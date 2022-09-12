@@ -12,105 +12,105 @@ import net.minecraft.nbt.NBTTagCompound;
 import net.minecraft.util.StatCollector;
 
 public class LOTRMiniQuestRetrieve extends LOTRMiniQuestCollect {
-    public Class killEntityType;
-    public boolean hasDropped = false;
+	public Class killEntityType;
+	public boolean hasDropped = false;
 
-    public LOTRMiniQuestRetrieve(LOTRPlayerData pd) {
-        super(pd);
-    }
+	public LOTRMiniQuestRetrieve(LOTRPlayerData pd) {
+		super(pd);
+	}
 
-    public static UUID getRetrieveQuestID(ItemStack itemstack) {
-        if(itemstack.getTagCompound() != null && itemstack.getTagCompound().hasKey("LOTRRetrieveID")) {
-            String id = itemstack.getTagCompound().getString("LOTRRetrieveID");
-            return UUID.fromString(id);
-        }
-        return null;
-    }
+	@Override
+	public String getProgressedObjectiveInSpeech() {
+		if (collectTarget == 1) {
+			return collectItem.getDisplayName();
+		}
+		return collectTarget + " " + collectItem.getDisplayName();
+	}
 
-    public static void setRetrieveQuest(ItemStack itemstack, LOTRMiniQuest quest) {
-        if(itemstack.getTagCompound() == null) {
-            itemstack.setTagCompound(new NBTTagCompound());
-        }
-        itemstack.getTagCompound().setString("LOTRRetrieveID", quest.questUUID.toString());
-    }
+	@Override
+	public String getQuestObjective() {
+		if (collectTarget == 1) {
+			return StatCollector.translateToLocalFormatted("lotr.miniquest.retrieve1", collectItem.getDisplayName());
+		}
+		return StatCollector.translateToLocalFormatted("lotr.miniquest.retrieveMany", collectTarget, collectItem.getDisplayName());
+	}
 
-    @Override
-    public void writeToNBT(NBTTagCompound nbt) {
-        super.writeToNBT(nbt);
-        nbt.setString("KillClass", LOTREntities.getStringFromClass(this.killEntityType));
-        nbt.setBoolean("HasDropped", this.hasDropped);
-    }
+	@Override
+	public boolean isQuestItem(ItemStack itemstack) {
+		if (super.isQuestItem(itemstack)) {
+			UUID retrieveQuestID = LOTRMiniQuestRetrieve.getRetrieveQuestID(itemstack);
+			return retrieveQuestID.equals(questUUID);
+		}
+		return false;
+	}
 
-    @Override
-    public void readFromNBT(NBTTagCompound nbt) {
-        super.readFromNBT(nbt);
-        this.killEntityType = LOTREntities.getClassFromString(nbt.getString("KillClass"));
-        this.hasDropped = nbt.getBoolean("HasDropped");
-    }
+	@Override
+	public boolean isValidQuest() {
+		return super.isValidQuest() && killEntityType != null && EntityLivingBase.class.isAssignableFrom(killEntityType);
+	}
 
-    @Override
-    public boolean isValidQuest() {
-        return super.isValidQuest() && this.killEntityType != null && EntityLivingBase.class.isAssignableFrom(this.killEntityType);
-    }
+	@Override
+	public void onKill(EntityPlayer entityplayer, EntityLivingBase entity) {
+		if (!hasDropped && killEntityType.isAssignableFrom(entity.getClass())) {
+			ItemStack itemstack = collectItem.copy();
+			LOTRMiniQuestRetrieve.setRetrieveQuest(itemstack, this);
+			hasDropped = true;
+			updateQuest();
+		}
+	}
 
-    @Override
-    public String getQuestObjective() {
-        if(this.collectTarget == 1) {
-            return StatCollector.translateToLocalFormatted("lotr.miniquest.retrieve1", this.collectItem.getDisplayName());
-        }
-        return StatCollector.translateToLocalFormatted("lotr.miniquest.retrieveMany", this.collectTarget, this.collectItem.getDisplayName());
-    }
+	@Override
+	public void readFromNBT(NBTTagCompound nbt) {
+		super.readFromNBT(nbt);
+		killEntityType = LOTREntities.getClassFromString(nbt.getString("KillClass"));
+		hasDropped = nbt.getBoolean("HasDropped");
+	}
 
-    @Override
-    public String getProgressedObjectiveInSpeech() {
-        if(this.collectTarget == 1) {
-            return this.collectItem.getDisplayName();
-        }
-        return this.collectTarget + " " + this.collectItem.getDisplayName();
-    }
+	@Override
+	public void writeToNBT(NBTTagCompound nbt) {
+		super.writeToNBT(nbt);
+		nbt.setString("KillClass", LOTREntities.getStringFromClass(killEntityType));
+		nbt.setBoolean("HasDropped", hasDropped);
+	}
 
-    @Override
-    protected boolean isQuestItem(ItemStack itemstack) {
-        if(super.isQuestItem(itemstack)) {
-            UUID retrieveQuestID = LOTRMiniQuestRetrieve.getRetrieveQuestID(itemstack);
-            return retrieveQuestID.equals(this.questUUID);
-        }
-        return false;
-    }
+	public static UUID getRetrieveQuestID(ItemStack itemstack) {
+		if (itemstack.getTagCompound() != null && itemstack.getTagCompound().hasKey("LOTRRetrieveID")) {
+			String id = itemstack.getTagCompound().getString("LOTRRetrieveID");
+			return UUID.fromString(id);
+		}
+		return null;
+	}
 
-    @Override
-    public void onKill(EntityPlayer entityplayer, EntityLivingBase entity) {
-        if(!this.hasDropped && this.killEntityType.isAssignableFrom(entity.getClass())) {
-            ItemStack itemstack = this.collectItem.copy();
-            LOTRMiniQuestRetrieve.setRetrieveQuest(itemstack, this);
-            this.hasDropped = true;
-            this.updateQuest();
-        }
-    }
+	public static void setRetrieveQuest(ItemStack itemstack, LOTRMiniQuest quest) {
+		if (itemstack.getTagCompound() == null) {
+			itemstack.setTagCompound(new NBTTagCompound());
+		}
+		itemstack.getTagCompound().setString("LOTRRetrieveID", quest.questUUID.toString());
+	}
 
-    public static class QFRetrieve extends LOTRMiniQuestCollect.QFCollect<LOTRMiniQuestRetrieve> {
-        private Class entityType;
+	public static class QFRetrieve extends LOTRMiniQuestCollect.QFCollect<LOTRMiniQuestRetrieve> {
+		public Class entityType;
 
-        public QFRetrieve(String name) {
-            super(name);
-        }
+		public QFRetrieve(String name) {
+			super(name);
+		}
 
-        public QFRetrieve setKillEntity(Class entityClass) {
-            this.entityType = entityClass;
-            return this;
-        }
+		@Override
+		public LOTRMiniQuestRetrieve createQuest(LOTREntityNPC npc, Random rand) {
+			LOTRMiniQuestRetrieve quest = super.createQuest(npc, rand);
+			quest.killEntityType = entityType;
+			return quest;
+		}
 
-        @Override
-        public Class getQuestClass() {
-            return LOTRMiniQuestRetrieve.class;
-        }
+		@Override
+		public Class getQuestClass() {
+			return LOTRMiniQuestRetrieve.class;
+		}
 
-        @Override
-        public LOTRMiniQuestRetrieve createQuest(LOTREntityNPC npc, Random rand) {
-            LOTRMiniQuestRetrieve quest = super.createQuest(npc, rand);
-            quest.killEntityType = this.entityType;
-            return quest;
-        }
-    }
+		public QFRetrieve setKillEntity(Class entityClass) {
+			entityType = entityClass;
+			return this;
+		}
+	}
 
 }

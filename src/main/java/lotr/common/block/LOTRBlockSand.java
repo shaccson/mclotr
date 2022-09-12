@@ -5,10 +5,10 @@ import net.minecraft.block.BlockFalling;
 import net.minecraft.block.material.Material;
 
 public class LOTRBlockSand extends BlockFalling {
-    public LOTRBlockSand() {
-        super(Material.sand);
-        this.setCreativeTab(LOTRCreativeTabs.tabBlock);
-        this.setHardness(0.5f);
-        this.setStepSound(soundTypeSand);
-    }
+	public LOTRBlockSand() {
+		super(Material.sand);
+		setCreativeTab(LOTRCreativeTabs.tabBlock);
+		setHardness(0.5f);
+		setStepSound(soundTypeSand);
+	}
 }

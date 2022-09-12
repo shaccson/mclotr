@@ -4,48 +4,53 @@ import net.minecraft.entity.Entity;
 import net.minecraft.nbt.NBTTagCompound;
 import net.minecraft.world.World;
 
-public class LOTREntitySwordCommandMarker
-extends Entity {
-    private int particleAge;
-    private int particleMaxAge;
+public class LOTREntitySwordCommandMarker extends Entity {
+	public int particleAge;
+	public int particleMaxAge;
 
-    public LOTREntitySwordCommandMarker(World world, double d, double d1, double d2) {
-        super(world);
-        this.setSize(0.5f, 0.5f);
-        this.yOffset = this.height / 2.0f;
-        this.setPosition(d, d1, d2);
-        this.particleAge = 0;
-        this.particleMaxAge = 30;
-    }
+	public LOTREntitySwordCommandMarker(World world, double d, double d1, double d2) {
+		super(world);
+		setSize(0.5f, 0.5f);
+		yOffset = height / 2.0f;
+		setPosition(d, d1, d2);
+		particleAge = 0;
+		particleMaxAge = 30;
+	}
 
-    protected void entityInit() {
-    }
+	@Override
+	public boolean canBePushed() {
+		return false;
+	}
 
-    public void writeEntityToNBT(NBTTagCompound nbt) {
-    }
+	@Override
+	public boolean canTriggerWalking() {
+		return false;
+	}
 
-    public void readEntityFromNBT(NBTTagCompound nbt) {
-    }
+	@Override
+	public void entityInit() {
+	}
 
-    public void onUpdate() {
-        super.onUpdate();
-        this.posY -= 0.35;
-        ++this.particleAge;
-        if (this.particleAge >= this.particleMaxAge) {
-            this.setDead();
-        }
-    }
+	@Override
+	public boolean isEntityInvulnerable() {
+		return true;
+	}
 
-    protected boolean canTriggerWalking() {
-        return false;
-    }
+	@Override
+	public void onUpdate() {
+		super.onUpdate();
+		posY -= 0.35;
+		++particleAge;
+		if (particleAge >= particleMaxAge) {
+			setDead();
+		}
+	}
 
-    public boolean isEntityInvulnerable() {
-        return true;
-    }
+	@Override
+	public void readEntityFromNBT(NBTTagCompound nbt) {
+	}
 
-    public boolean canBePushed() {
-        return false;
-    }
+	@Override
+	public void writeEntityToNBT(NBTTagCompound nbt) {
+	}
 }
-

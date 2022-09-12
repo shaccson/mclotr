@@ -8,77 +8,71 @@ import net.minecraft.entity.ai.EntityAIBase;
 import net.minecraft.item.ItemStack;
 
 public abstract class LOTREntityAIConsumeBase extends EntityAIBase {
-    protected LOTREntityNPC theEntity;
-    protected Random rand;
-    protected LOTRFoods foodPool;
-    private int chanceToConsume;
-    private int consumeTick;
+	public LOTREntityNPC theEntity;
+	public Random rand;
+	public LOTRFoods foodPool;
+	public int chanceToConsume;
+	public int consumeTick;
 
-    public LOTREntityAIConsumeBase(LOTREntityNPC entity, LOTRFoods foods, int chance) {
-        this.theEntity = entity;
-        this.rand = this.theEntity.getRNG();
-        this.foodPool = foods;
-        this.chanceToConsume = chance;
-        this.setMutexBits(3);
-    }
+	public LOTREntityAIConsumeBase(LOTREntityNPC entity, LOTRFoods foods, int chance) {
+		theEntity = entity;
+		rand = theEntity.getRNG();
+		foodPool = foods;
+		chanceToConsume = chance;
+		setMutexBits(3);
+	}
 
-    @Override
-    public boolean shouldExecute() {
-        if(this.theEntity.isChild()) {
-            return false;
-        }
-        if(this.theEntity.getAttackTarget() != null) {
-            return false;
-        }
-        if(this.theEntity.npcItemsInv.getIsEating()) {
-            return false;
-        }
-        return this.shouldConsume();
-    }
+	public abstract void consume();
 
-    protected boolean shouldConsume() {
-        boolean needsHeal = this.theEntity.getHealth() < this.theEntity.getMaxHealth();
-        return needsHeal && this.rand.nextInt(this.chanceToConsume / 4) == 0 || this.rand.nextInt(this.chanceToConsume) == 0;
-    }
+	@Override
+	public boolean continueExecuting() {
+		return consumeTick > 0 && theEntity.getHeldItem() != null && theEntity.getAttackTarget() == null;
+	}
 
-    @Override
-    public void startExecuting() {
-        this.theEntity.npcItemsInv.setEatingBackup(this.theEntity.getHeldItem());
-        this.theEntity.npcItemsInv.setIsEating(true);
-        this.theEntity.setCurrentItemOrArmor(0, this.createConsumable());
-        this.consumeTick = this.getConsumeTime();
-    }
+	public abstract ItemStack createConsumable();
 
-    protected int getConsumeTime() {
-        return 32;
-    }
+	public int getConsumeTime() {
+		return 32;
+	}
 
-    @Override
-    public void updateTask() {
-        --this.consumeTick;
-        this.updateConsumeTick(this.consumeTick);
-        if(this.consumeTick == 0) {
-            this.consume();
-        }
-    }
+	@Override
+	public void resetTask() {
+		theEntity.setCurrentItemOrArmor(0, theEntity.npcItemsInv.getEatingBackup());
+		theEntity.npcItemsInv.setEatingBackup(null);
+		theEntity.npcItemsInv.setIsEating(false);
+		theEntity.refreshCurrentAttackMode();
+		consumeTick = 0;
+	}
 
-    protected abstract ItemStack createConsumable();
+	public boolean shouldConsume() {
+		boolean needsHeal = theEntity.getHealth() < theEntity.getMaxHealth();
+		return needsHeal && rand.nextInt(chanceToConsume / 4) == 0 || rand.nextInt(chanceToConsume) == 0;
+	}
 
-    protected abstract void updateConsumeTick(int var1);
+	@Override
+	public boolean shouldExecute() {
+		if (theEntity.isChild() || theEntity.getAttackTarget() != null || theEntity.npcItemsInv.getIsEating()) {
+			return false;
+		}
+		return shouldConsume();
+	}
 
-    protected abstract void consume();
+	@Override
+	public void startExecuting() {
+		theEntity.npcItemsInv.setEatingBackup(theEntity.getHeldItem());
+		theEntity.npcItemsInv.setIsEating(true);
+		theEntity.setCurrentItemOrArmor(0, createConsumable());
+		consumeTick = getConsumeTime();
+	}
 
-    @Override
-    public boolean continueExecuting() {
-        return this.consumeTick > 0 && this.theEntity.getHeldItem() != null && this.theEntity.getAttackTarget() == null;
-    }
+	public abstract void updateConsumeTick(int var1);
 
-    @Override
-    public void resetTask() {
-        this.theEntity.setCurrentItemOrArmor(0, this.theEntity.npcItemsInv.getEatingBackup());
-        this.theEntity.npcItemsInv.setEatingBackup(null);
-        this.theEntity.npcItemsInv.setIsEating(false);
-        this.theEntity.refreshCurrentAttackMode();
-        this.consumeTick = 0;
-    }
+	@Override
+	public void updateTask() {
+		--consumeTick;
+		updateConsumeTick(consumeTick);
+		if (consumeTick == 0) {
+			consume();
+		}
+	}
 }

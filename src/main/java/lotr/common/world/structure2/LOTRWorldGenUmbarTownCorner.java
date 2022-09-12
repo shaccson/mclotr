@@ -1,12 +1,12 @@
 package lotr.common.world.structure2;
 
 public class LOTRWorldGenUmbarTownCorner extends LOTRWorldGenSouthronTownCorner {
-    public LOTRWorldGenUmbarTownCorner(boolean flag) {
-        super(flag);
-    }
+	public LOTRWorldGenUmbarTownCorner(boolean flag) {
+		super(flag);
+	}
 
-    @Override
-    protected boolean isUmbar() {
-        return true;
-    }
+	@Override
+	public boolean isUmbar() {
+		return true;
+	}
 }

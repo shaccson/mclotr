@@ -5,8 +5,8 @@ import net.minecraft.block.BlockPressurePlate;
 import net.minecraft.block.material.Material;
 
 public class LOTRBlockPressurePlate extends BlockPressurePlate {
-    public LOTRBlockPressurePlate(String iconPath, Material material, BlockPressurePlate.Sensitivity triggerType) {
-        super(iconPath, material, triggerType);
-        this.setCreativeTab(LOTRCreativeTabs.tabMisc);
-    }
+	public LOTRBlockPressurePlate(String iconPath, Material material, BlockPressurePlate.Sensitivity triggerType) {
+		super(iconPath, material, triggerType);
+		setCreativeTab(LOTRCreativeTabs.tabMisc);
+	}
 }

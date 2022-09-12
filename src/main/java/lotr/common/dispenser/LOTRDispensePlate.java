@@ -7,14 +7,14 @@ import net.minecraft.entity.IProjectile;
 import net.minecraft.world.World;
 
 public class LOTRDispensePlate extends BehaviorProjectileDispense {
-    private Block plateBlock;
+	public Block plateBlock;
 
-    public LOTRDispensePlate(Block block) {
-        this.plateBlock = block;
-    }
+	public LOTRDispensePlate(Block block) {
+		plateBlock = block;
+	}
 
-    @Override
-    protected IProjectile getProjectileEntity(World world, IPosition position) {
-        return new LOTREntityPlate(world, this.plateBlock, position.getX(), position.getY(), position.getZ());
-    }
+	@Override
+	public IProjectile getProjectileEntity(World world, IPosition position) {
+		return new LOTREntityPlate(world, plateBlock, position.getX(), position.getY(), position.getZ());
+	}
 }

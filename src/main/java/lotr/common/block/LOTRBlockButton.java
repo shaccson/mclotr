@@ -6,17 +6,17 @@ import net.minecraft.block.BlockButton;
 import net.minecraft.client.renderer.texture.IIconRegister;
 
 public class LOTRBlockButton extends BlockButton {
-    private String iconPath;
+	public String iconPath;
 
-    public LOTRBlockButton(boolean flag, String s) {
-        super(flag);
-        this.iconPath = s;
-        this.setCreativeTab(LOTRCreativeTabs.tabMisc);
-    }
+	public LOTRBlockButton(boolean flag, String s) {
+		super(flag);
+		iconPath = s;
+		setCreativeTab(LOTRCreativeTabs.tabMisc);
+	}
 
-    @SideOnly(value = Side.CLIENT)
-    @Override
-    public void registerBlockIcons(IIconRegister iconregister) {
-        this.blockIcon = iconregister.registerIcon(this.iconPath);
-    }
+	@SideOnly(value = Side.CLIENT)
+	@Override
+	public void registerBlockIcons(IIconRegister iconregister) {
+		blockIcon = iconregister.registerIcon(iconPath);
+	}
 }

@@ -7,6 +7,7 @@ import org.apache.commons.lang3.StringUtils;
 import cpw.mods.fml.common.network.simpleimpl.IMessage;
 import lotr.common.LOTRLevelData;
 import lotr.common.network.*;
+import lotr.common.util.LOTRLog;
 import net.minecraft.entity.player.*;
 import net.minecraft.event.ClickEvent;
 import net.minecraft.item.ItemStack;
@@ -17,321 +18,394 @@ import net.minecraft.util.*;
 import net.minecraftforge.common.ForgeHooks;
 
 public class LOTRFellowship {
-    private boolean needsSave = false;
-    private UUID fellowshipUUID;
-    private String fellowshipName;
-    private boolean disbanded = false;
-    private ItemStack fellowshipIcon;
-    private UUID ownerUUID;
-    private List<UUID> memberUUIDs = new ArrayList<>();
-    private Set<UUID> adminUUIDs = new HashSet<>();
-    private boolean preventPVP = true;
-    private boolean preventHiredFF = true;
-    private boolean showMapLocations = true;
+	public boolean needsSave = false;
+	public UUID fellowshipUUID;
+	public String fellowshipName;
+	public boolean disbanded = false;
+	public ItemStack fellowshipIcon;
+	public UUID ownerUUID;
+	public List<UUID> memberUUIDs = new ArrayList<>();
+	public Set<UUID> adminUUIDs = new HashSet<>();
+	public Set<UUID> waypointSharerUUIDs = new HashSet<>();
+	public boolean doneRetroactiveWaypointSharerCheck = true;
+	public boolean preventPVP = true;
+	public boolean preventHiredFF = true;
+	public boolean showMapLocations = true;
 
-    public LOTRFellowship() {
-        this.fellowshipUUID = UUID.randomUUID();
-    }
+	public LOTRFellowship() {
+		fellowshipUUID = UUID.randomUUID();
+	}
 
-    public LOTRFellowship(UUID fsID) {
-        this.fellowshipUUID = fsID;
-    }
+	public LOTRFellowship(UUID fsID) {
+		fellowshipUUID = fsID;
+	}
 
-    public LOTRFellowship(UUID owner, String name) {
-        this();
-        this.ownerUUID = owner;
-        this.fellowshipName = name;
-    }
+	public LOTRFellowship(UUID owner, String name) {
+		this();
+		ownerUUID = owner;
+		fellowshipName = name;
+	}
 
-    public void createAndRegister() {
-        LOTRFellowshipData.addFellowship(this);
-        LOTRLevelData.getData(this.ownerUUID).addFellowship(this);
-        this.updateForAllMembers(new FellowshipUpdateType.Full());
-        this.markDirty();
-    }
+	public void addMember(UUID player) {
+		if (!isOwner(player) && !memberUUIDs.contains(player)) {
+			memberUUIDs.add(player);
+			LOTRLevelData.getData(player).addFellowship(this);
+			updateForAllMembers(new FellowshipUpdateType.AddMember(player));
+			markDirty();
+		}
+	}
 
-    public void validate() {
-        if (this.fellowshipUUID == null) {
-            this.fellowshipUUID = UUID.randomUUID();
-        }
-        if (this.ownerUUID == null) {
-            this.ownerUUID = UUID.randomUUID();
-        }
-    }
+	public boolean containsPlayer(UUID player) {
+		return isOwner(player) || hasMember(player);
+	}
 
-    public void markDirty() {
-        this.needsSave = true;
-    }
+	public void createAndRegister() {
+		LOTRFellowshipData.addFellowship(this);
+		LOTRLevelData.getData(ownerUUID).addFellowship(this);
+		updateForAllMembers(new FellowshipUpdateType.Full());
+		markDirty();
+	}
 
-    public boolean needsSave() {
-        return this.needsSave;
-    }
+	public void doRetroactiveWaypointSharerCheckIfNeeded() {
+		if (!doneRetroactiveWaypointSharerCheck) {
+			waypointSharerUUIDs.clear();
+			if (!disbanded) {
+				List<UUID> allPlayersSafe = getAllPlayerUUIDs();
+				for (UUID player : allPlayersSafe) {
+					if (!LOTRLevelData.getData(player).hasAnyWaypointsSharedToFellowship(this)) {
+						continue;
+					}
+					waypointSharerUUIDs.add(player);
+				}
+				LOTRLog.logger.info("Fellowship " + getName() + " did retroactive waypoint sharer check and found " + waypointSharerUUIDs.size() + " out of " + allPlayersSafe.size() + " players");
+			}
+			doneRetroactiveWaypointSharerCheck = true;
+			markDirty();
+		}
+	}
 
-    public void save(NBTTagCompound fsData) {
-        if (this.ownerUUID != null) {
-            fsData.setString("Owner", this.ownerUUID.toString());
-        }
-        NBTTagList memberTags = new NBTTagList();
-        for (UUID member : this.memberUUIDs) {
-            NBTTagCompound nbt = new NBTTagCompound();
-            nbt.setString("Member", member.toString());
-            if (this.adminUUIDs.contains(member)) {
-                nbt.setBoolean("Admin", true);
-            }
-            memberTags.appendTag(nbt);
-        }
-        fsData.setTag("Members", memberTags);
-        if (this.fellowshipName != null) {
-            fsData.setString("Name", this.fellowshipName);
-        }
-        if (this.fellowshipIcon != null) {
-            NBTTagCompound itemData = new NBTTagCompound();
-            this.fellowshipIcon.writeToNBT(itemData);
-            fsData.setTag("Icon", itemData);
-        }
-        fsData.setBoolean("PreventPVP", this.preventPVP);
-        fsData.setBoolean("PreventHiredFF", this.preventHiredFF);
-        fsData.setBoolean("ShowMap", this.showMapLocations);
-        this.needsSave = false;
-    }
+	public List<UUID> getAllPlayerUUIDs() {
+		ArrayList<UUID> list = new ArrayList<>();
+		list.add(ownerUUID);
+		list.addAll(memberUUIDs);
+		return list;
+	}
 
-    public void load(NBTTagCompound fsData) {
-        if (fsData.hasKey("Owner")) {
-            this.ownerUUID = UUID.fromString(fsData.getString("Owner"));
-        }
-        this.memberUUIDs.clear();
-        this.adminUUIDs.clear();
-        NBTTagList memberTags = fsData.getTagList("Members", 10);
-        for (int i = 0; i < memberTags.tagCount(); ++i) {
-            NBTTagCompound nbt = memberTags.getCompoundTagAt(i);
-            UUID member = UUID.fromString(nbt.getString("Member"));
-            if (member == null) continue;
-            this.memberUUIDs.add(member);
-            if (!nbt.hasKey("Admin") || !(nbt.getBoolean("Admin"))) continue;
-            this.adminUUIDs.add(member);
-        }
-        if (fsData.hasKey("Name")) {
-            this.fellowshipName = fsData.getString("Name");
-        }
-        if (fsData.hasKey("Icon")) {
-            NBTTagCompound itemData = fsData.getCompoundTag("Icon");
-            this.fellowshipIcon = ItemStack.loadItemStackFromNBT(itemData);
-        }
-        if (fsData.hasKey("PreventPVP")) {
-            this.preventPVP = fsData.getBoolean("PreventPVP");
-        }
-        if (fsData.hasKey("PreventPVP")) {
-            this.preventHiredFF = fsData.getBoolean("PreventHiredFF");
-        }
-        if (fsData.hasKey("ShowMap")) {
-            this.showMapLocations = fsData.getBoolean("ShowMap");
-        }
-        this.validate();
-    }
+	public UUID getFellowshipID() {
+		return fellowshipUUID;
+	}
 
-    public UUID getFellowshipID() {
-        return this.fellowshipUUID;
-    }
+	public ItemStack getIcon() {
+		return fellowshipIcon;
+	}
 
-    public UUID getOwner() {
-        return this.ownerUUID;
-    }
+	public List<UUID> getMemberUUIDs() {
+		return memberUUIDs;
+	}
 
-    public boolean isOwner(UUID player) {
-        return this.ownerUUID.equals(player);
-    }
+	public String getName() {
+		return fellowshipName;
+	}
 
-    public void setOwner(UUID owner) {
-        UUID prevOwner = this.ownerUUID;
-        if (prevOwner != null && !this.memberUUIDs.contains(prevOwner)) {
-            this.memberUUIDs.add(0, prevOwner);
-        }
-        this.ownerUUID = owner;
-        if (this.memberUUIDs.contains(owner)) {
-            this.memberUUIDs.remove(owner);
-        }
-        if (this.adminUUIDs.contains(owner)) {
-            this.adminUUIDs.remove(owner);
-        }
-        LOTRLevelData.getData(this.ownerUUID).addFellowship(this);
-        this.updateForAllMembers(new FellowshipUpdateType.SetOwner(this.ownerUUID));
-        this.markDirty();
-    }
+	public UUID getOwner() {
+		return ownerUUID;
+	}
 
-    public String getName() {
-        return this.fellowshipName;
-    }
+	public int getPlayerCount() {
+		return memberUUIDs.size() + 1;
+	}
 
-    public void setName(String name) {
-        this.fellowshipName = name;
-        this.updateForAllMembers(new FellowshipUpdateType.Rename());
-        this.markDirty();
-    }
+	public boolean getPreventHiredFriendlyFire() {
+		return preventHiredFF;
+	}
 
-    public boolean containsPlayer(UUID player) {
-        return this.isOwner(player) || this.hasMember(player);
-    }
+	public boolean getPreventPVP() {
+		return preventPVP;
+	}
 
-    public boolean hasMember(UUID player) {
-        return this.memberUUIDs.contains(player);
-    }
+	public boolean getShowMapLocations() {
+		return showMapLocations;
+	}
 
-    public void addMember(UUID player) {
-        if (!this.isOwner(player) && !this.memberUUIDs.contains(player)) {
-            this.memberUUIDs.add(player);
-            LOTRLevelData.getData(player).addFellowship(this);
-            this.updateForAllMembers(new FellowshipUpdateType.AddMember(player));
-            this.markDirty();
-        }
-    }
+	public Set<UUID> getWaypointSharerUUIDs() {
+		return waypointSharerUUIDs;
+	}
 
-    public void removeMember(UUID player) {
-        if (this.memberUUIDs.contains(player)) {
-            this.memberUUIDs.remove(player);
-            if (this.adminUUIDs.contains(player)) {
-                this.adminUUIDs.remove(player);
-            }
-            LOTRLevelData.getData(player).removeFellowship(this);
-            this.updateForAllMembers(new FellowshipUpdateType.RemoveMember(player));
-            this.markDirty();
-        }
-    }
+	public boolean hasMember(UUID player) {
+		return memberUUIDs.contains(player);
+	}
 
-    public List<UUID> getMemberUUIDs() {
-        return this.memberUUIDs;
-    }
+	public boolean isAdmin(UUID player) {
+		return hasMember(player) && adminUUIDs.contains(player);
+	}
 
-    public List<UUID> getAllPlayerUUIDs() {
-        ArrayList<UUID> list = new ArrayList<>();
-        list.add(this.ownerUUID);
-        list.addAll(this.memberUUIDs);
-        return list;
-    }
+	public boolean isDisbanded() {
+		return disbanded;
+	}
 
-    public boolean isAdmin(UUID player) {
-        return this.hasMember(player) && this.adminUUIDs.contains(player);
-    }
+	public boolean isOwner(UUID player) {
+		return ownerUUID.equals(player);
+	}
 
-    public void setAdmin(UUID player, boolean flag) {
-        if (this.memberUUIDs.contains(player)) {
-            if (flag && !this.adminUUIDs.contains(player)) {
-                this.adminUUIDs.add(player);
-                this.updateForAllMembers(new FellowshipUpdateType.SetAdmin(player));
-                this.markDirty();
-            } else if (!flag && this.adminUUIDs.contains(player)) {
-                this.adminUUIDs.remove(player);
-                this.updateForAllMembers(new FellowshipUpdateType.RemoveAdmin(player));
-                this.markDirty();
-            }
-        }
-    }
+	public boolean isWaypointSharer(UUID player) {
+		return waypointSharerUUIDs.contains(player);
+	}
 
-    public ItemStack getIcon() {
-        return this.fellowshipIcon;
-    }
+	public void load(NBTTagCompound fsData) {
+		disbanded = fsData.getBoolean("Disbanded");
+		if (fsData.hasKey("Owner")) {
+			ownerUUID = UUID.fromString(fsData.getString("Owner"));
+		}
+		memberUUIDs.clear();
+		adminUUIDs.clear();
+		NBTTagList memberTags = fsData.getTagList("Members", 10);
+		for (int i = 0; i < memberTags.tagCount(); ++i) {
+			NBTTagCompound nbt = memberTags.getCompoundTagAt(i);
+			UUID member = UUID.fromString(nbt.getString("Member"));
+			if (member == null) {
+				continue;
+			}
+			memberUUIDs.add(member);
+			if (!nbt.hasKey("Admin") || !nbt.getBoolean("Admin")) {
+				continue;
+			}
+			adminUUIDs.add(member);
+		}
+		waypointSharerUUIDs.clear();
+		NBTTagList waypointSharerTags = fsData.getTagList("WaypointSharers", 8);
+		for (int i = 0; i < waypointSharerTags.tagCount(); ++i) {
+			UUID waypointSharer = UUID.fromString(waypointSharerTags.getStringTagAt(i));
+			if (waypointSharer == null || !containsPlayer(waypointSharer)) {
+				continue;
+			}
+			waypointSharerUUIDs.add(waypointSharer);
+		}
+		if (fsData.hasKey("Name")) {
+			fellowshipName = fsData.getString("Name");
+		}
+		if (fsData.hasKey("Icon")) {
+			NBTTagCompound itemData = fsData.getCompoundTag("Icon");
+			fellowshipIcon = ItemStack.loadItemStackFromNBT(itemData);
+		}
+		if (fsData.hasKey("PreventPVP")) {
+			preventPVP = fsData.getBoolean("PreventPVP");
+		}
+		if (fsData.hasKey("PreventPVP")) {
+			preventHiredFF = fsData.getBoolean("PreventHiredFF");
+		}
+		if (fsData.hasKey("ShowMap")) {
+			showMapLocations = fsData.getBoolean("ShowMap");
+		}
+		validate();
+		doneRetroactiveWaypointSharerCheck = fsData.getBoolean("DoneRetroactiveWaypointSharerCheck");
+	}
 
-    public void setIcon(ItemStack itemstack) {
-        this.fellowshipIcon = itemstack;
-        this.updateForAllMembers(new FellowshipUpdateType.ChangeIcon());
-        this.markDirty();
-    }
+	public void markDirty() {
+		needsSave = true;
+	}
 
-    public boolean getPreventPVP() {
-        return this.preventPVP;
-    }
+	public void markIsWaypointSharer(UUID player, boolean flag) {
+		if (containsPlayer(player)) {
+			if (flag && !waypointSharerUUIDs.contains(player)) {
+				waypointSharerUUIDs.add(player);
+				markDirty();
+			} else if (!flag && waypointSharerUUIDs.contains(player)) {
+				waypointSharerUUIDs.remove(player);
+				markDirty();
+			}
+		}
+	}
 
-    public void setPreventPVP(boolean flag) {
-        this.preventPVP = flag;
-        this.updateForAllMembers(new FellowshipUpdateType.TogglePvp());
-        this.markDirty();
-    }
+	public boolean needsSave() {
+		return needsSave;
+	}
 
-    public boolean getPreventHiredFriendlyFire() {
-        return this.preventHiredFF;
-    }
+	public void removeMember(UUID player) {
+		if (memberUUIDs.contains(player)) {
+			memberUUIDs.remove(player);
+			if (adminUUIDs.contains(player)) {
+				adminUUIDs.remove(player);
+			}
+			if (waypointSharerUUIDs.contains(player)) {
+				waypointSharerUUIDs.remove(player);
+			}
+			LOTRLevelData.getData(player).removeFellowship(this);
+			updateForAllMembers(new FellowshipUpdateType.RemoveMember(player));
+			markDirty();
+		}
+	}
 
-    public void setPreventHiredFriendlyFire(boolean flag) {
-        this.preventHiredFF = flag;
-        this.updateForAllMembers(new FellowshipUpdateType.ToggleHiredFriendlyFire());
-        this.markDirty();
-    }
+	public void save(NBTTagCompound fsData) {
+		fsData.setBoolean("Disbanded", disbanded);
+		if (ownerUUID != null) {
+			fsData.setString("Owner", ownerUUID.toString());
+		}
+		NBTTagList memberTags = new NBTTagList();
+		for (UUID member : memberUUIDs) {
+			NBTTagCompound nbt = new NBTTagCompound();
+			nbt.setString("Member", member.toString());
+			if (adminUUIDs.contains(member)) {
+				nbt.setBoolean("Admin", true);
+			}
+			memberTags.appendTag(nbt);
+		}
+		fsData.setTag("Members", memberTags);
+		NBTTagList waypointSharerTags = new NBTTagList();
+		for (UUID waypointSharer : waypointSharerUUIDs) {
+			waypointSharerTags.appendTag(new NBTTagString(waypointSharer.toString()));
+		}
+		fsData.setTag("WaypointSharers", waypointSharerTags);
+		if (fellowshipName != null) {
+			fsData.setString("Name", fellowshipName);
+		}
+		if (fellowshipIcon != null) {
+			NBTTagCompound itemData = new NBTTagCompound();
+			fellowshipIcon.writeToNBT(itemData);
+			fsData.setTag("Icon", itemData);
+		}
+		fsData.setBoolean("PreventPVP", preventPVP);
+		fsData.setBoolean("PreventHiredFF", preventHiredFF);
+		fsData.setBoolean("ShowMap", showMapLocations);
+		fsData.setBoolean("DoneRetroactiveWaypointSharerCheck", doneRetroactiveWaypointSharerCheck);
+		needsSave = false;
+	}
 
-    public boolean getShowMapLocations() {
-        return this.showMapLocations;
-    }
+	public void sendFellowshipMessage(EntityPlayerMP sender, String message) {
+		if (sender.func_147096_v() == EntityPlayer.EnumChatVisibility.HIDDEN) {
+			ChatComponentTranslation msgCannotSend = new ChatComponentTranslation("chat.cannotSend");
+			msgCannotSend.getChatStyle().setColor(EnumChatFormatting.RED);
+			sender.playerNetServerHandler.sendPacket(new S02PacketChat(msgCannotSend));
+		} else {
+			sender.func_143004_u();
+			message = StringUtils.normalizeSpace(message);
+			if (StringUtils.isBlank(message)) {
+				return;
+			}
+			for (int i = 0; i < message.length(); ++i) {
+				if (ChatAllowedCharacters.isAllowedCharacter(message.charAt(i))) {
+					continue;
+				}
+				sender.playerNetServerHandler.kickPlayerFromServer("Illegal characters in chat");
+				return;
+			}
+			ClickEvent fMsgClickEvent = new ClickEvent(ClickEvent.Action.SUGGEST_COMMAND, "/fmsg \"" + getName() + "\" ");
+			IChatComponent msgComponent = ForgeHooks.newChatWithLinks(message);
+			msgComponent.getChatStyle().setColor(EnumChatFormatting.YELLOW);
+			IChatComponent senderComponent = sender.func_145748_c_();
+			senderComponent.getChatStyle().setChatClickEvent(fMsgClickEvent);
+			ChatComponentTranslation chatComponent = new ChatComponentTranslation("chat.type.text", senderComponent, "");
+			chatComponent = ForgeHooks.onServerChatEvent(sender.playerNetServerHandler, message, chatComponent);
+			if (chatComponent == null) {
+				return;
+			}
+			chatComponent.appendSibling(msgComponent);
+			ChatComponentTranslation fsComponent = new ChatComponentTranslation("commands.lotr.fmsg.fsPrefix", getName());
+			fsComponent.getChatStyle().setColor(EnumChatFormatting.YELLOW);
+			fsComponent.getChatStyle().setChatClickEvent(fMsgClickEvent);
+			ChatComponentTranslation fullChatComponent = new ChatComponentTranslation("%s %s", fsComponent, chatComponent);
+			MinecraftServer server = MinecraftServer.getServer();
+			server.addChatMessage(fullChatComponent);
+			S02PacketChat packetChat = new S02PacketChat(fullChatComponent, false);
+			for (Object player : server.getConfigurationManager().playerEntityList) {
+				EntityPlayerMP entityplayer = (EntityPlayerMP) player;
+				if (!containsPlayer(entityplayer.getUniqueID())) {
+					continue;
+				}
+				entityplayer.playerNetServerHandler.sendPacket(packetChat);
+			}
+		}
+	}
 
-    public void setShowMapLocations(boolean flag) {
-        this.showMapLocations = flag;
-        this.updateForAllMembers(new FellowshipUpdateType.ToggleShowMapLocations());
-        this.markDirty();
-    }
+	public void sendNotification(EntityPlayer entityplayer, String key, Object... args) {
+		ChatComponentTranslation message = new ChatComponentTranslation(key, args);
+		message.getChatStyle().setColor(EnumChatFormatting.YELLOW);
+		entityplayer.addChatMessage(message);
+		LOTRPacketFellowshipNotification packet = new LOTRPacketFellowshipNotification(message);
+		LOTRPacketHandler.networkWrapper.sendTo((IMessage) packet, (EntityPlayerMP) entityplayer);
+	}
 
-    public void updateForAllMembers(FellowshipUpdateType updateType) {
-        for (UUID player : this.getAllPlayerUUIDs()) {
-            LOTRLevelData.getData(player).updateFellowship(this, updateType);
-        }
-    }
+	public void setAdmin(UUID player, boolean flag) {
+		if (memberUUIDs.contains(player)) {
+			if (flag && !adminUUIDs.contains(player)) {
+				adminUUIDs.add(player);
+				updateForAllMembers(new FellowshipUpdateType.SetAdmin(player));
+				markDirty();
+			} else if (!flag && adminUUIDs.contains(player)) {
+				adminUUIDs.remove(player);
+				updateForAllMembers(new FellowshipUpdateType.RemoveAdmin(player));
+				markDirty();
+			}
+		}
+	}
 
-    public void disband() {
-        this.disbanded = true;
-        ArrayList<UUID> copyMemberIDs = new ArrayList<>(this.memberUUIDs);
-        for (UUID player : copyMemberIDs) {
-            this.removeMember(player);
-        }
-    }
+	public void setDisbandedAndRemoveAllMembers() {
+		disbanded = true;
+		markDirty();
+		ArrayList<UUID> copyMemberIDs = new ArrayList<>(memberUUIDs);
+		for (UUID player : copyMemberIDs) {
+			removeMember(player);
+		}
+	}
 
-    public boolean isDisbanded() {
-        return this.disbanded;
-    }
+	public void setIcon(ItemStack itemstack) {
+		fellowshipIcon = itemstack;
+		updateForAllMembers(new FellowshipUpdateType.ChangeIcon());
+		markDirty();
+	}
 
-    public void sendFellowshipMessage(EntityPlayerMP sender, String message) {
-        if (sender.func_147096_v() == EntityPlayer.EnumChatVisibility.HIDDEN) {
-            ChatComponentTranslation msgCannotSend = new ChatComponentTranslation("chat.cannotSend");
-            msgCannotSend.getChatStyle().setColor(EnumChatFormatting.RED);
-            sender.playerNetServerHandler.sendPacket(new S02PacketChat(msgCannotSend));
-        } else {
-            sender.func_143004_u();
-            message = StringUtils.normalizeSpace(message);
-            if (StringUtils.isBlank(message)) {
-                return;
-            }
-            for (int i = 0; i < message.length(); ++i) {
-                if (ChatAllowedCharacters.isAllowedCharacter(message.charAt(i))) continue;
-                sender.playerNetServerHandler.kickPlayerFromServer("Illegal characters in chat");
-                return;
-            }
-            ClickEvent fMsgClickEvent = new ClickEvent(ClickEvent.Action.SUGGEST_COMMAND, "/fmsg \"" + this.getName() + "\" ");
-            IChatComponent msgComponent = ForgeHooks.newChatWithLinks(message);
-            msgComponent.getChatStyle().setColor(EnumChatFormatting.YELLOW);
-            IChatComponent senderComponent = sender.func_145748_c_();
-            senderComponent.getChatStyle().setChatClickEvent(fMsgClickEvent);
-            ChatComponentTranslation chatComponent = new ChatComponentTranslation("chat.type.text", senderComponent, "");
-            chatComponent = ForgeHooks.onServerChatEvent(sender.playerNetServerHandler, message, chatComponent);
-            if (chatComponent == null) {
-                return;
-            }
-            chatComponent.appendSibling(msgComponent);
-            ChatComponentTranslation fsComponent = new ChatComponentTranslation("commands.lotr.fmsg.fsPrefix", this.getName());
-            fsComponent.getChatStyle().setColor(EnumChatFormatting.YELLOW);
-            fsComponent.getChatStyle().setChatClickEvent(fMsgClickEvent);
-            ChatComponentTranslation fullChatComponent = new ChatComponentTranslation("%s %s", fsComponent, chatComponent);
-            MinecraftServer server = MinecraftServer.getServer();
-            server.addChatMessage(fullChatComponent);
-            S02PacketChat packetChat = new S02PacketChat(fullChatComponent, false);
-            for (Object player : server.getConfigurationManager().playerEntityList) {
-                EntityPlayerMP entityplayer = (EntityPlayerMP)player;
-                if (!this.containsPlayer(entityplayer.getUniqueID())) continue;
-                entityplayer.playerNetServerHandler.sendPacket(packetChat);
-            }
-        }
-    }
+	public void setName(String name) {
+		fellowshipName = name;
+		updateForAllMembers(new FellowshipUpdateType.Rename());
+		markDirty();
+	}
 
-    public void sendNotification(EntityPlayer entityplayer, String key, Object ... args) {
-        ChatComponentTranslation message = new ChatComponentTranslation(key, args);
-        message.getChatStyle().setColor(EnumChatFormatting.YELLOW);
-        entityplayer.addChatMessage(message);
-        LOTRPacketFellowshipNotification packet = new LOTRPacketFellowshipNotification(message);
-        LOTRPacketHandler.networkWrapper.sendTo((IMessage)packet, (EntityPlayerMP)entityplayer);
-    }
+	public void setOwner(UUID owner) {
+		UUID prevOwner = ownerUUID;
+		if (prevOwner != null && !memberUUIDs.contains(prevOwner)) {
+			memberUUIDs.add(0, prevOwner);
+		}
+		ownerUUID = owner;
+		if (memberUUIDs.contains(owner)) {
+			memberUUIDs.remove(owner);
+		}
+		if (adminUUIDs.contains(owner)) {
+			adminUUIDs.remove(owner);
+		}
+		LOTRLevelData.getData(ownerUUID).addFellowship(this);
+		updateForAllMembers(new FellowshipUpdateType.SetOwner(ownerUUID));
+		markDirty();
+	}
+
+	public void setPreventHiredFriendlyFire(boolean flag) {
+		preventHiredFF = flag;
+		updateForAllMembers(new FellowshipUpdateType.ToggleHiredFriendlyFire());
+		markDirty();
+	}
+
+	public void setPreventPVP(boolean flag) {
+		preventPVP = flag;
+		updateForAllMembers(new FellowshipUpdateType.TogglePvp());
+		markDirty();
+	}
+
+	public void setShowMapLocations(boolean flag) {
+		showMapLocations = flag;
+		updateForAllMembers(new FellowshipUpdateType.ToggleShowMapLocations());
+		markDirty();
+	}
+
+	public void updateForAllMembers(FellowshipUpdateType updateType) {
+		for (UUID player : getAllPlayerUUIDs()) {
+			LOTRLevelData.getData(player).updateFellowship(this, updateType);
+		}
+	}
+
+	public void validate() {
+		if (fellowshipUUID == null) {
+			fellowshipUUID = UUID.randomUUID();
+		}
+		if (ownerUUID == null) {
+			ownerUUID = UUID.randomUUID();
+		}
+	}
 }
-

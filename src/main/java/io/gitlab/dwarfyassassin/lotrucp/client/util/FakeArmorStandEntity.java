@@ -5,15 +5,10 @@ import net.minecraft.entity.EntityLivingBase;
 import net.minecraft.item.ItemStack;
 
 public class FakeArmorStandEntity extends EntityLivingBase {
-	public static final FakeArmorStandEntity INSTANCE = new FakeArmorStandEntity();
+	public static FakeArmorStandEntity INSTANCE = new FakeArmorStandEntity();
 
 	public FakeArmorStandEntity() {
 		super(FMLClientHandler.instance().getWorldClient());
-	}
-
-	@Override
-	public ItemStack getHeldItem() {
-		return null;
 	}
 
 	@Override
@@ -22,11 +17,16 @@ public class FakeArmorStandEntity extends EntityLivingBase {
 	}
 
 	@Override
-	public void setCurrentItemOrArmor(int p_70062_1_, ItemStack p_70062_2_) {
+	public ItemStack getHeldItem() {
+		return null;
 	}
 
 	@Override
 	public ItemStack[] getLastActiveItems() {
 		return null;
+	}
+
+	@Override
+	public void setCurrentItemOrArmor(int p_70062_1_, ItemStack p_70062_2_) {
 	}
 }

@@ -1,14 +1,16 @@
+# Written by Goran
+#
 #author:{name:dunlending_male}
-#title:Морские боги
+#title:Ancient Sea-Gods
 #types:dunland,ruins
 #reward
 #
-Давным-давно, когда леса покрывали большую территорию материка, а наш народ был разбросан по всему материку, к нам приходили странные морские боги.
+Long ago, when the forests covered all the lands to the West, and our people were spread across the earth, we were visited by strange Sea-Gods.
 
-Они были похожи на высоких мужчин, по ним была видна мудрость прожитых лет. Они пришли из-за моря в больших серебряных сосудах и построили высокие каменные строения на наших берегах. Сказки говорят, что они носили железную кожу, и их оружие было быстрее ветра.
+In form they were like tall Men, though with life beyond the span of our years. They came from across the Sea in great silver vessels and built tall dwellings of stone upon our shores. The tales say they wore skin like iron, and their weapons could strike faster than the wind.
 
-В первое время они жили в мире с нами и давали нам знания и инструменты. Наши шаманы говорят, что они пришли из далекой земли за морем, что их корабли несли их по волнам во все дальние уголки мира, что они могли плавать даже на облаках.
+At first, they let our people be, and sometimes they even gifted us with powerful tools and knowledge. Our elders say they came from a far land beyond the Sea, that their ships bore them across the waves to all the far lands of the world, even upon the very clouds of the air.
 
-Но со временем эти морские боги изменились. Они начали вырубать и сжигать наши леса и охотитьсЯ на нас, как на животных. Они украли много наших людей, и мы их никогда не видели. Мы не знали, что мы сделали, чтобы так разгневать морских богов.
+But as time went by, these Sea-Gods changed their ways. They started cutting and burning our forests, and hunting us like animals. They stole many of our people away, never to be seen again. We knew not what we did to so anger the Sea-Gods.
 
-Затем прошла эпоха и мы больше не видели морских богов. Говорят, что морские боги разгневали небесных богов, и небесные боги уничтожили их за это. Мы не знаем, почему небесные боги уничтожили морских богов, мы знаем, что морских богов больше нет.
+And an age passed, and the Sea-Gods were no more. It is said that the Sea-Gods angered the Sky-Gods, and the Sky-Gods destroyed them for it. But we know not why; we only know the Sea-Gods are no more.

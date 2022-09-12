@@ -4,11 +4,11 @@ import lotr.common.fac.LOTRFaction;
 import net.minecraft.entity.player.EntityPlayer;
 
 public interface LOTRHireableBase {
-    String getNPCName();
+	boolean canTradeWith(EntityPlayer var1);
 
-    LOTRFaction getFaction();
+	LOTRFaction getFaction();
 
-    boolean canTradeWith(EntityPlayer var1);
+	String getNPCName();
 
-    void onUnitTrade(EntityPlayer var1);
+	void onUnitTrade(EntityPlayer var1);
 }

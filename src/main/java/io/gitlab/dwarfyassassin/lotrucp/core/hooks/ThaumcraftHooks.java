@@ -16,15 +16,15 @@ import net.minecraft.world.World;
 import net.minecraftforge.common.util.FakePlayer;
 
 public class ThaumcraftHooks {
-	private static boolean doneReflection = false;
-	private static Class class_golem;
-	private static Method method_getOwnerName;
+	public static boolean doneReflection = false;
+	public static Class class_golem;
+	public static Method method_getOwnerName;
 
 	public static LOTRBannerProtection.ProtectType thaumcraftGolemBannerProtection(EntityPlayer player, LOTREntityBanner banner) {
 		GameProfile profile;
 		FakePlayer fakePlayer;
 		World world = player.worldObj;
-		if (player instanceof FakePlayer && (profile = (fakePlayer = (FakePlayer) player).getGameProfile()).getName().equals("FakeThaumcraftGolem")) {
+		if (player instanceof FakePlayer && "FakeThaumcraftGolem".equals((profile = (fakePlayer = (FakePlayer) player).getGameProfile()).getName())) {
 			if (!doneReflection) {
 				try {
 					class_golem = Class.forName("thaumcraft.common.entities.golems.EntityGolemBase");
@@ -59,13 +59,7 @@ public class ThaumcraftHooks {
 			try {
 				String golemOwner = (String) method_getOwnerName.invoke(closestGolem);
 				uuid = PlayerUtils.getLastKownUUIDFromUsername(golemOwner);
-			} catch (IllegalAccessException e) {
-				UCPCoreMod.log.error("Was unable to invoke Thaumcraft EntityGolemBase.getOwnerName method");
-				e.printStackTrace();
-			} catch (IllegalArgumentException e) {
-				UCPCoreMod.log.error("Was unable to invoke Thaumcraft EntityGolemBase.getOwnerName method");
-				e.printStackTrace();
-			} catch (InvocationTargetException e) {
+			} catch (IllegalAccessException | IllegalArgumentException | InvocationTargetException e) {
 				UCPCoreMod.log.error("Was unable to invoke Thaumcraft EntityGolemBase.getOwnerName method");
 				e.printStackTrace();
 			}

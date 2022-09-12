@@ -13,402 +13,416 @@ import net.minecraft.entity.player.EntityPlayer;
 import net.minecraft.nbt.*;
 import net.minecraft.server.MinecraftServer;
 import net.minecraft.util.*;
-import net.minecraft.world.*;
+import net.minecraft.world.World;
 
-public class LOTRCustomWaypoint
-implements LOTRAbstractWaypoint {
-    private String customName;
-    private int mapX;
-    private int mapY;
-    private int xCoord;
-    private int yCoord;
-    private int zCoord;
-    private int ID;
-    private List<UUID> sharedFellowshipIDs = new ArrayList<>();
-    private UUID sharingPlayer;
-    private String sharingPlayerName;
-    private boolean sharedUnlocked;
-    private boolean sharedHidden;
+public class LOTRCustomWaypoint implements LOTRAbstractWaypoint {
+	public String customName;
+	public double mapX;
+	public double mapY;
+	public int xCoord;
+	public int yCoord;
+	public int zCoord;
+	public int ID;
+	public List<UUID> sharedFellowshipIDs = new ArrayList<>();
+	public UUID sharingPlayer;
+	public String sharingPlayerName;
+	public boolean sharedUnlocked;
+	public boolean sharedHidden;
 
-    public static LOTRCustomWaypoint createForPlayer(String name, EntityPlayer entityplayer) {
-        LOTRPlayerData playerData = LOTRLevelData.getData(entityplayer);
-        int cwpID = playerData.getNextCwpID();
-        int i = MathHelper.floor_double(entityplayer.posX);
-        int j = MathHelper.floor_double(entityplayer.boundingBox.minY);
-        int k = MathHelper.floor_double(entityplayer.posZ);
-        int mapX = LOTRWaypoint.worldToMapX(i);
-        int mapY = LOTRWaypoint.worldToMapZ(k);
-        LOTRCustomWaypoint cwp = new LOTRCustomWaypoint(name, mapX, mapY, i, j, k, cwpID);
-        playerData.addCustomWaypoint(cwp);
-        playerData.incrementNextCwpID();
-        return cwp;
-    }
+	public LOTRCustomWaypoint(String name, double i, double j, int posX, int posY, int posZ, int id) {
+		customName = name;
+		mapX = i;
+		mapY = j;
+		xCoord = posX;
+		yCoord = posY;
+		zCoord = posZ;
+		ID = id;
+	}
 
-    public LOTRCustomWaypoint(String name, int i, int j, int posX, int posY, int posZ, int id) {
-        this.customName = name;
-        this.mapX = i;
-        this.mapY = j;
-        this.xCoord = posX;
-        this.yCoord = posY;
-        this.zCoord = posZ;
-        this.ID = id;
-    }
+	public void addSharedFellowship(UUID fsID) {
+		if (!sharedFellowshipIDs.contains(fsID)) {
+			sharedFellowshipIDs.add(fsID);
+		}
+	}
 
-    @Override
-    public int getX() {
-        return this.mapX;
-    }
+	public boolean canUnlockShared(EntityPlayer entityplayer) {
+		if (yCoord >= 0) {
+			double distSq = entityplayer.getDistanceSq(xCoord + 0.5, yCoord + 0.5, zCoord + 0.5);
+			return distSq <= 1000000.0;
+		}
+		return false;
+	}
 
-    @Override
-    public int getY() {
-        return this.mapY;
-    }
+	public LOTRCustomWaypoint createCopyOfShared(UUID sharer) {
+		LOTRCustomWaypoint copy = new LOTRCustomWaypoint(customName, mapX, mapY, xCoord, yCoord, zCoord, ID);
+		copy.setSharingPlayerID(sharer);
+		copy.setSharedFellowshipIDs(new ArrayList<>(sharedFellowshipIDs));
+		return copy;
+	}
 
-    @Override
-    public int getXCoord() {
-        return this.xCoord;
-    }
+	public LOTRPacketShareCWPClient getClientAddFellowshipPacket(UUID fsID) {
+		return new LOTRPacketShareCWPClient(ID, fsID, true);
+	}
 
-    @Override
-    public int getYCoord(World world, int i, int k) {
-        int j = this.yCoord;
-        if (j < 0) {
-            this.yCoord = LOTRMod.getTrueTopBlock(world, i, k);
-        } else if (!this.isSafeBlock(world, i, j, k)) {
-            int j1;
-            Block below = world.getBlock(i, j - 1, k);
-            Block block = world.getBlock(i, j, k);
-            Block above = world.getBlock(i, j + 1, k);
-            boolean belowSafe = below.getMaterial().blocksMovement();
-            boolean blockSafe = !block.isNormalCube(world, i, j, k);
-            boolean aboveSafe = !above.isNormalCube(world, i, j + 1, k);
-            boolean foundSafe = false;
-            if (!belowSafe) {
-                for (j1 = j - 1; j1 >= 1; --j1) {
-                    if (!this.isSafeBlock(world, i, j1, k)) continue;
-                    this.yCoord = j1;
-                    foundSafe = true;
-                    break;
-                }
-            }
-            if ((!foundSafe && (!blockSafe || !aboveSafe))) {
-                for (j1 = aboveSafe ? j + 1 : j + 2; j1 <= world.getHeight() - 1; ++j1) {
-                    if (!this.isSafeBlock(world, i, j1, k)) continue;
-                    this.yCoord = j1;
-                    foundSafe = true;
-                    break;
-                }
-            }
-            if (!foundSafe) {
-                this.yCoord = LOTRMod.getTrueTopBlock(world, i, k);
-            }
-        }
-        return this.yCoord;
-    }
+	public LOTRPacketDeleteCWPClient getClientDeletePacket() {
+		return new LOTRPacketDeleteCWPClient(ID);
+	}
 
-    private boolean isSafeBlock(World world, int i, int j, int k) {
-        Block below = world.getBlock(i, j - 1, k);
-        Block block = world.getBlock(i, j, k);
-        Block above = world.getBlock(i, j + 1, k);
-        if (below.getMaterial().blocksMovement() && !block.isNormalCube(world, i, j, k) && !above.isNormalCube(world, i, j + 1, k)) {
-            if (block.getMaterial().isLiquid() || block.getMaterial() == Material.fire) {
-                return false;
-            }
-            return !above.getMaterial().isLiquid() && above.getMaterial() != Material.fire;
-        }
-        return false;
-    }
+	public LOTRPacketDeleteCWPClient getClientDeletePacketShared() {
+		return new LOTRPacketDeleteCWPClient(ID).setSharingPlayer(sharingPlayer);
+	}
 
-    @Override
-    public int getYCoordSaved() {
-        return this.yCoord;
-    }
+	public LOTRPacketCreateCWPClient getClientPacket() {
+		return new LOTRPacketCreateCWPClient(mapX, mapY, xCoord, yCoord, zCoord, ID, customName, sharedFellowshipIDs);
+	}
 
-    @Override
-    public int getZCoord() {
-        return this.zCoord;
-    }
+	public LOTRPacketCreateCWPClient getClientPacketShared() {
+		return new LOTRPacketCreateCWPClient(mapX, mapY, xCoord, yCoord, zCoord, ID, customName, sharedFellowshipIDs).setSharingPlayer(sharingPlayer, sharingPlayerName, sharedUnlocked, sharedHidden);
+	}
 
-    @Override
-    public String getCodeName() {
-        return this.customName;
-    }
+	public LOTRPacketShareCWPClient getClientRemoveFellowshipPacket(UUID fsID) {
+		return new LOTRPacketShareCWPClient(ID, fsID, false);
+	}
 
-    @Override
-    public String getDisplayName() {
-        if (this.isShared()) {
-            return StatCollector.translateToLocalFormatted("lotr.waypoint.shared", this.customName);
-        }
-        return StatCollector.translateToLocalFormatted("lotr.waypoint.custom", this.customName);
-    }
+	public LOTRPacketRenameCWPClient getClientRenamePacket() {
+		return new LOTRPacketRenameCWPClient(ID, customName);
+	}
 
-    @Override
-    public String getLoreText(EntityPlayer entityplayer) {
-        boolean shared;
-        boolean ownShared = !this.isShared() && !this.sharedFellowshipIDs.isEmpty();
-        shared = this.isShared() && this.sharingPlayerName != null;
-        if (ownShared || shared) {
-            int numShared = this.sharedFellowshipIDs.size();
-            int numShown = 0;
-            ArrayList<String> fsNames = new ArrayList<>();
-            for (int i = 0; i < 3 && i < this.sharedFellowshipIDs.size(); ++i) {
-                UUID fsID = this.sharedFellowshipIDs.get(i);
-                LOTRFellowshipClient fs = LOTRLevelData.getData(entityplayer).getClientFellowshipByID(fsID);
-                if (fs == null) continue;
-                fsNames.add(fs.getName());
-                ++numShown;
-            }
-            String sharedFsNames = "";
-            for (String s : fsNames) {
-                sharedFsNames = sharedFsNames + "\n" + s;
-            }
-            if (numShared > numShown) {
-                int numMore = numShared - numShown;
-                sharedFsNames = sharedFsNames + "\n" + StatCollector.translateToLocalFormatted("lotr.waypoint.custom.andMore", numMore);
-            }
-            if (ownShared) {
-                return StatCollector.translateToLocalFormatted("lotr.waypoint.custom.info", sharedFsNames);
-            }
-            if (shared) {
-                return StatCollector.translateToLocalFormatted("lotr.waypoint.shared.info", this.sharingPlayerName, sharedFsNames);
-            }
-        }
-        return null;
-    }
+	public LOTRPacketRenameCWPClient getClientRenamePacketShared() {
+		return new LOTRPacketRenameCWPClient(ID, customName).setSharingPlayer(sharingPlayer);
+	}
 
-    @Override
-    public boolean hasPlayerUnlocked(EntityPlayer entityplayer) {
-        if (this.isShared()) {
-            return this.isSharedUnlocked();
-        }
-        return true;
-    }
+	public LOTRPacketCWPSharedHideClient getClientSharedHidePacket(boolean hide) {
+		return new LOTRPacketCWPSharedHideClient(ID, sharingPlayer, hide);
+	}
 
-    @Override
-    public LOTRAbstractWaypoint.WaypointLockState getLockState(EntityPlayer entityplayer) {
-        boolean unlocked = this.hasPlayerUnlocked(entityplayer);
-        if (this.isShared()) {
-            return unlocked ? LOTRAbstractWaypoint.WaypointLockState.SHARED_CUSTOM_UNLOCKED : LOTRAbstractWaypoint.WaypointLockState.SHARED_CUSTOM_LOCKED;
-        }
-        return unlocked ? LOTRAbstractWaypoint.WaypointLockState.CUSTOM_UNLOCKED : LOTRAbstractWaypoint.WaypointLockState.CUSTOM_LOCKED;
-    }
+	public LOTRPacketCWPSharedUnlockClient getClientSharedUnlockPacket() {
+		return new LOTRPacketCWPSharedUnlockClient(ID, sharingPlayer);
+	}
 
-    @Override
-    public boolean isHidden() {
-        return false;
-    }
+	@Override
+	public String getCodeName() {
+		return customName;
+	}
 
-    @Override
-    public int getID() {
-        return this.ID;
-    }
+	@Override
+	public String getDisplayName() {
+		if (isShared()) {
+			return StatCollector.translateToLocalFormatted("lotr.waypoint.shared", customName);
+		}
+		return StatCollector.translateToLocalFormatted("lotr.waypoint.custom", customName);
+	}
 
-    public void rename(String newName) {
-        this.customName = newName;
-    }
+	@Override
+	public int getID() {
+		return ID;
+	}
 
-    public static String validateCustomName(String name) {
-        if (!StringUtils.isBlank(name = StringUtils.trim(name))) {
-            return name;
-        }
-        return null;
-    }
+	@Override
+	public LOTRAbstractWaypoint.WaypointLockState getLockState(EntityPlayer entityplayer) {
+		boolean unlocked = hasPlayerUnlocked(entityplayer);
+		if (isShared()) {
+			return unlocked ? LOTRAbstractWaypoint.WaypointLockState.SHARED_CUSTOM_UNLOCKED : LOTRAbstractWaypoint.WaypointLockState.SHARED_CUSTOM_LOCKED;
+		}
+		return unlocked ? LOTRAbstractWaypoint.WaypointLockState.CUSTOM_UNLOCKED : LOTRAbstractWaypoint.WaypointLockState.CUSTOM_LOCKED;
+	}
 
-    public List<UUID> getSharedFellowshipIDs() {
-        return this.sharedFellowshipIDs;
-    }
+	@Override
+	public String getLoreText(EntityPlayer entityplayer) {
+		boolean shared;
+		boolean ownShared = !isShared() && !sharedFellowshipIDs.isEmpty();
+		shared = isShared() && sharingPlayerName != null;
+		if (ownShared || shared) {
+			int numShared = sharedFellowshipIDs.size();
+			int numShown = 0;
+			ArrayList<String> fsNames = new ArrayList<>();
+			for (int i = 0; i < 3 && i < sharedFellowshipIDs.size(); ++i) {
+				UUID fsID = sharedFellowshipIDs.get(i);
+				LOTRFellowshipClient fs = LOTRLevelData.getData(entityplayer).getClientFellowshipByID(fsID);
+				if (fs == null) {
+					continue;
+				}
+				fsNames.add(fs.getName());
+				++numShown;
+			}
+			String sharedFsNames = "";
+			for (String s : fsNames) {
+				sharedFsNames = sharedFsNames + "\n" + s;
+			}
+			if (numShared > numShown) {
+				int numMore = numShared - numShown;
+				sharedFsNames = sharedFsNames + "\n" + StatCollector.translateToLocalFormatted("lotr.waypoint.custom.andMore", numMore);
+			}
+			if (ownShared) {
+				return StatCollector.translateToLocalFormatted("lotr.waypoint.custom.info", sharedFsNames);
+			}
+			if (shared) {
+				return StatCollector.translateToLocalFormatted("lotr.waypoint.shared.info", sharingPlayerName, sharedFsNames);
+			}
+		}
+		return null;
+	}
 
-    public void addSharedFellowship(LOTRFellowship fs) {
-        this.addSharedFellowship(fs.getFellowshipID());
-    }
+	public List<UUID> getPlayersInAllSharedFellowships() {
+		ArrayList<UUID> allPlayers = new ArrayList<>();
+		for (UUID fsID : sharedFellowshipIDs) {
+			LOTRFellowship fs = LOTRFellowshipData.getActiveFellowship(fsID);
+			if (fs == null) {
+				continue;
+			}
+			List<UUID> fsPlayers = fs.getAllPlayerUUIDs();
+			for (UUID player : fsPlayers) {
+				if (player.equals(sharingPlayer) || allPlayers.contains(player)) {
+					continue;
+				}
+				allPlayers.add(player);
+			}
+		}
+		return allPlayers;
+	}
 
-    public void addSharedFellowship(UUID fsID) {
-        if (!this.sharedFellowshipIDs.contains(fsID)) {
-            this.sharedFellowshipIDs.add(fsID);
-        }
-    }
+	public List<UUID> getSharedFellowshipIDs() {
+		return sharedFellowshipIDs;
+	}
 
-    public void removeSharedFellowship(LOTRFellowship fs) {
-        this.removeSharedFellowship(fs.getFellowshipID());
-    }
+	public UUID getSharingPlayerID() {
+		return sharingPlayer;
+	}
 
-    public void removeSharedFellowship(UUID fsID) {
-        if (this.sharedFellowshipIDs.contains(fsID)) {
-            this.sharedFellowshipIDs.remove(fsID);
-        }
-    }
+	public String getSharingPlayerName() {
+		return sharingPlayerName;
+	}
 
-    public boolean hasSharedFellowship(LOTRFellowship fs) {
-        return this.hasSharedFellowship(fs.getFellowshipID());
-    }
+	@Override
+	public double getX() {
+		return mapX;
+	}
 
-    public boolean hasSharedFellowship(UUID fsID) {
-        return this.sharedFellowshipIDs.contains(fsID);
-    }
+	@Override
+	public int getXCoord() {
+		return xCoord;
+	}
 
-    public void validateFellowshipIDs(LOTRPlayerData ownerData) {
-        UUID ownerUUID = ownerData.getPlayerUUID();
-        HashSet<UUID> removeIDs = new HashSet<>();
-        for (UUID fsID : this.sharedFellowshipIDs) {
-            LOTRFellowship fs = LOTRFellowshipData.getFellowship(fsID);
-            if (fs != null && !fs.isDisbanded() && fs.containsPlayer(ownerUUID)) continue;
-            removeIDs.add(fsID);
-        }
-        this.sharedFellowshipIDs.removeAll(removeIDs);
-    }
+	@Override
+	public double getY() {
+		return mapY;
+	}
 
-    public void setSharedFellowshipIDs(List<UUID> fsIDs) {
-        this.sharedFellowshipIDs = fsIDs;
-    }
+	@Override
+	public int getYCoord(World world, int i, int k) {
+		int j = yCoord;
+		if (j < 0) {
+			yCoord = LOTRMod.getTrueTopBlock(world, i, k);
+		} else if (!isSafeBlock(world, i, j, k)) {
+			int j1;
+			Block below = world.getBlock(i, j - 1, k);
+			Block block = world.getBlock(i, j, k);
+			Block above = world.getBlock(i, j + 1, k);
+			boolean belowSafe = below.getMaterial().blocksMovement();
+			boolean blockSafe = !block.isNormalCube(world, i, j, k);
+			boolean aboveSafe = !above.isNormalCube(world, i, j + 1, k);
+			boolean foundSafe = false;
+			if (!belowSafe) {
+				for (j1 = j - 1; j1 >= 1; --j1) {
+					if (!isSafeBlock(world, i, j1, k)) {
+						continue;
+					}
+					yCoord = j1;
+					foundSafe = true;
+					break;
+				}
+			}
+			if (!foundSafe && (!blockSafe || !aboveSafe)) {
+				for (j1 = aboveSafe ? j + 1 : j + 2; j1 <= world.getHeight() - 1; ++j1) {
+					if (!isSafeBlock(world, i, j1, k)) {
+						continue;
+					}
+					yCoord = j1;
+					foundSafe = true;
+					break;
+				}
+			}
+			if (!foundSafe) {
+				yCoord = LOTRMod.getTrueTopBlock(world, i, k);
+			}
+		}
+		return yCoord;
+	}
 
-    public void setSharingPlayerID(UUID id) {
-        UUID prev = this.sharingPlayer;
-        this.sharingPlayer = id;
-        if (((MinecraftServer.getServer() != null) && ((prev == null) || !prev.equals(this.sharingPlayer)))) {
-            this.sharingPlayerName = LOTRPacketFellowship.getPlayerUsername(this.sharingPlayer);
-        }
-    }
+	@Override
+	public int getYCoordSaved() {
+		return yCoord;
+	}
 
-    public UUID getSharingPlayerID() {
-        return this.sharingPlayer;
-    }
+	@Override
+	public int getZCoord() {
+		return zCoord;
+	}
 
-    public boolean isShared() {
-        return this.sharingPlayer != null;
-    }
+	@Override
+	public boolean hasPlayerUnlocked(EntityPlayer entityplayer) {
+		if (isShared()) {
+			return isSharedUnlocked();
+		}
+		return true;
+	}
 
-    public void setSharingPlayerName(String s) {
-        this.sharingPlayerName = s;
-    }
+	public boolean hasSharedFellowship(LOTRFellowship fs) {
+		return this.hasSharedFellowship(fs.getFellowshipID());
+	}
 
-    public String getSharingPlayerName() {
-        return this.sharingPlayerName;
-    }
+	public boolean hasSharedFellowship(UUID fsID) {
+		return sharedFellowshipIDs.contains(fsID);
+	}
 
-    public LOTRCustomWaypoint createCopyOfShared(UUID sharer) {
-        LOTRCustomWaypoint copy = new LOTRCustomWaypoint(this.customName, this.mapX, this.mapY, this.xCoord, this.yCoord, this.zCoord, this.ID);
-        copy.setSharingPlayerID(sharer);
-        copy.setSharedFellowshipIDs(new ArrayList<>(this.sharedFellowshipIDs));
-        return copy;
-    }
+	@Override
+	public boolean isHidden() {
+		return false;
+	}
 
-    public boolean isSharedUnlocked() {
-        return this.sharedUnlocked;
-    }
+	public boolean isSafeBlock(World world, int i, int j, int k) {
+		Block below = world.getBlock(i, j - 1, k);
+		Block block = world.getBlock(i, j, k);
+		Block above = world.getBlock(i, j + 1, k);
+		if (below.getMaterial().blocksMovement() && !block.isNormalCube(world, i, j, k) && !above.isNormalCube(world, i, j + 1, k)) {
+			if (block.getMaterial().isLiquid() || block.getMaterial() == Material.fire) {
+				return false;
+			}
+			return !above.getMaterial().isLiquid() && above.getMaterial() != Material.fire;
+		}
+		return false;
+	}
 
-    public void setSharedUnlocked() {
-        this.sharedUnlocked = true;
-    }
+	public boolean isShared() {
+		return sharingPlayer != null;
+	}
 
-    public boolean canUnlockShared(EntityPlayer entityplayer) {
-        if (this.yCoord >= 0) {
-            double distSq = entityplayer.getDistanceSq(this.xCoord + 0.5, this.yCoord + 0.5, this.zCoord + 0.5);
-            return distSq <= (1000000.0);
-        }
-        return false;
-    }
+	public boolean isSharedHidden() {
+		return sharedHidden;
+	}
 
-    public boolean isSharedHidden() {
-        return this.sharedHidden;
-    }
+	public boolean isSharedUnlocked() {
+		return sharedUnlocked;
+	}
 
-    public void setSharedHidden(boolean flag) {
-        this.sharedHidden = flag;
-    }
+	public void removeSharedFellowship(UUID fsID) {
+		if (sharedFellowshipIDs.contains(fsID)) {
+			sharedFellowshipIDs.remove(fsID);
+		}
+	}
 
-    public List<UUID> getPlayersInAllSharedFellowships() {
-        ArrayList<UUID> allPlayers = new ArrayList<>();
-        for (UUID fsID : this.sharedFellowshipIDs) {
-            LOTRFellowship fs = LOTRFellowshipData.getFellowship(fsID);
-            if (fs == null || fs.isDisbanded()) continue;
-            List<UUID> fsPlayers = fs.getAllPlayerUUIDs();
-            for (UUID player : fsPlayers) {
-                if (player.equals(this.sharingPlayer) || allPlayers.contains(player)) continue;
-                allPlayers.add(player);
-            }
-        }
-        return allPlayers;
-    }
+	public void rename(String newName) {
+		customName = newName;
+	}
 
-    public LOTRPacketCreateCWPClient getClientPacket() {
-        return new LOTRPacketCreateCWPClient(this.mapX, this.mapY, this.xCoord, this.yCoord, this.zCoord, this.ID, this.customName, this.sharedFellowshipIDs);
-    }
+	public void setSharedFellowshipIDs(List<UUID> fsIDs) {
+		sharedFellowshipIDs = fsIDs;
+	}
 
-    public LOTRPacketDeleteCWPClient getClientDeletePacket() {
-        return new LOTRPacketDeleteCWPClient(this.ID);
-    }
+	public void setSharedHidden(boolean flag) {
+		sharedHidden = flag;
+	}
 
-    public LOTRPacketRenameCWPClient getClientRenamePacket() {
-        return new LOTRPacketRenameCWPClient(this.ID, this.customName);
-    }
+	public void setSharedUnlocked() {
+		sharedUnlocked = true;
+	}
 
-    public LOTRPacketShareCWPClient getClientAddFellowshipPacket(UUID fsID) {
-        return new LOTRPacketShareCWPClient(this.ID, fsID, true);
-    }
+	public void setSharingPlayerID(UUID id) {
+		UUID prev = sharingPlayer;
+		sharingPlayer = id;
+		if (MinecraftServer.getServer() != null && (prev == null || !prev.equals(sharingPlayer))) {
+			sharingPlayerName = LOTRPacketFellowship.getPlayerProfileWithUsername(sharingPlayer).getName();
+		}
+	}
 
-    public LOTRPacketShareCWPClient getClientRemoveFellowshipPacket(UUID fsID) {
-        return new LOTRPacketShareCWPClient(this.ID, fsID, false);
-    }
+	public void setSharingPlayerName(String s) {
+		sharingPlayerName = s;
+	}
 
-    public LOTRPacketCreateCWPClient getClientPacketShared() {
-        return new LOTRPacketCreateCWPClient(this.mapX, this.mapY, this.xCoord, this.yCoord, this.zCoord, this.ID, this.customName, this.sharedFellowshipIDs).setSharingPlayer(this.sharingPlayer, this.sharingPlayerName, this.sharedUnlocked, this.sharedHidden);
-    }
+	public void validateFellowshipIDs(LOTRPlayerData ownerData) {
+		UUID ownerUUID = ownerData.getPlayerUUID();
+		HashSet<UUID> removeIDs = new HashSet<>();
+		for (UUID fsID : sharedFellowshipIDs) {
+			LOTRFellowship fs = LOTRFellowshipData.getActiveFellowship(fsID);
+			if (fs != null && fs.containsPlayer(ownerUUID)) {
+				continue;
+			}
+			removeIDs.add(fsID);
+		}
+		sharedFellowshipIDs.removeAll(removeIDs);
+	}
 
-    public LOTRPacketDeleteCWPClient getClientDeletePacketShared() {
-        return new LOTRPacketDeleteCWPClient(this.ID).setSharingPlayer(this.sharingPlayer);
-    }
+	public void writeToNBT(NBTTagCompound nbt, LOTRPlayerData pd) {
+		nbt.setString("Name", customName);
+		nbt.setDouble("XMap", mapX);
+		nbt.setDouble("YMap", mapY);
+		nbt.setInteger("XCoord", xCoord);
+		nbt.setInteger("YCoord", yCoord);
+		nbt.setInteger("ZCoord", zCoord);
+		nbt.setInteger("ID", ID);
+		validateFellowshipIDs(pd);
+		if (!sharedFellowshipIDs.isEmpty()) {
+			NBTTagList sharedFellowshipTags = new NBTTagList();
+			for (UUID fsID : sharedFellowshipIDs) {
+				NBTTagString tag = new NBTTagString(fsID.toString());
+				sharedFellowshipTags.appendTag(tag);
+			}
+			nbt.setTag("SharedFellowships", sharedFellowshipTags);
+		}
+	}
 
-    public LOTRPacketRenameCWPClient getClientRenamePacketShared() {
-        return new LOTRPacketRenameCWPClient(this.ID, this.customName).setSharingPlayer(this.sharingPlayer);
-    }
+	public static LOTRCustomWaypoint createForPlayer(String name, EntityPlayer entityplayer) {
+		LOTRPlayerData playerData = LOTRLevelData.getData(entityplayer);
+		int cwpID = playerData.getNextCwpID();
+		int i = MathHelper.floor_double(entityplayer.posX);
+		int j = MathHelper.floor_double(entityplayer.boundingBox.minY);
+		int k = MathHelper.floor_double(entityplayer.posZ);
+		double mapX = LOTRWaypoint.worldToMapX(i);
+		double mapY = LOTRWaypoint.worldToMapZ(k);
+		LOTRCustomWaypoint cwp = new LOTRCustomWaypoint(name, mapX, mapY, i, j, k, cwpID);
+		playerData.addCustomWaypoint(cwp);
+		playerData.incrementNextCwpID();
+		return cwp;
+	}
 
-    public LOTRPacketCWPSharedUnlockClient getClientSharedUnlockPacket() {
-        return new LOTRPacketCWPSharedUnlockClient(this.ID, this.sharingPlayer);
-    }
+	public static LOTRCustomWaypoint readFromNBT(NBTTagCompound nbt, LOTRPlayerData pd) {
+		String name = nbt.getString("Name");
+		double x = 0.0;
+		double y = 0.0;
+		if (nbt.hasKey("XMap")) {
+			x = nbt.getDouble("XMap");
+		} else if (nbt.hasKey("X")) {
+			x = nbt.getInteger("X");
+		}
+		if (nbt.hasKey("YMap")) {
+			y = nbt.getDouble("YMap");
+		} else if (nbt.hasKey("Y")) {
+			y = nbt.getInteger("Y");
+		}
+		int xCoord = nbt.getInteger("XCoord");
+		int zCoord = nbt.getInteger("ZCoord");
+		int yCoord = nbt.hasKey("YCoord") ? nbt.getInteger("YCoord") : -1;
+		int ID = nbt.getInteger("ID");
+		LOTRCustomWaypoint cwp = new LOTRCustomWaypoint(name, x, y, xCoord, yCoord, zCoord, ID);
+		cwp.sharedFellowshipIDs.clear();
+		if (nbt.hasKey("SharedFellowships")) {
+			NBTTagList sharedFellowshipTags = nbt.getTagList("SharedFellowships", 8);
+			for (int i = 0; i < sharedFellowshipTags.tagCount(); ++i) {
+				UUID fsID = UUID.fromString(sharedFellowshipTags.getStringTagAt(i));
+				if (fsID == null) {
+					continue;
+				}
+				cwp.sharedFellowshipIDs.add(fsID);
+			}
+		}
+		cwp.validateFellowshipIDs(pd);
+		return cwp;
+	}
 
-    public LOTRPacketCWPSharedHideClient getClientSharedHidePacket(boolean hide) {
-        return new LOTRPacketCWPSharedHideClient(this.ID, this.sharingPlayer, hide);
-    }
-
-    public void writeToNBT(NBTTagCompound nbt, LOTRPlayerData pd) {
-        nbt.setString("Name", this.customName);
-        nbt.setInteger("X", this.mapX);
-        nbt.setInteger("Y", this.mapY);
-        nbt.setInteger("XCoord", this.xCoord);
-        nbt.setInteger("YCoord", this.yCoord);
-        nbt.setInteger("ZCoord", this.zCoord);
-        nbt.setInteger("ID", this.ID);
-        this.validateFellowshipIDs(pd);
-        if (!this.sharedFellowshipIDs.isEmpty()) {
-            NBTTagList sharedFellowshipTags = new NBTTagList();
-            for (UUID fsID : this.sharedFellowshipIDs) {
-                NBTTagString tag = new NBTTagString(fsID.toString());
-                sharedFellowshipTags.appendTag(tag);
-            }
-            nbt.setTag("SharedFellowships", sharedFellowshipTags);
-        }
-    }
-
-    public static LOTRCustomWaypoint readFromNBT(NBTTagCompound nbt, LOTRPlayerData pd) {
-        String name = nbt.getString("Name");
-        int x = nbt.getInteger("X");
-        int y = nbt.getInteger("Y");
-        int xCoord = nbt.getInteger("XCoord");
-        int zCoord = nbt.getInteger("ZCoord");
-        int yCoord = nbt.hasKey("YCoord") ? nbt.getInteger("YCoord") : -1;
-        int ID = nbt.getInteger("ID");
-        LOTRCustomWaypoint cwp = new LOTRCustomWaypoint(name, x, y, xCoord, yCoord, zCoord, ID);
-        cwp.sharedFellowshipIDs.clear();
-        if (nbt.hasKey("SharedFellowships")) {
-            NBTTagList sharedFellowshipTags = nbt.getTagList("SharedFellowships", 8);
-            for (int i = 0; i < sharedFellowshipTags.tagCount(); ++i) {
-                UUID fsID = UUID.fromString(sharedFellowshipTags.getStringTagAt(i));
-                if (fsID == null) continue;
-                cwp.sharedFellowshipIDs.add(fsID);
-            }
-        }
-        cwp.validateFellowshipIDs(pd);
-        return cwp;
-    }
+	public static String validateCustomName(String name) {
+		if (!StringUtils.isBlank(name = StringUtils.trim(name))) {
+			return name;
+		}
+		return null;
+	}
 }
-

@@ -1,15 +1,16 @@
-#title:Для {name:gondor_male}
+#Written by Boost the Cat
+#
+#title:To {name:gondor_male}
 #types:gondor
 #
-Брат, я не буду тратить ни слова на представление. Что-то ужасное происходит с лордом Денетором. Его разум стал подобен чёрной туче; он, кажется, сосредоточен на Мордоре. Он больше не заботится о своем народе. Много дней подряд он запирается в башне Эктелиона, оставляя внешний мир на произвол судьбы.
+Brother, I will not waste any words with introduction. Something is terribly wrong with Lord Denethor. His mind has become as a hollow shell; he seems focused on nothing but a great fear for the Eye in the Dark Tower. He no longer cares for his people. Many a day he locks himself in the Tower of Ecthelion, leaving the outside world to fend for itself.
 
-Я чувствую опасность, брат мой. Далеко за горизонтом... Мордор становится все сильнее, враг намерен уничтожить расу людей. Денетор всегда прав в своих предчувствиях, но он не делает ничего полезного!
+I feel it too, my brother. Far across the horizon... Mordor grows ever stronger, the Enemy intent on wiping out the race of Men.
 
-Денетор становится все более отдаленным. Он боится будущего, и это правильно; но, похоже, он оставил всякую надежду, оставив наш народ самим себе. Если мы не предпримем меры, произойдет худшее: и для лорда, и для Гондора, и для нас.
+Yet Denethor grows ever more distant. He is fearful of the future, and rightly so; but he seems to have given up all hope, leaving our people to ourselves. If something is not done, I fear the worst: for the Lord Steward, and for Gondor, and for us.
 
-Поэтому я умоляю тебя, брат! Мне нужен совет! Что я могу сделать, здесь в стенах Белого города? Есть ли что-нибудь, что можно сделать для Денетора? Или мы обречены на гибель не только от рук Мордора, но и от собственного бездействия?
+So I plead to you, brother! I need advice! What can I do, here within the walls of the White City? Is there anything that can be done for Lord Denethor? Or are we doomed to destruction, not only at the hands of Mordor, but also by our own inaction?
 
-Пожалуйста, ответь в ближайшее время!
-
-Твоя сестра,
+Please respond soon!
+Your sister,
 {name:gondor_female}

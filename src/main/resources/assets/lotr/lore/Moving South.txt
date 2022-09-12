@@ -1,11 +1,11 @@
-#author:{dunlending_male}
-#title:Движение на юг
+#author:{name:dunlending_male}
+#title:Moving South
 #types:dunland
 #reward
-Кажется, мы, люди Дунланда, не одиноки в нашей борьбе за возвращение Родины! 
+It seems that we men of Dunland are not alone in our fight to take back our homelands! We can now move on the filthy Strawhead villages. We have one to follow!
 
-Теперь мы можем уничтожить соломенноголовых. У нас есть лидер! Имя ему - Саруман. И мы поклянемся в верности ему.
+Saruman. We will swear allegiance to the White Wizard.
 
-Мы сделаем южные земли снова нашими! Наши овцы смогут свободно бродить, а наши семьи смогут расселиться по старым землям...
+We will let the fields run red with the blood of the Strawheads! Our sheep will be able to roam free, and our families can spread seed through the lands...
 
-Он принесет нам сладкую месть! Саруман сделает Дунланд снова великим!
+He will deliver us sweet revenge! Saruman will make Dunland great once more!

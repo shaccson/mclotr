@@ -1,18 +1,20 @@
-#title:Долийские репецты, p. 175
-#author:{name:dale_female} из Дейла
+#Written by LordDainTheAwsome
+#
+#title:Dalish Recipes, p. 175
+#author:{name:dale_female} of Dale
 #types:dale
 #reward
 #
-Марцепан.
+Marchpane.
 
-Ингридиенты:
-* Два мешка свежего миндаля;
-* Одна щепотка белого сахара.
+Ingredients:
+* Two bags of fresh almonds
+* One pinch of white sugar
 
-Инструкция:
-* Миндаль измельчить в ступке до мелкой пасты;
-* Добавить пасту в сахар и смешать;
-* Разложить миндаль по углам и сахар выше;
-* Перемешать.
+Instructions:
+* Grind almonds in mortar until fine paste
+* Add sugar to paste and mix
+* Arrange with almonds at corners and sugar above
+* Craft recipe
 
-Подавать после основного блюда.
+Serves 1.

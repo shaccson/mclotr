@@ -5,8 +5,8 @@ import net.minecraft.entity.player.EntityPlayer;
 import net.minecraft.world.World;
 
 public class LOTRGuiUnitTrade extends LOTRGuiHireBase {
-    public LOTRGuiUnitTrade(EntityPlayer entityplayer, LOTRUnitTradeable trader, World world) {
-        super(entityplayer, trader, world);
-        this.setTrades(trader.getUnits());
-    }
+	public LOTRGuiUnitTrade(EntityPlayer entityplayer, LOTRUnitTradeable trader, World world) {
+		super(entityplayer, trader, world);
+		setTrades(trader.getUnits());
+	}
 }

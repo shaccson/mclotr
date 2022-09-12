@@ -6,26 +6,26 @@ import net.minecraft.entity.*;
 import net.minecraft.util.ResourceLocation;
 
 public class LOTRRenderMirkTroll extends LOTRRenderTroll {
-    private static LOTRRandomSkins mirkSkins;
-    private static LOTRRandomSkins mirkArmorSkins;
+	public static LOTRRandomSkins mirkSkins;
+	public static LOTRRandomSkins mirkArmorSkins;
 
-    public LOTRRenderMirkTroll() {
-        mirkSkins = LOTRRandomSkins.loadSkinsList("lotr:mob/troll/mirkTroll");
-        mirkArmorSkins = LOTRRandomSkins.loadSkinsList("lotr:mob/troll/mirkTroll_armor");
-    }
+	public LOTRRenderMirkTroll() {
+		mirkSkins = LOTRRandomSkins.loadSkinsList("lotr:mob/troll/mirkTroll");
+		mirkArmorSkins = LOTRRandomSkins.loadSkinsList("lotr:mob/troll/mirkTroll_armor");
+	}
 
-    @Override
-    protected ResourceLocation getEntityTexture(Entity entity) {
-        return mirkSkins.getRandomSkin((LOTREntityMirkTroll) entity);
-    }
+	@Override
+	public void bindTrollOutfitTexture(EntityLivingBase entity) {
+		bindTexture(mirkArmorSkins.getRandomSkin((LOTREntityMirkTroll) entity));
+	}
 
-    @Override
-    protected void renderTrollWeapon(EntityLivingBase entity, float f) {
-        ((LOTRModelTroll) this.mainModel).renderBattleaxe(0.0625f);
-    }
+	@Override
+	public ResourceLocation getEntityTexture(Entity entity) {
+		return mirkSkins.getRandomSkin((LOTREntityMirkTroll) entity);
+	}
 
-    @Override
-    protected void bindTrollOutfitTexture(EntityLivingBase entity) {
-        this.bindTexture(mirkArmorSkins.getRandomSkin((LOTREntityMirkTroll) entity));
-    }
+	@Override
+	public void renderTrollWeapon(EntityLivingBase entity, float f) {
+		((LOTRModelTroll) mainModel).renderBattleaxe(0.0625f);
+	}
 }

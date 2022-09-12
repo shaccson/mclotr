@@ -18,7 +18,7 @@ public class FMLPatcher extends Patcher {
 		});
 	}
 
-	private void patchLoadController(ClassNode classNode) {
+	public void patchLoadController(ClassNode classNode) {
 		MethodNode method = ASMUtils.findMethod(classNode, "buildModList", "(Lcpw/mods/fml/common/event/FMLLoadEvent;)V");
 		if (method == null) {
 			return;

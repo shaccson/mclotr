@@ -9,23 +9,23 @@ import net.minecraft.item.ItemStack;
 import net.minecraft.util.IIcon;
 
 public class LOTRSlotBomb extends Slot {
-    public LOTRSlotBomb(IInventory inv, int i, int j, int k) {
-        super(inv, i, j, k);
-    }
+	public LOTRSlotBomb(IInventory inv, int i, int j, int k) {
+		super(inv, i, j, k);
+	}
 
-    @Override
-    public int getSlotStackLimit() {
-        return 1;
-    }
+	@SideOnly(value = Side.CLIENT)
+	@Override
+	public IIcon getBackgroundIconIndex() {
+		return LOTRCommonIcons.iconBomb;
+	}
 
-    @Override
-    public boolean isItemValid(ItemStack itemstack) {
-        return itemstack != null && Block.getBlockFromItem(itemstack.getItem()) instanceof LOTRBlockOrcBomb;
-    }
+	@Override
+	public int getSlotStackLimit() {
+		return 1;
+	}
 
-    @SideOnly(value = Side.CLIENT)
-    @Override
-    public IIcon getBackgroundIconIndex() {
-        return LOTRCommonIcons.iconBomb;
-    }
+	@Override
+	public boolean isItemValid(ItemStack itemstack) {
+		return itemstack != null && Block.getBlockFromItem(itemstack.getItem()) instanceof LOTRBlockOrcBomb;
+	}
 }

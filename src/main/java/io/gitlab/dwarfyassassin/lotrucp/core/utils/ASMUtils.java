@@ -6,10 +6,6 @@ import io.gitlab.dwarfyassassin.lotrucp.core.UCPCoreMod;
 import net.minecraftforge.classloading.FMLForgePlugin;
 
 public class ASMUtils {
-	public static MethodNode findMethod(ClassNode classNode, String targetMethodName, String obfTargetMethodName, String targetMethodDesc) {
-		return ASMUtils.findMethod(classNode, FMLForgePlugin.RUNTIME_DEOBF ? obfTargetMethodName : targetMethodName, targetMethodDesc);
-	}
-
 	public static MethodNode findMethod(ClassNode classNode, String targetMethodName, String targetMethodDesc) {
 		for (MethodNode method : classNode.methods) {
 			if (!method.name.equals(targetMethodName) || !method.desc.equals(targetMethodDesc)) {
@@ -19,6 +15,10 @@ public class ASMUtils {
 		}
 		UCPCoreMod.log.error("Couldn't find method " + targetMethodName + " with desc " + targetMethodDesc + " in " + classNode.name);
 		return null;
+	}
+
+	public static MethodNode findMethod(ClassNode classNode, String targetMethodName, String obfTargetMethodName, String targetMethodDesc) {
+		return ASMUtils.findMethod(classNode, FMLForgePlugin.RUNTIME_DEOBF ? obfTargetMethodName : targetMethodName, targetMethodDesc);
 	}
 
 	public static void removePreviousNodes(InsnList list, AbstractInsnNode start, int amount) {

@@ -9,44 +9,40 @@ import lotr.common.entity.item.LOTREntityBanner;
 import net.minecraft.util.StatCollector;
 
 public class LOTRFellowshipProfile extends GameProfile {
-    public static final String fellowshipPrefix = "f/";
-    private String fellowshipName;
+	public static String fellowshipPrefix = "f/";
+	public String fellowshipName;
 
-    public LOTRFellowshipProfile(LOTREntityBanner banner, UUID fsID, String fsName) {
-        super(fsID, fsName);
-        this.fellowshipName = fsName;
-    }
+	public LOTRFellowshipProfile(LOTREntityBanner banner, UUID fsID, String fsName) {
+		super(fsID, fsName);
+		fellowshipName = fsName;
+	}
 
-    public LOTRFellowship getFellowship() {
-        LOTRFellowship fs = LOTRFellowshipData.getFellowship(this.getId());
-        if(fs != null && !fs.isDisbanded()) {
-            return fs;
-        }
-        return null;
-    }
+	public LOTRFellowship getFellowship() {
+		return LOTRFellowshipData.getActiveFellowship(getId());
+	}
 
-    public LOTRFellowshipClient getFellowshipClient() {
-        return LOTRLevelData.getData(LOTRMod.proxy.getClientPlayer()).getClientFellowshipByName(this.fellowshipName);
-    }
+	public LOTRFellowshipClient getFellowshipClient() {
+		return LOTRLevelData.getData(LOTRMod.proxy.getClientPlayer()).getClientFellowshipByName(fellowshipName);
+	}
 
-    @Override
-    public String getName() {
-        return LOTRFellowshipProfile.addFellowshipCode(super.getName());
-    }
+	@Override
+	public String getName() {
+		return LOTRFellowshipProfile.addFellowshipCode(super.getName());
+	}
 
-    public static boolean hasFellowshipCode(String s) {
-        return s.toLowerCase().startsWith(fellowshipPrefix.toLowerCase());
-    }
+	public static String addFellowshipCode(String s) {
+		return fellowshipPrefix + s;
+	}
 
-    public static String addFellowshipCode(String s) {
-        return fellowshipPrefix + s;
-    }
+	public static String getFellowshipCodeHint() {
+		return StatCollector.translateToLocalFormatted("lotr.gui.bannerEdit.fellowshipHint", fellowshipPrefix);
+	}
 
-    public static String stripFellowshipCode(String s) {
-        return s.substring(fellowshipPrefix.length());
-    }
+	public static boolean hasFellowshipCode(String s) {
+		return s.toLowerCase().startsWith(fellowshipPrefix.toLowerCase());
+	}
 
-    public static String getFellowshipCodeHint() {
-        return StatCollector.translateToLocalFormatted("lotr.gui.bannerEdit.fellowshipHint", fellowshipPrefix);
-    }
+	public static String stripFellowshipCode(String s) {
+		return s.substring(fellowshipPrefix.length());
+	}
 }

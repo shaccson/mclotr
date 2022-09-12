@@ -10,24 +10,24 @@ import net.minecraft.item.*;
 import net.minecraft.world.World;
 
 public abstract class LOTRBlockWallBase extends BlockWall {
-    private int subtypes;
+	public int subtypes;
 
-    public LOTRBlockWallBase(Block block, int i) {
-        super(block);
-        this.setCreativeTab(LOTRCreativeTabs.tabBlock);
-        this.subtypes = i;
-    }
+	public LOTRBlockWallBase(Block block, int i) {
+		super(block);
+		setCreativeTab(LOTRCreativeTabs.tabBlock);
+		subtypes = i;
+	}
 
-    @Override
-    public boolean canPlaceTorchOnTop(World world, int i, int j, int k) {
-        return true;
-    }
+	@Override
+	public boolean canPlaceTorchOnTop(World world, int i, int j, int k) {
+		return true;
+	}
 
-    @SideOnly(value = Side.CLIENT)
-    @Override
-    public void getSubBlocks(Item item, CreativeTabs tab, List list) {
-        for(int j = 0; j < this.subtypes; ++j) {
-            list.add(new ItemStack(item, 1, j));
-        }
-    }
+	@SideOnly(value = Side.CLIENT)
+	@Override
+	public void getSubBlocks(Item item, CreativeTabs tab, List list) {
+		for (int j = 0; j < subtypes; ++j) {
+			list.add(new ItemStack(item, 1, j));
+		}
+	}
 }

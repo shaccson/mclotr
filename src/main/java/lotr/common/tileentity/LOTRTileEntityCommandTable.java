@@ -8,59 +8,60 @@ import net.minecraft.tileentity.TileEntity;
 import net.minecraft.util.*;
 
 public class LOTRTileEntityCommandTable extends TileEntity {
-    private int zoomExp;
-    public int getZoomExp() {
-        return this.zoomExp;
-    }
+	public int zoomExp;
 
-    public void setZoomExp(int i) {
-        this.zoomExp = MathHelper.clamp_int(i, -2, 2);
-        this.worldObj.markBlockForUpdate(this.xCoord, this.yCoord, this.zCoord);
-        this.markDirty();
-    }
+	@Override
+	public Packet getDescriptionPacket() {
+		NBTTagCompound data = new NBTTagCompound();
+		writeTableToNBT(data);
+		return new S35PacketUpdateTileEntity(xCoord, yCoord, zCoord, 0, data);
+	}
 
-    public void toggleZoomExp() {
-        int z = this.zoomExp;
-        z = z <= -2 ? 2 : --z;
-        this.setZoomExp(z);
-    }
+	@SideOnly(value = Side.CLIENT)
+	@Override
+	public AxisAlignedBB getRenderBoundingBox() {
+		return AxisAlignedBB.getBoundingBox(xCoord - 1, yCoord, zCoord - 1, xCoord + 2, yCoord + 2, zCoord + 2);
+	}
 
-    @Override
-    public void writeToNBT(NBTTagCompound nbt) {
-        super.writeToNBT(nbt);
-        this.writeTableToNBT(nbt);
-    }
+	public int getZoomExp() {
+		return zoomExp;
+	}
 
-    @Override
-    public void readFromNBT(NBTTagCompound nbt) {
-        super.readFromNBT(nbt);
-        this.readTableFromNBT(nbt);
-    }
+	@Override
+	public void onDataPacket(NetworkManager manager, S35PacketUpdateTileEntity packet) {
+		NBTTagCompound data = packet.func_148857_g();
+		readTableFromNBT(data);
+	}
 
-    private void writeTableToNBT(NBTTagCompound nbt) {
-        nbt.setByte("Zoom", (byte) this.zoomExp);
-    }
+	@Override
+	public void readFromNBT(NBTTagCompound nbt) {
+		super.readFromNBT(nbt);
+		readTableFromNBT(nbt);
+	}
 
-    private void readTableFromNBT(NBTTagCompound nbt) {
-        this.zoomExp = nbt.getByte("Zoom");
-    }
+	public void readTableFromNBT(NBTTagCompound nbt) {
+		zoomExp = nbt.getByte("Zoom");
+	}
 
-    @Override
-    public Packet getDescriptionPacket() {
-        NBTTagCompound data = new NBTTagCompound();
-        this.writeTableToNBT(data);
-        return new S35PacketUpdateTileEntity(this.xCoord, this.yCoord, this.zCoord, 0, data);
-    }
+	public void setZoomExp(int i) {
+		zoomExp = MathHelper.clamp_int(i, -2, 2);
+		worldObj.markBlockForUpdate(xCoord, yCoord, zCoord);
+		markDirty();
+	}
 
-    @Override
-    public void onDataPacket(NetworkManager manager, S35PacketUpdateTileEntity packet) {
-        NBTTagCompound data = packet.func_148857_g();
-        this.readTableFromNBT(data);
-    }
+	public void toggleZoomExp() {
+		int z = zoomExp;
+		z = z <= -2 ? 2 : --z;
+		setZoomExp(z);
+	}
 
-    @SideOnly(value = Side.CLIENT)
-    @Override
-    public AxisAlignedBB getRenderBoundingBox() {
-        return AxisAlignedBB.getBoundingBox(this.xCoord - 1, this.yCoord, this.zCoord - 1, this.xCoord + 2, this.yCoord + 2, this.zCoord + 2);
-    }
+	public void writeTableToNBT(NBTTagCompound nbt) {
+		nbt.setByte("Zoom", (byte) zoomExp);
+	}
+
+	@Override
+	public void writeToNBT(NBTTagCompound nbt) {
+		super.writeToNBT(nbt);
+		writeTableToNBT(nbt);
+	}
 }

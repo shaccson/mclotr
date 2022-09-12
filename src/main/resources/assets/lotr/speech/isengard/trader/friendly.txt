@@ -1,13 +1,14 @@
-Принеси мне монеты, если хочешь получить мои вещички. 
-Что ж, вы проявили себя должным образом, #. Теперь мы можем заключить сделку. Какой товар вам по душе? 
-Маленькая грязная сумма монет тоже может быть принята. 
-Если ты не хочешь ничего покупать, то просто отдай мне монеты и вали отсюда.
-Орку всегда мало монет, слизняк! 
-Не хочешь ничего купить? А я говорю, что ты ХОЧЕШЬ купить у меня чего нибудь.
-Я не только продаю слизнякам, но и покупаю у них. Имеются некоторые материалы, на которые мне монет не жалко.
-Ох, как же я люблю хруст хорошей эльфийской кости...
-Нужно снаряжение? Деньги вперёд, червь!
-Инструменты меняю на монеты. И только.
-Если ты хочешь лучшее оружие - тащи монеты!
-Я продаю лучшее снаряжение и самые острые клинки! 
-Я обычно не торгую с людьми, но ты достаточно хорош. 
+We Orcs like silver coins as much as the next race, you know...
+Bring me coins if you want equipment, filth!
+So you have proven yourself, #. Now we can trade.
+A nice little stinking sum of silver coins might be nice.
+If you want to trade, bring some coins, and keep it quiet.
+I can never have enough silver coins, maggot!
+I might be interested in buying some materials.
+Certain materials can fetch a good price among traders like myself.
+What do you want, maggot?
+You want some equipment? Get me some coins first, maggot!
+Get me some coins and I'll sell you some tools!
+If you want some of my fine equipment, then bring some coins!
+I sell the finest equipment and the sharpest blades!
+I don't usually trade with filthy Men, but you're good enough.

@@ -1,20 +1,20 @@
-Вы друг эльфов?
-Вы друг эльфов, #?
-Вы пришли с миром, #?
-Какие вести Вы принесли из мира людей, #?
-Заботьтесь о лесе, #. Ведь скоро его может не стать...
-Мы не доверяем тем, кто прибыл извне, #.
-По каким делам Вы прибыли на наши земли, #?
-Мы, эльфы Лесного Королевства, должны сохранять бдительность. Ежечасно зло ломится через наши границы.
-Мы всегда должны быть начеку, #.
-Не стоит входить в наши земли без приглашения, #...
-Берегись, #. Лесные эльфы недоверяют незнакомцам.
-Ваше присутствие меня напрягает.
-Слабые людские сердца легко подчиняются тьме.
-Мы не такие, как другие эльфийские народы, #. Мы более... осторожны.
-Я не могу знать ваших намерений, но всё же, покиньте эти земли, #. Чужакам здесь не рады.
-Откуда Вы пришли, #?
-По каким же делам Вы прибыли в Лесное Королевство, #?
-Лесные эльфы не доверяют чужакам.
-Я Вам не доверяю, #. И я о Вас никогда не слышал.
-Я не видел людей сотни лет. С какими вестями Вы прибыли к нам, #?
+Are you an Elf-friend?
+Are you an Elf-friend, #?
+Do you come in peace, #?
+What tidings from the world of Men, #?
+Take care in the woods, #. You might lose your way...
+We are slow to trust those who come from outside, #.
+What business brings you to these lands, #?
+We Elves of the Woodland Realm must remain vigilant, for there is always evil on our borders.
+Always we must be on the watch, #.
+It is not wise to wander unannounced into our land, #...
+Beware, #, for we Wood-elves are slow to trust a stranger.
+Your presence makes me uneasy.
+Weak hearts are easily corrupted...
+We are not like other Elven-folk, #. We are more... cautious.
+I cannot discern your intentions. You would be wise to leave these lands, #.
+Whence do you come, #?
+What business do you have in our realm, #?
+We Woodland Elves do not trust any stranger that passes by.
+I am unsure of your heart, #. You are unknown to our kin.
+I have not seen a Man in many a year. What tidings do you bring to us, #?

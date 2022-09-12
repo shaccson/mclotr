@@ -1,9 +1,10 @@
-#title:Приглашение
-#author:Бильбо Бэггинс
+#title:Invitation
+#author:Bilbo Baggins
 #types:shire
-Сообщение для доставки к Ильберику Брэндибаку.
+Message to be delivered to Ilberic Brandybuck,
+Bucklebury.
 
-Дорогой господин Брэндибак,
-я хотел бы купить три бочки вашей медовухи и пять бочек вашего эля. Оплата будет произведена после их доставки на праздничное поле Хоббитона, где 22 сентября я буду ждать вас на моем 111-й дне рождения.
-
-Ваш слуга, Бильбо Бэггинс.
+Dear Mr. Brandybuck,
+I would like to purchase three barrels of your finest mead and five barrels of your esteemed ale. Payment will be made upon their delivery to the Party Field, Hobbiton, where on the 22nd September I will also be delighted to welcome you to my 111th birthday party.
+Your servant,
+Bilbo Baggins

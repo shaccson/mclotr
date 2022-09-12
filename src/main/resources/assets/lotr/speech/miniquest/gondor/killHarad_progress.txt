@@ -1,1 +1,3 @@
-Торопись, #! Харадримы не остановятся, пока каждый человек Гондора не погибнет!
+You have returned to us, but you have not yet slain $.
+Do not forget your errand against the Haradrim, #.
+If we do not defeat the Southrons, they will destroy us!

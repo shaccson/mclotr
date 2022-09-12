@@ -10,15 +10,15 @@ import net.minecraft.item.*;
 import net.minecraft.util.StatCollector;
 
 public class LOTRItemRhunFireJar extends ItemBlock {
-    public LOTRItemRhunFireJar(Block block) {
-        super(block);
-        BlockDispenser.dispenseBehaviorRegistry.putObject(this, new LOTRDispenseRhunFireJar());
-    }
+	public LOTRItemRhunFireJar(Block block) {
+		super(block);
+		BlockDispenser.dispenseBehaviorRegistry.putObject(this, new LOTRDispenseRhunFireJar());
+	}
 
-    @SideOnly(value = Side.CLIENT)
-    @Override
-    public void addInformation(ItemStack itemstack, EntityPlayer entityplayer, List list, boolean flag) {
-        super.addInformation(itemstack, entityplayer, list, flag);
-        list.add(StatCollector.translateToLocal("tile.lotr.rhunFire.warning"));
-    }
+	@SideOnly(value = Side.CLIENT)
+	@Override
+	public void addInformation(ItemStack itemstack, EntityPlayer entityplayer, List list, boolean flag) {
+		super.addInformation(itemstack, entityplayer, list, flag);
+		list.add(StatCollector.translateToLocal("tile.lotr.rhunFire.warning"));
+	}
 }

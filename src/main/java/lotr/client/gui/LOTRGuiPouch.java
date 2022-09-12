@@ -9,65 +9,69 @@ import net.minecraft.client.gui.inventory.GuiContainer;
 import net.minecraft.entity.player.EntityPlayer;
 import net.minecraft.util.*;
 
-public class LOTRGuiPouch
-extends GuiContainer {
-    public static ResourceLocation texture = new ResourceLocation("lotr:gui/pouch.png");
-    private LOTRContainerPouch thePouch;
-    private int pouchRows;
-    private GuiTextField theGuiTextField;
+public class LOTRGuiPouch extends GuiContainer {
+	public static ResourceLocation texture = new ResourceLocation("lotr:gui/pouch.png");
+	public LOTRContainerPouch thePouch;
+	public int pouchRows;
+	public GuiTextField theGuiTextField;
 
-    public LOTRGuiPouch(EntityPlayer entityplayer, int slot) {
-        super(new LOTRContainerPouch(entityplayer, slot));
-        this.thePouch = (LOTRContainerPouch)this.inventorySlots;
-        this.pouchRows = this.thePouch.capacity / 9;
-        this.ySize = 180;
-    }
+	public LOTRGuiPouch(EntityPlayer entityplayer, int slot) {
+		super(new LOTRContainerPouch(entityplayer, slot));
+		thePouch = (LOTRContainerPouch) inventorySlots;
+		pouchRows = thePouch.capacity / 9;
+		ySize = 180;
+	}
 
-    public void initGui() {
-        super.initGui();
-        this.theGuiTextField = new GuiTextField(this.fontRendererObj, this.guiLeft + this.xSize / 2 - 80, this.guiTop + 7, 160, 20);
-        this.theGuiTextField.setText(this.thePouch.getDisplayName());
-    }
+	@Override
+	public void drawGuiContainerBackgroundLayer(float f, int i, int j) {
+		GL11.glColor4f(1.0f, 1.0f, 1.0f, 1.0f);
+		mc.getTextureManager().bindTexture(texture);
+		drawTexturedModalRect(guiLeft, guiTop, 0, 0, xSize, ySize);
+		for (int l = 0; l < pouchRows; ++l) {
+			drawTexturedModalRect(guiLeft + 7, guiTop + 29 + l * 18, 0, 180, 162, 18);
+		}
+		GL11.glDisable(2896);
+		theGuiTextField.drawTextBox();
+		GL11.glEnable(2896);
+	}
 
-    protected void drawGuiContainerForegroundLayer(int i, int j) {
-        this.fontRendererObj.drawString(StatCollector.translateToLocal("container.inventory"), 8, this.ySize - 96 + 2, 4210752);
-    }
+	@Override
+	public void drawGuiContainerForegroundLayer(int i, int j) {
+		fontRendererObj.drawString(StatCollector.translateToLocal("container.inventory"), 8, ySize - 96 + 2, 4210752);
+	}
 
-    protected void drawGuiContainerBackgroundLayer(float f, int i, int j) {
-        GL11.glColor4f(1.0f, 1.0f, 1.0f, 1.0f);
-        this.mc.getTextureManager().bindTexture(texture);
-        this.drawTexturedModalRect(this.guiLeft, this.guiTop, 0, 0, this.xSize, this.ySize);
-        for (int l = 0; l < this.pouchRows; ++l) {
-            this.drawTexturedModalRect(this.guiLeft + 7, this.guiTop + 29 + l * 18, 0, 180, 162, 18);
-        }
-        GL11.glDisable(2896);
-        this.theGuiTextField.drawTextBox();
-        GL11.glEnable(2896);
-    }
+	@Override
+	public void initGui() {
+		super.initGui();
+		theGuiTextField = new GuiTextField(fontRendererObj, guiLeft + xSize / 2 - 80, guiTop + 7, 160, 20);
+		theGuiTextField.setText(thePouch.getDisplayName());
+	}
 
-    public void updateScreen() {
-        super.updateScreen();
-        this.theGuiTextField.updateCursorCounter();
-    }
+	@Override
+	public void keyTyped(char c, int i) {
+		if (theGuiTextField.textboxKeyTyped(c, i)) {
+			renamePouch();
+		} else {
+			super.keyTyped(c, i);
+		}
+	}
 
-    protected void keyTyped(char c, int i) {
-        if (this.theGuiTextField.textboxKeyTyped(c, i)) {
-            this.renamePouch();
-        } else {
-            super.keyTyped(c, i);
-        }
-    }
+	@Override
+	public void mouseClicked(int i, int j, int k) {
+		super.mouseClicked(i, j, k);
+		theGuiTextField.mouseClicked(i, j, k);
+	}
 
-    protected void mouseClicked(int i, int j, int k) {
-        super.mouseClicked(i, j, k);
-        this.theGuiTextField.mouseClicked(i, j, k);
-    }
+	public void renamePouch() {
+		String name = theGuiTextField.getText();
+		thePouch.renamePouch(name);
+		LOTRPacketRenamePouch packet = new LOTRPacketRenamePouch(name);
+		LOTRPacketHandler.networkWrapper.sendToServer(packet);
+	}
 
-    private void renamePouch() {
-        String name = this.theGuiTextField.getText();
-        this.thePouch.renamePouch(name);
-        LOTRPacketRenamePouch packet = new LOTRPacketRenamePouch(name);
-        LOTRPacketHandler.networkWrapper.sendToServer(packet);
-    }
+	@Override
+	public void updateScreen() {
+		super.updateScreen();
+		theGuiTextField.updateCursorCounter();
+	}
 }
-

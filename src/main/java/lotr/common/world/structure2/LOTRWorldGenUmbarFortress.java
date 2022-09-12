@@ -7,27 +7,27 @@ import lotr.common.entity.npc.*;
 import net.minecraft.world.World;
 
 public class LOTRWorldGenUmbarFortress extends LOTRWorldGenSouthronFortress {
-    public LOTRWorldGenUmbarFortress(boolean flag) {
-        super(flag);
-    }
+	public LOTRWorldGenUmbarFortress(boolean flag) {
+		super(flag);
+	}
 
-    @Override
-    protected boolean isUmbar() {
-        return true;
-    }
+	@Override
+	public LOTREntityNearHaradrimBase createCaptain(World world, Random random) {
+		return new LOTREntityUmbarCaptain(world);
+	}
 
-    @Override
-    protected LOTREntityNearHaradrimBase createWarrior(World world, Random random) {
-        return random.nextInt(3) == 0 ? new LOTREntityUmbarArcher(world) : new LOTREntityUmbarWarrior(world);
-    }
+	@Override
+	public LOTREntityNearHaradrimBase createWarrior(World world, Random random) {
+		return random.nextInt(3) == 0 ? new LOTREntityUmbarArcher(world) : new LOTREntityUmbarWarrior(world);
+	}
 
-    @Override
-    protected LOTREntityNearHaradrimBase createCaptain(World world, Random random) {
-        return new LOTREntityUmbarCaptain(world);
-    }
+	@Override
+	public boolean isUmbar() {
+		return true;
+	}
 
-    @Override
-    protected void setSpawnClasses(LOTREntityNPCRespawner spawner) {
-        spawner.setSpawnClasses(LOTREntityUmbarWarrior.class, LOTREntityUmbarArcher.class);
-    }
+	@Override
+	public void setSpawnClasses(LOTREntityNPCRespawner spawner) {
+		spawner.setSpawnClasses(LOTREntityUmbarWarrior.class, LOTREntityUmbarArcher.class);
+	}
 }

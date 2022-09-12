@@ -10,72 +10,72 @@ import net.minecraft.item.ItemStack;
 import net.minecraft.world.World;
 
 public class LOTREntityRohanFarmer extends LOTREntityRohanMan implements LOTRTradeable, LOTRUnitTradeable {
-    public LOTREntityRohanFarmer(World world) {
-        super(world);
-        this.addTargetTasks(false);
-    }
+	public LOTREntityRohanFarmer(World world) {
+		super(world);
+		this.addTargetTasks(false);
+	}
 
-    @Override
-    public LOTRTradeEntries getBuyPool() {
-        return LOTRTradeEntries.ROHAN_FARMER_BUY;
-    }
+	@Override
+	public boolean canTradeWith(EntityPlayer entityplayer) {
+		return LOTRLevelData.getData(entityplayer).getAlignment(getFaction()) >= 0.0f && isFriendly(entityplayer);
+	}
 
-    @Override
-    public LOTRTradeEntries getSellPool() {
-        return LOTRTradeEntries.ROHAN_FARMER_SELL;
-    }
+	@Override
+	public float getAlignmentBonus() {
+		return 2.0f;
+	}
 
-    @Override
-    public IEntityLivingData onSpawnWithEgg(IEntityLivingData data) {
-        data = super.onSpawnWithEgg(data);
-        this.npcItemsInv.setMeleeWeapon(new ItemStack(Items.iron_hoe));
-        this.npcItemsInv.setIdleItem(this.npcItemsInv.getMeleeWeapon());
-        ItemStack hat = new ItemStack(LOTRMod.leatherHat);
-        LOTRItemLeatherHat.setHatColor(hat, 10390131);
-        this.setCurrentItemOrArmor(4, hat);
-        return data;
-    }
+	@Override
+	public LOTRTradeEntries getBuyPool() {
+		return LOTRTradeEntries.ROHAN_FARMER_BUY;
+	}
 
-    @Override
-    public float getAlignmentBonus() {
-        return 2.0f;
-    }
+	@Override
+	public LOTRTradeEntries getSellPool() {
+		return LOTRTradeEntries.ROHAN_FARMER_SELL;
+	}
 
-    @Override
-    public LOTRInvasions getWarhorn() {
-        return null;
-    }
+	@Override
+	public String getSpeechBank(EntityPlayer entityplayer) {
+		if (isFriendly(entityplayer)) {
+			return "rohan/farmer/friendly";
+		}
+		return "rohan/farmer/hostile";
+	}
 
-    @Override
-    public boolean canTradeWith(EntityPlayer entityplayer) {
-        return LOTRLevelData.getData(entityplayer).getAlignment(this.getFaction()) >= 0.0f && this.isFriendly(entityplayer);
-    }
+	@Override
+	public LOTRUnitTradeEntries getUnits() {
+		return LOTRUnitTradeEntries.ROHAN_FARMER;
+	}
 
-    @Override
-    public void onPlayerTrade(EntityPlayer entityplayer, LOTRTradeEntries.TradeType type, ItemStack itemstack) {
-        LOTRLevelData.getData(entityplayer).addAchievement(LOTRAchievement.tradeRohanFarmer);
-    }
+	@Override
+	public LOTRInvasions getWarhorn() {
+		return null;
+	}
 
-    @Override
-    public LOTRUnitTradeEntries getUnits() {
-        return LOTRUnitTradeEntries.ROHAN_FARMER;
-    }
+	@Override
+	public void onPlayerTrade(EntityPlayer entityplayer, LOTRTradeEntries.TradeType type, ItemStack itemstack) {
+		LOTRLevelData.getData(entityplayer).addAchievement(LOTRAchievement.tradeRohanFarmer);
+	}
 
-    @Override
-    public void onUnitTrade(EntityPlayer entityplayer) {
-        LOTRLevelData.getData(entityplayer).addAchievement(LOTRAchievement.hireRohanFarmer);
-    }
+	@Override
+	public IEntityLivingData onSpawnWithEgg(IEntityLivingData data) {
+		data = super.onSpawnWithEgg(data);
+		npcItemsInv.setMeleeWeapon(new ItemStack(Items.iron_hoe));
+		npcItemsInv.setIdleItem(npcItemsInv.getMeleeWeapon());
+		ItemStack hat = new ItemStack(LOTRMod.leatherHat);
+		LOTRItemLeatherHat.setHatColor(hat, 10390131);
+		setCurrentItemOrArmor(4, hat);
+		return data;
+	}
 
-    @Override
-    public boolean shouldTraderRespawn() {
-        return true;
-    }
+	@Override
+	public void onUnitTrade(EntityPlayer entityplayer) {
+		LOTRLevelData.getData(entityplayer).addAchievement(LOTRAchievement.hireRohanFarmer);
+	}
 
-    @Override
-    public String getSpeechBank(EntityPlayer entityplayer) {
-        if(this.isFriendly(entityplayer)) {
-            return "rohan/farmer/friendly";
-        }
-        return "rohan/farmer/hostile";
-    }
+	@Override
+	public boolean shouldTraderRespawn() {
+		return true;
+	}
 }

@@ -8,42 +8,41 @@ import net.minecraft.entity.player.EntityPlayerMP;
 import net.minecraft.item.ItemStack;
 
 public class LOTRPacketFellowshipSetIcon extends LOTRPacketFellowshipDo {
-    public LOTRPacketFellowshipSetIcon() {
-    }
+	public LOTRPacketFellowshipSetIcon() {
+	}
 
-    public LOTRPacketFellowshipSetIcon(LOTRFellowshipClient fs) {
-        super(fs);
-    }
+	public LOTRPacketFellowshipSetIcon(LOTRFellowshipClient fs) {
+		super(fs);
+	}
 
-    @Override
-    public void toBytes(ByteBuf data) {
-        super.toBytes(data);
-    }
+	@Override
+	public void fromBytes(ByteBuf data) {
+		super.fromBytes(data);
+	}
 
-    @Override
-    public void fromBytes(ByteBuf data) {
-        super.fromBytes(data);
-    }
+	@Override
+	public void toBytes(ByteBuf data) {
+		super.toBytes(data);
+	}
 
-    public static class Handler implements IMessageHandler<LOTRPacketFellowshipSetIcon, IMessage> {
-        @Override
-        public IMessage onMessage(LOTRPacketFellowshipSetIcon packet, MessageContext context) {
-            EntityPlayerMP entityplayer = context.getServerHandler().playerEntity;
-            LOTRFellowship fellowship = packet.getFellowship();
-            if(fellowship != null) {
-                LOTRPlayerData playerData = LOTRLevelData.getData(entityplayer);
-                ItemStack itemstack = entityplayer.getHeldItem();
-                if(itemstack != null) {
-                    ItemStack newStack = itemstack.copy();
-                    newStack.stackSize = 1;
-                    playerData.setFellowshipIcon(fellowship, newStack);
-                }
-                else {
-                    playerData.setFellowshipIcon(fellowship, null);
-                }
-            }
-            return null;
-        }
-    }
+	public static class Handler implements IMessageHandler<LOTRPacketFellowshipSetIcon, IMessage> {
+		@Override
+		public IMessage onMessage(LOTRPacketFellowshipSetIcon packet, MessageContext context) {
+			EntityPlayerMP entityplayer = context.getServerHandler().playerEntity;
+			LOTRFellowship fellowship = packet.getActiveFellowship();
+			if (fellowship != null) {
+				LOTRPlayerData playerData = LOTRLevelData.getData(entityplayer);
+				ItemStack itemstack = entityplayer.getHeldItem();
+				if (itemstack != null) {
+					ItemStack newStack = itemstack.copy();
+					newStack.stackSize = 1;
+					playerData.setFellowshipIcon(fellowship, newStack);
+				} else {
+					playerData.setFellowshipIcon(fellowship, null);
+				}
+			}
+			return null;
+		}
+	}
 
 }

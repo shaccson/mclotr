@@ -7,140 +7,137 @@ import net.minecraft.client.gui.GuiButton;
 import net.minecraft.util.MathHelper;
 
 public class LOTRGuiSlider extends GuiButton {
-    private String baseDisplayString;
-    private String overrideStateString;
-    private boolean isTime = false;
-    private boolean isFloat = false;
-    private boolean valueOnly = false;
-    private int numberDigits = 0;
-    private int minValue;
-    private int maxValue;
-    private float minValueF;
-    private float maxValueF;
-    private float sliderValue = 1.0f;
-    public boolean dragging = false;
+	public String baseDisplayString;
+	public String overrideStateString;
+	public boolean isTime = false;
+	public boolean isFloat = false;
+	public boolean valueOnly = false;
+	public int numberDigits = 0;
+	public int minValue;
+	public int maxValue;
+	public float minValueF;
+	public float maxValueF;
+	public float sliderValue = 1.0f;
+	public boolean dragging = false;
 
-    public LOTRGuiSlider(int id, int x, int y, int width, int height, String s) {
-        super(id, x, y, width, height, s);
-        this.baseDisplayString = s;
-    }
+	public LOTRGuiSlider(int id, int x, int y, int width, int height, String s) {
+		super(id, x, y, width, height, s);
+		baseDisplayString = s;
+	}
 
-    public void setFloat() {
-        this.isFloat = true;
-    }
+	@Override
+	public void drawButton(Minecraft mc, int i, int j) {
+		if (overrideStateString != null) {
+			displayString = overrideStateString;
+		} else if (isTime) {
+			int value = getSliderValue();
+			int seconds = value % 60;
+			int minutes = value / 60;
+			displayString = String.format("%d:%02d", minutes, seconds);
+		} else if (isFloat) {
+			displayString = String.format("%.2f", Float.valueOf(getSliderValue_F()));
+		} else {
+			int value = getSliderValue();
+			displayString = String.valueOf(value);
+			if (numberDigits > 0) {
+				displayString = String.format("%0" + numberDigits + "d", value);
+			}
+		}
+		if (!valueOnly) {
+			displayString = baseDisplayString + ": " + displayString;
+		}
+		super.drawButton(mc, i, j);
+	}
 
-    public void setMinutesSecondsTime() {
-        this.isTime = true;
-    }
+	@Override
+	public int getHoverState(boolean flag) {
+		return 0;
+	}
 
-    public void setValueOnly() {
-        this.valueOnly = true;
-    }
+	public int getSliderValue() {
+		return minValue + Math.round(sliderValue * (maxValue - minValue));
+	}
 
-    public void setNumberDigits(int i) {
-        this.numberDigits = i;
-    }
+	public float getSliderValue_F() {
+		return minValueF + sliderValue * (maxValueF - minValueF);
+	}
 
-    @Override
-    public int getHoverState(boolean flag) {
-        return 0;
-    }
+	@Override
+	public void mouseDragged(Minecraft mc, int i, int j) {
+		if (visible && enabled) {
+			if (dragging) {
+				sliderValue = (float) (i - (xPosition + 4)) / (float) (width - 8);
+				if (sliderValue < 0.0f) {
+					sliderValue = 0.0f;
+				}
+				if (sliderValue > 1.0f) {
+					sliderValue = 1.0f;
+				}
+			}
+			GL11.glColor4f(1.0f, 1.0f, 1.0f, 1.0f);
+			drawTexturedModalRect(xPosition + (int) (sliderValue * (width - 8)), yPosition, 0, 66, 4, 20);
+			drawTexturedModalRect(xPosition + (int) (sliderValue * (width - 8)) + 4, yPosition, 196, 66, 4, 20);
+		}
+	}
 
-    public void setMinMaxValues(int min, int max) {
-        this.minValue = min;
-        this.maxValue = max;
-    }
+	@Override
+	public boolean mousePressed(Minecraft mc, int i, int j) {
+		if (super.mousePressed(mc, i, j)) {
+			sliderValue = (float) (i - (xPosition + 4)) / (float) (width - 8);
+			if (sliderValue < 0.0f) {
+				sliderValue = 0.0f;
+			}
+			if (sliderValue > 1.0f) {
+				sliderValue = 1.0f;
+			}
+			dragging = true;
+			return true;
+		}
+		return false;
+	}
 
-    public int getSliderValue() {
-        return this.minValue + Math.round(this.sliderValue * (this.maxValue - this.minValue));
-    }
+	@Override
+	public void mouseReleased(int i, int j) {
+		dragging = false;
+	}
 
-    public void setSliderValue(int value) {
-        value = MathHelper.clamp_int(value, this.minValue, this.maxValue);
-        this.sliderValue = (float) (value - this.minValue) / (float) (this.maxValue - this.minValue);
-    }
+	public void setFloat() {
+		isFloat = true;
+	}
 
-    public void setMinMaxValues_F(float min, float max) {
-        this.minValueF = min;
-        this.maxValueF = max;
-    }
+	public void setMinMaxValues(int min, int max) {
+		minValue = min;
+		maxValue = max;
+	}
 
-    public float getSliderValue_F() {
-        return this.minValueF + this.sliderValue * (this.maxValueF - this.minValueF);
-    }
+	public void setMinMaxValues_F(float min, float max) {
+		minValueF = min;
+		maxValueF = max;
+	}
 
-    public void setSliderValue_F(float value) {
-        value = MathHelper.clamp_float(value, this.minValueF, this.maxValueF);
-        this.sliderValue = (value - this.minValueF) / (this.maxValueF - this.minValueF);
-    }
+	public void setMinutesSecondsTime() {
+		isTime = true;
+	}
 
-    public void setOverrideStateString(String s) {
-        this.overrideStateString = s;
-    }
+	public void setNumberDigits(int i) {
+		numberDigits = i;
+	}
 
-    @Override
-    public void drawButton(Minecraft mc, int i, int j) {
-        if(this.overrideStateString != null) {
-            this.displayString = this.overrideStateString;
-        }
-        else if(this.isTime) {
-            int value = this.getSliderValue();
-            int seconds = value % 60;
-            int minutes = value / 60;
-            this.displayString = String.format("%d:%02d", minutes, seconds);
-        }
-        else if(this.isFloat) {
-            this.displayString = String.format("%.2f", Float.valueOf(this.getSliderValue_F()));
-        }
-        else {
-            int value = this.getSliderValue();
-            this.displayString = String.valueOf(value);
-            if(this.numberDigits > 0) {
-                this.displayString = String.format("%0" + this.numberDigits + "d", value);
-            }
-        }
-        if(!this.valueOnly) {
-            this.displayString = this.baseDisplayString + ": " + this.displayString;
-        }
-        super.drawButton(mc, i, j);
-    }
+	public void setOverrideStateString(String s) {
+		overrideStateString = s;
+	}
 
-    @Override
-    protected void mouseDragged(Minecraft mc, int i, int j) {
-        if(this.visible && this.enabled) {
-            if(this.dragging) {
-                this.sliderValue = (float) (i - (this.xPosition + 4)) / (float) (this.width - 8);
-                if(this.sliderValue < 0.0f) {
-                    this.sliderValue = 0.0f;
-                }
-                if(this.sliderValue > 1.0f) {
-                    this.sliderValue = 1.0f;
-                }
-            }
-            GL11.glColor4f(1.0f, 1.0f, 1.0f, 1.0f);
-            this.drawTexturedModalRect(this.xPosition + (int) (this.sliderValue * (this.width - 8)), this.yPosition, 0, 66, 4, 20);
-            this.drawTexturedModalRect(this.xPosition + (int) (this.sliderValue * (this.width - 8)) + 4, this.yPosition, 196, 66, 4, 20);
-        }
-    }
+	public void setSliderValue(int value) {
+		value = MathHelper.clamp_int(value, minValue, maxValue);
+		sliderValue = (float) (value - minValue) / (float) (maxValue - minValue);
+	}
 
-    @Override
-    public boolean mousePressed(Minecraft mc, int i, int j) {
-        if(super.mousePressed(mc, i, j)) {
-            this.sliderValue = (float) (i - (this.xPosition + 4)) / (float) (this.width - 8);
-            if(this.sliderValue < 0.0f) {
-                this.sliderValue = 0.0f;
-            }
-            if(this.sliderValue > 1.0f) {
-                this.sliderValue = 1.0f;
-            }
-            this.dragging = true;
-            return true;
-        }
-        return false;
-    }
+	public void setSliderValue_F(float value) {
+		value = MathHelper.clamp_float(value, minValueF, maxValueF);
+		sliderValue = (value - minValueF) / (maxValueF - minValueF);
+	}
 
-    @Override
-    public void mouseReleased(int i, int j) {
-        this.dragging = false;
-    }
+	public void setValueOnly() {
+		valueOnly = true;
+	}
 }

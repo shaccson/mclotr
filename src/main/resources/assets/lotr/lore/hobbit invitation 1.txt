@@ -1,9 +1,10 @@
-#title:Приглашение
-#author:Бильбо Бэггинс
+#title:Invitation
+#author:Bilbo Baggins
 #types:shire
-Письмо для доставки к Отто Саквиль-Бэггинсу.
+Message to be delivered to Otho Sackville-Baggins,
+Longbottom.
 
-Дорогой господин Саквиль-Бэггинс, приглашаю вас и вашу семью на празднование моего 111-го дня рождения, который состоится 22 сентября на праздничном поле Хоббитона.
-Надеюсь, что вы будете присутствовать,
-
-Бильбо Бэггинс.
+Dear Mr. Sackville-Baggins,
+It is my pleasure to invite you and your family to the celebration of my 111th birthday party, to be held at the Party Field, Hobbiton, on the 22nd September.
+Hoping that you will attend,
+Bilbo Baggins

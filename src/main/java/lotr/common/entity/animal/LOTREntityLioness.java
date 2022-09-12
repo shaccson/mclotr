@@ -4,17 +4,17 @@ import lotr.common.item.LOTRItemLionRug;
 import net.minecraft.world.World;
 
 public class LOTREntityLioness extends LOTREntityLionBase {
-    public LOTREntityLioness(World world) {
-        super(world);
-    }
+	public LOTREntityLioness(World world) {
+		super(world);
+	}
 
-    @Override
-    public boolean isMale() {
-        return false;
-    }
+	@Override
+	public LOTRItemLionRug.LionRugType getLionRugType() {
+		return LOTRItemLionRug.LionRugType.LIONESS;
+	}
 
-    @Override
-    protected LOTRItemLionRug.LionRugType getLionRugType() {
-        return LOTRItemLionRug.LionRugType.LIONESS;
-    }
+	@Override
+	public boolean isMale() {
+		return false;
+	}
 }

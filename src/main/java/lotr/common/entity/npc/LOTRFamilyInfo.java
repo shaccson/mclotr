@@ -14,281 +14,290 @@ import net.minecraft.util.MathHelper;
 import net.minecraft.world.WorldServer;
 
 public class LOTRFamilyInfo {
-    private LOTREntityNPC theEntity;
-    public Class marriageEntityClass;
-    public Item marriageRing;
-    public float marriageAlignmentRequired;
-    public LOTRAchievement marriageAchievement;
-    public int potentialMaxChildren;
-    public int timeToMature;
-    public int breedingDelay;
-    public UUID spouseUniqueID;
-    public int children;
-    public int maxChildren;
-    public UUID maleParentID;
-    public UUID femaleParentID;
-    public UUID ringGivingPlayer;
-    private boolean doneFirstUpdate = false;
-    private boolean resendData = true;
-    private int age;
-    private boolean male;
-    private String name;
-    private int drunkTime;
-    private int timeUntilDrunkSpeech;
+	public LOTREntityNPC theEntity;
+	public Class marriageEntityClass;
+	public Item marriageRing;
+	public float marriageAlignmentRequired;
+	public LOTRAchievement marriageAchievement;
+	public int potentialMaxChildren;
+	public int timeToMature;
+	public int breedingDelay;
+	public UUID spouseUniqueID;
+	public int children;
+	public int maxChildren;
+	public UUID maleParentID;
+	public UUID femaleParentID;
+	public UUID ringGivingPlayer;
+	public boolean doneFirstUpdate = false;
+	public boolean resendData = true;
+	public int age;
+	public boolean male;
+	public String name;
+	public int drunkTime;
+	public int timeUntilDrunkSpeech;
 
-    public LOTRFamilyInfo(LOTREntityNPC npc) {
-        this.theEntity = npc;
-    }
+	public LOTRFamilyInfo(LOTREntityNPC npc) {
+		theEntity = npc;
+	}
 
-    public int getAge() {
-        return this.age;
-    }
+	public boolean canMarryNPC(LOTREntityNPC npc) {
+		if (npc.getClass() != theEntity.getClass() || npc.familyInfo.spouseUniqueID != null || npc.familyInfo.getAge() != 0 || npc.getEquipmentInSlot(4) != null) {
+			return false;
+		}
+		if (npc == theEntity || npc.familyInfo.isMale() == isMale() || maleParentID != null && maleParentID == npc.familyInfo.maleParentID || femaleParentID != null && femaleParentID == npc.familyInfo.femaleParentID) {
+			return false;
+		}
+		ItemStack heldItem = npc.getEquipmentInSlot(0);
+		return heldItem != null && heldItem.getItem() == marriageRing;
+	}
 
-    public void setAge(int i) {
-        this.age = i;
-        this.markDirty();
-    }
+	public int getAge() {
+		return age;
+	}
 
-    public boolean isMale() {
-        return this.male;
-    }
+	public String getName() {
+		return name;
+	}
 
-    public void setMale(boolean flag) {
-        this.male = flag;
-        this.markDirty();
-    }
+	public LOTREntityNPC getParentToFollow() {
+		UUID parentToFollowID = isMale() ? maleParentID : femaleParentID;
+		List list = theEntity.worldObj.getEntitiesWithinAABB(theEntity.getClass(), theEntity.boundingBox.expand(16.0, 8.0, 16.0));
+		for (Object element : list) {
+			Entity entity = (Entity) element;
+			if (!(entity instanceof LOTREntityNPC) || entity == theEntity || parentToFollowID == null || !entity.getUniqueID().equals(parentToFollowID)) {
+				continue;
+			}
+			return (LOTREntityNPC) entity;
+		}
+		return null;
+	}
 
-    public String getName() {
-        return this.name;
-    }
+	public int getRandomMaxChildren() {
+		return 1 + theEntity.getRNG().nextInt(potentialMaxChildren);
+	}
 
-    public void setName(String s) {
-        this.name = s;
-        this.markDirty();
-    }
+	public EntityPlayer getRingGivingPlayer() {
+		if (ringGivingPlayer != null) {
+			for (Object obj : theEntity.worldObj.playerEntities) {
+				EntityPlayer entityplayer = (EntityPlayer) obj;
+				if (!entityplayer.getUniqueID().equals(ringGivingPlayer)) {
+					continue;
+				}
+				return entityplayer;
+			}
+		}
+		return null;
+	}
 
-    public boolean isDrunk() {
-        return this.drunkTime > 0;
-    }
+	public LOTREntityNPC getSpouse() {
+		if (spouseUniqueID == null) {
+			return null;
+		}
+		List list = theEntity.worldObj.getEntitiesWithinAABB(theEntity.getClass(), theEntity.boundingBox.expand(16.0, 8.0, 16.0));
+		for (Object element : list) {
+			Entity entity = (Entity) element;
+			if (!(entity instanceof LOTREntityNPC) || entity == theEntity || !entity.getUniqueID().equals(spouseUniqueID)) {
+				continue;
+			}
+			LOTREntityNPC npc = (LOTREntityNPC) entity;
+			if (npc.familyInfo.spouseUniqueID == null || !theEntity.getUniqueID().equals(npc.familyInfo.spouseUniqueID)) {
+				continue;
+			}
+			return npc;
+		}
+		return null;
+	}
 
-    public void setDrunkTime(int i) {
-        boolean prevDrunk = this.isDrunk();
-        this.drunkTime = i;
-        if(this.isDrunk() != prevDrunk) {
-            this.markDirty();
-        }
-    }
+	public boolean interact(EntityPlayer entityplayer) {
+		if (theEntity.hiredNPCInfo.isActive) {
+			return false;
+		}
+		ItemStack itemstack = entityplayer.inventory.getCurrentItem();
+		if (itemstack != null && itemstack.getItem() == marriageRing && LOTRLevelData.getData(entityplayer).getAlignment(theEntity.getFaction()) >= marriageAlignmentRequired && theEntity.getClass() == marriageEntityClass && getAge() == 0 && theEntity.getEquipmentInSlot(0) == null && theEntity.getEquipmentInSlot(4) == null && spouseUniqueID == null) {
+			if (!entityplayer.capabilities.isCreativeMode) {
+				--itemstack.stackSize;
+				if (itemstack.stackSize <= 0) {
+					entityplayer.inventory.setInventorySlotContents(entityplayer.inventory.currentItem, null);
+				}
+			}
+			if (!theEntity.worldObj.isRemote) {
+				theEntity.setCurrentItemOrArmor(0, new ItemStack(marriageRing));
+				ringGivingPlayer = entityplayer.getUniqueID();
+			}
+			theEntity.isNPCPersistent = true;
+			return true;
+		}
+		return false;
+	}
 
-    private void markDirty() {
-        if(!this.theEntity.worldObj.isRemote) {
-            if(this.theEntity.ticksExisted > 0) {
-                this.resendData = true;
-            }
-            else {
-                this.sendDataToAllWatchers();
-            }
-        }
-    }
+	public boolean isDrunk() {
+		return drunkTime > 0;
+	}
 
-    public void sendData(EntityPlayerMP entityplayer) {
-        LOTRPacketFamilyInfo packet = new LOTRPacketFamilyInfo(this.theEntity.getEntityId(), this.getAge(), this.isMale(), this.getName(), this.isDrunk());
-        LOTRPacketHandler.networkWrapper.sendTo(packet, entityplayer);
-    }
+	public boolean isMale() {
+		return male;
+	}
 
-    private void sendDataToAllWatchers() {
-        int x = MathHelper.floor_double(this.theEntity.posX) >> 4;
-        int z = MathHelper.floor_double(this.theEntity.posZ) >> 4;
-        PlayerManager playermanager = ((WorldServer) this.theEntity.worldObj).getPlayerManager();
-        List players = this.theEntity.worldObj.playerEntities;
-        for(Object obj : players) {
-            EntityPlayerMP entityplayer = (EntityPlayerMP) obj;
-            if(!playermanager.isPlayerWatchingChunk(entityplayer, x, z)) continue;
-            this.sendData(entityplayer);
-        }
-    }
+	public void markDirty() {
+		if (!theEntity.worldObj.isRemote) {
+			if (theEntity.ticksExisted > 0) {
+				resendData = true;
+			} else {
+				sendDataToAllWatchers();
+			}
+		}
+	}
 
-    public void receiveData(LOTRPacketFamilyInfo packet) {
-        this.setAge(packet.age);
-        this.setMale(packet.isMale);
-        this.setName(packet.name);
-        if(packet.isDrunk) {
-            this.setDrunkTime(100000);
-        }
-        else {
-            this.setDrunkTime(0);
-        }
-    }
+	public void onUpdate() {
+		if (!theEntity.worldObj.isRemote) {
+			if (!doneFirstUpdate) {
+				doneFirstUpdate = true;
+			}
+			if (resendData) {
+				sendDataToAllWatchers();
+				resendData = false;
+			}
+			if (getAge() < 0) {
+				setAge(getAge() + 1);
+			} else if (getAge() > 0) {
+				setAge(getAge() - 1);
+			}
+			if (drunkTime > 0) {
+				setDrunkTime(drunkTime - 1);
+			}
+			if (isDrunk()) {
+				theEntity.addPotionEffect(new PotionEffect(Potion.confusion.id, 20));
+				if (timeUntilDrunkSpeech > 0) {
+					--timeUntilDrunkSpeech;
+				}
+				if (theEntity.isEntityAlive() && theEntity.getAttackTarget() == null && timeUntilDrunkSpeech == 0) {
+					double range = 12.0;
+					List players = theEntity.worldObj.getEntitiesWithinAABB(EntityPlayer.class, theEntity.boundingBox.expand(range, range, range));
+					for (Object obj : players) {
+						String speechBank;
+						EntityPlayer entityplayer = (EntityPlayer) obj;
+						if (!entityplayer.isEntityAlive() || entityplayer.capabilities.isCreativeMode || (speechBank = theEntity.getSpeechBank(entityplayer)) == null || theEntity.getRNG().nextInt(3) != 0) {
+							continue;
+						}
+						theEntity.sendSpeechBank(entityplayer, speechBank);
+					}
+					timeUntilDrunkSpeech = 20 * MathHelper.getRandomIntegerInRange(theEntity.getRNG(), 5, 20);
+				}
+			}
+		}
+	}
 
-    public void onUpdate() {
-        if(!this.theEntity.worldObj.isRemote) {
-            if(!this.doneFirstUpdate) {
-                this.doneFirstUpdate = true;
-            }
-            if(this.resendData) {
-                this.sendDataToAllWatchers();
-                this.resendData = false;
-            }
-            if(this.getAge() < 0) {
-                this.setAge(this.getAge() + 1);
-            }
-            else if(this.getAge() > 0) {
-                this.setAge(this.getAge() - 1);
-            }
-            if(this.drunkTime > 0) {
-                this.setDrunkTime(this.drunkTime - 1);
-            }
-            if(this.isDrunk()) {
-                this.theEntity.addPotionEffect(new PotionEffect(Potion.confusion.id, 20));
-                if(this.timeUntilDrunkSpeech > 0) {
-                    --this.timeUntilDrunkSpeech;
-                }
-                if(this.theEntity.isEntityAlive() && this.theEntity.getAttackTarget() == null && this.timeUntilDrunkSpeech == 0) {
-                    double range = 12.0;
-                    List players = this.theEntity.worldObj.getEntitiesWithinAABB(EntityPlayer.class, this.theEntity.boundingBox.expand(range, range, range));
-                    for(Object obj : players) {
-                        String speechBank;
-                        EntityPlayer entityplayer = (EntityPlayer) obj;
-                        if(!entityplayer.isEntityAlive() || entityplayer.capabilities.isCreativeMode || (speechBank = this.theEntity.getSpeechBank(entityplayer)) == null || this.theEntity.getRNG().nextInt(3) != 0) continue;
-                        this.theEntity.sendSpeechBank(entityplayer, speechBank);
-                    }
-                    this.timeUntilDrunkSpeech = 20 * MathHelper.getRandomIntegerInRange(this.theEntity.getRNG(), 5, 20);
-                }
-            }
-        }
-    }
+	public void readFromNBT(NBTTagCompound nbt) {
+		setAge(nbt.getInteger("NPCAge"));
+		if (nbt.hasKey("NPCMale")) {
+			setMale(nbt.getBoolean("NPCMale"));
+		}
+		if (nbt.hasKey("NPCName")) {
+			setName(nbt.getString("NPCName"));
+		}
+		setDrunkTime(nbt.getInteger("NPCDrunkTime"));
+		if (nbt.hasKey("SpouseUUIDMost") && nbt.hasKey("SpouseUUIDLeast")) {
+			spouseUniqueID = new UUID(nbt.getLong("SpouseUUIDMost"), nbt.getLong("SpouseUUIDLeast"));
+		}
+		children = nbt.getInteger("Children");
+		maxChildren = nbt.getInteger("MaxChildren");
+		if (nbt.hasKey("MaleParentUUIDMost") && nbt.hasKey("MaleParentUUIDLeast")) {
+			maleParentID = new UUID(nbt.getLong("MaleParentUUIDMost"), nbt.getLong("MaleParentUUIDLeast"));
+		}
+		if (nbt.hasKey("FemaleParentUUIDMost") && nbt.hasKey("FemaleParentUUIDLeast")) {
+			femaleParentID = new UUID(nbt.getLong("FemaleParentUUIDMost"), nbt.getLong("FemaleParentUUIDLeast"));
+		}
+		if (nbt.hasKey("RingGivingPlayer")) {
+			ringGivingPlayer = new UUID(nbt.getLong("RingGivingPlayerUUIDMost"), nbt.getLong("RingGivingPlayerUUIDLeast"));
+		}
+	}
 
-    public boolean canMarryNPC(LOTREntityNPC npc) {
-        if(npc.getClass() != this.theEntity.getClass() || npc.familyInfo.spouseUniqueID != null || npc.familyInfo.getAge() != 0 || npc.getEquipmentInSlot(4) != null) {
-            return false;
-        }
-        if(npc == this.theEntity || npc.familyInfo.isMale() == this.isMale() || this.maleParentID != null && this.maleParentID == npc.familyInfo.maleParentID || this.femaleParentID != null && this.femaleParentID == npc.familyInfo.femaleParentID) {
-            return false;
-        }
-        ItemStack heldItem = npc.getEquipmentInSlot(0);
-        return heldItem != null && heldItem.getItem() == this.marriageRing;
-    }
+	public void receiveData(LOTRPacketFamilyInfo packet) {
+		setAge(packet.age);
+		setMale(packet.isMale);
+		setName(packet.name);
+		if (packet.isDrunk) {
+			setDrunkTime(100000);
+		} else {
+			setDrunkTime(0);
+		}
+	}
 
-    public LOTREntityNPC getSpouse() {
-        if(this.spouseUniqueID == null) {
-            return null;
-        }
-        List list = this.theEntity.worldObj.getEntitiesWithinAABB(this.theEntity.getClass(), this.theEntity.boundingBox.expand(16.0, 8.0, 16.0));
-        for(Object element : list) {
-            Entity entity = (Entity) element;
-            if(!(entity instanceof LOTREntityNPC) || entity == this.theEntity || !entity.getUniqueID().equals(this.spouseUniqueID)) continue;
-            LOTREntityNPC npc = (LOTREntityNPC) entity;
-            if(npc.familyInfo.spouseUniqueID == null || !this.theEntity.getUniqueID().equals(npc.familyInfo.spouseUniqueID)) continue;
-            return npc;
-        }
-        return null;
-    }
+	public void sendData(EntityPlayerMP entityplayer) {
+		LOTRPacketFamilyInfo packet = new LOTRPacketFamilyInfo(theEntity.getEntityId(), getAge(), isMale(), getName(), isDrunk());
+		LOTRPacketHandler.networkWrapper.sendTo(packet, entityplayer);
+	}
 
-    public LOTREntityNPC getParentToFollow() {
-        UUID parentToFollowID = this.isMale() ? this.maleParentID : this.femaleParentID;
-        List list = this.theEntity.worldObj.getEntitiesWithinAABB(this.theEntity.getClass(), this.theEntity.boundingBox.expand(16.0, 8.0, 16.0));
-        for(Object element : list) {
-            Entity entity = (Entity) element;
-            if(!(entity instanceof LOTREntityNPC) || entity == this.theEntity || parentToFollowID == null || !entity.getUniqueID().equals(parentToFollowID)) continue;
-            return (LOTREntityNPC) entity;
-        }
-        return null;
-    }
+	public void sendDataToAllWatchers() {
+		int x = MathHelper.floor_double(theEntity.posX) >> 4;
+		int z = MathHelper.floor_double(theEntity.posZ) >> 4;
+		PlayerManager playermanager = ((WorldServer) theEntity.worldObj).getPlayerManager();
+		List players = theEntity.worldObj.playerEntities;
+		for (Object obj : players) {
+			EntityPlayerMP entityplayer = (EntityPlayerMP) obj;
+			if (!playermanager.isPlayerWatchingChunk(entityplayer, x, z)) {
+				continue;
+			}
+			sendData(entityplayer);
+		}
+	}
 
-    public boolean interact(EntityPlayer entityplayer) {
-        if(this.theEntity.hiredNPCInfo.isActive) {
-            return false;
-        }
-        ItemStack itemstack = entityplayer.inventory.getCurrentItem();
-        if(itemstack != null && itemstack.getItem() == this.marriageRing && LOTRLevelData.getData(entityplayer).getAlignment(this.theEntity.getFaction()) >= this.marriageAlignmentRequired && this.theEntity.getClass() == this.marriageEntityClass && this.getAge() == 0 && this.theEntity.getEquipmentInSlot(0) == null && this.theEntity.getEquipmentInSlot(4) == null && this.spouseUniqueID == null) {
-            if(!entityplayer.capabilities.isCreativeMode) {
-                --itemstack.stackSize;
-                if(itemstack.stackSize <= 0) {
-                    entityplayer.inventory.setInventorySlotContents(entityplayer.inventory.currentItem, null);
-                }
-            }
-            if(!this.theEntity.worldObj.isRemote) {
-                this.theEntity.setCurrentItemOrArmor(0, new ItemStack(this.marriageRing));
-                this.ringGivingPlayer = entityplayer.getUniqueID();
-            }
-            this.theEntity.isNPCPersistent = true;
-            return true;
-        }
-        return false;
-    }
+	public void setAge(int i) {
+		age = i;
+		markDirty();
+	}
 
-    public EntityPlayer getRingGivingPlayer() {
-        if(this.ringGivingPlayer != null) {
-            for(Object obj : this.theEntity.worldObj.playerEntities) {
-                EntityPlayer entityplayer = (EntityPlayer) obj;
-                if(!entityplayer.getUniqueID().equals(this.ringGivingPlayer)) continue;
-                return entityplayer;
-            }
-        }
-        return null;
-    }
+	public void setChild() {
+		setAge(-timeToMature);
+	}
 
-    public void setChild() {
-        this.setAge(-this.timeToMature);
-    }
+	public void setDrunkTime(int i) {
+		boolean prevDrunk = isDrunk();
+		drunkTime = i;
+		if (isDrunk() != prevDrunk) {
+			markDirty();
+		}
+	}
 
-    public void setMaxBreedingDelay() {
-        float f = this.breedingDelay;
-        this.setAge((int) (f *= 0.5f + this.theEntity.getRNG().nextFloat() * 0.5f));
-    }
+	public void setMale(boolean flag) {
+		male = flag;
+		markDirty();
+	}
 
-    public int getRandomMaxChildren() {
-        return 1 + this.theEntity.getRNG().nextInt(this.potentialMaxChildren);
-    }
+	public void setMaxBreedingDelay() {
+		float f = breedingDelay;
+		setAge((int) (f *= 0.5f + theEntity.getRNG().nextFloat() * 0.5f));
+	}
 
-    public void writeToNBT(NBTTagCompound nbt) {
-        nbt.setInteger("NPCAge", this.getAge());
-        nbt.setBoolean("NPCMale", this.isMale());
-        if(this.getName() != null) {
-            nbt.setString("NPCName", this.getName());
-        }
-        nbt.setInteger("NPCDrunkTime", this.drunkTime);
-        if(this.spouseUniqueID != null) {
-            nbt.setLong("SpouseUUIDMost", this.spouseUniqueID.getMostSignificantBits());
-            nbt.setLong("SpouseUUIDLeast", this.spouseUniqueID.getLeastSignificantBits());
-        }
-        nbt.setInteger("Children", this.children);
-        nbt.setInteger("MaxChildren", this.maxChildren);
-        if(this.maleParentID != null) {
-            nbt.setLong("MaleParentUUIDMost", this.maleParentID.getMostSignificantBits());
-            nbt.setLong("MaleParentUUIDLeast", this.maleParentID.getLeastSignificantBits());
-        }
-        if(this.femaleParentID != null) {
-            nbt.setLong("FemaleParentUUIDMost", this.femaleParentID.getMostSignificantBits());
-            nbt.setLong("FemaleParentUUIDLeast", this.femaleParentID.getLeastSignificantBits());
-        }
-        if(this.ringGivingPlayer != null) {
-            nbt.setLong("RingGivingPlayerUUIDMost", this.ringGivingPlayer.getMostSignificantBits());
-            nbt.setLong("RingGivingPlayerUUIDLeast", this.ringGivingPlayer.getLeastSignificantBits());
-        }
-    }
+	public void setName(String s) {
+		name = s;
+		markDirty();
+	}
 
-    public void readFromNBT(NBTTagCompound nbt) {
-        this.setAge(nbt.getInteger("NPCAge"));
-        if(nbt.hasKey("NPCMale")) {
-            this.setMale(nbt.getBoolean("NPCMale"));
-        }
-        if(nbt.hasKey("NPCName")) {
-            this.setName(nbt.getString("NPCName"));
-        }
-        this.setDrunkTime(nbt.getInteger("NPCDrunkTime"));
-        if(nbt.hasKey("SpouseUUIDMost") && nbt.hasKey("SpouseUUIDLeast")) {
-            this.spouseUniqueID = new UUID(nbt.getLong("SpouseUUIDMost"), nbt.getLong("SpouseUUIDLeast"));
-        }
-        this.children = nbt.getInteger("Children");
-        this.maxChildren = nbt.getInteger("MaxChildren");
-        if(nbt.hasKey("MaleParentUUIDMost") && nbt.hasKey("MaleParentUUIDLeast")) {
-            this.maleParentID = new UUID(nbt.getLong("MaleParentUUIDMost"), nbt.getLong("MaleParentUUIDLeast"));
-        }
-        if(nbt.hasKey("FemaleParentUUIDMost") && nbt.hasKey("FemaleParentUUIDLeast")) {
-            this.femaleParentID = new UUID(nbt.getLong("FemaleParentUUIDMost"), nbt.getLong("FemaleParentUUIDLeast"));
-        }
-        if(nbt.hasKey("RingGivingPlayer")) {
-            this.ringGivingPlayer = new UUID(nbt.getLong("RingGivingPlayerUUIDMost"), nbt.getLong("RingGivingPlayerUUIDLeast"));
-        }
-    }
+	public void writeToNBT(NBTTagCompound nbt) {
+		nbt.setInteger("NPCAge", getAge());
+		nbt.setBoolean("NPCMale", isMale());
+		if (getName() != null) {
+			nbt.setString("NPCName", getName());
+		}
+		nbt.setInteger("NPCDrunkTime", drunkTime);
+		if (spouseUniqueID != null) {
+			nbt.setLong("SpouseUUIDMost", spouseUniqueID.getMostSignificantBits());
+			nbt.setLong("SpouseUUIDLeast", spouseUniqueID.getLeastSignificantBits());
+		}
+		nbt.setInteger("Children", children);
+		nbt.setInteger("MaxChildren", maxChildren);
+		if (maleParentID != null) {
+			nbt.setLong("MaleParentUUIDMost", maleParentID.getMostSignificantBits());
+			nbt.setLong("MaleParentUUIDLeast", maleParentID.getLeastSignificantBits());
+		}
+		if (femaleParentID != null) {
+			nbt.setLong("FemaleParentUUIDMost", femaleParentID.getMostSignificantBits());
+			nbt.setLong("FemaleParentUUIDLeast", femaleParentID.getLeastSignificantBits());
+		}
+		if (ringGivingPlayer != null) {
+			nbt.setLong("RingGivingPlayerUUIDMost", ringGivingPlayer.getMostSignificantBits());
+			nbt.setLong("RingGivingPlayerUUIDLeast", ringGivingPlayer.getLeastSignificantBits());
+		}
+	}
 }

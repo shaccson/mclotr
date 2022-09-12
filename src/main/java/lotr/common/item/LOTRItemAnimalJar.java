@@ -15,97 +15,95 @@ import net.minecraft.util.Vec3;
 import net.minecraft.world.World;
 
 public class LOTRItemAnimalJar extends LOTRItemBlockMetadata {
-    public LOTRItemAnimalJar(Block block) {
-        super(block);
-        this.setMaxStackSize(1);
-    }
+	public LOTRItemAnimalJar(Block block) {
+		super(block);
+		setMaxStackSize(1);
+	}
 
-    public static NBTTagCompound getEntityData(ItemStack itemstack) {
-        if(itemstack.hasTagCompound()) {
-            NBTTagCompound nbt;
-            if(itemstack.getTagCompound().hasKey("LOTRButterfly")) {
-                nbt = itemstack.getTagCompound().getCompoundTag("LOTRButterfly");
-                if(!nbt.hasNoTags()) {
-                    nbt.setString("id", LOTREntities.getStringFromClass(LOTREntityButterfly.class));
-                    LOTRItemAnimalJar.setEntityData(itemstack, (NBTTagCompound) nbt.copy());
-                }
-                itemstack.getTagCompound().removeTag("LOTRButterfly");
-            }
-            if(itemstack.getTagCompound().hasKey("JarEntity") && !(nbt = itemstack.getTagCompound().getCompoundTag("JarEntity")).hasNoTags()) {
-                return nbt;
-            }
-        }
-        return null;
-    }
+	@Override
+	public boolean itemInteractionForEntity(ItemStack itemstack, EntityPlayer entityplayer, EntityLivingBase entity) {
+		itemstack = entityplayer.getCurrentEquippedItem();
+		World world = entityplayer.worldObj;
+		LOTRBlockAnimalJar jarBlock = (LOTRBlockAnimalJar) field_150939_a;
+		if (jarBlock.canCapture(entity) && LOTRItemAnimalJar.getEntityData(itemstack) == null) {
+			NBTTagCompound nbt;
+			if (!world.isRemote && entity.writeToNBTOptional(nbt = new NBTTagCompound())) {
+				LOTRItemAnimalJar.setEntityData(itemstack, nbt);
+				entity.playSound("random.pop", 0.5f, 0.5f + world.rand.nextFloat() * 0.5f);
+				entity.setDead();
+				if (entity instanceof LOTREntityButterfly) {
+					LOTRLevelData.getData(entityplayer).addAchievement(LOTRAchievement.catchButterfly);
+				}
+			}
+			return true;
+		}
+		return false;
+	}
 
-    public static void setEntityData(ItemStack itemstack, NBTTagCompound nbt) {
-        if(itemstack.getTagCompound() == null) {
-            itemstack.setTagCompound(new NBTTagCompound());
-        }
-        if(nbt == null) {
-            itemstack.getTagCompound().removeTag("JarEntity");
-        }
-        else {
-            itemstack.getTagCompound().setTag("JarEntity", nbt);
-        }
-    }
+	@Override
+	public ItemStack onItemRightClick(ItemStack itemstack, World world, EntityPlayer entityplayer) {
+		Entity jarEntity;
+		if (!world.isRemote && (jarEntity = LOTRItemAnimalJar.getItemJarEntity(itemstack, world)) != null) {
+			double x = entityplayer.posX;
+			double y = entityplayer.boundingBox.minY + entityplayer.getEyeHeight();
+			double z = entityplayer.posZ;
+			Vec3 look = entityplayer.getLookVec();
+			float length = 2.0f;
+			jarEntity.setLocationAndAngles(x += look.xCoord * length, y += look.yCoord * length, z += look.zCoord * length, world.rand.nextFloat(), 0.0f);
+			world.spawnEntityInWorld(jarEntity);
+			jarEntity.playSound("random.pop", 0.5f, 0.5f + world.rand.nextFloat() * 0.5f);
+			LOTRItemAnimalJar.setEntityData(itemstack, null);
+		}
+		return itemstack;
+	}
 
-    public static Entity getItemJarEntity(ItemStack itemstack, World world) {
-        NBTTagCompound nbt = LOTRItemAnimalJar.getEntityData(itemstack);
-        if(nbt != null) {
-            Entity jarEntity = EntityList.createEntityFromNBT(nbt, world);
-            return jarEntity;
-        }
-        return null;
-    }
+	@Override
+	public boolean placeBlockAt(ItemStack itemstack, EntityPlayer entityplayer, World world, int i, int j, int k, int side, float f, float f1, float f2, int metadata) {
+		if (super.placeBlockAt(itemstack, entityplayer, world, i, j, k, side, f, f1, f2, metadata)) {
+			TileEntity tileentity = world.getTileEntity(i, j, k);
+			if (tileentity instanceof LOTRTileEntityAnimalJar) {
+				LOTRTileEntityAnimalJar jar = (LOTRTileEntityAnimalJar) tileentity;
+				jar.setEntityData(LOTRItemAnimalJar.getEntityData(itemstack));
+			}
+			return true;
+		}
+		return false;
+	}
 
-    @Override
-    public boolean placeBlockAt(ItemStack itemstack, EntityPlayer entityplayer, World world, int i, int j, int k, int side, float f, float f1, float f2, int metadata) {
-        if(super.placeBlockAt(itemstack, entityplayer, world, i, j, k, side, f, f1, f2, metadata)) {
-            TileEntity tileentity = world.getTileEntity(i, j, k);
-            if(tileentity instanceof LOTRTileEntityAnimalJar) {
-                LOTRTileEntityAnimalJar jar = (LOTRTileEntityAnimalJar) tileentity;
-                jar.setEntityData(LOTRItemAnimalJar.getEntityData(itemstack));
-            }
-            return true;
-        }
-        return false;
-    }
+	public static NBTTagCompound getEntityData(ItemStack itemstack) {
+		if (itemstack.hasTagCompound()) {
+			NBTTagCompound nbt;
+			if (itemstack.getTagCompound().hasKey("LOTRButterfly")) {
+				nbt = itemstack.getTagCompound().getCompoundTag("LOTRButterfly");
+				if (!nbt.hasNoTags()) {
+					nbt.setString("id", LOTREntities.getStringFromClass(LOTREntityButterfly.class));
+					LOTRItemAnimalJar.setEntityData(itemstack, (NBTTagCompound) nbt.copy());
+				}
+				itemstack.getTagCompound().removeTag("LOTRButterfly");
+			}
+			if (itemstack.getTagCompound().hasKey("JarEntity") && !(nbt = itemstack.getTagCompound().getCompoundTag("JarEntity")).hasNoTags()) {
+				return nbt;
+			}
+		}
+		return null;
+	}
 
-    @Override
-    public boolean itemInteractionForEntity(ItemStack itemstack, EntityPlayer entityplayer, EntityLivingBase entity) {
-        itemstack = entityplayer.getCurrentEquippedItem();
-        World world = entityplayer.worldObj;
-        LOTRBlockAnimalJar jarBlock = (LOTRBlockAnimalJar) this.field_150939_a;
-        if(jarBlock.canCapture(entity) && LOTRItemAnimalJar.getEntityData(itemstack) == null) {
-            NBTTagCompound nbt;
-            if(!world.isRemote && entity.writeToNBTOptional(nbt = new NBTTagCompound())) {
-                LOTRItemAnimalJar.setEntityData(itemstack, nbt);
-                entity.playSound("random.pop", 0.5f, 0.5f + world.rand.nextFloat() * 0.5f);
-                entity.setDead();
-                if(entity instanceof LOTREntityButterfly) {
-                    LOTRLevelData.getData(entityplayer).addAchievement(LOTRAchievement.catchButterfly);
-                }
-            }
-            return true;
-        }
-        return false;
-    }
+	public static Entity getItemJarEntity(ItemStack itemstack, World world) {
+		NBTTagCompound nbt = LOTRItemAnimalJar.getEntityData(itemstack);
+		if (nbt != null) {
+			return EntityList.createEntityFromNBT(nbt, world);
+		}
+		return null;
+	}
 
-    @Override
-    public ItemStack onItemRightClick(ItemStack itemstack, World world, EntityPlayer entityplayer) {
-        Entity jarEntity;
-        if(!world.isRemote && (jarEntity = LOTRItemAnimalJar.getItemJarEntity(itemstack, world)) != null) {
-            double x = entityplayer.posX;
-            double y = entityplayer.boundingBox.minY + entityplayer.getEyeHeight();
-            double z = entityplayer.posZ;
-            Vec3 look = entityplayer.getLookVec();
-            float length = 2.0f;
-            jarEntity.setLocationAndAngles(x += look.xCoord * length, y += look.yCoord * length, z += look.zCoord * length, world.rand.nextFloat(), 0.0f);
-            world.spawnEntityInWorld(jarEntity);
-            jarEntity.playSound("random.pop", 0.5f, 0.5f + world.rand.nextFloat() * 0.5f);
-            LOTRItemAnimalJar.setEntityData(itemstack, null);
-        }
-        return itemstack;
-    }
+	public static void setEntityData(ItemStack itemstack, NBTTagCompound nbt) {
+		if (itemstack.getTagCompound() == null) {
+			itemstack.setTagCompound(new NBTTagCompound());
+		}
+		if (nbt == null) {
+			itemstack.getTagCompound().removeTag("JarEntity");
+		} else {
+			itemstack.getTagCompound().setTag("JarEntity", nbt);
+		}
+	}
 }

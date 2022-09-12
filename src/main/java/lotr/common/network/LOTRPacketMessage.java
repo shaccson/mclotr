@@ -6,40 +6,39 @@ import io.netty.buffer.ByteBuf;
 import lotr.common.*;
 
 public class LOTRPacketMessage implements IMessage {
-    private LOTRGuiMessageTypes message;
+	public LOTRGuiMessageTypes message;
 
-    public LOTRPacketMessage() {
-    }
+	public LOTRPacketMessage() {
+	}
 
-    public LOTRPacketMessage(LOTRGuiMessageTypes m) {
-        this.message = m;
-    }
+	public LOTRPacketMessage(LOTRGuiMessageTypes m) {
+		message = m;
+	}
 
-    @Override
-    public void toBytes(ByteBuf data) {
-        data.writeByte(this.message.ordinal());
-    }
+	@Override
+	public void fromBytes(ByteBuf data) {
+		byte messageID = data.readByte();
+		if (messageID < 0 || messageID >= LOTRGuiMessageTypes.values().length) {
+			FMLLog.severe("Failed to display LOTR message: There is no message with ID " + messageID);
+			message = null;
+		} else {
+			message = LOTRGuiMessageTypes.values()[messageID];
+		}
+	}
 
-    @Override
-    public void fromBytes(ByteBuf data) {
-        byte messageID = data.readByte();
-        if(messageID < 0 || messageID >= LOTRGuiMessageTypes.values().length) {
-            FMLLog.severe("Failed to display LOTR message: There is no message with ID " + messageID);
-            this.message = null;
-        }
-        else {
-            this.message = LOTRGuiMessageTypes.values()[messageID];
-        }
-    }
+	@Override
+	public void toBytes(ByteBuf data) {
+		data.writeByte(message.ordinal());
+	}
 
-    public static class Handler implements IMessageHandler<LOTRPacketMessage, IMessage> {
-        @Override
-        public IMessage onMessage(LOTRPacketMessage packet, MessageContext context) {
-            if(packet.message != null) {
-                LOTRMod.proxy.displayMessage(packet.message);
-            }
-            return null;
-        }
-    }
+	public static class Handler implements IMessageHandler<LOTRPacketMessage, IMessage> {
+		@Override
+		public IMessage onMessage(LOTRPacketMessage packet, MessageContext context) {
+			if (packet.message != null) {
+				LOTRMod.proxy.displayMessage(packet.message);
+			}
+			return null;
+		}
+	}
 
 }

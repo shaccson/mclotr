@@ -6,8 +6,8 @@ import net.minecraft.client.gui.inventory.GuiScreenHorseInventory;
 import net.minecraft.inventory.IInventory;
 
 public class LOTRGuiMountInventory extends GuiScreenHorseInventory {
-    public LOTRGuiMountInventory(IInventory playerInv, IInventory horseInv, LOTREntityHorse horse) {
-        super(playerInv, horseInv, horse);
-        this.inventorySlots = new LOTRContainerMountInventory(playerInv, horseInv, horse);
-    }
+	public LOTRGuiMountInventory(IInventory playerInv, IInventory horseInv, LOTREntityHorse horse) {
+		super(playerInv, horseInv, horse);
+		inventorySlots = new LOTRContainerMountInventory(playerInv, horseInv, horse);
+	}
 }

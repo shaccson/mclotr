@@ -7,36 +7,36 @@ import net.minecraft.entity.player.EntityPlayerMP;
 import net.minecraft.inventory.Container;
 
 public class LOTRPacketCoinExchange implements IMessage {
-    private int button;
+	public int button;
 
-    public LOTRPacketCoinExchange() {
-    }
+	public LOTRPacketCoinExchange() {
+	}
 
-    public LOTRPacketCoinExchange(int i) {
-        this.button = i;
-    }
+	public LOTRPacketCoinExchange(int i) {
+		button = i;
+	}
 
-    @Override
-    public void toBytes(ByteBuf data) {
-        data.writeByte(this.button);
-    }
+	@Override
+	public void fromBytes(ByteBuf data) {
+		button = data.readByte();
+	}
 
-    @Override
-    public void fromBytes(ByteBuf data) {
-        this.button = data.readByte();
-    }
+	@Override
+	public void toBytes(ByteBuf data) {
+		data.writeByte(button);
+	}
 
-    public static class Handler implements IMessageHandler<LOTRPacketCoinExchange, IMessage> {
-        @Override
-        public IMessage onMessage(LOTRPacketCoinExchange packet, MessageContext context) {
-            EntityPlayerMP entityplayer = context.getServerHandler().playerEntity;
-            Container container = entityplayer.openContainer;
-            if(container instanceof LOTRContainerCoinExchange) {
-                LOTRContainerCoinExchange coinExchange = (LOTRContainerCoinExchange) container;
-                coinExchange.handleExchangePacket(packet.button);
-            }
-            return null;
-        }
-    }
+	public static class Handler implements IMessageHandler<LOTRPacketCoinExchange, IMessage> {
+		@Override
+		public IMessage onMessage(LOTRPacketCoinExchange packet, MessageContext context) {
+			EntityPlayerMP entityplayer = context.getServerHandler().playerEntity;
+			Container container = entityplayer.openContainer;
+			if (container instanceof LOTRContainerCoinExchange) {
+				LOTRContainerCoinExchange coinExchange = (LOTRContainerCoinExchange) container;
+				coinExchange.handleExchangePacket(packet.button);
+			}
+			return null;
+		}
+	}
 
 }

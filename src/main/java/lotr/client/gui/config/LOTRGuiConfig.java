@@ -5,7 +5,7 @@ import lotr.common.LOTRConfig;
 import net.minecraft.client.gui.GuiScreen;
 
 public class LOTRGuiConfig extends GuiConfig {
-    public LOTRGuiConfig(GuiScreen parent) {
-        super(parent, LOTRConfig.getConfigElements(), "lotr", false, false, GuiConfig.getAbridgedConfigPath(LOTRConfig.config.toString()));
-    }
+	public LOTRGuiConfig(GuiScreen parent) {
+		super(parent, LOTRConfig.getConfigElements(), "lotr", false, false, GuiConfig.getAbridgedConfigPath(LOTRConfig.config.toString()));
+	}
 }

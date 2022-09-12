@@ -7,97 +7,97 @@ import net.minecraft.util.MovingObjectPosition;
 import net.minecraft.world.World;
 
 public class LOTREntitySmokeRing extends EntityThrowable {
-    public static int MAX_AGE = 300;
-    public int renderSmokeAge = -1;
-    public int prevRenderSmokeAge = -1;
+	public static int MAX_AGE = 300;
+	public int renderSmokeAge = -1;
+	public int prevRenderSmokeAge = -1;
 
-    public LOTREntitySmokeRing(World world) {
-        super(world);
-    }
+	public LOTREntitySmokeRing(World world) {
+		super(world);
+	}
 
-    public LOTREntitySmokeRing(World world, EntityLivingBase entityliving) {
-        super(world, entityliving);
-    }
+	public LOTREntitySmokeRing(World world, double d, double d1, double d2) {
+		super(world, d, d1, d2);
+	}
 
-    public LOTREntitySmokeRing(World world, double d, double d1, double d2) {
-        super(world, d, d1, d2);
-    }
+	public LOTREntitySmokeRing(World world, EntityLivingBase entityliving) {
+		super(world, entityliving);
+	}
 
-    @Override
-    protected void entityInit() {
-        super.entityInit();
-        this.dataWatcher.addObject(16, 0);
-        this.dataWatcher.addObject(17, (byte) 0);
-    }
+	@Override
+	public void entityInit() {
+		super.entityInit();
+		dataWatcher.addObject(16, 0);
+		dataWatcher.addObject(17, (byte) 0);
+	}
 
-    public int getSmokeAge() {
-        return this.dataWatcher.getWatchableObjectInt(16);
-    }
+	@Override
+	public float func_70182_d() {
+		return 0.1f;
+	}
 
-    public void setSmokeAge(int age) {
-        this.dataWatcher.updateObject(16, age);
-    }
+	@Override
+	public float getGravityVelocity() {
+		return 0.0f;
+	}
 
-    public int getSmokeColour() {
-        return this.dataWatcher.getWatchableObjectByte(17);
-    }
+	public float getRenderSmokeAge(float f) {
+		float smokeAge = prevRenderSmokeAge + (renderSmokeAge - prevRenderSmokeAge) * f;
+		return smokeAge / MAX_AGE;
+	}
 
-    public void setSmokeColour(int colour) {
-        this.dataWatcher.updateObject(17, (byte) colour);
-    }
+	public int getSmokeAge() {
+		return dataWatcher.getWatchableObjectInt(16);
+	}
 
-    @Override
-    public void writeEntityToNBT(NBTTagCompound nbt) {
-        super.writeEntityToNBT(nbt);
-        nbt.setInteger("SmokeAge", this.getSmokeAge());
-        nbt.setInteger("SmokeColour", this.getSmokeColour());
-    }
+	public int getSmokeColour() {
+		return dataWatcher.getWatchableObjectByte(17);
+	}
 
-    @Override
-    public void readEntityFromNBT(NBTTagCompound nbt) {
-        super.readEntityFromNBT(nbt);
-        this.setSmokeAge(nbt.getInteger("SmokeAge"));
-        this.setSmokeColour(nbt.getInteger("SmokeColour"));
-    }
+	@Override
+	public void onImpact(MovingObjectPosition m) {
+		if (m.typeOfHit == MovingObjectPosition.MovingObjectType.ENTITY && m.entityHit == getThrower()) {
+			return;
+		}
+		if (!worldObj.isRemote) {
+			setDead();
+		}
+	}
 
-    @Override
-    public void onUpdate() {
-        super.onUpdate();
-        if(this.isInWater() && !this.worldObj.isRemote) {
-            this.setDead();
-        }
-        this.prevRenderSmokeAge = this.renderSmokeAge == -1 ? (this.renderSmokeAge = this.getSmokeAge()) : this.renderSmokeAge;
-        if(!this.worldObj.isRemote) {
-            this.setSmokeAge(this.getSmokeAge() + 1);
-            if(this.getSmokeAge() >= MAX_AGE) {
-                this.setDead();
-            }
-        }
-        this.renderSmokeAge = this.getSmokeAge();
-    }
+	@Override
+	public void onUpdate() {
+		super.onUpdate();
+		if (isInWater() && !worldObj.isRemote) {
+			setDead();
+		}
+		prevRenderSmokeAge = renderSmokeAge == -1 ? (renderSmokeAge = getSmokeAge()) : renderSmokeAge;
+		if (!worldObj.isRemote) {
+			setSmokeAge(getSmokeAge() + 1);
+			if (getSmokeAge() >= MAX_AGE) {
+				setDead();
+			}
+		}
+		renderSmokeAge = getSmokeAge();
+	}
 
-    public float getRenderSmokeAge(float f) {
-        float smokeAge = this.prevRenderSmokeAge + (this.renderSmokeAge - this.prevRenderSmokeAge) * f;
-        return smokeAge / MAX_AGE;
-    }
+	@Override
+	public void readEntityFromNBT(NBTTagCompound nbt) {
+		super.readEntityFromNBT(nbt);
+		setSmokeAge(nbt.getInteger("SmokeAge"));
+		setSmokeColour(nbt.getInteger("SmokeColour"));
+	}
 
-    @Override
-    protected void onImpact(MovingObjectPosition m) {
-        if(m.typeOfHit == MovingObjectPosition.MovingObjectType.ENTITY && m.entityHit == this.getThrower()) {
-            return;
-        }
-        if(!this.worldObj.isRemote) {
-            this.setDead();
-        }
-    }
+	public void setSmokeAge(int age) {
+		dataWatcher.updateObject(16, age);
+	}
 
-    @Override
-    protected float func_70182_d() {
-        return 0.1f;
-    }
+	public void setSmokeColour(int colour) {
+		dataWatcher.updateObject(17, (byte) colour);
+	}
 
-    @Override
-    protected float getGravityVelocity() {
-        return 0.0f;
-    }
+	@Override
+	public void writeEntityToNBT(NBTTagCompound nbt) {
+		super.writeEntityToNBT(nbt);
+		nbt.setInteger("SmokeAge", getSmokeAge());
+		nbt.setInteger("SmokeColour", getSmokeColour());
+	}
 }

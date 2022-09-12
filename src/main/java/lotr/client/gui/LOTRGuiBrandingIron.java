@@ -11,93 +11,92 @@ import net.minecraft.item.ItemStack;
 import net.minecraft.util.*;
 
 public class LOTRGuiBrandingIron extends LOTRGuiScreenBase {
-    private static final ResourceLocation guiTexture = new ResourceLocation("lotr:gui/brandingIron.png");
-    private static final RenderItem itemRenderer = new RenderItem();
-    private int xSize = 200;
-    private int ySize = 132;
-    private int guiLeft;
-    private int guiTop;
-    private GuiButton buttonDone;
-    private GuiTextField brandNameField;
-    private ItemStack theItem;
+	public static ResourceLocation guiTexture = new ResourceLocation("lotr:gui/brandingIron.png");
+	public static RenderItem itemRenderer = new RenderItem();
+	public int xSize = 200;
+	public int ySize = 132;
+	public int guiLeft;
+	public int guiTop;
+	public GuiButton buttonDone;
+	public GuiTextField brandNameField;
+	public ItemStack theItem;
 
-    @Override
-    public void initGui() {
-        this.guiLeft = (this.width - this.xSize) / 2;
-        this.guiTop = (this.height - this.ySize) / 2;
-        this.buttonDone = new GuiButton(1, this.guiLeft + this.xSize / 2 - 40, this.guiTop + 97, 80, 20, StatCollector.translateToLocal("lotr.gui.brandingIron.done"));
-        this.buttonList.add(this.buttonDone);
-        ItemStack itemstack = this.mc.thePlayer.inventory.getCurrentItem();
-        if(itemstack != null && itemstack.getItem() instanceof LOTRItemBrandingIron) {
-            this.theItem = itemstack;
-            this.brandNameField = new GuiTextField(this.fontRendererObj, this.guiLeft + this.xSize / 2 - 80, this.guiTop + 50, 160, 20);
-        }
-        if(this.theItem == null) {
-            this.mc.thePlayer.closeScreen();
-        }
-    }
+	@Override
+	public void actionPerformed(GuiButton button) {
+		if (button == buttonDone) {
+			mc.thePlayer.closeScreen();
+		}
+	}
 
-    @Override
-    public void drawScreen(int i, int j, float f) {
-        this.drawDefaultBackground();
-        GL11.glColor4f(1.0f, 1.0f, 1.0f, 1.0f);
-        this.mc.getTextureManager().bindTexture(guiTexture);
-        this.drawTexturedModalRect(this.guiLeft, this.guiTop, 0, 0, this.xSize, this.ySize);
-        String s = StatCollector.translateToLocal("lotr.gui.brandingIron.title");
-        this.fontRendererObj.drawString(s, this.guiLeft + this.xSize / 2 - this.fontRendererObj.getStringWidth(s) / 2, this.guiTop + 11, 4210752);
-        s = StatCollector.translateToLocal("lotr.gui.brandingIron.naming");
-        this.fontRendererObj.drawString(s, this.brandNameField.xPosition, this.brandNameField.yPosition - this.fontRendererObj.FONT_HEIGHT - 3, 4210752);
-        s = StatCollector.translateToLocal("lotr.gui.brandingIron.unnameHint");
-        this.fontRendererObj.drawString(s, this.brandNameField.xPosition, this.brandNameField.yPosition + this.brandNameField.height + 3, 4210752);
-        this.brandNameField.drawTextBox();
-        this.buttonDone.enabled = !StringUtils.isBlank(this.brandNameField.getText());
-        super.drawScreen(i, j, f);
-        if(this.theItem != null) {
-            itemRenderer.renderItemIntoGUI(this.fontRendererObj, this.mc.getTextureManager(), this.theItem, this.guiLeft + 8, this.guiTop + 8);
-        }
-    }
+	@Override
+	public void drawScreen(int i, int j, float f) {
+		drawDefaultBackground();
+		GL11.glColor4f(1.0f, 1.0f, 1.0f, 1.0f);
+		mc.getTextureManager().bindTexture(guiTexture);
+		this.drawTexturedModalRect(guiLeft, guiTop, 0, 0, xSize, ySize);
+		String s = StatCollector.translateToLocal("lotr.gui.brandingIron.title");
+		fontRendererObj.drawString(s, guiLeft + xSize / 2 - fontRendererObj.getStringWidth(s) / 2, guiTop + 11, 4210752);
+		s = StatCollector.translateToLocal("lotr.gui.brandingIron.naming");
+		fontRendererObj.drawString(s, brandNameField.xPosition, brandNameField.yPosition - fontRendererObj.FONT_HEIGHT - 3, 4210752);
+		s = StatCollector.translateToLocal("lotr.gui.brandingIron.unnameHint");
+		fontRendererObj.drawString(s, brandNameField.xPosition, brandNameField.yPosition + brandNameField.height + 3, 4210752);
+		brandNameField.drawTextBox();
+		buttonDone.enabled = !StringUtils.isBlank(brandNameField.getText());
+		super.drawScreen(i, j, f);
+		if (theItem != null) {
+			itemRenderer.renderItemIntoGUI(fontRendererObj, mc.getTextureManager(), theItem, guiLeft + 8, guiTop + 8);
+		}
+	}
 
-    @Override
-    public void updateScreen() {
-        super.updateScreen();
-        this.brandNameField.updateCursorCounter();
-        ItemStack itemstack = this.mc.thePlayer.getCurrentEquippedItem();
-        if(itemstack == null || !(itemstack.getItem() instanceof LOTRItemBrandingIron)) {
-            this.mc.thePlayer.closeScreen();
-        }
-        else {
-            this.theItem = itemstack;
-        }
-    }
+	@Override
+	public void initGui() {
+		guiLeft = (width - xSize) / 2;
+		guiTop = (height - ySize) / 2;
+		buttonDone = new GuiButton(1, guiLeft + xSize / 2 - 40, guiTop + 97, 80, 20, StatCollector.translateToLocal("lotr.gui.brandingIron.done"));
+		buttonList.add(buttonDone);
+		ItemStack itemstack = mc.thePlayer.inventory.getCurrentItem();
+		if (itemstack != null && itemstack.getItem() instanceof LOTRItemBrandingIron) {
+			theItem = itemstack;
+			brandNameField = new GuiTextField(fontRendererObj, guiLeft + xSize / 2 - 80, guiTop + 50, 160, 20);
+		}
+		if (theItem == null) {
+			mc.thePlayer.closeScreen();
+		}
+	}
 
-    @Override
-    protected void actionPerformed(GuiButton button) {
-        if(button == this.buttonDone) {
-            this.mc.thePlayer.closeScreen();
-        }
-    }
+	@Override
+	public void keyTyped(char c, int i) {
+		if (brandNameField.getVisible() && brandNameField.textboxKeyTyped(c, i)) {
+			return;
+		}
+		super.keyTyped(c, i);
+	}
 
-    @Override
-    protected void keyTyped(char c, int i) {
-        if(this.brandNameField.getVisible() && this.brandNameField.textboxKeyTyped(c, i)) {
-            return;
-        }
-        super.keyTyped(c, i);
-    }
+	@Override
+	public void mouseClicked(int i, int j, int k) {
+		super.mouseClicked(i, j, k);
+		brandNameField.mouseClicked(i, j, k);
+	}
 
-    @Override
-    protected void mouseClicked(int i, int j, int k) {
-        super.mouseClicked(i, j, k);
-        this.brandNameField.mouseClicked(i, j, k);
-    }
+	@Override
+	public void onGuiClosed() {
+		super.onGuiClosed();
+		String brandName = brandNameField.getText();
+		if (!StringUtils.isBlank(brandName)) {
+			LOTRPacketBrandingIron packet = new LOTRPacketBrandingIron(brandName);
+			LOTRPacketHandler.networkWrapper.sendToServer(packet);
+		}
+	}
 
-    @Override
-    public void onGuiClosed() {
-        super.onGuiClosed();
-        String brandName = this.brandNameField.getText();
-        if(!StringUtils.isBlank(brandName)) {
-            LOTRPacketBrandingIron packet = new LOTRPacketBrandingIron(brandName);
-            LOTRPacketHandler.networkWrapper.sendToServer(packet);
-        }
-    }
+	@Override
+	public void updateScreen() {
+		super.updateScreen();
+		brandNameField.updateCursorCounter();
+		ItemStack itemstack = mc.thePlayer.getCurrentEquippedItem();
+		if (itemstack == null || !(itemstack.getItem() instanceof LOTRItemBrandingIron)) {
+			mc.thePlayer.closeScreen();
+		} else {
+			theItem = itemstack;
+		}
+	}
 }

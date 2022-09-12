@@ -6,15 +6,15 @@ import net.minecraft.entity.Entity;
 import net.minecraft.util.ResourceLocation;
 
 public class LOTRRenderSwanKnight extends LOTRRenderBiped {
-    private static LOTRRandomSkins dolAmrothSkins;
+	public static LOTRRandomSkins dolAmrothSkins;
 
-    public LOTRRenderSwanKnight() {
-        super(new LOTRModelHuman(), 0.5f);
-        dolAmrothSkins = LOTRRandomSkins.loadSkinsList("lotr:mob/gondor/swanKnight");
-    }
+	public LOTRRenderSwanKnight() {
+		super(new LOTRModelHuman(), 0.5f);
+		dolAmrothSkins = LOTRRandomSkins.loadSkinsList("lotr:mob/gondor/swanKnight");
+	}
 
-    @Override
-    public ResourceLocation getEntityTexture(Entity entity) {
-        return dolAmrothSkins.getRandomSkin((LOTREntityNPC) entity);
-    }
+	@Override
+	public ResourceLocation getEntityTexture(Entity entity) {
+		return dolAmrothSkins.getRandomSkin((LOTREntityNPC) entity);
+	}
 }

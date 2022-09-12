@@ -3,7 +3,7 @@ package io.gitlab.dwarfyassassin.lotrucp.core.patches.base;
 import cpw.mods.fml.common.Loader;
 
 public abstract class ModPatcher extends Patcher {
-	private String modID;
+	public String modID;
 
 	public ModPatcher(String name, String modID) {
 		super(name);

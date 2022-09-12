@@ -7,22 +7,22 @@ import net.minecraft.client.renderer.texture.IIconRegister;
 import net.minecraft.util.IIcon;
 
 public class LOTRBlockBars extends LOTRBlockPane {
-    public LOTRBlockBars() {
-        super("", "", Material.iron, true);
-        this.setHardness(5.0f);
-        this.setResistance(10.0f);
-        this.setStepSound(Block.soundTypeMetal);
-    }
+	public LOTRBlockBars() {
+		super("", "", Material.iron, true);
+		setHardness(5.0f);
+		setResistance(10.0f);
+		setStepSound(Block.soundTypeMetal);
+	}
 
-    @SideOnly(value = Side.CLIENT)
-    @Override
-    public void registerBlockIcons(IIconRegister iconregister) {
-        this.blockIcon = iconregister.registerIcon(this.getTextureName());
-    }
+	@SideOnly(value = Side.CLIENT)
+	@Override
+	public IIcon func_150097_e() {
+		return blockIcon;
+	}
 
-    @SideOnly(value = Side.CLIENT)
-    @Override
-    public IIcon func_150097_e() {
-        return this.blockIcon;
-    }
+	@SideOnly(value = Side.CLIENT)
+	@Override
+	public void registerBlockIcons(IIconRegister iconregister) {
+		blockIcon = iconregister.registerIcon(getTextureName());
+	}
 }

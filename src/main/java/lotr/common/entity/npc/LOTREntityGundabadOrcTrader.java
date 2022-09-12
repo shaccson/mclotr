@@ -7,61 +7,61 @@ import net.minecraft.item.ItemStack;
 import net.minecraft.world.World;
 
 public class LOTREntityGundabadOrcTrader extends LOTREntityGundabadOrc implements LOTRTradeable.Smith {
-    public LOTREntityGundabadOrcTrader(World world) {
-        super(world);
-        this.addTargetTasks(false);
-    }
+	public LOTREntityGundabadOrcTrader(World world) {
+		super(world);
+		this.addTargetTasks(false);
+	}
 
-    @Override
-    public LOTRTradeEntries getBuyPool() {
-        return LOTRTradeEntries.GUNDABAD_TRADER_BUY;
-    }
+	@Override
+	public boolean canTradeWith(EntityPlayer entityplayer) {
+		return LOTRLevelData.getData(entityplayer).getAlignment(getFaction()) >= 50.0f && isFriendly(entityplayer);
+	}
 
-    @Override
-    public LOTRTradeEntries getSellPool() {
-        return LOTRTradeEntries.GUNDABAD_TRADER_SELL;
-    }
+	@Override
+	public float getAlignmentBonus() {
+		return 2.0f;
+	}
 
-    @Override
-    public IEntityLivingData onSpawnWithEgg(IEntityLivingData data) {
-        data = super.onSpawnWithEgg(data);
-        this.npcItemsInv.setMeleeWeapon(new ItemStack(LOTRMod.daggerOrcPoisoned));
-        this.npcItemsInv.setIdleItem(this.npcItemsInv.getMeleeWeapon());
-        this.setCurrentItemOrArmor(1, new ItemStack(LOTRMod.bootsFur));
-        this.setCurrentItemOrArmor(2, new ItemStack(LOTRMod.legsFur));
-        this.setCurrentItemOrArmor(3, new ItemStack(LOTRMod.bodyFur));
-        this.setCurrentItemOrArmor(4, new ItemStack(LOTRMod.helmetFur));
-        return data;
-    }
+	@Override
+	public LOTRTradeEntries getBuyPool() {
+		return LOTRTradeEntries.GUNDABAD_TRADER_BUY;
+	}
 
-    @Override
-    public float getAlignmentBonus() {
-        return 2.0f;
-    }
+	@Override
+	public LOTRTradeEntries getSellPool() {
+		return LOTRTradeEntries.GUNDABAD_TRADER_SELL;
+	}
 
-    @Override
-    public boolean canTradeWith(EntityPlayer entityplayer) {
-        return LOTRLevelData.getData(entityplayer).getAlignment(this.getFaction()) >= 50.0f && this.isFriendly(entityplayer);
-    }
+	@Override
+	public String getSpeechBank(EntityPlayer entityplayer) {
+		if (isFriendly(entityplayer)) {
+			if (canTradeWith(entityplayer)) {
+				return "gundabad/trader/friendly";
+			}
+			return "gundabad/trader/neutral";
+		}
+		return "gundabad/orc/hostile";
+	}
 
-    @Override
-    public void onPlayerTrade(EntityPlayer entityplayer, LOTRTradeEntries.TradeType type, ItemStack itemstack) {
-        LOTRLevelData.getData(entityplayer).addAchievement(LOTRAchievement.tradeGundabadTrader);
-    }
+	@Override
+	public void onPlayerTrade(EntityPlayer entityplayer, LOTRTradeEntries.TradeType type, ItemStack itemstack) {
+		LOTRLevelData.getData(entityplayer).addAchievement(LOTRAchievement.tradeGundabadTrader);
+	}
 
-    @Override
-    public boolean shouldTraderRespawn() {
-        return true;
-    }
+	@Override
+	public IEntityLivingData onSpawnWithEgg(IEntityLivingData data) {
+		data = super.onSpawnWithEgg(data);
+		npcItemsInv.setMeleeWeapon(new ItemStack(LOTRMod.daggerOrcPoisoned));
+		npcItemsInv.setIdleItem(npcItemsInv.getMeleeWeapon());
+		setCurrentItemOrArmor(1, new ItemStack(LOTRMod.bootsFur));
+		setCurrentItemOrArmor(2, new ItemStack(LOTRMod.legsFur));
+		setCurrentItemOrArmor(3, new ItemStack(LOTRMod.bodyFur));
+		setCurrentItemOrArmor(4, new ItemStack(LOTRMod.helmetFur));
+		return data;
+	}
 
-    @Override
-    public String getSpeechBank(EntityPlayer entityplayer) {
-        if(this.isFriendly(entityplayer)) {
-            if(this.canTradeWith(entityplayer)) {
-                return "gundabad/trader/friendly";
-            }
-            return "gundabad/trader/neutral";
-        }
-        return "gundabad/orc/hostile";
-    }
+	@Override
+	public boolean shouldTraderRespawn() {
+		return true;
+	}
 }

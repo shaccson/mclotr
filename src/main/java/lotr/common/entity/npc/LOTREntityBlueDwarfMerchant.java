@@ -6,56 +6,56 @@ import net.minecraft.item.ItemStack;
 import net.minecraft.world.World;
 
 public class LOTREntityBlueDwarfMerchant extends LOTREntityBlueDwarf implements LOTRTravellingTrader {
-    public LOTREntityBlueDwarfMerchant(World world) {
-        super(world);
-        this.addTargetTasks(false);
-    }
+	public LOTREntityBlueDwarfMerchant(World world) {
+		super(world);
+		this.addTargetTasks(false);
+	}
 
-    @Override
-    public LOTRTradeEntries getBuyPool() {
-        return LOTRTradeEntries.BLUE_DWARF_MERCHANT_BUY;
-    }
+	@Override
+	public boolean canTradeWith(EntityPlayer entityplayer) {
+		return LOTRLevelData.getData(entityplayer).getAlignment(getFaction()) >= 0.0f && isFriendly(entityplayer);
+	}
 
-    @Override
-    public LOTRTradeEntries getSellPool() {
-        return LOTRTradeEntries.BLUE_DWARF_MERCHANT_SELL;
-    }
+	@Override
+	public LOTREntityNPC createTravellingEscort() {
+		return new LOTREntityBlueDwarf(worldObj);
+	}
 
-    @Override
-    public LOTREntityNPC createTravellingEscort() {
-        return new LOTREntityBlueDwarf(this.worldObj);
-    }
+	@Override
+	public float getAlignmentBonus() {
+		return 2.0f;
+	}
 
-    @Override
-    public String getDepartureSpeech() {
-        return "blueDwarf/merchant/departure";
-    }
+	@Override
+	public LOTRTradeEntries getBuyPool() {
+		return LOTRTradeEntries.BLUE_DWARF_MERCHANT_BUY;
+	}
 
-    @Override
-    public float getAlignmentBonus() {
-        return 2.0f;
-    }
+	@Override
+	public String getDepartureSpeech() {
+		return "blueDwarf/merchant/departure";
+	}
 
-    @Override
-    public boolean canTradeWith(EntityPlayer entityplayer) {
-        return LOTRLevelData.getData(entityplayer).getAlignment(this.getFaction()) >= 0.0f && this.isFriendly(entityplayer);
-    }
+	@Override
+	public LOTRTradeEntries getSellPool() {
+		return LOTRTradeEntries.BLUE_DWARF_MERCHANT_SELL;
+	}
 
-    @Override
-    public void onPlayerTrade(EntityPlayer entityplayer, LOTRTradeEntries.TradeType type, ItemStack itemstack) {
-        LOTRLevelData.getData(entityplayer).addAchievement(LOTRAchievement.tradeBlueDwarfMerchant);
-    }
+	@Override
+	public String getSpeechBank(EntityPlayer entityplayer) {
+		if (isFriendly(entityplayer)) {
+			return "blueDwarf/merchant/friendly";
+		}
+		return "blueDwarf/dwarf/hostile";
+	}
 
-    @Override
-    public boolean shouldTraderRespawn() {
-        return false;
-    }
+	@Override
+	public void onPlayerTrade(EntityPlayer entityplayer, LOTRTradeEntries.TradeType type, ItemStack itemstack) {
+		LOTRLevelData.getData(entityplayer).addAchievement(LOTRAchievement.tradeBlueDwarfMerchant);
+	}
 
-    @Override
-    public String getSpeechBank(EntityPlayer entityplayer) {
-        if(this.isFriendly(entityplayer)) {
-            return "blueDwarf/merchant/friendly";
-        }
-        return "blueDwarf/dwarf/hostile";
-    }
+	@Override
+	public boolean shouldTraderRespawn() {
+		return false;
+	}
 }

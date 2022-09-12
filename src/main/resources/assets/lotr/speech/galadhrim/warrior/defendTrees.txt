@@ -1,15 +1,14 @@
-Вам нет ходу в Лориэн, #!
-Не тронь деревья золотого леса!
-Вам здесь не рады!
-Мы не позволим рабу зла прикасаться к нашим деревьям!
-Опусти топор!
-Сюда нельзя таскать топоры! Убери его, и сам убирайся!
-Я не позволю рубить мэллорны!
-Вам не пройти в Лотлориэн, #!
-Дереву этого леса не пасть от рук зла!
-Те, кто приносит огонь и разрушение в Лориэн, будут иметь дело с нами!
-Зло не пустят в эти земли!
-Не смей трогать наши деревья, раб Саурона!
-Убирайся с наших земель, отродье Моргота!
-Отродье Моргота! Ты заплатишь за это!
-Ты ответишь за свершённое, #!
+You may not enter Lórien, #!
+Do not touch the trees of the Golden Wood!
+You are not welcome here!
+No evil hand shall slay the trees of Lothlórien!
+The axes of the Enemy are forbidden here!
+The Mallorn trees shall not be felled!
+You may not set foot in Lothlórien, #!
+No tree shall fall by evil hand in this wood!
+Those who bring destruction to Lórien will be met with it themselves!
+Evil is not allowed in these lands!
+How dare you fell the beautiful trees of the Golden Wood? You are truly a servant of evil.
+What evil is this? Begone from our lands, spawn of Morgoth.
+Foul spawn of Morgoth! You shall pay for defiling the trees of the Golden Wood.
+You shall answer for your crimes, #!

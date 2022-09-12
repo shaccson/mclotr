@@ -1,12 +1,12 @@
-Хотите командовать лучниками Мортонда, #?
-Наши силы будут в Вашем распоряжении всего за две дюжины серебряных монет.
-Наши лучники не работают бесплатно, #!
-Принесите мне деньги, и сможете нанять отряд лучников Мортонда.
-Вы здесь с целью найма моих лучников?
-Я могу предоставить Вам несколько солдат в обмен на серебряные монеты.
-Жители Морнана уважают Вас, они готовы пойти за Вами куда угодно, #.
-Народ Мортонда доверяет Вам, #. Вам позволили взять отряд под своё командование.
-Хотите командовать могучими лучниками Морнанской долины?
-Всего за несколько серебряных монет Вы можете нанять метких и отважных стрелков Мортонда!
-Если Вы хотите взять мои отряды под свои знамёна, Вам придётся мне заплатить.
-Заплати мне, и получишь отряд.
+Do you seek to command the soldiers of the Blackroot Vale, #?
+Our forces can be yours to command for only a small sum of silver.
+Our soldiers need paying, #!
+Bring some silver coins and you can have some hired bowmen.
+Are you here with the intention of hiring my archers?
+I can grant you some soldiers in return for silver coins.
+The Men of Mornan now respect you enough to follow you into battle, #.
+The people of the Blackroot Vale trust you, #. You may command our valiant bowmen.
+Do you wish to command the mighty bowmen of the Blackroot Vale?
+For a few dozen silver coins, you can command very valiant and loyal soldiers.
+If you wish to take my troops to battle, you'll have to pay for them!
+Give me some silver coins and I'll give you some soldiers!

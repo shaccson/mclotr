@@ -8,20 +8,20 @@ import net.minecraft.client.renderer.texture.IIconRegister;
 import net.minecraft.util.IIcon;
 
 public class LOTRBlockSlabThatch extends LOTRBlockSlabBase {
-    public LOTRBlockSlabThatch(boolean flag) {
-        super(flag, Material.grass, 2);
-        this.setHardness(0.5f);
-        this.setStepSound(Block.soundTypeGrass);
-    }
+	public LOTRBlockSlabThatch(boolean flag) {
+		super(flag, Material.grass, 2);
+		setHardness(0.5f);
+		setStepSound(Block.soundTypeGrass);
+	}
 
-    @SideOnly(value = Side.CLIENT)
-    @Override
-    public IIcon getIcon(int i, int j) {
-        return LOTRMod.thatch.getIcon(i, j &= 7);
-    }
+	@SideOnly(value = Side.CLIENT)
+	@Override
+	public IIcon getIcon(int i, int j) {
+		return LOTRMod.thatch.getIcon(i, j &= 7);
+	}
 
-    @SideOnly(value = Side.CLIENT)
-    @Override
-    public void registerBlockIcons(IIconRegister iconregister) {
-    }
+	@SideOnly(value = Side.CLIENT)
+	@Override
+	public void registerBlockIcons(IIconRegister iconregister) {
+	}
 }

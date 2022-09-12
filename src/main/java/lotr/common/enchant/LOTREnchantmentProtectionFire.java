@@ -4,22 +4,22 @@ import net.minecraft.item.ItemStack;
 import net.minecraft.util.*;
 
 public class LOTREnchantmentProtectionFire extends LOTREnchantmentProtectionSpecial {
-    public LOTREnchantmentProtectionFire(String s, int level) {
-        super(s, level);
-    }
+	public LOTREnchantmentProtectionFire(String s, int level) {
+		super(s, level);
+	}
 
-    @Override
-    public String getDescription(ItemStack itemstack) {
-        return StatCollector.translateToLocalFormatted("lotr.enchant.protectFire.desc", this.formatAdditiveInt(this.calcIntProtection()));
-    }
+	@Override
+	public int calcIntProtection() {
+		return 1 + protectLevel;
+	}
 
-    @Override
-    protected boolean protectsAgainst(DamageSource source) {
-        return source.isFireDamage();
-    }
+	@Override
+	public String getDescription(ItemStack itemstack) {
+		return StatCollector.translateToLocalFormatted("lotr.enchant.protectFire.desc", formatAdditiveInt(calcIntProtection()));
+	}
 
-    @Override
-    protected int calcIntProtection() {
-        return 1 + this.protectLevel;
-    }
+	@Override
+	public boolean protectsAgainst(DamageSource source) {
+		return source.isFireDamage();
+	}
 }

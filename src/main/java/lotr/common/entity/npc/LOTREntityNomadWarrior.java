@@ -8,67 +8,65 @@ import net.minecraft.item.ItemStack;
 import net.minecraft.world.World;
 
 public class LOTREntityNomadWarrior extends LOTREntityNomad {
-    private static ItemStack[] weaponsBronze = new ItemStack[] {new ItemStack(LOTRMod.swordHarad), new ItemStack(LOTRMod.swordHarad), new ItemStack(LOTRMod.swordHarad), new ItemStack(LOTRMod.daggerHarad), new ItemStack(LOTRMod.daggerHaradPoisoned), new ItemStack(LOTRMod.pikeHarad)};
+	public static ItemStack[] weaponsBronze = { new ItemStack(LOTRMod.swordHarad), new ItemStack(LOTRMod.swordHarad), new ItemStack(LOTRMod.swordHarad), new ItemStack(LOTRMod.daggerHarad), new ItemStack(LOTRMod.daggerHaradPoisoned), new ItemStack(LOTRMod.pikeHarad) };
 
-    public LOTREntityNomadWarrior(World world) {
-        super(world);
-        this.addTargetTasks(true);
-        this.spawnRidingHorse = this.rand.nextInt(8) == 0;
-        this.npcShield = null;
-    }
+	public LOTREntityNomadWarrior(World world) {
+		super(world);
+		this.addTargetTasks(true);
+		spawnRidingHorse = rand.nextInt(8) == 0;
+		npcShield = null;
+	}
 
-    @Override
-    public void setupNPCGender() {
-        this.familyInfo.setMale(true);
-    }
+	@Override
+	public void applyEntityAttributes() {
+		super.applyEntityAttributes();
+		getEntityAttribute(npcRangedAccuracy).setBaseValue(0.75);
+	}
 
-    @Override
-    protected void applyEntityAttributes() {
-        super.applyEntityAttributes();
-        this.getEntityAttribute(npcRangedAccuracy).setBaseValue(0.75);
-    }
+	@Override
+	public float getAlignmentBonus() {
+		return 2.0f;
+	}
 
-    @Override
-    public IEntityLivingData onSpawnWithEgg(IEntityLivingData data) {
-        data = super.onSpawnWithEgg(data);
-        int i = this.rand.nextInt(weaponsBronze.length);
-        this.npcItemsInv.setMeleeWeapon(weaponsBronze[i].copy());
-        if(this.rand.nextInt(6) == 0) {
-            this.npcItemsInv.setSpearBackup(this.npcItemsInv.getMeleeWeapon());
-            this.npcItemsInv.setMeleeWeapon(new ItemStack(LOTRMod.spearHarad));
-        }
-        this.npcItemsInv.setIdleItem(this.npcItemsInv.getMeleeWeapon());
-        this.setCurrentItemOrArmor(1, new ItemStack(LOTRMod.bootsNomad));
-        this.setCurrentItemOrArmor(2, new ItemStack(LOTRMod.legsNomad));
-        this.setCurrentItemOrArmor(3, new ItemStack(LOTRMod.bodyNomad));
-        if(this.rand.nextInt(10) == 0) {
-            this.setCurrentItemOrArmor(4, null);
-        }
-        else if(this.rand.nextInt(3) == 0) {
-            ItemStack turban = new ItemStack(LOTRMod.helmetHaradRobes);
-            int robeColor = nomadTurbanColors[this.rand.nextInt(nomadTurbanColors.length)];
-            LOTRItemHaradRobes.setRobesColor(turban, robeColor);
-            this.setCurrentItemOrArmor(4, turban);
-        }
-        else {
-            this.setCurrentItemOrArmor(4, new ItemStack(LOTRMod.helmetNomad));
-        }
-        return data;
-    }
+	@Override
+	public String getSpeechBank(EntityPlayer entityplayer) {
+		if (isFriendly(entityplayer)) {
+			if (hiredNPCInfo.getHiringPlayer() == entityplayer) {
+				return "nearHarad/nomad/warrior/hired";
+			}
+			return "nearHarad/nomad/warrior/friendly";
+		}
+		return "nearHarad/nomad/warrior/hostile";
+	}
 
-    @Override
-    public float getAlignmentBonus() {
-        return 2.0f;
-    }
+	@Override
+	public IEntityLivingData onSpawnWithEgg(IEntityLivingData data) {
+		data = super.onSpawnWithEgg(data);
+		int i = rand.nextInt(weaponsBronze.length);
+		npcItemsInv.setMeleeWeapon(weaponsBronze[i].copy());
+		if (rand.nextInt(6) == 0) {
+			npcItemsInv.setSpearBackup(npcItemsInv.getMeleeWeapon());
+			npcItemsInv.setMeleeWeapon(new ItemStack(LOTRMod.spearHarad));
+		}
+		npcItemsInv.setIdleItem(npcItemsInv.getMeleeWeapon());
+		setCurrentItemOrArmor(1, new ItemStack(LOTRMod.bootsNomad));
+		setCurrentItemOrArmor(2, new ItemStack(LOTRMod.legsNomad));
+		setCurrentItemOrArmor(3, new ItemStack(LOTRMod.bodyNomad));
+		if (rand.nextInt(10) == 0) {
+			setCurrentItemOrArmor(4, null);
+		} else if (rand.nextInt(3) == 0) {
+			ItemStack turban = new ItemStack(LOTRMod.helmetHaradRobes);
+			int robeColor = nomadTurbanColors[rand.nextInt(nomadTurbanColors.length)];
+			LOTRItemHaradRobes.setRobesColor(turban, robeColor);
+			setCurrentItemOrArmor(4, turban);
+		} else {
+			setCurrentItemOrArmor(4, new ItemStack(LOTRMod.helmetNomad));
+		}
+		return data;
+	}
 
-    @Override
-    public String getSpeechBank(EntityPlayer entityplayer) {
-        if(this.isFriendly(entityplayer)) {
-            if(this.hiredNPCInfo.getHiringPlayer() == entityplayer) {
-                return "nearHarad/nomad/warrior/hired";
-            }
-            return "nearHarad/nomad/warrior/friendly";
-        }
-        return "nearHarad/nomad/warrior/hostile";
-    }
+	@Override
+	public void setupNPCGender() {
+		familyInfo.setMale(true);
+	}
 }

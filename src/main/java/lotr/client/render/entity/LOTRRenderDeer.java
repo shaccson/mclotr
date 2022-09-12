@@ -7,17 +7,16 @@ import net.minecraft.entity.Entity;
 import net.minecraft.util.ResourceLocation;
 
 public class LOTRRenderDeer extends RenderLiving {
-    private static LOTRRandomSkins deerSkins;
+	public static LOTRRandomSkins deerSkins;
 
-    public LOTRRenderDeer() {
-        super(new LOTRModelDeer(), 0.5f);
-        deerSkins = LOTRRandomSkins.loadSkinsList("lotr:mob/deer");
-    }
+	public LOTRRenderDeer() {
+		super(new LOTRModelDeer(), 0.5f);
+		deerSkins = LOTRRandomSkins.loadSkinsList("lotr:mob/deer");
+	}
 
-    @Override
-    public ResourceLocation getEntityTexture(Entity entity) {
-        LOTREntityDeer deer = (LOTREntityDeer) entity;
-        ResourceLocation deerSkin = deerSkins.getRandomSkin(deer);
-        return deerSkin;
-    }
+	@Override
+	public ResourceLocation getEntityTexture(Entity entity) {
+		LOTREntityDeer deer = (LOTREntityDeer) entity;
+		return deerSkins.getRandomSkin(deer);
+	}
 }

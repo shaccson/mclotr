@@ -1,22 +1,24 @@
-#title:Долийские рецепты, p. 28
-#author:{name:dale_female} из Дейла
+#Written by LordDainTheAwsome
+#
+#title:Dalish Recipes, p. 28
+#author:{name:dale_female} of Dale
 #types:dale
 #reward
 #
-Долийский торт.
+Dalish Pastry.
 
-»Ингредиенты:
-* Одно яйцо;
-* Две тарелки кленового сиропа;
-* Три фунта зёрен пшеницы;
-* Одна кружка молока;
-* Две горсти какао.
+Ingredients:
+* 1 egg
+* 2 bowls of maple syrup
+* 3 pounds of wheat grain
+* 1 pint of milk
+* 2 handfuls of cocoa
 
-Инструкция:
-* Смешать семена пшеницы, молоко и яйцо в тарелке;
-* Какао-бобы измельчить и добавить в смесь;
-* Выпекать в духовке 2 часа;
-* Засыпать какао;
-* Залить торт кленовым сиропом.
+Instructions:
+* Mix wheat, egg and milk in a bowl
+* Grind cocoa beans and add to mixture
+* Bake in oven for 2 hours
+* Sprinkle with cocoa
+* Pour maple syrup in a swirl upon the cake
 
-Подавать после основного блюда.
+Serves 1.

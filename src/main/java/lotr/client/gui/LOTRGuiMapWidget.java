@@ -3,49 +3,49 @@ package lotr.client.gui;
 import net.minecraft.util.StatCollector;
 
 public class LOTRGuiMapWidget {
-    private int xPos;
-    private int yPos;
-    public final int width;
-    private String name;
-    private final int texUBase;
-    private final int texVBase;
-    private int texVIndex;
-    public boolean visible = true;
+	public int xPos;
+	public int yPos;
+	public int width;
+	public String name;
+	public int texUBase;
+	public int texVBase;
+	public int texVIndex;
+	public boolean visible = true;
 
-    public LOTRGuiMapWidget(int x, int y, int w, String s, int u, int v) {
-        this.xPos = x;
-        this.yPos = y;
-        this.width = w;
-        this.name = s;
-        this.texUBase = u;
-        this.texVBase = v;
-    }
+	public LOTRGuiMapWidget(int x, int y, int w, String s, int u, int v) {
+		xPos = x;
+		yPos = y;
+		width = w;
+		name = s;
+		texUBase = u;
+		texVBase = v;
+	}
 
-    public String getTranslatedName() {
-        return StatCollector.translateToLocal("lotr.gui.map.widget." + this.name);
-    }
+	public int getMapXPos(int mapWidth) {
+		return xPos < 0 ? mapWidth + xPos : xPos;
+	}
 
-    public void setTexVIndex(int i) {
-        this.texVIndex = i;
-    }
+	public int getMapYPos(int mapHeight) {
+		return yPos < 0 ? mapHeight + yPos : yPos;
+	}
 
-    public int getTexU() {
-        return this.texUBase;
-    }
+	public int getTexU() {
+		return texUBase;
+	}
 
-    public int getTexV() {
-        return this.texVBase + this.texVIndex * this.width;
-    }
+	public int getTexV() {
+		return texVBase + texVIndex * width;
+	}
 
-    public int getMapXPos(int mapWidth) {
-        return this.xPos < 0 ? mapWidth + this.xPos : this.xPos;
-    }
+	public String getTranslatedName() {
+		return StatCollector.translateToLocal("lotr.gui.map.widget." + name);
+	}
 
-    public int getMapYPos(int mapHeight) {
-        return this.yPos < 0 ? mapHeight + this.yPos : this.yPos;
-    }
+	public boolean isMouseOver(int mouseX, int mouseY, int mapWidth, int mapHeight) {
+		return visible && mouseX >= getMapXPos(mapWidth) && mouseX < getMapXPos(mapWidth) + width && mouseY >= getMapYPos(mapHeight) && mouseY < getMapYPos(mapHeight) + width;
+	}
 
-    public boolean isMouseOver(int mouseX, int mouseY, int mapWidth, int mapHeight) {
-        return this.visible && mouseX >= this.getMapXPos(mapWidth) && mouseX < this.getMapXPos(mapWidth) + this.width && mouseY >= this.getMapYPos(mapHeight) && mouseY < this.getMapYPos(mapHeight) + this.width;
-    }
+	public void setTexVIndex(int i) {
+		texVIndex = i;
+	}
 }

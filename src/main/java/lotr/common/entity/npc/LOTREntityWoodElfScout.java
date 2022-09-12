@@ -14,101 +14,104 @@ import net.minecraft.util.*;
 import net.minecraft.world.World;
 
 public class LOTREntityWoodElfScout extends LOTREntityWoodElf {
-    private static final UUID scoutArmorSpeedBoost_id = UUID.fromString("cf0ceb91-0f13-4788-be0e-a6c67a830308");
-    public static final AttributeModifier scoutArmorSpeedBoost = new AttributeModifier(scoutArmorSpeedBoost_id, "WE Scout armor speed boost", 0.3, 2).setSaved(false);
+	public static UUID scoutArmorSpeedBoost_id = UUID.fromString("cf0ceb91-0f13-4788-be0e-a6c67a830308");
+	public static AttributeModifier scoutArmorSpeedBoost = new AttributeModifier(scoutArmorSpeedBoost_id, "WE Scout armor speed boost", 0.3, 2).setSaved(false);
 
-    public LOTREntityWoodElfScout(World world) {
-        super(world);
-        this.tasks.addTask(2, this.rangedAttackAI);
-    }
+	public LOTREntityWoodElfScout(World world) {
+		super(world);
+		tasks.addTask(2, rangedAttackAI);
+	}
 
-    @Override
-    protected EntityAIBase createElfRangedAttackAI() {
-        return new LOTREntityAIRangedAttack(this, 1.25, 25, 35, 24.0f);
-    }
+	@Override
+	public void applyEntityAttributes() {
+		super.applyEntityAttributes();
+		getEntityAttribute(SharedMonsterAttributes.followRange).setBaseValue(24.0);
+	}
 
-    @Override
-    protected void applyEntityAttributes() {
-        super.applyEntityAttributes();
-        this.getEntityAttribute(SharedMonsterAttributes.followRange).setBaseValue(24.0);
-    }
+	@Override
+	public EntityAIBase createElfRangedAttackAI() {
+		return new LOTREntityAIRangedAttack(this, 1.25, 25, 35, 24.0f);
+	}
 
-    @Override
-    public IEntityLivingData onSpawnWithEgg(IEntityLivingData data) {
-        data = super.onSpawnWithEgg(data);
-        this.npcItemsInv.setIdleItem(this.npcItemsInv.getRangedWeapon());
-        this.setCurrentItemOrArmor(1, new ItemStack(LOTRMod.bootsWoodElvenScout));
-        this.setCurrentItemOrArmor(2, new ItemStack(LOTRMod.legsWoodElvenScout));
-        this.setCurrentItemOrArmor(3, new ItemStack(LOTRMod.bodyWoodElvenScout));
-        if(this.rand.nextInt(10) != 0) {
-            this.setCurrentItemOrArmor(4, new ItemStack(LOTRMod.helmetWoodElvenScout));
-        }
-        return data;
-    }
+	public void doTeleportEffects() {
+		worldObj.playSoundAtEntity(this, "lotr:elf.woodElf_teleport", getSoundVolume(), 0.5f + rand.nextFloat());
+		worldObj.setEntityState(this, (byte) 15);
+	}
 
-    @Override
-    public void onLivingUpdate() {
-        ItemStack currentItem;
-        EntityLivingBase lastAttacker;
-        super.onLivingUpdate();
-        if(!this.worldObj.isRemote && this.isEntityAlive() && this.ridingEntity == null && (currentItem = this.getEquipmentInSlot(0)) != null && currentItem.getItem() instanceof ItemBow && (lastAttacker = this.getAITarget()) != null && this.getDistanceSqToEntity(lastAttacker) < 16.0 && this.rand.nextInt(20) == 0) {
-            for(int l = 0; l < 32; ++l) {
-                int k;
-                int j;
-                int i = MathHelper.floor_double(this.posX) - this.rand.nextInt(16) + this.rand.nextInt(16);
-                if((this.getDistance(i, j = MathHelper.floor_double(this.posY) - this.rand.nextInt(3) + this.rand.nextInt(3), k = MathHelper.floor_double(this.posZ) - this.rand.nextInt(16) + this.rand.nextInt(16)) <= 6.0) || !this.worldObj.getBlock(i, j - 1, k).isNormalCube() || this.worldObj.getBlock(i, j, k).isNormalCube() || this.worldObj.getBlock(i, j + 1, k).isNormalCube()) continue;
-                double d = i + 0.5;
-                double d1 = j;
-                double d2 = k + 0.5;
-                AxisAlignedBB aabb = this.boundingBox.copy().offset(d - this.posX, d1 - this.posY, d2 - this.posZ);
-                if(!this.worldObj.checkNoEntityCollision(aabb) || !this.worldObj.getCollidingBoundingBoxes(this, aabb).isEmpty() || this.worldObj.isAnyLiquid(aabb)) continue;
-                this.doTeleportEffects();
-                this.setPosition(d, d1, d2);
-                break;
-            }
-        }
-    }
+	@Override
+	public float getAlignmentBonus() {
+		return 2.0f;
+	}
 
-    private void doTeleportEffects() {
-        this.worldObj.playSoundAtEntity(this, "lotr:elf.woodElf_teleport", this.getSoundVolume(), 0.5f + this.rand.nextFloat());
-        this.worldObj.setEntityState(this, (byte) 15);
-    }
+	@Override
+	public String getSpeechBank(EntityPlayer entityplayer) {
+		if (isFriendly(entityplayer)) {
+			if (hiredNPCInfo.getHiringPlayer() == entityplayer) {
+				return "woodElf/elf/hired";
+			}
+			if (LOTRLevelData.getData(entityplayer).getAlignment(getFaction()) >= LOTREntityWoodElf.getWoodlandTrustLevel()) {
+				return "woodElf/warrior/friendly";
+			}
+			return "woodElf/elf/neutral";
+		}
+		return "woodElf/warrior/hostile";
+	}
 
-    @SideOnly(value = Side.CLIENT)
-    @Override
-    public void handleHealthUpdate(byte b) {
-        if(b == 15) {
-            for(int i = 0; i < 16; ++i) {
-                double d = this.posX + (this.rand.nextDouble() - 0.5) * this.width;
-                double d1 = this.posY + this.rand.nextDouble() * this.height;
-                double d2 = this.posZ + (this.rand.nextDouble() - 0.5) * this.width;
-                double d3 = -0.05 + this.rand.nextFloat() * 0.1f;
-                double d4 = -0.05 + this.rand.nextFloat() * 0.1f;
-                double d5 = -0.05 + this.rand.nextFloat() * 0.1f;
-                LOTRMod.proxy.spawnParticle("leafGreen_" + (20 + this.rand.nextInt(30)), d, d1, d2, d3, d4, d5);
-            }
-        }
-        else {
-            super.handleHealthUpdate(b);
-        }
-    }
+	@SideOnly(value = Side.CLIENT)
+	@Override
+	public void handleHealthUpdate(byte b) {
+		if (b == 15) {
+			for (int i = 0; i < 16; ++i) {
+				double d = posX + (rand.nextDouble() - 0.5) * width;
+				double d1 = posY + rand.nextDouble() * height;
+				double d2 = posZ + (rand.nextDouble() - 0.5) * width;
+				double d3 = -0.05 + rand.nextFloat() * 0.1f;
+				double d4 = -0.05 + rand.nextFloat() * 0.1f;
+				double d5 = -0.05 + rand.nextFloat() * 0.1f;
+				LOTRMod.proxy.spawnParticle("leafGreen_" + (20 + rand.nextInt(30)), d, d1, d2, d3, d4, d5);
+			}
+		} else {
+			super.handleHealthUpdate(b);
+		}
+	}
 
-    @Override
-    public float getAlignmentBonus() {
-        return 2.0f;
-    }
+	@Override
+	public void onLivingUpdate() {
+		ItemStack currentItem;
+		EntityLivingBase lastAttacker;
+		super.onLivingUpdate();
+		if (!worldObj.isRemote && isEntityAlive() && ridingEntity == null && (currentItem = getEquipmentInSlot(0)) != null && currentItem.getItem() instanceof ItemBow && (lastAttacker = getAITarget()) != null && getDistanceSqToEntity(lastAttacker) < 16.0 && rand.nextInt(20) == 0) {
+			for (int l = 0; l < 32; ++l) {
+				int k;
+				int j;
+				int i = MathHelper.floor_double(posX) - rand.nextInt(16) + rand.nextInt(16);
+				if (getDistance(i, j = MathHelper.floor_double(posY) - rand.nextInt(3) + rand.nextInt(3), k = MathHelper.floor_double(posZ) - rand.nextInt(16) + rand.nextInt(16)) <= 6.0 || !worldObj.getBlock(i, j - 1, k).isNormalCube() || worldObj.getBlock(i, j, k).isNormalCube() || worldObj.getBlock(i, j + 1, k).isNormalCube()) {
+					continue;
+				}
+				double d = i + 0.5;
+				double d1 = j;
+				double d2 = k + 0.5;
+				AxisAlignedBB aabb = boundingBox.copy().offset(d - posX, d1 - posY, d2 - posZ);
+				if (!worldObj.checkNoEntityCollision(aabb) || !worldObj.getCollidingBoundingBoxes(this, aabb).isEmpty() || worldObj.isAnyLiquid(aabb)) {
+					continue;
+				}
+				doTeleportEffects();
+				setPosition(d, d1, d2);
+				break;
+			}
+		}
+	}
 
-    @Override
-    public String getSpeechBank(EntityPlayer entityplayer) {
-        if(this.isFriendly(entityplayer)) {
-            if(this.hiredNPCInfo.getHiringPlayer() == entityplayer) {
-                return "woodElf/elf/hired";
-            }
-            if(LOTRLevelData.getData(entityplayer).getAlignment(this.getFaction()) >= LOTREntityWoodElf.getWoodlandTrustLevel()) {
-                return "woodElf/warrior/friendly";
-            }
-            return "woodElf/elf/neutral";
-        }
-        return "woodElf/warrior/hostile";
-    }
+	@Override
+	public IEntityLivingData onSpawnWithEgg(IEntityLivingData data) {
+		data = super.onSpawnWithEgg(data);
+		npcItemsInv.setIdleItem(npcItemsInv.getRangedWeapon());
+		setCurrentItemOrArmor(1, new ItemStack(LOTRMod.bootsWoodElvenScout));
+		setCurrentItemOrArmor(2, new ItemStack(LOTRMod.legsWoodElvenScout));
+		setCurrentItemOrArmor(3, new ItemStack(LOTRMod.bodyWoodElvenScout));
+		if (rand.nextInt(10) != 0) {
+			setCurrentItemOrArmor(4, new ItemStack(LOTRMod.helmetWoodElvenScout));
+		}
+		return data;
+	}
 }

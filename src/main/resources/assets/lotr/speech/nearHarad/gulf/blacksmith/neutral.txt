@@ -1,14 +1,11 @@
-Я не могу торговать с Вами, #. Простите.
-Властители Харада обозлились бы на меня, если бы я снарядил нашими доспехами чужака.
-Прошу прощения, #, но Вам придётся подыскать себе доспехи в другом месте. Я Вам ничего не продам.
-Кузнечное дело - ремесло благородное. И то, что создано благодаря этому ремеслу, должно достаться лишь достойному.
-Я не поверю в то, что Вы сможете принести честь и славу моей кузнице.
-Прости, но я даже за деньги не отдам тебе своё оружие, #. Откуда мне знать, что Вы будете использовать их в благих целях?
-Я продаю свои товары только благородным людям.
-Я никогда не слышал о тебе, воин с Запада. Откуда мне знать, что ты не обратишь моё же оружие против моей семьи?
-Слова - это лишь пустые звуки. Ты должен на деле доказать, что желаешь защищать мой народ.
-Мы не настолько глупы, чтобы верить чужакам, #.
-Вы сражаетесь за нас, #, или за Белое Древо?
-Я не слышал о Вас, #. Я продаю своё оружие лишь истинным героям, чьё имя воспевают наши барды в своих балладах.
-Докажите мне, что Вам можно доверять, прежде чем я предоставлю Вам свои услуги.
-Когда мой народ будет называть Ваше имя со слезами счастья на глазах, #, я буду с Вами торговать.
+I would not dare displease Mulkhêr by trading my weapons off to a stranger.
+Sorry, only the devoted may wield what I have in stock.
+What promise do I have that you won't use my weapons against me?
+All my time and effort should not go towards arming a non-believer, #.
+Come back when you have Mulkhêr's blessing to wield my weapons.
+Join me at the temple tonight and I might reconsider trading with you tomorrow, #.
+You really shouldn't pester me for goods that aren't meant to be yours.
+I would welcome you, #, but my heart grows uneasy around a traveller from the North.
+Be on your way, I have nothing I am willing to sell to you.
+My apologies, but I can't trust you quite yet. Wouldn't want you using my weapons to do harm to my friends here.
+I care for silver, but I'm not that desperate yet.

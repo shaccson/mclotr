@@ -13,60 +13,60 @@ import net.minecraft.util.IIcon;
 import net.minecraft.world.IBlockAccess;
 
 public abstract class LOTRBlockOreStorageBase extends Block {
-    @SideOnly(value = Side.CLIENT)
-    protected IIcon[] oreStorageIcons;
-    protected String[] oreStorageNames;
+	@SideOnly(value = Side.CLIENT)
+	public IIcon[] oreStorageIcons;
+	public String[] oreStorageNames;
 
-    public LOTRBlockOreStorageBase() {
-        super(Material.iron);
-        this.setCreativeTab(LOTRCreativeTabs.tabBlock);
-        this.setHardness(5.0f);
-        this.setResistance(10.0f);
-        this.setStepSound(Block.soundTypeMetal);
-    }
+	public LOTRBlockOreStorageBase() {
+		super(Material.iron);
+		setCreativeTab(LOTRCreativeTabs.tabBlock);
+		setHardness(5.0f);
+		setResistance(10.0f);
+		setStepSound(Block.soundTypeMetal);
+	}
 
-    protected void setOreStorageNames(String... names) {
-        this.oreStorageNames = names;
-    }
+	@Override
+	public boolean canSilkHarvest() {
+		return true;
+	}
 
-    @SideOnly(value = Side.CLIENT)
-    @Override
-    public void registerBlockIcons(IIconRegister iconregister) {
-        this.oreStorageIcons = new IIcon[this.oreStorageNames.length];
-        for(int i = 0; i < this.oreStorageNames.length; ++i) {
-            this.oreStorageIcons[i] = iconregister.registerIcon(this.getTextureName() + "_" + this.oreStorageNames[i]);
-        }
-    }
+	@Override
+	public int damageDropped(int i) {
+		return i;
+	}
 
-    @SideOnly(value = Side.CLIENT)
-    @Override
-    public IIcon getIcon(int i, int j) {
-        if(j >= this.oreStorageNames.length) {
-            j = 0;
-        }
-        return this.oreStorageIcons[j];
-    }
+	@SideOnly(value = Side.CLIENT)
+	@Override
+	public IIcon getIcon(int i, int j) {
+		if (j >= oreStorageNames.length) {
+			j = 0;
+		}
+		return oreStorageIcons[j];
+	}
 
-    @Override
-    public int damageDropped(int i) {
-        return i;
-    }
+	@SideOnly(value = Side.CLIENT)
+	@Override
+	public void getSubBlocks(Item item, CreativeTabs tab, List list) {
+		for (int i = 0; i < oreStorageNames.length; ++i) {
+			list.add(new ItemStack(item, 1, i));
+		}
+	}
 
-    @SideOnly(value = Side.CLIENT)
-    @Override
-    public void getSubBlocks(Item item, CreativeTabs tab, List list) {
-        for(int i = 0; i < this.oreStorageNames.length; ++i) {
-            list.add(new ItemStack(item, 1, i));
-        }
-    }
+	@Override
+	public boolean isBeaconBase(IBlockAccess world, int i, int j, int k, int beaconX, int beaconY, int beaconZ) {
+		return true;
+	}
 
-    @Override
-    public boolean isBeaconBase(IBlockAccess world, int i, int j, int k, int beaconX, int beaconY, int beaconZ) {
-        return true;
-    }
+	@SideOnly(value = Side.CLIENT)
+	@Override
+	public void registerBlockIcons(IIconRegister iconregister) {
+		oreStorageIcons = new IIcon[oreStorageNames.length];
+		for (int i = 0; i < oreStorageNames.length; ++i) {
+			oreStorageIcons[i] = iconregister.registerIcon(getTextureName() + "_" + oreStorageNames[i]);
+		}
+	}
 
-    @Override
-    protected boolean canSilkHarvest() {
-        return true;
-    }
+	public void setOreStorageNames(String... names) {
+		oreStorageNames = names;
+	}
 }

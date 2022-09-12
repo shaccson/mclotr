@@ -13,94 +13,94 @@ import net.minecraft.world.World;
 import net.minecraft.world.chunk.IChunkProvider;
 
 public class LOTRWorldProviderUtumno extends LOTRWorldProvider {
-    public LOTRWorldProviderUtumno() {
-        this.hasNoSky = true;
-    }
+	public LOTRWorldProviderUtumno() {
+		hasNoSky = true;
+	}
 
-    @Override
-    public LOTRDimension getLOTRDimension() {
-        return LOTRDimension.UTUMNO;
-    }
+	@Override
+	public float calculateCelestialAngle(long time, float f) {
+		return 0.5f;
+	}
 
-    @Override
-    public IChunkProvider createChunkGenerator() {
-        return new LOTRChunkProviderUtumno(this.worldObj, this.worldObj.getSeed());
-    }
+	@Override
+	public boolean canRespawnHere() {
+		return false;
+	}
 
-    @Override
-    protected void generateLightBrightnessTable() {
-        for(int i = 0; i <= 15; ++i) {
-            float f = i / 15.0f;
-            this.lightBrightnessTable[i] = (float) Math.pow(f, 4.0);
-        }
-    }
+	@Override
+	public IChunkProvider createChunkGenerator() {
+		return new LOTRChunkProviderUtumno(worldObj, worldObj.getSeed());
+	}
 
-    @Override
-    public float calculateCelestialAngle(long time, float f) {
-        return 0.5f;
-    }
+	@Override
+	public void generateLightBrightnessTable() {
+		for (int i = 0; i <= 15; ++i) {
+			float f = i / 15.0f;
+			lightBrightnessTable[i] = (float) Math.pow(f, 4.0);
+		}
+	}
 
-    @SideOnly(value = Side.CLIENT)
-    @Override
-    public double getVoidFogYFactor() {
-        return 1.0;
-    }
+	@Override
+	public int getActualHeight() {
+		return getHeight();
+	}
 
-    @Override
-    public float[] handleFinalFogColors(EntityLivingBase viewer, double tick, float[] rgb) {
-        double y = viewer.prevPosY + (viewer.posY - viewer.prevPosY) * tick;
-        LOTRUtumnoLevel level = LOTRUtumnoLevel.forY((int) y);
-        if(level == LOTRUtumnoLevel.FIRE) {
-            int min = level.getLowestCorridorFloor();
-            int max = level.getHighestCorridorRoof();
-            max = (int) (max - (max - min) * 0.3);
-            double yFactor = (y - min) / (max - min);
-            yFactor = MathHelper.clamp_double(yFactor, 0.0, 1.0);
-            yFactor = 1.0 - yFactor;
-            Color clr = new Color(rgb[0], rgb[1], rgb[2]);
-            float[] hsb = Color.RGBtoHSB(clr.getRed(), clr.getGreen(), clr.getBlue(), null);
-            float br = hsb[2];
-            if(br > 0.0) {
-                hsb[2] = br = (float) (br + (1.0f - br) * yFactor);
-            }
-            rgb = new Color(Color.HSBtoRGB(hsb[0], hsb[1], hsb[2])).getRGBComponents(null);
-        }
-        return rgb;
-    }
+	@Override
+	public LOTRDimension getLOTRDimension() {
+		return LOTRDimension.UTUMNO;
+	}
 
-    @Override
-    public boolean canRespawnHere() {
-        return false;
-    }
+	@Override
+	public int getRespawnDimension(EntityPlayerMP entityplayer) {
+		return LOTRDimension.MIDDLE_EARTH.dimensionID;
+	}
 
-    @Override
-    public int getRespawnDimension(EntityPlayerMP entityplayer) {
-        return LOTRDimension.MIDDLE_EARTH.dimensionID;
-    }
+	@SideOnly(value = Side.CLIENT)
+	@Override
+	public double getVoidFogYFactor() {
+		return 1.0;
+	}
 
-    @Override
-    public boolean isSurfaceWorld() {
-        return false;
-    }
+	@Override
+	public float[] handleFinalFogColors(EntityLivingBase viewer, double tick, float[] rgb) {
+		double y = viewer.prevPosY + (viewer.posY - viewer.prevPosY) * tick;
+		LOTRUtumnoLevel level = LOTRUtumnoLevel.forY((int) y);
+		if (level == LOTRUtumnoLevel.FIRE) {
+			int min = level.getLowestCorridorFloor();
+			int max = level.getHighestCorridorRoof();
+			max = (int) (max - (max - min) * 0.3);
+			double yFactor = (y - min) / (max - min);
+			yFactor = MathHelper.clamp_double(yFactor, 0.0, 1.0);
+			yFactor = 1.0 - yFactor;
+			Color clr = new Color(rgb[0], rgb[1], rgb[2]);
+			float[] hsb = Color.RGBtoHSB(clr.getRed(), clr.getGreen(), clr.getBlue(), null);
+			float br = hsb[2];
+			if (br > 0.0) {
+				hsb[2] = br = (float) (br + (1.0f - br) * yFactor);
+			}
+			rgb = new Color(Color.HSBtoRGB(hsb[0], hsb[1], hsb[2])).getRGBComponents(null);
+		}
+		return rgb;
+	}
 
-    @Override
-    public int getActualHeight() {
-        return this.getHeight();
-    }
+	@Override
+	public boolean isSurfaceWorld() {
+		return false;
+	}
 
-    @Override
-    public void setSpawnPoint(int i, int j, int k) {
-    }
+	@Override
+	public void setSpawnPoint(int i, int j, int k) {
+	}
 
-    public static void doEvaporateFX(World world, int i, int j, int k) {
-        if(!world.isRemote) {
-            world.playSoundEffect(i + 0.5f, j + 0.5f, k + 0.5f, "random.fizz", 0.5f, 2.6f + (world.rand.nextFloat() - world.rand.nextFloat()) * 0.8f);
-            LOTRPacketBlockFX pkt = new LOTRPacketBlockFX(LOTRPacketBlockFX.Type.UTUMNO_EVAPORATE, i, j, k);
-            LOTRPacketHandler.networkWrapper.sendToAllAround(pkt, new NetworkRegistry.TargetPoint(world.provider.dimensionId, i + 0.5, j + 0.5, k + 0.5, 32.0));
-        }
-    }
+	public static void doEvaporateFX(World world, int i, int j, int k) {
+		if (!world.isRemote) {
+			world.playSoundEffect(i + 0.5f, j + 0.5f, k + 0.5f, "random.fizz", 0.5f, 2.6f + (world.rand.nextFloat() - world.rand.nextFloat()) * 0.8f);
+			LOTRPacketBlockFX pkt = new LOTRPacketBlockFX(LOTRPacketBlockFX.Type.UTUMNO_EVAPORATE, i, j, k);
+			LOTRPacketHandler.networkWrapper.sendToAllAround(pkt, new NetworkRegistry.TargetPoint(world.provider.dimensionId, i + 0.5, j + 0.5, k + 0.5, 32.0));
+		}
+	}
 
-    public interface UtumnoBlock {
-    }
+	public interface UtumnoBlock {
+	}
 
 }

@@ -7,64 +7,64 @@ import net.minecraft.item.ItemStack;
 import net.minecraft.world.World;
 
 public class LOTREntityGondorBartender extends LOTREntityGondorMan implements LOTRTradeable.Bartender {
-    public LOTREntityGondorBartender(World world) {
-        super(world);
-        this.addTargetTasks(false);
-        this.npcLocationName = "entity.lotr.GondorBartender.locationName";
-    }
+	public LOTREntityGondorBartender(World world) {
+		super(world);
+		this.addTargetTasks(false);
+		npcLocationName = "entity.lotr.GondorBartender.locationName";
+	}
 
-    @Override
-    public LOTRTradeEntries getBuyPool() {
-        return LOTRTradeEntries.GONDOR_BARTENDER_BUY;
-    }
+	@Override
+	public boolean canTradeWith(EntityPlayer entityplayer) {
+		return isFriendly(entityplayer);
+	}
 
-    @Override
-    public LOTRTradeEntries getSellPool() {
-        return LOTRTradeEntries.GONDOR_BARTENDER_SELL;
-    }
+	@Override
+	public void dropFewItems(boolean flag, int i) {
+		super.dropFewItems(flag, i);
+		int drinks = 1 + rand.nextInt(4) + i;
+		for (int l = 0; l < drinks; ++l) {
+			ItemStack drink = LOTRFoods.GONDOR_DRINK.getRandomFood(rand);
+			entityDropItem(drink, 0.0f);
+		}
+	}
 
-    @Override
-    public IEntityLivingData onSpawnWithEgg(IEntityLivingData data) {
-        data = super.onSpawnWithEgg(data);
-        this.npcItemsInv.setIdleItem(new ItemStack(LOTRMod.mug));
-        return data;
-    }
+	@Override
+	public float getAlignmentBonus() {
+		return 2.0f;
+	}
 
-    @Override
-    public void dropFewItems(boolean flag, int i) {
-        super.dropFewItems(flag, i);
-        int drinks = 1 + this.rand.nextInt(4) + i;
-        for(int l = 0; l < drinks; ++l) {
-            ItemStack drink = LOTRFoods.GONDOR_DRINK.getRandomFood(this.rand);
-            this.entityDropItem(drink, 0.0f);
-        }
-    }
+	@Override
+	public LOTRTradeEntries getBuyPool() {
+		return LOTRTradeEntries.GONDOR_BARTENDER_BUY;
+	}
 
-    @Override
-    public float getAlignmentBonus() {
-        return 2.0f;
-    }
+	@Override
+	public LOTRTradeEntries getSellPool() {
+		return LOTRTradeEntries.GONDOR_BARTENDER_SELL;
+	}
 
-    @Override
-    public boolean canTradeWith(EntityPlayer entityplayer) {
-        return this.isFriendly(entityplayer);
-    }
+	@Override
+	public String getSpeechBank(EntityPlayer entityplayer) {
+		if (isFriendly(entityplayer)) {
+			return "gondor/bartender/friendly";
+		}
+		return "gondor/bartender/hostile";
+	}
 
-    @Override
-    public void onPlayerTrade(EntityPlayer entityplayer, LOTRTradeEntries.TradeType type, ItemStack itemstack) {
-        LOTRLevelData.getData(entityplayer).addAchievement(LOTRAchievement.tradeGondorBartender);
-    }
+	@Override
+	public void onPlayerTrade(EntityPlayer entityplayer, LOTRTradeEntries.TradeType type, ItemStack itemstack) {
+		LOTRLevelData.getData(entityplayer).addAchievement(LOTRAchievement.tradeGondorBartender);
+	}
 
-    @Override
-    public boolean shouldTraderRespawn() {
-        return true;
-    }
+	@Override
+	public IEntityLivingData onSpawnWithEgg(IEntityLivingData data) {
+		data = super.onSpawnWithEgg(data);
+		npcItemsInv.setIdleItem(new ItemStack(LOTRMod.mug));
+		return data;
+	}
 
-    @Override
-    public String getSpeechBank(EntityPlayer entityplayer) {
-        if(this.isFriendly(entityplayer)) {
-            return "gondor/bartender/friendly";
-        }
-        return "gondor/bartender/hostile";
-    }
+	@Override
+	public boolean shouldTraderRespawn() {
+		return true;
+	}
 }

@@ -13,164 +13,163 @@ import net.minecraft.potion.*;
 import net.minecraft.world.World;
 
 public class LOTREntitySnowTroll extends LOTREntityTroll {
-    private EntityAIBase rangedAttackAI = this.getTrollRangedAttackAI();
-    private EntityAIBase meleeAttackAI;
+	public EntityAIBase rangedAttackAI = getTrollRangedAttackAI();
+	public EntityAIBase meleeAttackAI;
 
-    public LOTREntitySnowTroll(World world) {
-        super(world);
-        this.isImmuneToFrost = true;
-    }
+	public LOTREntitySnowTroll(World world) {
+		super(world);
+		isImmuneToFrost = true;
+	}
 
-    @Override
-    public float getTrollScale() {
-        return 0.8f;
-    }
+	@Override
+	public void applyEntityAttributes() {
+		super.applyEntityAttributes();
+		getEntityAttribute(SharedMonsterAttributes.maxHealth).setBaseValue(40.0);
+	}
 
-    @Override
-    public EntityAIBase getTrollAttackAI() {
-        this.meleeAttackAI = new LOTREntityAIAttackOnCollide(this, 1.6, false);
-        return this.meleeAttackAI;
-    }
+	@Override
+	public boolean attackEntityAsMob(Entity entity) {
+		if (super.attackEntityAsMob(entity)) {
+			int difficulty;
+			int duration;
+			if (entity instanceof EntityLivingBase && (duration = (difficulty = worldObj.difficultySetting.getDifficultyId()) * (difficulty + 5) / 2) > 0) {
+				((EntityLivingBase) entity).addPotionEffect(new PotionEffect(Potion.moveSlowdown.id, duration * 20, 0));
+			}
+			return true;
+		}
+		return false;
+	}
 
-    protected EntityAIBase getTrollRangedAttackAI() {
-        return new LOTREntityAIRangedAttack(this, 1.2, 20, 30, 24.0f);
-    }
+	@Override
+	public void attackEntityWithRangedAttack(EntityLivingBase target, float f) {
+		EntityArrow template = new EntityArrow(worldObj, this, target, f * 1.6f, 0.5f);
+		LOTREntityTrollSnowball snowball = new LOTREntityTrollSnowball(worldObj, this);
+		snowball.setLocationAndAngles(template.posX, template.posY, template.posZ, template.rotationYaw, template.rotationPitch);
+		snowball.motionX = template.motionX;
+		snowball.motionY = template.motionY;
+		snowball.motionZ = template.motionZ;
+		worldObj.spawnEntityInWorld(snowball);
+		playSound("random.bow", 1.0f, 1.0f / (rand.nextFloat() * 0.4f + 0.8f));
+		swingItem();
+	}
 
-    @Override
-    public void entityInit() {
-        super.entityInit();
-        this.dataWatcher.addObject(21, (byte) 0);
-    }
+	@Override
+	public boolean canTrollBeTickled(EntityPlayer entityplayer) {
+		return false;
+	}
 
-    public boolean isThrowingSnow() {
-        return this.dataWatcher.getWatchableObjectByte(21) == 1;
-    }
+	@Override
+	public void dropFewItems(boolean flag, int i) {
+		super.dropFewItems(flag, i);
+		int furs = 1 + rand.nextInt(3) + rand.nextInt(i + 1);
+		for (int l = 0; l < furs; ++l) {
+			dropItem(LOTRMod.fur, 1);
+		}
+		int snows = 2 + rand.nextInt(4) + rand.nextInt(i * 2 + 1);
+		for (int l = 0; l < snows; ++l) {
+			dropItem(Items.snowball, 1);
+		}
+	}
 
-    public void setThrowingSnow(boolean flag) {
-        this.dataWatcher.updateObject(21, flag ? (byte) 1 : 0);
-    }
+	@Override
+	public void dropTrollItems(boolean flag, int i) {
+		if (rand.nextBoolean()) {
+			super.dropTrollItems(flag, i);
+		}
+	}
 
-    @Override
-    protected void applyEntityAttributes() {
-        super.applyEntityAttributes();
-        this.getEntityAttribute(SharedMonsterAttributes.maxHealth).setBaseValue(40.0);
-    }
+	@Override
+	public void entityInit() {
+		super.entityInit();
+		dataWatcher.addObject(21, (byte) 0);
+	}
 
-    @Override
-    protected boolean hasTrollName() {
-        return false;
-    }
+	@Override
+	public float getAlignmentBonus() {
+		return 3.0f;
+	}
 
-    @Override
-    protected boolean canTrollBeTickled(EntityPlayer entityplayer) {
-        return false;
-    }
+	@Override
+	public LOTRAchievement getKillAchievement() {
+		return LOTRAchievement.killSnowTroll;
+	}
 
-    @Override
-    public double getMeleeRange() {
-        return 12.0;
-    }
+	@Override
+	public double getMeleeRange() {
+		return 12.0;
+	}
 
-    @Override
-    public void onAttackModeChange(LOTREntityNPC.AttackMode mode, boolean mounted) {
-        if(mode == LOTREntityNPC.AttackMode.IDLE) {
-            this.tasks.removeTask(this.meleeAttackAI);
-            this.tasks.removeTask(this.rangedAttackAI);
-            this.setThrowingSnow(false);
-        }
-        if(mode == LOTREntityNPC.AttackMode.MELEE) {
-            this.tasks.removeTask(this.meleeAttackAI);
-            this.tasks.removeTask(this.rangedAttackAI);
-            this.tasks.addTask(3, this.meleeAttackAI);
-            this.setThrowingSnow(false);
-        }
-        if(mode == LOTREntityNPC.AttackMode.RANGED) {
-            this.tasks.removeTask(this.meleeAttackAI);
-            this.tasks.removeTask(this.rangedAttackAI);
-            this.tasks.addTask(3, this.rangedAttackAI);
-            this.setThrowingSnow(true);
-        }
-    }
+	@Override
+	public String getSpeechBank(EntityPlayer entityplayer) {
+		return null;
+	}
 
-    @Override
-    public boolean attackEntityAsMob(Entity entity) {
-        if(super.attackEntityAsMob(entity)) {
-            int difficulty;
-            int duration;
-            if(entity instanceof EntityLivingBase && (duration = (difficulty = this.worldObj.difficultySetting.getDifficultyId()) * (difficulty + 5) / 2) > 0) {
-                ((EntityLivingBase) entity).addPotionEffect(new PotionEffect(Potion.moveSlowdown.id, duration * 20, 0));
-            }
-            return true;
-        }
-        return false;
-    }
+	@Override
+	public EntityAIBase getTrollAttackAI() {
+		meleeAttackAI = new LOTREntityAIAttackOnCollide(this, 1.6, false);
+		return meleeAttackAI;
+	}
 
-    @Override
-    public void attackEntityWithRangedAttack(EntityLivingBase target, float f) {
-        EntityArrow template = new EntityArrow(this.worldObj, this, target, f * 1.6f, 0.5f);
-        LOTREntityTrollSnowball snowball = new LOTREntityTrollSnowball(this.worldObj, this);
-        snowball.setLocationAndAngles(template.posX, template.posY, template.posZ, template.rotationYaw, template.rotationPitch);
-        snowball.motionX = template.motionX;
-        snowball.motionY = template.motionY;
-        snowball.motionZ = template.motionZ;
-        this.worldObj.spawnEntityInWorld(snowball);
-        this.playSound("random.bow", 1.0f, 1.0f / (this.rand.nextFloat() * 0.4f + 0.8f));
-        this.swingItem();
-    }
+	public EntityAIBase getTrollRangedAttackAI() {
+		return new LOTREntityAIRangedAttack(this, 1.2, 20, 30, 24.0f);
+	}
 
-    @Override
-    public void onTrollDeathBySun() {
-        this.worldObj.playSoundAtEntity(this, "lotr:troll.transform", this.getSoundVolume(), this.getSoundPitch());
-        this.worldObj.setEntityState(this, (byte) 15);
-        this.setDead();
-    }
+	@Override
+	public float getTrollScale() {
+		return 0.8f;
+	}
 
-    @SideOnly(value = Side.CLIENT)
-    @Override
-    public void handleHealthUpdate(byte b) {
-        if(b == 15) {
-            super.handleHealthUpdate(b);
-            for(int l = 0; l < 64; ++l) {
-                this.worldObj.spawnParticle("snowballpoof", this.posX + this.rand.nextGaussian() * this.width * 0.5, this.posY + this.rand.nextDouble() * this.height, this.posZ + this.rand.nextGaussian() * this.width * 0.5, 0.0, 0.0, 0.0);
-            }
-        }
-        else {
-            super.handleHealthUpdate(b);
-        }
-    }
+	@SideOnly(value = Side.CLIENT)
+	@Override
+	public void handleHealthUpdate(byte b) {
+		if (b == 15) {
+			super.handleHealthUpdate(b);
+			for (int l = 0; l < 64; ++l) {
+				worldObj.spawnParticle("snowballpoof", posX + rand.nextGaussian() * width * 0.5, posY + rand.nextDouble() * height, posZ + rand.nextGaussian() * width * 0.5, 0.0, 0.0, 0.0);
+			}
+		} else {
+			super.handleHealthUpdate(b);
+		}
+	}
 
-    @Override
-    public void dropFewItems(boolean flag, int i) {
-        super.dropFewItems(flag, i);
-        int furs = 1 + this.rand.nextInt(3) + this.rand.nextInt(i + 1);
-        for(int l = 0; l < furs; ++l) {
-            this.dropItem(LOTRMod.fur, 1);
-        }
-        int snows = 2 + this.rand.nextInt(4) + this.rand.nextInt(i * 2 + 1);
-        for(int l = 0; l < snows; ++l) {
-            this.dropItem(Items.snowball, 1);
-        }
-    }
+	@Override
+	public boolean hasTrollName() {
+		return false;
+	}
 
-    @Override
-    public void dropTrollItems(boolean flag, int i) {
-        if(this.rand.nextBoolean()) {
-            super.dropTrollItems(flag, i);
-        }
-    }
+	public boolean isThrowingSnow() {
+		return dataWatcher.getWatchableObjectByte(21) == 1;
+	}
 
-    @Override
-    protected LOTRAchievement getKillAchievement() {
-        return LOTRAchievement.killSnowTroll;
-    }
+	@Override
+	public void onAttackModeChange(LOTREntityNPC.AttackMode mode, boolean mounted) {
+		if (mode == LOTREntityNPC.AttackMode.IDLE) {
+			tasks.removeTask(meleeAttackAI);
+			tasks.removeTask(rangedAttackAI);
+			setThrowingSnow(false);
+		}
+		if (mode == LOTREntityNPC.AttackMode.MELEE) {
+			tasks.removeTask(meleeAttackAI);
+			tasks.removeTask(rangedAttackAI);
+			tasks.addTask(3, meleeAttackAI);
+			setThrowingSnow(false);
+		}
+		if (mode == LOTREntityNPC.AttackMode.RANGED) {
+			tasks.removeTask(meleeAttackAI);
+			tasks.removeTask(rangedAttackAI);
+			tasks.addTask(3, rangedAttackAI);
+			setThrowingSnow(true);
+		}
+	}
 
-    @Override
-    public float getAlignmentBonus() {
-        return 3.0f;
-    }
+	@Override
+	public void onTrollDeathBySun() {
+		worldObj.playSoundAtEntity(this, "lotr:troll.transform", getSoundVolume(), getSoundPitch());
+		worldObj.setEntityState(this, (byte) 15);
+		setDead();
+	}
 
-    @Override
-    public String getSpeechBank(EntityPlayer entityplayer) {
-        return null;
-    }
+	public void setThrowingSnow(boolean flag) {
+		dataWatcher.updateObject(21, flag ? (byte) 1 : 0);
+	}
 }

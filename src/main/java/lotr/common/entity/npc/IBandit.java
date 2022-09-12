@@ -5,31 +5,32 @@ import net.minecraft.entity.player.EntityPlayer;
 import net.minecraft.util.IChatComponent;
 
 public interface IBandit {
-    LOTREntityNPC getBanditAsNPC();
+	boolean canTargetPlayerForTheft(EntityPlayer var1);
 
-    int getMaxThefts();
+	LOTREntityNPC getBanditAsNPC();
 
-    LOTRInventoryNPC getBanditInventory();
+	LOTRInventoryNPC getBanditInventory();
 
-    boolean canTargetPlayerForTheft(EntityPlayer var1);
+	int getMaxThefts();
 
-    String getTheftSpeechBank(EntityPlayer var1);
+	IChatComponent getTheftChatMsg(EntityPlayer var1);
 
-    IChatComponent getTheftChatMsg(EntityPlayer var1);
+	String getTheftSpeechBank(EntityPlayer var1);
 
-    public static class Helper {
-        public static LOTRInventoryNPC createInv(IBandit bandit) {
-            return new LOTRInventoryNPC("BanditInventory", bandit.getBanditAsNPC(), bandit.getMaxThefts());
-        }
+	public static class Helper {
+		public static boolean canStealFromPlayerInv(IBandit bandit, EntityPlayer entityplayer) {
+			for (int slot = 0; slot < entityplayer.inventory.mainInventory.length; ++slot) {
+				if (slot == entityplayer.inventory.currentItem || entityplayer.inventory.getStackInSlot(slot) == null) {
+					continue;
+				}
+				return true;
+			}
+			return false;
+		}
 
-        public static boolean canStealFromPlayerInv(IBandit bandit, EntityPlayer entityplayer) {
-            for (int slot = 0; slot < entityplayer.inventory.mainInventory.length; ++slot) {
-                if (slot == entityplayer.inventory.currentItem || entityplayer.inventory.getStackInSlot(slot) == null) continue;
-                return true;
-            }
-            return false;
-        }
-    }
+		public static LOTRInventoryNPC createInv(IBandit bandit) {
+			return new LOTRInventoryNPC("BanditInventory", bandit.getBanditAsNPC(), bandit.getMaxThefts());
+		}
+	}
 
 }
-

@@ -6,8 +6,8 @@ import net.minecraft.entity.IProjectile;
 import net.minecraft.world.World;
 
 public class LOTRDispenseMysteryWeb extends BehaviorProjectileDispense {
-    @Override
-    protected IProjectile getProjectileEntity(World world, IPosition position) {
-        return new LOTREntityMysteryWeb(world, position.getX(), position.getY(), position.getZ());
-    }
+	@Override
+	public IProjectile getProjectileEntity(World world, IPosition position) {
+		return new LOTREntityMysteryWeb(world, position.getX(), position.getY(), position.getZ());
+	}
 }

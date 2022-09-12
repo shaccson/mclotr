@@ -8,67 +8,67 @@ import net.minecraft.item.ItemStack;
 import net.minecraft.world.World;
 
 public class LOTREntityUrukHaiMercenaryCaptain extends LOTREntityUrukHai implements LOTRUnitTradeable {
-    public LOTREntityUrukHaiMercenaryCaptain(World world) {
-        super(world);
-        this.addTargetTasks(false);
-    }
+	public LOTREntityUrukHaiMercenaryCaptain(World world) {
+		super(world);
+		this.addTargetTasks(false);
+	}
 
-    @Override
-    protected void applyEntityAttributes() {
-        super.applyEntityAttributes();
-        this.getEntityAttribute(SharedMonsterAttributes.maxHealth).setBaseValue(30.0);
-    }
+	@Override
+	public void applyEntityAttributes() {
+		super.applyEntityAttributes();
+		getEntityAttribute(SharedMonsterAttributes.maxHealth).setBaseValue(30.0);
+	}
 
-    @Override
-    public IEntityLivingData onSpawnWithEgg(IEntityLivingData data) {
-        data = super.onSpawnWithEgg(data);
-        this.npcItemsInv.setMeleeWeapon(new ItemStack(LOTRMod.orcSkullStaff));
-        this.npcItemsInv.setIdleItem(this.npcItemsInv.getMeleeWeapon());
-        this.setCurrentItemOrArmor(1, new ItemStack(LOTRMod.bootsUruk));
-        this.setCurrentItemOrArmor(2, new ItemStack(LOTRMod.legsUruk));
-        this.setCurrentItemOrArmor(3, new ItemStack(LOTRMod.bodyUruk));
-        this.setCurrentItemOrArmor(4, null);
-        return data;
-    }
+	@Override
+	public boolean canTradeWith(EntityPlayer entityplayer) {
+		return LOTRLevelData.getData(entityplayer).getAlignment(getFaction()) >= 150.0f && isFriendly(entityplayer);
+	}
 
-    @Override
-    public float getAlignmentBonus() {
-        return 5.0f;
-    }
+	@Override
+	public float getAlignmentBonus() {
+		return 5.0f;
+	}
 
-    @Override
-    public LOTRUnitTradeEntries getUnits() {
-        return LOTRUnitTradeEntries.URUK_HAI_MERCENARY_CAPTAIN;
-    }
+	@Override
+	public String getSpeechBank(EntityPlayer entityplayer) {
+		if (isFriendly(entityplayer)) {
+			if (canTradeWith(entityplayer)) {
+				return "isengard/chieftain/friendly";
+			}
+			return "isengard/chieftain/neutral";
+		}
+		return "isengard/orc/hostile";
+	}
 
-    @Override
-    public LOTRInvasions getWarhorn() {
-        return LOTRInvasions.URUK_HAI;
-    }
+	@Override
+	public LOTRUnitTradeEntries getUnits() {
+		return LOTRUnitTradeEntries.URUK_HAI_MERCENARY_CAPTAIN;
+	}
 
-    @Override
-    public boolean canTradeWith(EntityPlayer entityplayer) {
-        return LOTRLevelData.getData(entityplayer).getAlignment(this.getFaction()) >= 150.0f && this.isFriendly(entityplayer);
-    }
+	@Override
+	public LOTRInvasions getWarhorn() {
+		return LOTRInvasions.URUK_HAI;
+	}
 
-    @Override
-    public void onUnitTrade(EntityPlayer entityplayer) {
-        LOTRLevelData.getData(entityplayer).addAchievement(LOTRAchievement.tradeUrukCaptain);
-    }
+	@Override
+	public IEntityLivingData onSpawnWithEgg(IEntityLivingData data) {
+		data = super.onSpawnWithEgg(data);
+		npcItemsInv.setMeleeWeapon(new ItemStack(LOTRMod.orcSkullStaff));
+		npcItemsInv.setIdleItem(npcItemsInv.getMeleeWeapon());
+		setCurrentItemOrArmor(1, new ItemStack(LOTRMod.bootsUruk));
+		setCurrentItemOrArmor(2, new ItemStack(LOTRMod.legsUruk));
+		setCurrentItemOrArmor(3, new ItemStack(LOTRMod.bodyUruk));
+		setCurrentItemOrArmor(4, null);
+		return data;
+	}
 
-    @Override
-    public boolean shouldTraderRespawn() {
-        return true;
-    }
+	@Override
+	public void onUnitTrade(EntityPlayer entityplayer) {
+		LOTRLevelData.getData(entityplayer).addAchievement(LOTRAchievement.tradeUrukCaptain);
+	}
 
-    @Override
-    public String getSpeechBank(EntityPlayer entityplayer) {
-        if(this.isFriendly(entityplayer)) {
-            if(this.canTradeWith(entityplayer)) {
-                return "isengard/chieftain/friendly";
-            }
-            return "isengard/chieftain/neutral";
-        }
-        return "isengard/orc/hostile";
-    }
+	@Override
+	public boolean shouldTraderRespawn() {
+		return true;
+	}
 }

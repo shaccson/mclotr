@@ -12,29 +12,29 @@ import net.minecraft.util.*;
 import net.minecraft.world.World;
 
 public class LOTRCommandStrScan extends CommandBase {
-	private boolean scanning = false;
-	private int originX;
-	private int originY;
-	private int originZ;
-	private int minX;
-	private int minY;
-	private int minZ;
-	private int maxX;
-	private int maxY;
-	private int maxZ;
-	private List<String> aliasOrder = new ArrayList<>();
-	private Map<Block, String> blockAliases = new HashMap<>();
-	private Map<Pair<Block, Integer>, String> blockMetaAliases = new HashMap<>();
-	private Set<String> aliasesToInclude = new HashSet<>();
+	public boolean scanning = false;
+	public int originX;
+	public int originY;
+	public int originZ;
+	public int minX;
+	public int minY;
+	public int minZ;
+	public int maxX;
+	public int maxY;
+	public int maxZ;
+	public List<String> aliasOrder = new ArrayList<>();
+	public Map<Block, String> blockAliases = new HashMap<>();
+	public Map<Pair<Block, Integer>, String> blockMetaAliases = new HashMap<>();
+	public Set<String> aliasesToInclude = new HashSet<>();
+
+	@Override
+	public List addTabCompletionOptions(ICommandSender sender, String[] args) {
+		return null;
+	}
 
 	@Override
 	public String getCommandName() {
 		return "strscan";
-	}
-
-	@Override
-	public int getRequiredPermissionLevel() {
-		return 2;
 	}
 
 	@Override
@@ -43,10 +43,20 @@ public class LOTRCommandStrScan extends CommandBase {
 	}
 
 	@Override
+	public int getRequiredPermissionLevel() {
+		return 2;
+	}
+
+	@Override
+	public boolean isUsernameIndex(String[] args, int i) {
+		return false;
+	}
+
+	@Override
 	public void processCommand(ICommandSender sender, String[] args) {
 		if (args.length >= 1) {
 			String option = args[0];
-			if (option.equals("begin")) {
+			if ("begin".equals(option)) {
 				if (!scanning) {
 					scanning = true;
 					aliasOrder.clear();
@@ -57,7 +67,7 @@ public class LOTRCommandStrScan extends CommandBase {
 				}
 				throw new WrongUsageException("Already begun scanning");
 			}
-			if (option.equals("assoc") && args.length >= 3 && scanning) {
+			if ("assoc".equals(option) && args.length >= 3 && scanning) {
 				String blockID = args[1];
 				Block block = Block.getBlockFromName(blockID);
 				if (block == null) {
@@ -76,7 +86,7 @@ public class LOTRCommandStrScan extends CommandBase {
 				}
 				throw new WrongUsageException("Block %s does not exist", blockID);
 			}
-			if (option.equals("assoc_meta") && args.length >= 4 && scanning) {
+			if ("assoc_meta".equals(option) && args.length >= 4 && scanning) {
 				String blockID = args[1];
 				Block block = Block.getBlockFromName(blockID);
 				if (block == null) {
@@ -99,7 +109,7 @@ public class LOTRCommandStrScan extends CommandBase {
 				}
 				throw new WrongUsageException("Block %s does not exist", blockID);
 			}
-			if (option.equals("origin") && args.length >= 4 && scanning) {
+			if ("origin".equals(option) && args.length >= 4 && scanning) {
 				ChunkCoordinates coords = sender.getPlayerCoordinates();
 				int i = coords.posX;
 				int j = coords.posY;
@@ -116,7 +126,7 @@ public class LOTRCommandStrScan extends CommandBase {
 				CommandBase.func_152373_a(sender, this, "Set scan origin to %s %s %s", originX, originY, originZ);
 				return;
 			}
-			if (option.equals("expand") && args.length >= 4 && scanning) {
+			if ("expand".equals(option) && args.length >= 4 && scanning) {
 				ChunkCoordinates coords = sender.getPlayerCoordinates();
 				int i = coords.posX;
 				int j = coords.posY;
@@ -133,7 +143,7 @@ public class LOTRCommandStrScan extends CommandBase {
 				CommandBase.func_152373_a(sender, this, "Expanded scan region to include %s %s %s", i, j, k);
 				return;
 			}
-			if (option.equals("scan") && args.length >= 2 && scanning) {
+			if ("scan".equals(option) && args.length >= 2 && scanning) {
 				String scanName = args[1];
 				LOTRStructureScan scan = new LOTRStructureScan(scanName);
 				Block fillBelowKey = Blocks.bedrock;
@@ -198,15 +208,5 @@ public class LOTRCommandStrScan extends CommandBase {
 			}
 		}
 		throw new WrongUsageException(getCommandUsage(sender));
-	}
-
-	@Override
-	public List addTabCompletionOptions(ICommandSender sender, String[] args) {
-		return null;
-	}
-
-	@Override
-	public boolean isUsernameIndex(String[] args, int i) {
-		return false;
 	}
 }

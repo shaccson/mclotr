@@ -6,10 +6,10 @@ import net.minecraft.block.Block;
 import net.minecraft.item.ItemReed;
 
 public class LOTRItemPlaceableFood extends ItemReed {
-    public LOTRItemPlaceableFood(Block block) {
-        super(block);
-        this.setMaxStackSize(1);
-        this.setCreativeTab(LOTRCreativeTabs.tabFood);
-        ((LOTRBlockPlaceableFood) block).foodItem = this;
-    }
+	public LOTRItemPlaceableFood(Block block) {
+		super(block);
+		setMaxStackSize(1);
+		setCreativeTab(LOTRCreativeTabs.tabFood);
+		((LOTRBlockPlaceableFood) block).foodItem = this;
+	}
 }

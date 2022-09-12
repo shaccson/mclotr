@@ -18,296 +18,295 @@ import net.minecraft.world.*;
 import net.minecraft.world.biome.BiomeGenBase;
 
 public class LOTREntityDwarf extends LOTREntityNPC {
-    public LOTREntityDwarf(World world) {
-        super(world);
-        this.setSize(0.5f, 1.5f);
-        this.getNavigator().setAvoidsWater(true);
-        this.getNavigator().setBreakDoors(true);
-        this.tasks.addTask(0, new EntityAISwimming(this));
-        this.tasks.addTask(1, new LOTREntityAIHiredRemainStill(this));
-        this.tasks.addTask(2, new LOTREntityAINPCAvoidEvilPlayer(this, 8.0f, 1.5, 1.8));
-        this.tasks.addTask(3, this.getDwarfAttackAI());
-        this.tasks.addTask(4, new LOTREntityAIFollowHiringPlayer(this));
-        this.tasks.addTask(5, new LOTREntityAINPCMarry(this, 1.3));
-        this.tasks.addTask(6, new LOTREntityAINPCMate(this, 1.3));
-        this.tasks.addTask(7, new LOTREntityAINPCFollowParent(this, 1.4));
-        this.tasks.addTask(8, new LOTREntityAINPCFollowSpouse(this, 1.1));
-        this.tasks.addTask(9, new EntityAIOpenDoor(this, true));
-        this.tasks.addTask(10, new EntityAIWander(this, 1.0));
-        this.tasks.addTask(11, new LOTREntityAIEat(this, this.getDwarfFoods(), 6000));
-        this.tasks.addTask(11, new LOTREntityAIDrink(this, LOTRFoods.DWARF_DRINK, 6000));
-        this.tasks.addTask(12, new EntityAIWatchClosest2(this, EntityPlayer.class, 8.0f, 0.02f));
-        this.tasks.addTask(12, new EntityAIWatchClosest2(this, LOTREntityNPC.class, 5.0f, 0.02f));
-        this.tasks.addTask(13, new EntityAIWatchClosest(this, EntityLiving.class, 8.0f, 0.02f));
-        this.tasks.addTask(14, new EntityAILookIdle(this));
-        this.addTargetTasks(true);
-        this.familyInfo.marriageEntityClass = LOTREntityDwarf.class;
-        this.familyInfo.marriageRing = LOTRMod.dwarvenRing;
-        this.familyInfo.marriageAlignmentRequired = 200.0f;
-        this.familyInfo.marriageAchievement = LOTRAchievement.marryDwarf;
-        this.familyInfo.potentialMaxChildren = 3;
-        this.familyInfo.timeToMature = 72000;
-        this.familyInfo.breedingDelay = 48000;
-    }
+	public LOTREntityDwarf(World world) {
+		super(world);
+		setSize(0.5f, 1.5f);
+		getNavigator().setAvoidsWater(true);
+		getNavigator().setBreakDoors(true);
+		tasks.addTask(0, new EntityAISwimming(this));
+		tasks.addTask(1, new LOTREntityAIHiredRemainStill(this));
+		tasks.addTask(2, new LOTREntityAINPCAvoidEvilPlayer(this, 8.0f, 1.5, 1.8));
+		tasks.addTask(3, getDwarfAttackAI());
+		tasks.addTask(4, new LOTREntityAIFollowHiringPlayer(this));
+		tasks.addTask(5, new LOTREntityAINPCMarry(this, 1.3));
+		tasks.addTask(6, new LOTREntityAINPCMate(this, 1.3));
+		tasks.addTask(7, new LOTREntityAINPCFollowParent(this, 1.4));
+		tasks.addTask(8, new LOTREntityAINPCFollowSpouse(this, 1.1));
+		tasks.addTask(9, new EntityAIOpenDoor(this, true));
+		tasks.addTask(10, new EntityAIWander(this, 1.0));
+		tasks.addTask(11, new LOTREntityAIEat(this, getDwarfFoods(), 6000));
+		tasks.addTask(11, new LOTREntityAIDrink(this, LOTRFoods.DWARF_DRINK, 6000));
+		tasks.addTask(12, new EntityAIWatchClosest2(this, EntityPlayer.class, 8.0f, 0.02f));
+		tasks.addTask(12, new EntityAIWatchClosest2(this, LOTREntityNPC.class, 5.0f, 0.02f));
+		tasks.addTask(13, new EntityAIWatchClosest(this, EntityLiving.class, 8.0f, 0.02f));
+		tasks.addTask(14, new EntityAILookIdle(this));
+		this.addTargetTasks(true);
+		familyInfo.marriageEntityClass = LOTREntityDwarf.class;
+		familyInfo.marriageRing = LOTRMod.dwarvenRing;
+		familyInfo.marriageAlignmentRequired = 200.0f;
+		familyInfo.marriageAchievement = LOTRAchievement.marryDwarf;
+		familyInfo.potentialMaxChildren = 3;
+		familyInfo.timeToMature = 72000;
+		familyInfo.breedingDelay = 48000;
+	}
 
-    protected EntityAIBase getDwarfAttackAI() {
-        return new LOTREntityAIAttackOnCollide(this, 1.4, false);
-    }
+	@Override
+	public void applyEntityAttributes() {
+		super.applyEntityAttributes();
+		getEntityAttribute(SharedMonsterAttributes.maxHealth).setBaseValue(26.0);
+		getEntityAttribute(SharedMonsterAttributes.movementSpeed).setBaseValue(0.2);
+	}
 
-    protected LOTRFoods getDwarfFoods() {
-        return LOTRFoods.DWARF;
-    }
+	public boolean canDwarfSpawnAboveGround() {
+		return true;
+	}
 
-    @Override
-    public void setupNPCGender() {
-        this.familyInfo.setMale(true);
-    }
+	public boolean canDwarfSpawnHere() {
+		int i = MathHelper.floor_double(posX);
+		int j = MathHelper.floor_double(boundingBox.minY);
+		int k = MathHelper.floor_double(posZ);
+		if (rand.nextInt(200) == 0) {
+			return canDwarfSpawnAboveGround();
+		}
+		return j < 60 && worldObj.getBlock(i, j - 1, k).getMaterial() == Material.rock && !worldObj.canBlockSeeTheSky(i, j, k) && worldObj.getSavedLightValue(EnumSkyBlock.Block, i, j, k) >= 10;
+	}
 
-    @Override
-    public void setupNPCName() {
-        this.familyInfo.setName(LOTRNames.getDwarfName(this.rand, this.familyInfo.isMale()));
-    }
+	@Override
+	public LOTRMiniQuest createMiniQuest() {
+		return LOTRMiniQuestFactory.DURIN.createQuest(this);
+	}
 
-    @Override
-    protected void applyEntityAttributes() {
-        super.applyEntityAttributes();
-        this.getEntityAttribute(SharedMonsterAttributes.maxHealth).setBaseValue(26.0);
-        this.getEntityAttribute(SharedMonsterAttributes.movementSpeed).setBaseValue(0.2);
-    }
+	@Override
+	public void createNPCChildName(LOTREntityNPC maleParent, LOTREntityNPC femaleParent) {
+		familyInfo.setName(LOTRNames.getDwarfChildNameForParent(rand, familyInfo.isMale(), (LOTREntityDwarf) maleParent));
+	}
 
-    @Override
-    public IEntityLivingData initCreatureForHire(IEntityLivingData data) {
-        data = super.initCreatureForHire(data);
-        data = this.onSpawnWithEgg(data);
-        if(this.getClass() == this.familyInfo.marriageEntityClass && this.rand.nextInt(3) == 0) {
-            this.familyInfo.setMale(false);
-            this.setupNPCName();
-        }
-        return data;
-    }
+	@Override
+	public void dropFewItems(boolean flag, int i) {
+		super.dropFewItems(flag, i);
+		int bones = rand.nextInt(2) + rand.nextInt(i + 1);
+		for (int l = 0; l < bones; ++l) {
+			dropItem(LOTRMod.dwarfBone, 1);
+		}
+		if (rand.nextInt(4) == 0) {
+			dropChestContents(getLarderDrops(), 1, 2 + i);
+		}
+		if (rand.nextInt(8) == 0) {
+			dropChestContents(getGenericDrops(), 1, 2 + i);
+		}
+		if (flag) {
+			int rareDropChance = 20 - i * 4;
+			if (rand.nextInt(rareDropChance = Math.max(rareDropChance, 1)) == 0) {
+				int randDrop = rand.nextInt(4);
+				switch (randDrop) {
+				case 0: {
+					entityDropItem(new ItemStack(Items.iron_ingot), 0.0f);
+					break;
+				}
+				case 1: {
+					entityDropItem(new ItemStack(getDwarfSteelDrop()), 0.0f);
+					break;
+				}
+				case 2: {
+					entityDropItem(new ItemStack(Items.gold_nugget, 1 + rand.nextInt(3)), 0.0f);
+					break;
+				}
+				case 3: {
+					entityDropItem(new ItemStack(LOTRMod.silverNugget, 1 + rand.nextInt(3)), 0.0f);
+				}
+				}
+			}
+			int mithrilBookChance = 40 - i * 5;
+			if (rand.nextInt(mithrilBookChance = Math.max(mithrilBookChance, 1)) == 0) {
+				entityDropItem(new ItemStack(LOTRMod.mithrilBook), 0.0f);
+			}
+		}
+	}
 
-    @Override
-    public IEntityLivingData onSpawnWithEgg(IEntityLivingData data) {
-        data = super.onSpawnWithEgg(data);
-        this.npcItemsInv.setMeleeWeapon(new ItemStack(LOTRMod.daggerDwarven));
-        this.npcItemsInv.setIdleItem(null);
-        return data;
-    }
+	@Override
+	public float getAlignmentBonus() {
+		return 1.0f;
+	}
 
-    @Override
-    public LOTRFaction getFaction() {
-        return LOTRFaction.DURINS_FOLK;
-    }
+	@Override
+	public String getAttackSound() {
+		return "lotr:dwarf.attack";
+	}
 
-    @Override
-    public String getNPCName() {
-        return this.familyInfo.getName();
-    }
+	@Override
+	public float getBlockPathWeight(int i, int j, int k) {
+		float f = 0.0f;
+		BiomeGenBase biome = worldObj.getBiomeGenForCoords(i, k);
+		if (biome instanceof LOTRBiomeGenIronHills || biome instanceof LOTRBiomeGenErebor || biome instanceof LOTRBiomeGenBlueMountains || biome instanceof LOTRBiomeGenRedMountains) {
+			f += 20.0f;
+		}
+		return f;
+	}
 
-    @Override
-    public void readEntityFromNBT(NBTTagCompound nbt) {
-        super.readEntityFromNBT(nbt);
-        if(nbt.hasKey("DwarfName")) {
-            this.familyInfo.setName(nbt.getString("DwarfName"));
-        }
-    }
+	@Override
+	public LOTRMiniQuestFactory getBountyHelpSpeechDir() {
+		return LOTRMiniQuestFactory.DURIN;
+	}
 
-    @Override
-    public void createNPCChildName(LOTREntityNPC maleParent, LOTREntityNPC femaleParent) {
-        this.familyInfo.setName(LOTRNames.getDwarfChildNameForParent(this.rand, this.familyInfo.isMale(), (LOTREntityDwarf) maleParent));
-    }
+	@Override
+	public boolean getCanSpawnHere() {
+		if (super.getCanSpawnHere()) {
+			if (liftSpawnRestrictions) {
+				return true;
+			}
+			return canDwarfSpawnHere();
+		}
+		return false;
+	}
 
-    @Override
-    public boolean interact(EntityPlayer entityplayer) {
-        if(this.familyInfo.interact(entityplayer)) {
-            return true;
-        }
-        return super.interact(entityplayer);
-    }
+	@Override
+	public String getDeathSound() {
+		return "lotr:dwarf.hurt";
+	}
 
-    @Override
-    public void onAttackModeChange(LOTREntityNPC.AttackMode mode, boolean mounted) {
-        if(mode == LOTREntityNPC.AttackMode.IDLE) {
-            this.setCurrentItemOrArmor(0, this.npcItemsInv.getIdleItem());
-        }
-        else {
-            this.setCurrentItemOrArmor(0, this.npcItemsInv.getMeleeWeapon());
-        }
-    }
+	public EntityAIBase getDwarfAttackAI() {
+		return new LOTREntityAIAttackOnCollide(this, 1.4, false);
+	}
 
-    @Override
-    protected LOTRAchievement getKillAchievement() {
-        return LOTRAchievement.killDwarf;
-    }
+	public LOTRFoods getDwarfFoods() {
+		return LOTRFoods.DWARF;
+	}
 
-    @Override
-    public float getAlignmentBonus() {
-        return 1.0f;
-    }
+	public Item getDwarfSteelDrop() {
+		return LOTRMod.dwarfSteel;
+	}
 
-    @Override
-    protected void dropFewItems(boolean flag, int i) {
-        super.dropFewItems(flag, i);
-        int bones = this.rand.nextInt(2) + this.rand.nextInt(i + 1);
-        for(int l = 0; l < bones; ++l) {
-            this.dropItem(LOTRMod.dwarfBone, 1);
-        }
-        if(this.rand.nextInt(4) == 0) {
-            this.dropChestContents(this.getLarderDrops(), 1, 2 + i);
-        }
-        if(this.rand.nextInt(8) == 0) {
-            this.dropChestContents(this.getGenericDrops(), 1, 2 + i);
-        }
-        if(flag) {
-            int rareDropChance = 20 - i * 4;
-            if(this.rand.nextInt(rareDropChance = Math.max(rareDropChance, 1)) == 0) {
-                int randDrop = this.rand.nextInt(4);
-                switch(randDrop) {
-                    case 0: {
-                        this.entityDropItem(new ItemStack(Items.iron_ingot), 0.0f);
-                        break;
-                    }
-                    case 1: {
-                        this.entityDropItem(new ItemStack(this.getDwarfSteelDrop()), 0.0f);
-                        break;
-                    }
-                    case 2: {
-                        this.entityDropItem(new ItemStack(Items.gold_nugget, 1 + this.rand.nextInt(3)), 0.0f);
-                        break;
-                    }
-                    case 3: {
-                        this.entityDropItem(new ItemStack(LOTRMod.silverNugget, 1 + this.rand.nextInt(3)), 0.0f);
-                    }
-                }
-            }
-            int mithrilBookChance = 40 - i * 5;
-            if(this.rand.nextInt(mithrilBookChance = Math.max(mithrilBookChance, 1)) == 0) {
-                this.entityDropItem(new ItemStack(LOTRMod.mithrilBook), 0.0f);
-            }
-        }
-    }
+	@Override
+	public LOTRFaction getFaction() {
+		return LOTRFaction.DURINS_FOLK;
+	}
 
-    protected Item getDwarfSteelDrop() {
-        return LOTRMod.dwarfSteel;
-    }
+	public LOTRChestContents getGenericDrops() {
+		return LOTRChestContents.DWARVEN_TOWER;
+	}
 
-    protected LOTRChestContents getLarderDrops() {
-        return LOTRChestContents.DWARF_HOUSE_LARDER;
-    }
+	@Override
+	public String getHurtSound() {
+		return "lotr:dwarf.hurt";
+	}
 
-    protected LOTRChestContents getGenericDrops() {
-        return LOTRChestContents.DWARVEN_TOWER;
-    }
+	@Override
+	public LOTRAchievement getKillAchievement() {
+		return LOTRAchievement.killDwarf;
+	}
 
-    @Override
-    public boolean getCanSpawnHere() {
-        if(super.getCanSpawnHere()) {
-            if(this.liftSpawnRestrictions) {
-                return true;
-            }
-            return this.canDwarfSpawnHere();
-        }
-        return false;
-    }
+	public LOTRChestContents getLarderDrops() {
+		return LOTRChestContents.DWARF_HOUSE_LARDER;
+	}
 
-    protected boolean canDwarfSpawnHere() {
-        int i = MathHelper.floor_double(this.posX);
-        int j = MathHelper.floor_double(this.boundingBox.minY);
-        int k = MathHelper.floor_double(this.posZ);
-        if(this.rand.nextInt(200) == 0) {
-            return this.canDwarfSpawnAboveGround();
-        }
-        return j < 60 && this.worldObj.getBlock(i, j - 1, k).getMaterial() == Material.rock && !this.worldObj.canBlockSeeTheSky(i, j, k) && this.worldObj.getSavedLightValue(EnumSkyBlock.Block, i, j, k) >= 10;
-    }
+	@Override
+	public int getMaxSpawnedInChunk() {
+		return 6;
+	}
 
-    protected boolean canDwarfSpawnAboveGround() {
-        return true;
-    }
+	@Override
+	public String getNPCName() {
+		return familyInfo.getName();
+	}
 
-    @Override
-    public float getBlockPathWeight(int i, int j, int k) {
-        float f = 0.0f;
-        BiomeGenBase biome = this.worldObj.getBiomeGenForCoords(i, k);
-        if(biome instanceof LOTRBiomeGenIronHills || biome instanceof LOTRBiomeGenErebor || biome instanceof LOTRBiomeGenBlueMountains || biome instanceof LOTRBiomeGenRedMountains) {
-            f += 20.0f;
-        }
-        return f;
-    }
+	@Override
+	public float getSoundPitch() {
+		float f = super.getSoundPitch();
+		if (!familyInfo.isMale()) {
+			f *= 1.4f;
+		}
+		return f;
+	}
 
-    @Override
-    public int getMaxSpawnedInChunk() {
-        return 6;
-    }
+	@Override
+	public String getSpeechBank(EntityPlayer entityplayer) {
+		if (isFriendly(entityplayer)) {
+			if (hiredNPCInfo.getHiringPlayer() == entityplayer) {
+				return "dwarf/dwarf/hired";
+			}
+			return isChild() ? "dwarf/child/friendly" : "dwarf/dwarf/friendly";
+		}
+		return isChild() ? "dwarf/child/hostile" : "dwarf/dwarf/hostile";
+	}
 
-    @Override
-    protected float getSoundPitch() {
-        float f = super.getSoundPitch();
-        if(!this.familyInfo.isMale()) {
-            f *= 1.4f;
-        }
-        return f;
-    }
+	@Override
+	public LOTRAchievement getTalkAchievement() {
+		if (!familyInfo.isMale()) {
+			return LOTRAchievement.talkDwarfWoman;
+		}
+		return super.getTalkAchievement();
+	}
 
-    @Override
-    public String getHurtSound() {
-        return "lotr:dwarf.hurt";
-    }
+	@Override
+	public IEntityLivingData initCreatureForHire(IEntityLivingData data) {
+		data = super.initCreatureForHire(data);
+		data = onSpawnWithEgg(data);
+		if (this.getClass() == familyInfo.marriageEntityClass && rand.nextInt(3) == 0) {
+			familyInfo.setMale(false);
+			setupNPCName();
+		}
+		return data;
+	}
 
-    @Override
-    public String getDeathSound() {
-        return "lotr:dwarf.hurt";
-    }
+	@Override
+	public boolean interact(EntityPlayer entityplayer) {
+		if (familyInfo.interact(entityplayer)) {
+			return true;
+		}
+		return super.interact(entityplayer);
+	}
 
-    @Override
-    public String getAttackSound() {
-        return "lotr:dwarf.attack";
-    }
+	@Override
+	public void onArtificalSpawn() {
+		if (this.getClass() == familyInfo.marriageEntityClass) {
+			if (rand.nextInt(3) == 0) {
+				familyInfo.setMale(false);
+				setupNPCName();
+			}
+			if (rand.nextInt(20) == 0) {
+				familyInfo.setChild();
+			}
+		}
+	}
 
-    @Override
-    public void onKillEntity(EntityLivingBase entity) {
-        super.onKillEntity(entity);
-        this.playSound("lotr:dwarf.kill", this.getSoundVolume(), this.getSoundPitch());
-    }
+	@Override
+	public void onAttackModeChange(LOTREntityNPC.AttackMode mode, boolean mounted) {
+		if (mode == LOTREntityNPC.AttackMode.IDLE) {
+			setCurrentItemOrArmor(0, npcItemsInv.getIdleItem());
+		} else {
+			setCurrentItemOrArmor(0, npcItemsInv.getMeleeWeapon());
+		}
+	}
 
-    @Override
-    protected LOTRAchievement getTalkAchievement() {
-        if(!this.familyInfo.isMale()) {
-            return LOTRAchievement.talkDwarfWoman;
-        }
-        return super.getTalkAchievement();
-    }
+	@Override
+	public void onKillEntity(EntityLivingBase entity) {
+		super.onKillEntity(entity);
+		playSound("lotr:dwarf.kill", getSoundVolume(), getSoundPitch());
+	}
 
-    @Override
-    public String getSpeechBank(EntityPlayer entityplayer) {
-        if(this.isFriendly(entityplayer)) {
-            if(this.hiredNPCInfo.getHiringPlayer() == entityplayer) {
-                return "dwarf/dwarf/hired";
-            }
-            return this.isChild() ? "dwarf/child/friendly" : "dwarf/dwarf/friendly";
-        }
-        return this.isChild() ? "dwarf/child/hostile" : "dwarf/dwarf/hostile";
-    }
+	@Override
+	public IEntityLivingData onSpawnWithEgg(IEntityLivingData data) {
+		data = super.onSpawnWithEgg(data);
+		npcItemsInv.setMeleeWeapon(new ItemStack(LOTRMod.daggerDwarven));
+		npcItemsInv.setIdleItem(null);
+		return data;
+	}
 
-    @Override
-    public LOTRMiniQuest createMiniQuest() {
-        return LOTRMiniQuestFactory.DURIN.createQuest(this);
-    }
+	@Override
+	public void readEntityFromNBT(NBTTagCompound nbt) {
+		super.readEntityFromNBT(nbt);
+		if (nbt.hasKey("DwarfName")) {
+			familyInfo.setName(nbt.getString("DwarfName"));
+		}
+	}
 
-    @Override
-    public LOTRMiniQuestFactory getBountyHelpSpeechDir() {
-        return LOTRMiniQuestFactory.DURIN;
-    }
+	@Override
+	public void setupNPCGender() {
+		familyInfo.setMale(true);
+	}
 
-    @Override
-    public void onArtificalSpawn() {
-        if(this.getClass() == this.familyInfo.marriageEntityClass) {
-            if(this.rand.nextInt(3) == 0) {
-                this.familyInfo.setMale(false);
-                this.setupNPCName();
-            }
-            if(this.rand.nextInt(20) == 0) {
-                this.familyInfo.setChild();
-            }
-        }
-    }
+	@Override
+	public void setupNPCName() {
+		familyInfo.setName(LOTRNames.getDwarfName(rand, familyInfo.isMale()));
+	}
 }

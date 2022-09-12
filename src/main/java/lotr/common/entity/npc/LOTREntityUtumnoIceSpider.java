@@ -7,40 +7,40 @@ import net.minecraft.entity.player.EntityPlayerMP;
 import net.minecraft.world.World;
 
 public class LOTREntityUtumnoIceSpider extends LOTREntitySpiderBase {
-    public LOTREntityUtumnoIceSpider(World world) {
-        super(world);
-        this.isImmuneToFrost = true;
-        this.isChilly = true;
-    }
+	public LOTREntityUtumnoIceSpider(World world) {
+		super(world);
+		isImmuneToFrost = true;
+		isChilly = true;
+	}
 
-    @Override
-    protected int getRandomSpiderScale() {
-        return this.rand.nextInt(4);
-    }
+	@Override
+	public boolean attackEntityAsMob(Entity entity) {
+		if (super.attackEntityAsMob(entity)) {
+			if (entity instanceof EntityPlayerMP) {
+				LOTRDamage.doFrostDamage((EntityPlayerMP) entity);
+			}
+			return true;
+		}
+		return false;
+	}
 
-    @Override
-    protected int getRandomSpiderType() {
-        return VENOM_SLOWNESS;
-    }
+	@Override
+	public boolean canRideSpider() {
+		return false;
+	}
 
-    @Override
-    public LOTRFaction getFaction() {
-        return LOTRFaction.UTUMNO;
-    }
+	@Override
+	public LOTRFaction getFaction() {
+		return LOTRFaction.UTUMNO;
+	}
 
-    @Override
-    protected boolean canRideSpider() {
-        return false;
-    }
+	@Override
+	public int getRandomSpiderScale() {
+		return rand.nextInt(4);
+	}
 
-    @Override
-    public boolean attackEntityAsMob(Entity entity) {
-        if(super.attackEntityAsMob(entity)) {
-            if(entity instanceof EntityPlayerMP) {
-                LOTRDamage.doFrostDamage((EntityPlayerMP) entity);
-            }
-            return true;
-        }
-        return false;
-    }
+	@Override
+	public int getRandomSpiderType() {
+		return VENOM_SLOWNESS;
+	}
 }

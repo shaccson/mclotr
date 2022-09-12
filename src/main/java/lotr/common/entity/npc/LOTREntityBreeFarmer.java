@@ -9,74 +9,70 @@ import net.minecraft.init.Items;
 import net.minecraft.item.ItemStack;
 import net.minecraft.world.World;
 
-public class LOTREntityBreeFarmer
-extends LOTREntityBreeMan
-implements LOTRTradeable,
-LOTRUnitTradeable {
-    public LOTREntityBreeFarmer(World world) {
-        super(world);
-        this.addTargetTasks(false);
-    }
+public class LOTREntityBreeFarmer extends LOTREntityBreeMan implements LOTRTradeable, LOTRUnitTradeable {
+	public LOTREntityBreeFarmer(World world) {
+		super(world);
+		this.addTargetTasks(false);
+	}
 
-    @Override
-    public LOTRTradeEntries getBuyPool() {
-        return LOTRTradeEntries.BREE_FARMER_BUY;
-    }
+	@Override
+	public boolean canTradeWith(EntityPlayer entityplayer) {
+		return LOTRLevelData.getData(entityplayer).getAlignment(getFaction()) >= 0.0f && isFriendlyAndAligned(entityplayer);
+	}
 
-    @Override
-    public LOTRTradeEntries getSellPool() {
-        return LOTRTradeEntries.BREE_FARMER_SELL;
-    }
+	@Override
+	public float getAlignmentBonus() {
+		return 2.0f;
+	}
 
-    @Override
-    public IEntityLivingData onSpawnWithEgg(IEntityLivingData data) {
-        data = super.onSpawnWithEgg(data);
-        this.npcItemsInv.setMeleeWeapon(new ItemStack(Items.iron_hoe));
-        this.npcItemsInv.setIdleItem(this.npcItemsInv.getMeleeWeapon());
-        ItemStack hat = new ItemStack(LOTRMod.leatherHat);
-        LOTRItemLeatherHat.setHatColor(hat, 10390131);
-        this.setCurrentItemOrArmor(4, hat);
-        return data;
-    }
+	@Override
+	public LOTRTradeEntries getBuyPool() {
+		return LOTRTradeEntries.BREE_FARMER_BUY;
+	}
 
-    @Override
-    public float getAlignmentBonus() {
-        return 2.0f;
-    }
+	@Override
+	public LOTRTradeEntries getSellPool() {
+		return LOTRTradeEntries.BREE_FARMER_SELL;
+	}
 
-    @Override
-    public LOTRInvasions getWarhorn() {
-        return null;
-    }
+	@Override
+	public String getSpeechBank(EntityPlayer entityplayer) {
+		if (isFriendlyAndAligned(entityplayer)) {
+			return "bree/farmer/friendly";
+		}
+		return "bree/farmer/hostile";
+	}
 
-    @Override
-    public boolean canTradeWith(EntityPlayer entityplayer) {
-        return LOTRLevelData.getData(entityplayer).getAlignment(this.getFaction()) >= 0.0f && this.isFriendlyAndAligned(entityplayer);
-    }
+	@Override
+	public LOTRUnitTradeEntries getUnits() {
+		return LOTRUnitTradeEntries.BREE_FARMER;
+	}
 
-    @Override
-    public void onPlayerTrade(EntityPlayer entityplayer, LOTRTradeEntries.TradeType type, ItemStack itemstack) {
-        if (type == LOTRTradeEntries.TradeType.BUY && (itemstack.getItem() == Items.apple || itemstack.getItem() == LOTRMod.appleGreen)) {
-            LOTRLevelData.getData(entityplayer).addAchievement(LOTRAchievement.buyAppleBreeFarmer);
-        }
-    }
+	@Override
+	public LOTRInvasions getWarhorn() {
+		return null;
+	}
 
-    @Override
-    public LOTRUnitTradeEntries getUnits() {
-        return LOTRUnitTradeEntries.BREE_FARMER;
-    }
+	@Override
+	public void onPlayerTrade(EntityPlayer entityplayer, LOTRTradeEntries.TradeType type, ItemStack itemstack) {
+		if (type == LOTRTradeEntries.TradeType.BUY && (itemstack.getItem() == Items.apple || itemstack.getItem() == LOTRMod.appleGreen)) {
+			LOTRLevelData.getData(entityplayer).addAchievement(LOTRAchievement.buyAppleBreeFarmer);
+		}
+	}
 
-    @Override
-    public void onUnitTrade(EntityPlayer entityplayer) {
-        LOTRLevelData.getData(entityplayer).addAchievement(LOTRAchievement.hireBreeFarmer);
-    }
+	@Override
+	public IEntityLivingData onSpawnWithEgg(IEntityLivingData data) {
+		data = super.onSpawnWithEgg(data);
+		npcItemsInv.setMeleeWeapon(new ItemStack(Items.iron_hoe));
+		npcItemsInv.setIdleItem(npcItemsInv.getMeleeWeapon());
+		ItemStack hat = new ItemStack(LOTRMod.leatherHat);
+		LOTRItemLeatherHat.setHatColor(hat, 10390131);
+		setCurrentItemOrArmor(4, hat);
+		return data;
+	}
 
-    @Override
-    public String getSpeechBank(EntityPlayer entityplayer) {
-        if (this.isFriendlyAndAligned(entityplayer)) {
-            return "bree/farmer/friendly";
-        }
-        return "bree/farmer/hostile";
-    }
+	@Override
+	public void onUnitTrade(EntityPlayer entityplayer) {
+		LOTRLevelData.getData(entityplayer).addAchievement(LOTRAchievement.hireBreeFarmer);
+	}
 }
-

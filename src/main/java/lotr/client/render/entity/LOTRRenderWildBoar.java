@@ -7,26 +7,26 @@ import net.minecraft.entity.*;
 import net.minecraft.util.ResourceLocation;
 
 public class LOTRRenderWildBoar extends RenderLiving {
-    public static ResourceLocation boarSkin = new ResourceLocation("lotr:mob/boar/boar.png");
-    private static ResourceLocation saddleTexture = new ResourceLocation("lotr:mob/boar/saddle.png");
+	public static ResourceLocation boarSkin = new ResourceLocation("lotr:mob/boar/boar.png");
+	public static ResourceLocation saddleTexture = new ResourceLocation("lotr:mob/boar/saddle.png");
 
-    public LOTRRenderWildBoar() {
-        super(new LOTRModelBoar(), 0.7f);
-        this.setRenderPassModel(new LOTRModelBoar(0.5f));
-    }
+	public LOTRRenderWildBoar() {
+		super(new LOTRModelBoar(), 0.7f);
+		setRenderPassModel(new LOTRModelBoar(0.5f));
+	}
 
-    @Override
-    protected ResourceLocation getEntityTexture(Entity entity) {
-        LOTREntityWildBoar boar = (LOTREntityWildBoar) entity;
-        return LOTRRenderHorse.getLayeredMountTexture(boar, boarSkin);
-    }
+	@Override
+	public ResourceLocation getEntityTexture(Entity entity) {
+		LOTREntityWildBoar boar = (LOTREntityWildBoar) entity;
+		return LOTRRenderHorse.getLayeredMountTexture(boar, boarSkin);
+	}
 
-    @Override
-    protected int shouldRenderPass(EntityLivingBase entity, int pass, float f) {
-        if(pass == 0 && ((LOTREntityWildBoar) entity).isMountSaddled()) {
-            this.bindTexture(saddleTexture);
-            return 1;
-        }
-        return super.shouldRenderPass(entity, pass, f);
-    }
+	@Override
+	public int shouldRenderPass(EntityLivingBase entity, int pass, float f) {
+		if (pass == 0 && ((LOTREntityWildBoar) entity).isMountSaddled()) {
+			bindTexture(saddleTexture);
+			return 1;
+		}
+		return super.shouldRenderPass(entity, pass, f);
+	}
 }

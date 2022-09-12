@@ -1,10 +1,12 @@
-#title:Сказка путешественника часть 2
+#title:Traveller's Tale, part two
 #types:ruins
 #
-Я иду дальше. Солнце снова поднимается над мягкой, белой землёй.
+I keep my pace. The Sun rises again over the soft, white ground.
 
-Меня окружают мертвые. Вокруг реликвии давних-давних времен. И все же я иду не озираясь.
+The dead surround me. Relics of ages long past. And still, I continue.
 
-Не погибну ли я до того, как доберусь до гор Севера? Не прекратится ли это путешествие? Мое сердце устало.
+Will I perish before reaching the Mountains of the North? Will this journey ever cease? My heart grows weary.
 
-Вчера я наткнулся на маленькую лачугу на поляне иссохшего леса. Там лежали два трупа; зловещее зловоние гниющей плоти висело в воздухе.
+Yesterday, I came upon a small hovel in the clearing of a withered forest. The residents lay long dead; the foul stench of rotting flesh hung in the air, rank as the pits of the Enemy.
+
+Many Wargs and Orcs have I slain in recent days.

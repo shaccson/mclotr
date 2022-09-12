@@ -8,32 +8,32 @@ import net.minecraft.entity.passive.EntityCow;
 import net.minecraft.world.World;
 
 public class LOTREntityKineAraw extends LOTREntityAurochs {
-    public static float KINE_SCALE = 1.15f;
+	public static float KINE_SCALE = 1.15f;
 
-    public LOTREntityKineAraw(World world) {
-        super(world);
-        this.setSize(this.aurochsWidth * KINE_SCALE, this.aurochsHeight * KINE_SCALE);
-    }
+	public LOTREntityKineAraw(World world) {
+		super(world);
+		setSize(aurochsWidth * KINE_SCALE, aurochsHeight * KINE_SCALE);
+	}
 
-    @Override
-    protected EntityAIBase createAurochsAttackAI() {
-        return new LOTREntityAIAttackOnCollide(this, 1.9, true);
-    }
+	@Override
+	public void applyEntityAttributes() {
+		super.applyEntityAttributes();
+		getEntityAttribute(SharedMonsterAttributes.maxHealth).setBaseValue(40.0);
+		getEntityAttribute(SharedMonsterAttributes.attackDamage).setBaseValue(5.0);
+	}
 
-    @Override
-    protected void applyEntityAttributes() {
-        super.applyEntityAttributes();
-        this.getEntityAttribute(SharedMonsterAttributes.maxHealth).setBaseValue(40.0);
-        this.getEntityAttribute(SharedMonsterAttributes.attackDamage).setBaseValue(5.0);
-    }
+	@Override
+	public EntityAIBase createAurochsAttackAI() {
+		return new LOTREntityAIAttackOnCollide(this, 1.9, true);
+	}
 
-    @Override
-    protected void dropHornItem(boolean flag, int i) {
-        this.dropItem(LOTRMod.kineArawHorn, 1);
-    }
+	@Override
+	public EntityCow createChild(EntityAgeable entity) {
+		return new LOTREntityKineAraw(worldObj);
+	}
 
-    @Override
-    public EntityCow createChild(EntityAgeable entity) {
-        return new LOTREntityKineAraw(this.worldObj);
-    }
+	@Override
+	public void dropHornItem(boolean flag, int i) {
+		dropItem(LOTRMod.kineArawHorn, 1);
+	}
 }

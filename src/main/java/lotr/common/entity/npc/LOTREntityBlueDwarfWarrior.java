@@ -6,46 +6,52 @@ import net.minecraft.item.ItemStack;
 import net.minecraft.world.World;
 
 public class LOTREntityBlueDwarfWarrior extends LOTREntityBlueDwarf {
-    public LOTREntityBlueDwarfWarrior(World world) {
-        super(world);
-        this.npcShield = LOTRShields.ALIGNMENT_BLUE_MOUNTAINS;
-    }
+	public LOTREntityBlueDwarfWarrior(World world) {
+		super(world);
+		npcShield = LOTRShields.ALIGNMENT_BLUE_MOUNTAINS;
+	}
 
-    @Override
-    public IEntityLivingData onSpawnWithEgg(IEntityLivingData data) {
-        data = super.onSpawnWithEgg(data);
-        int i = this.rand.nextInt(7);
-        if(i == 0) {
-            this.npcItemsInv.setMeleeWeapon(new ItemStack(LOTRMod.swordBlueDwarven));
-        }
-        else if(i == 1 || i == 2) {
-            this.npcItemsInv.setMeleeWeapon(new ItemStack(LOTRMod.battleaxeBlueDwarven));
-        }
-        else if(i == 3 || i == 4) {
-            this.npcItemsInv.setMeleeWeapon(new ItemStack(LOTRMod.hammerBlueDwarven));
-        }
-        else if(i == 5) {
-            this.npcItemsInv.setMeleeWeapon(new ItemStack(LOTRMod.mattockBlueDwarven));
-        }
-        else if(i == 6) {
-            this.npcItemsInv.setMeleeWeapon(new ItemStack(LOTRMod.pikeBlueDwarven));
-        }
-        if(this.rand.nextInt(6) == 0) {
-            this.npcItemsInv.setSpearBackup(this.npcItemsInv.getMeleeWeapon());
-            this.npcItemsInv.setMeleeWeapon(new ItemStack(LOTRMod.spearBlueDwarven));
-        }
-        this.npcItemsInv.setIdleItem(this.npcItemsInv.getMeleeWeapon());
-        this.setCurrentItemOrArmor(1, new ItemStack(LOTRMod.bootsBlueDwarven));
-        this.setCurrentItemOrArmor(2, new ItemStack(LOTRMod.legsBlueDwarven));
-        this.setCurrentItemOrArmor(3, new ItemStack(LOTRMod.bodyBlueDwarven));
-        if(this.rand.nextInt(10) != 0) {
-            this.setCurrentItemOrArmor(4, new ItemStack(LOTRMod.helmetBlueDwarven));
-        }
-        return data;
-    }
+	@Override
+	public float getAlignmentBonus() {
+		return 2.0f;
+	}
 
-    @Override
-    public float getAlignmentBonus() {
-        return 2.0f;
-    }
+	@Override
+	public IEntityLivingData onSpawnWithEgg(IEntityLivingData data) {
+		data = super.onSpawnWithEgg(data);
+		int i = rand.nextInt(7);
+		switch (i) {
+		case 0:
+			npcItemsInv.setMeleeWeapon(new ItemStack(LOTRMod.swordBlueDwarven));
+			break;
+		case 1:
+		case 2:
+			npcItemsInv.setMeleeWeapon(new ItemStack(LOTRMod.battleaxeBlueDwarven));
+			break;
+		case 3:
+		case 4:
+			npcItemsInv.setMeleeWeapon(new ItemStack(LOTRMod.hammerBlueDwarven));
+			break;
+		case 5:
+			npcItemsInv.setMeleeWeapon(new ItemStack(LOTRMod.mattockBlueDwarven));
+			break;
+		case 6:
+			npcItemsInv.setMeleeWeapon(new ItemStack(LOTRMod.pikeBlueDwarven));
+			break;
+		default:
+			break;
+		}
+		if (rand.nextInt(6) == 0) {
+			npcItemsInv.setSpearBackup(npcItemsInv.getMeleeWeapon());
+			npcItemsInv.setMeleeWeapon(new ItemStack(LOTRMod.spearBlueDwarven));
+		}
+		npcItemsInv.setIdleItem(npcItemsInv.getMeleeWeapon());
+		setCurrentItemOrArmor(1, new ItemStack(LOTRMod.bootsBlueDwarven));
+		setCurrentItemOrArmor(2, new ItemStack(LOTRMod.legsBlueDwarven));
+		setCurrentItemOrArmor(3, new ItemStack(LOTRMod.bodyBlueDwarven));
+		if (rand.nextInt(10) != 0) {
+			setCurrentItemOrArmor(4, new ItemStack(LOTRMod.helmetBlueDwarven));
+		}
+		return data;
+	}
 }

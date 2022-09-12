@@ -7,21 +7,21 @@ import net.minecraft.client.renderer.texture.IIconRegister;
 import net.minecraft.util.IIcon;
 
 public class LOTRBlockReedBars extends LOTRBlockPane {
-    public LOTRBlockReedBars() {
-        super("", "", Material.grass, true);
-        this.setHardness(0.5f);
-        this.setStepSound(Block.soundTypeGrass);
-    }
+	public LOTRBlockReedBars() {
+		super("", "", Material.grass, true);
+		setHardness(0.5f);
+		setStepSound(Block.soundTypeGrass);
+	}
 
-    @SideOnly(value = Side.CLIENT)
-    @Override
-    public void registerBlockIcons(IIconRegister iconregister) {
-        this.blockIcon = iconregister.registerIcon(this.getTextureName());
-    }
+	@SideOnly(value = Side.CLIENT)
+	@Override
+	public IIcon func_150097_e() {
+		return blockIcon;
+	}
 
-    @SideOnly(value = Side.CLIENT)
-    @Override
-    public IIcon func_150097_e() {
-        return this.blockIcon;
-    }
+	@SideOnly(value = Side.CLIENT)
+	@Override
+	public void registerBlockIcons(IIconRegister iconregister) {
+		blockIcon = iconregister.registerIcon(getTextureName());
+	}
 }

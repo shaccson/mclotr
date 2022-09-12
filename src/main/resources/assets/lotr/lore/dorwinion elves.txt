@@ -1,16 +1,16 @@
 #author:{name:gondor_male}
-#title:Об эльфах
+#title:On the Elves
 #types:dorwinion
 #reward
 #
-Мы давно делили эти земли с эльфами, хотя наша дружба не всегда была такой приятной, как сейчас.
+Long indeed have we shared these lands with the Elves, though our friendship was not always pleasant as it is now.
 
-Много лет назад, или, как сказали бы вам эльфы, не так давно, эльф и человек встретились друг с другом на этих прекрасных полях. Наши предки странствовали в поисках нового дома, но обнаружили, что эльфы уже поселились на этих внутренних берегах.
+Many lifetimes ago - or as the Elves would tell you, not too long ago - Elf and Man met one another upon these fair fields. Our forefathers came out of the West, seeking a new homeland, but they discovered that the Elves were already settled upon these inland shores.
 
-Это был не первый раз, когда мы столкнулись со старшей расой, поскольку некоторые из их западных братьев когда-то научили нас своему языку и подарили нам свои знания в кузнечном ремесле. Таким образом, мы не ожидали никаких неприятностей от этих эльфов, и действительно, сначала они, казалось, не несли никакой злой воли против нас. Но людей много, а эльфов мало; и так как наша численность росла, и их не так много, они встревожились.
+It was not the first time we had encountered the elder race, for some of their western cousins had once taught us of their tongue and gifted us with their knowledge in smithcraft. Thus we expected no trouble from these new Elves, and indeed, at first they seemed to bear no ill will against us. But the children of Men are many, and of the Elves few; and as our numbers grew, and theirs not so much, they became troubled.
 
-Эльфы боялись, что скоро не будет мира для их рода в этих землях, где они веками жили нетронутыми. Это была напряженность между двух народов. Наши праотцы не хотели оставлять эти места.
+The Elves feared that soon there would be no peace for their kind in these lands, where they had lived for ages uncounted. Tensions rose between the two peoples. For neither were our own forefathers willing to give up their realms here.
 
-Казалось, что беда уже близка. Но затем, без предупреждения, с Востока появилось огромное множество всадников, мародёрствующих на наших землях, совершающих набеги на царства эльфов и людей! Увидев общего врага, наши отцы и эльфы оставили в стороне свои разногласия, и мы вместе сражались с захватчиками.
+It seemed that trouble was at hand. But then, without warning, out of the East there came a great host of hide-clad horsemen, pillaging our lands, raiding the realms of Elf and Man alike! Seeing the common foe, our fathers and the Elven-folk put aside their differences, and together we fought the invaders.
 
-После того, как битва была закончена, наш народ и эльфы собрались вместе, и мы заключили мир с условиями. Леса и редколесья этой страны навсегда принадлежат эльфам, в то время как мы будем свободно заселять поля и широкие равнины. Так было, и так оно всегда будет.
+After the battle was done, our people and the Elves came together, and we formed an agreement. The forests and woodlands of this country would forever belong to the Elves, untouched by the hand of Man, while we would be free to settle the fields and the wide plains. So it was, and so it has ever been since, in Dorwinion by the shores.

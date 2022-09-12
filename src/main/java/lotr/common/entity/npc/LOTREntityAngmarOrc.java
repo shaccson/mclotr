@@ -12,105 +12,111 @@ import net.minecraft.item.ItemStack;
 import net.minecraft.world.World;
 
 public class LOTREntityAngmarOrc extends LOTREntityOrc {
-    public LOTREntityAngmarOrc(World world) {
-        super(world);
-    }
+	public LOTREntityAngmarOrc(World world) {
+		super(world);
+	}
 
-    @Override
-    public EntityAIBase createOrcAttackAI() {
-        return new LOTREntityAIAttackOnCollide(this, 1.4, false);
-    }
+	@Override
+	public LOTRMiniQuest createMiniQuest() {
+		return LOTRMiniQuestFactory.ANGMAR.createQuest(this);
+	}
 
-    @Override
-    public IEntityLivingData onSpawnWithEgg(IEntityLivingData data) {
-        data = super.onSpawnWithEgg(data);
-        int i = this.rand.nextInt(10);
-        if(i == 0 || i == 1 || i == 2) {
-            this.npcItemsInv.setMeleeWeapon(new ItemStack(LOTRMod.swordAngmar));
-        }
-        else if(i == 3) {
-            this.npcItemsInv.setMeleeWeapon(new ItemStack(LOTRMod.battleaxeAngmar));
-        }
-        else if(i == 4) {
-            this.npcItemsInv.setMeleeWeapon(new ItemStack(LOTRMod.daggerAngmar));
-        }
-        else if(i == 5) {
-            this.npcItemsInv.setMeleeWeapon(new ItemStack(LOTRMod.daggerAngmarPoisoned));
-        }
-        else if(i == 6) {
-            this.npcItemsInv.setMeleeWeapon(new ItemStack(LOTRMod.hammerAngmar));
-        }
-        else if(i == 7) {
-            this.npcItemsInv.setMeleeWeapon(new ItemStack(LOTRMod.pickaxeAngmar));
-        }
-        else if(i == 8) {
-            this.npcItemsInv.setMeleeWeapon(new ItemStack(LOTRMod.axeAngmar));
-        }
-        else if(i == 9) {
-            this.npcItemsInv.setMeleeWeapon(new ItemStack(LOTRMod.polearmAngmar));
-        }
-        if(this.rand.nextInt(6) == 0) {
-            this.npcItemsInv.setSpearBackup(this.npcItemsInv.getMeleeWeapon());
-            this.npcItemsInv.setMeleeWeapon(new ItemStack(LOTRMod.spearAngmar));
-        }
-        this.npcItemsInv.setIdleItem(this.npcItemsInv.getMeleeWeapon());
-        this.setCurrentItemOrArmor(1, new ItemStack(LOTRMod.bootsAngmar));
-        this.setCurrentItemOrArmor(2, new ItemStack(LOTRMod.legsAngmar));
-        this.setCurrentItemOrArmor(3, new ItemStack(LOTRMod.bodyAngmar));
-        if(this.rand.nextInt(5) != 0) {
-            this.setCurrentItemOrArmor(4, new ItemStack(LOTRMod.helmetAngmar));
-        }
-        return data;
-    }
+	@Override
+	public EntityAIBase createOrcAttackAI() {
+		return new LOTREntityAIAttackOnCollide(this, 1.4, false);
+	}
 
-    @Override
-    public LOTRFaction getFaction() {
-        return LOTRFaction.ANGMAR;
-    }
+	@Override
+	public void dropOrcItems(boolean flag, int i) {
+		if (rand.nextInt(6) == 0) {
+			dropChestContents(LOTRChestContents.ANGMAR_TENT, 1, 2 + i);
+		}
+	}
 
-    @Override
-    public float getAlignmentBonus() {
-        return 1.0f;
-    }
+	@Override
+	public float getAlignmentBonus() {
+		return 1.0f;
+	}
 
-    @Override
-    protected LOTRAchievement getKillAchievement() {
-        return LOTRAchievement.killAngmarOrc;
-    }
+	@Override
+	public LOTRMiniQuestFactory getBountyHelpSpeechDir() {
+		return LOTRMiniQuestFactory.ANGMAR;
+	}
 
-    @Override
-    protected void dropOrcItems(boolean flag, int i) {
-        if(this.rand.nextInt(6) == 0) {
-            this.dropChestContents(LOTRChestContents.ANGMAR_TENT, 1, 2 + i);
-        }
-    }
+	@Override
+	public LOTRFaction getFaction() {
+		return LOTRFaction.ANGMAR;
+	}
 
-    @Override
-    public String getSpeechBank(EntityPlayer entityplayer) {
-        if(this.isFriendly(entityplayer)) {
-            if(this.hiredNPCInfo.getHiringPlayer() == entityplayer) {
-                return "angmar/orc/hired";
-            }
-            if(LOTRLevelData.getData(entityplayer).getAlignment(this.getFaction()) >= 100.0f) {
-                return "angmar/orc/friendly";
-            }
-            return "angmar/orc/neutral";
-        }
-        return "angmar/orc/hostile";
-    }
+	@Override
+	public LOTRAchievement getKillAchievement() {
+		return LOTRAchievement.killAngmarOrc;
+	}
 
-    @Override
-    protected String getOrcSkirmishSpeech() {
-        return "angmar/orc/skirmish";
-    }
+	@Override
+	public String getOrcSkirmishSpeech() {
+		return "angmar/orc/skirmish";
+	}
 
-    @Override
-    public LOTRMiniQuest createMiniQuest() {
-        return LOTRMiniQuestFactory.ANGMAR.createQuest(this);
-    }
+	@Override
+	public String getSpeechBank(EntityPlayer entityplayer) {
+		if (isFriendly(entityplayer)) {
+			if (hiredNPCInfo.getHiringPlayer() == entityplayer) {
+				return "angmar/orc/hired";
+			}
+			if (LOTRLevelData.getData(entityplayer).getAlignment(getFaction()) >= 100.0f) {
+				return "angmar/orc/friendly";
+			}
+			return "angmar/orc/neutral";
+		}
+		return "angmar/orc/hostile";
+	}
 
-    @Override
-    public LOTRMiniQuestFactory getBountyHelpSpeechDir() {
-        return LOTRMiniQuestFactory.ANGMAR;
-    }
+	@Override
+	public IEntityLivingData onSpawnWithEgg(IEntityLivingData data) {
+		data = super.onSpawnWithEgg(data);
+		int i = rand.nextInt(10);
+		switch (i) {
+		case 0:
+		case 1:
+		case 2:
+			npcItemsInv.setMeleeWeapon(new ItemStack(LOTRMod.swordAngmar));
+			break;
+		case 3:
+			npcItemsInv.setMeleeWeapon(new ItemStack(LOTRMod.battleaxeAngmar));
+			break;
+		case 4:
+			npcItemsInv.setMeleeWeapon(new ItemStack(LOTRMod.daggerAngmar));
+			break;
+		case 5:
+			npcItemsInv.setMeleeWeapon(new ItemStack(LOTRMod.daggerAngmarPoisoned));
+			break;
+		case 6:
+			npcItemsInv.setMeleeWeapon(new ItemStack(LOTRMod.hammerAngmar));
+			break;
+		case 7:
+			npcItemsInv.setMeleeWeapon(new ItemStack(LOTRMod.pickaxeAngmar));
+			break;
+		case 8:
+			npcItemsInv.setMeleeWeapon(new ItemStack(LOTRMod.axeAngmar));
+			break;
+		case 9:
+			npcItemsInv.setMeleeWeapon(new ItemStack(LOTRMod.polearmAngmar));
+			break;
+		default:
+			break;
+		}
+		if (rand.nextInt(6) == 0) {
+			npcItemsInv.setSpearBackup(npcItemsInv.getMeleeWeapon());
+			npcItemsInv.setMeleeWeapon(new ItemStack(LOTRMod.spearAngmar));
+		}
+		npcItemsInv.setIdleItem(npcItemsInv.getMeleeWeapon());
+		setCurrentItemOrArmor(1, new ItemStack(LOTRMod.bootsAngmar));
+		setCurrentItemOrArmor(2, new ItemStack(LOTRMod.legsAngmar));
+		setCurrentItemOrArmor(3, new ItemStack(LOTRMod.bodyAngmar));
+		if (rand.nextInt(5) != 0) {
+			setCurrentItemOrArmor(4, new ItemStack(LOTRMod.helmetAngmar));
+		}
+		return data;
+	}
 }

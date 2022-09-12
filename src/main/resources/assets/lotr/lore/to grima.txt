@@ -1,11 +1,12 @@
-#author:Галмод
-#title:Гриме
+#author:Gálmód
+#title:To Gríma
 #types:rohan
 #
-Мой дорогой сын, 
+My dear son,
 
-Прошло много месяцев с тех пор, как ты посещал меня и твою мать. Мы слышали слухи, что ты теперь советник Короля! Мы с матерью очень гордимся тобой. 
+It has been many a month since you last visited your mother and I. We have heard stories that you are now an advisor to the King in his hall! Your mother and I could not be more proud. Your name is spoken all around the village, and we all know you will serve the King well.
 
-Я надеюсь скоро увидеть тебя, сын. Приезжай к нам, когда Король даст тебе право на это.
+I hope to see you soon, son. Come to visit us when the King gives you leave.
 
-С любовью, Отец.
+With love,
+Father

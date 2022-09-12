@@ -9,41 +9,43 @@ import lotr.common.fac.LOTRFaction;
 import net.minecraft.entity.player.EntityPlayerMP;
 
 public class LOTRPacketAlignmentChoices implements IMessage {
-    private Set<LOTRFaction> setZeroFacs = new HashSet<>();
+	public Set<LOTRFaction> setZeroFacs = new HashSet<>();
 
-    public LOTRPacketAlignmentChoices() {
-    }
+	public LOTRPacketAlignmentChoices() {
+	}
 
-    public LOTRPacketAlignmentChoices(Set<LOTRFaction> facs) {
-        this.setZeroFacs = facs;
-    }
+	public LOTRPacketAlignmentChoices(Set<LOTRFaction> facs) {
+		setZeroFacs = facs;
+	}
 
-    @Override
-    public void toBytes(ByteBuf data) {
-        for(LOTRFaction fac : this.setZeroFacs) {
-            data.writeByte(fac.ordinal());
-        }
-        data.writeByte(-1);
-    }
+	@Override
+	public void fromBytes(ByteBuf data) {
+		byte facID = 0;
+		while ((facID = data.readByte()) >= 0) {
+			LOTRFaction fac = LOTRFaction.forID(facID);
+			if (fac == null) {
+				continue;
+			}
+			setZeroFacs.add(fac);
+		}
+	}
 
-    @Override
-    public void fromBytes(ByteBuf data) {
-        byte facID = 0;
-        while((facID = data.readByte()) >= 0) {
-            LOTRFaction fac = LOTRFaction.forID(facID);
-            if(fac == null) continue;
-            this.setZeroFacs.add(fac);
-        }
-    }
+	@Override
+	public void toBytes(ByteBuf data) {
+		for (LOTRFaction fac : setZeroFacs) {
+			data.writeByte(fac.ordinal());
+		}
+		data.writeByte(-1);
+	}
 
-    public static class Handler implements IMessageHandler<LOTRPacketAlignmentChoices, IMessage> {
-        @Override
-        public IMessage onMessage(LOTRPacketAlignmentChoices packet, MessageContext context) {
-            EntityPlayerMP entityplayer = context.getServerHandler().playerEntity;
-            LOTRPlayerData playerData = LOTRLevelData.getData(entityplayer);
-            playerData.chooseUnwantedAlignments(entityplayer, packet.setZeroFacs);
-            return null;
-        }
-    }
+	public static class Handler implements IMessageHandler<LOTRPacketAlignmentChoices, IMessage> {
+		@Override
+		public IMessage onMessage(LOTRPacketAlignmentChoices packet, MessageContext context) {
+			EntityPlayerMP entityplayer = context.getServerHandler().playerEntity;
+			LOTRPlayerData playerData = LOTRLevelData.getData(entityplayer);
+			playerData.chooseUnwantedAlignments(entityplayer, packet.setZeroFacs);
+			return null;
+		}
+	}
 
 }

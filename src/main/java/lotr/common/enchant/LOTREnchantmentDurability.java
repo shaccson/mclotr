@@ -4,21 +4,21 @@ import net.minecraft.item.ItemStack;
 import net.minecraft.util.StatCollector;
 
 public class LOTREnchantmentDurability extends LOTREnchantment {
-    public final float durabilityFactor;
+	public float durabilityFactor;
 
-    public LOTREnchantmentDurability(String s, float f) {
-        super(s, LOTREnchantmentType.BREAKABLE);
-        this.durabilityFactor = f;
-        this.setValueModifier(this.durabilityFactor);
-    }
+	public LOTREnchantmentDurability(String s, float f) {
+		super(s, LOTREnchantmentType.BREAKABLE);
+		durabilityFactor = f;
+		setValueModifier(durabilityFactor);
+	}
 
-    @Override
-    public String getDescription(ItemStack itemstack) {
-        return StatCollector.translateToLocalFormatted("lotr.enchant.durable.desc", this.formatMultiplicative(this.durabilityFactor));
-    }
+	@Override
+	public String getDescription(ItemStack itemstack) {
+		return StatCollector.translateToLocalFormatted("lotr.enchant.durable.desc", formatMultiplicative(durabilityFactor));
+	}
 
-    @Override
-    public boolean isBeneficial() {
-        return this.durabilityFactor >= 1.0f;
-    }
+	@Override
+	public boolean isBeneficial() {
+		return durabilityFactor >= 1.0f;
+	}
 }

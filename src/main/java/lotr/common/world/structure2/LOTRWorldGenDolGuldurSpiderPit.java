@@ -11,57 +11,57 @@ import net.minecraft.init.Blocks;
 import net.minecraft.world.World;
 
 public class LOTRWorldGenDolGuldurSpiderPit extends LOTRWorldGenWargPitBase {
-    public LOTRWorldGenDolGuldurSpiderPit(boolean flag) {
-        super(flag);
-    }
+	public LOTRWorldGenDolGuldurSpiderPit(boolean flag) {
+		super(flag);
+	}
 
-    @Override
-    protected void setupRandomBlocks(Random random) {
-        super.setupRandomBlocks(random);
-        this.brickBlock = LOTRMod.brick2;
-        this.brickMeta = 8;
-        this.brickSlabBlock = LOTRMod.slabSingle4;
-        this.brickSlabMeta = 5;
-        this.brickStairBlock = LOTRMod.stairsDolGuldurBrick;
-        this.brickWallBlock = LOTRMod.wall2;
-        this.brickWallMeta = 8;
-        this.pillarBlock = this.beamBlock;
-        this.pillarMeta = this.beamMeta;
-        this.woolBlock = Blocks.wool;
-        this.woolMeta = 15;
-        this.carpetBlock = Blocks.carpet;
-        this.carpetMeta = 15;
-        this.gateMetalBlock = LOTRMod.gateIronBars;
-        this.tableBlock = LOTRMod.dolGuldurTable;
-        this.banner = LOTRItemBanner.BannerType.DOL_GULDUR;
-        this.chestContents = LOTRChestContents.DOL_GULDUR_TENT;
-    }
+	@Override
+	public void associateGroundBlocks() {
+		super.associateGroundBlocks();
+		clearScanAlias("GROUND_COVER");
+		addBlockMetaAliasOption("GROUND_COVER", 1, LOTRMod.webUngoliant, 0);
+		setBlockAliasChance("GROUND_COVER", 0.04f);
+	}
 
-    @Override
-    protected LOTREntityNPC getOrc(World world) {
-        return new LOTREntityDolGuldurOrc(world);
-    }
+	@Override
+	public LOTREntityNPC getOrc(World world) {
+		return new LOTREntityDolGuldurOrc(world);
+	}
 
-    @Override
-    protected LOTREntityNPC getWarg(World world) {
-        return new LOTREntityMirkwoodSpider(world);
-    }
+	@Override
+	public LOTREntityNPC getWarg(World world) {
+		return new LOTREntityMirkwoodSpider(world);
+	}
 
-    @Override
-    protected void setOrcSpawner(LOTREntityNPCRespawner spawner) {
-        spawner.setSpawnClass(LOTREntityDolGuldurOrc.class);
-    }
+	@Override
+	public void setOrcSpawner(LOTREntityNPCRespawner spawner) {
+		spawner.setSpawnClass(LOTREntityDolGuldurOrc.class);
+	}
 
-    @Override
-    protected void setWargSpawner(LOTREntityNPCRespawner spawner) {
-        spawner.setSpawnClass(LOTREntityMirkwoodSpider.class);
-    }
+	@Override
+	public void setupRandomBlocks(Random random) {
+		super.setupRandomBlocks(random);
+		brickBlock = LOTRMod.brick2;
+		brickMeta = 8;
+		brickSlabBlock = LOTRMod.slabSingle4;
+		brickSlabMeta = 5;
+		brickStairBlock = LOTRMod.stairsDolGuldurBrick;
+		brickWallBlock = LOTRMod.wall2;
+		brickWallMeta = 8;
+		pillarBlock = beamBlock;
+		pillarMeta = beamMeta;
+		woolBlock = Blocks.wool;
+		woolMeta = 15;
+		carpetBlock = Blocks.carpet;
+		carpetMeta = 15;
+		gateMetalBlock = LOTRMod.gateIronBars;
+		tableBlock = LOTRMod.dolGuldurTable;
+		banner = LOTRItemBanner.BannerType.DOL_GULDUR;
+		chestContents = LOTRChestContents.DOL_GULDUR_TENT;
+	}
 
-    @Override
-    protected void associateGroundBlocks() {
-        super.associateGroundBlocks();
-        this.clearScanAlias("GROUND_COVER");
-        this.addBlockMetaAliasOption("GROUND_COVER", 1, LOTRMod.webUngoliant, 0);
-        this.setBlockAliasChance("GROUND_COVER", 0.04f);
-    }
+	@Override
+	public void setWargSpawner(LOTREntityNPCRespawner spawner) {
+		spawner.setSpawnClass(LOTREntityMirkwoodSpider.class);
+	}
 }

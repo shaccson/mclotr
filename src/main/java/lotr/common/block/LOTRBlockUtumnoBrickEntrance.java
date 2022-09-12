@@ -13,33 +13,33 @@ import net.minecraft.util.*;
 import net.minecraft.world.World;
 
 public class LOTRBlockUtumnoBrickEntrance extends Block {
-    public LOTRBlockUtumnoBrickEntrance() {
-        super(Material.rock);
-        this.setHardness(-1.0f);
-        this.setResistance(Float.MAX_VALUE);
-        this.setStepSound(Block.soundTypeStone);
-    }
+	public LOTRBlockUtumnoBrickEntrance() {
+		super(Material.rock);
+		setHardness(-1.0f);
+		setResistance(Float.MAX_VALUE);
+		setStepSound(Block.soundTypeStone);
+	}
 
-    @SideOnly(value = Side.CLIENT)
-    @Override
-    public IIcon getIcon(int i, int j) {
-        return LOTRMod.utumnoBrick.getIcon(i, 2);
-    }
+	@Override
+	public ArrayList<ItemStack> getDrops(World world, int i, int j, int k, int meta, int fortune) {
+		ArrayList<ItemStack> drops = new ArrayList<>();
+		drops.add(new ItemStack(LOTRMod.utumnoBrick, 1, 2));
+		return drops;
+	}
 
-    @SideOnly(value = Side.CLIENT)
-    @Override
-    public void registerBlockIcons(IIconRegister register) {
-    }
+	@SideOnly(value = Side.CLIENT)
+	@Override
+	public IIcon getIcon(int i, int j) {
+		return LOTRMod.utumnoBrick.getIcon(i, 2);
+	}
 
-    @Override
-    public ArrayList<ItemStack> getDrops(World world, int i, int j, int k, int meta, int fortune) {
-        ArrayList<ItemStack> drops = new ArrayList<>();
-        drops.add(new ItemStack(LOTRMod.utumnoBrick, 1, 2));
-        return drops;
-    }
+	@Override
+	public ItemStack getPickBlock(MovingObjectPosition target, World world, int i, int j, int k, EntityPlayer player) {
+		return new ItemStack(LOTRMod.utumnoBrick, 1, 2);
+	}
 
-    @Override
-    public ItemStack getPickBlock(MovingObjectPosition target, World world, int i, int j, int k, EntityPlayer player) {
-        return new ItemStack(LOTRMod.utumnoBrick, 1, 2);
-    }
+	@SideOnly(value = Side.CLIENT)
+	@Override
+	public void registerBlockIcons(IIconRegister register) {
+	}
 }

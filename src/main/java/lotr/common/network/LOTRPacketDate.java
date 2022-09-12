@@ -10,50 +10,48 @@ import net.minecraft.nbt.NBTTagCompound;
 import net.minecraft.network.PacketBuffer;
 
 public class LOTRPacketDate implements IMessage {
-    public NBTTagCompound dateData;
-    private boolean doUpdate;
+	public NBTTagCompound dateData;
+	public boolean doUpdate;
 
-    public LOTRPacketDate() {
-    }
+	public LOTRPacketDate() {
+	}
 
-    public LOTRPacketDate(NBTTagCompound nbt, boolean flag) {
-        this.dateData = nbt;
-        this.doUpdate = flag;
-    }
+	public LOTRPacketDate(NBTTagCompound nbt, boolean flag) {
+		dateData = nbt;
+		doUpdate = flag;
+	}
 
-    @Override
-    public void toBytes(ByteBuf data) {
-        try {
-            new PacketBuffer(data).writeNBTTagCompoundToBuffer(this.dateData);
-        }
-        catch(IOException e) {
-            FMLLog.severe("Error writing LOTR date");
-            e.printStackTrace();
-        }
-        data.writeBoolean(this.doUpdate);
-    }
+	@Override
+	public void fromBytes(ByteBuf data) {
+		try {
+			dateData = new PacketBuffer(data).readNBTTagCompoundFromBuffer();
+		} catch (IOException e) {
+			FMLLog.severe("Error reading LOTR date");
+			e.printStackTrace();
+		}
+		doUpdate = data.readBoolean();
+	}
 
-    @Override
-    public void fromBytes(ByteBuf data) {
-        try {
-            this.dateData = new PacketBuffer(data).readNBTTagCompoundFromBuffer();
-        }
-        catch(IOException e) {
-            FMLLog.severe("Error reading LOTR date");
-            e.printStackTrace();
-        }
-        this.doUpdate = data.readBoolean();
-    }
+	@Override
+	public void toBytes(ByteBuf data) {
+		try {
+			new PacketBuffer(data).writeNBTTagCompoundToBuffer(dateData);
+		} catch (IOException e) {
+			FMLLog.severe("Error writing LOTR date");
+			e.printStackTrace();
+		}
+		data.writeBoolean(doUpdate);
+	}
 
-    public static class Handler implements IMessageHandler<LOTRPacketDate, IMessage> {
-        @Override
-        public IMessage onMessage(LOTRPacketDate packet, MessageContext context) {
-            LOTRDate.loadDates(packet.dateData);
-            if(packet.doUpdate) {
-                LOTRMod.proxy.displayNewDate();
-            }
-            return null;
-        }
-    }
+	public static class Handler implements IMessageHandler<LOTRPacketDate, IMessage> {
+		@Override
+		public IMessage onMessage(LOTRPacketDate packet, MessageContext context) {
+			LOTRDate.loadDates(packet.dateData);
+			if (packet.doUpdate) {
+				LOTRMod.proxy.displayNewDate();
+			}
+			return null;
+		}
+	}
 
 }

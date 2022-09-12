@@ -9,21 +9,21 @@ import net.minecraft.entity.*;
 import net.minecraft.util.ResourceLocation;
 
 public class LOTRRenderRabbit extends RenderLiving {
-    private static LOTRRandomSkins rabbitSkins;
+	public static LOTRRandomSkins rabbitSkins;
 
-    public LOTRRenderRabbit() {
-        super(new LOTRModelRabbit(), 0.3f);
-        rabbitSkins = LOTRRandomSkins.loadSkinsList("lotr:mob/rabbit");
-    }
+	public LOTRRenderRabbit() {
+		super(new LOTRModelRabbit(), 0.3f);
+		rabbitSkins = LOTRRandomSkins.loadSkinsList("lotr:mob/rabbit");
+	}
 
-    @Override
-    protected ResourceLocation getEntityTexture(Entity entity) {
-        LOTREntityRabbit rabbit = (LOTREntityRabbit) entity;
-        return rabbitSkins.getRandomSkin(rabbit);
-    }
+	@Override
+	public ResourceLocation getEntityTexture(Entity entity) {
+		LOTREntityRabbit rabbit = (LOTREntityRabbit) entity;
+		return rabbitSkins.getRandomSkin(rabbit);
+	}
 
-    @Override
-    protected void preRenderCallback(EntityLivingBase entity, float f) {
-        GL11.glScalef(0.75f, 0.75f, 0.75f);
-    }
+	@Override
+	public void preRenderCallback(EntityLivingBase entity, float f) {
+		GL11.glScalef(0.75f, 0.75f, 0.75f);
+	}
 }

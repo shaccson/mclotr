@@ -19,7 +19,7 @@ public class ScreenshotEnhancedPatcher extends ModPatcher {
 		});
 	}
 
-	private void patchScrapTraderRender(ClassNode classNode) {
+	public void patchScrapTraderRender(ClassNode classNode) {
 		MethodNode method = ASMUtils.findMethod(classNode, "doRender", "func_76986_a", "(Lnet/minecraft/entity/EntityLiving;DDDFF)V");
 		if (method == null) {
 			return;
@@ -29,7 +29,7 @@ public class ScreenshotEnhancedPatcher extends ModPatcher {
 				continue;
 			}
 			MethodInsnNode methodNode = (MethodInsnNode) node;
-			if (!methodNode.name.equals(FMLForgePlugin.RUNTIME_DEOBF ? "func_151463_i" : "getKeyCode") || !methodNode.desc.equals("()I")) {
+			if (!methodNode.name.equals(FMLForgePlugin.RUNTIME_DEOBF ? "func_151463_i" : "getKeyCode") || !"()I".equals(methodNode.desc)) {
 				continue;
 			}
 			ASMUtils.removePreviousNodes(method.instructions, methodNode, 3);

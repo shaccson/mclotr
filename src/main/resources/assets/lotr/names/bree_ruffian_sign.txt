@@ -1,13 +1,12 @@
-Уходи
-Посетители#не нужны
-Держись в стороне
-Нет посетителей
+Keep Out
+Visitors#Unwelcome
+Stay Away
+No Visitors
 Private#Property
-Дом#разбойника
-Так#Уходи отсюда
-Вход#рискованный
-Входи#со страхом
-Только#бандитам
-Повернись#иди домой
-Жизнь#ворам
-Заброшено
+Ruffian#House
+Please#Turn Away
+Enter At#Your Own Risk
+Enter At#Your Own Peril
+Ruffians#Only
+Turn Around#And Go Home
+Uninhabited

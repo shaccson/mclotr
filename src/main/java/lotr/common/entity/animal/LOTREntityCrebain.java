@@ -4,33 +4,33 @@ import net.minecraft.entity.*;
 import net.minecraft.world.World;
 
 public class LOTREntityCrebain extends LOTREntityBird {
-    public static float CREBAIN_SCALE = 1.8f;
+	public static float CREBAIN_SCALE = 1.8f;
 
-    public LOTREntityCrebain(World world) {
-        super(world);
-        this.setSize(this.width * CREBAIN_SCALE, this.height * CREBAIN_SCALE);
-    }
+	public LOTREntityCrebain(World world) {
+		super(world);
+		setSize(width * CREBAIN_SCALE, height * CREBAIN_SCALE);
+	}
 
-    @Override
-    public String getBirdTextureDir() {
-        return "crebain";
-    }
+	@Override
+	public void applyEntityAttributes() {
+		super.applyEntityAttributes();
+		getEntityAttribute(SharedMonsterAttributes.maxHealth).setBaseValue(10.0);
+	}
 
-    @Override
-    protected void applyEntityAttributes() {
-        super.applyEntityAttributes();
-        this.getEntityAttribute(SharedMonsterAttributes.maxHealth).setBaseValue(10.0);
-    }
+	@Override
+	public String getBirdTextureDir() {
+		return "crebain";
+	}
 
-    @Override
-    public IEntityLivingData onSpawnWithEgg(IEntityLivingData data) {
-        data = super.onSpawnWithEgg(data);
-        this.setBirdType(LOTREntityBird.BirdType.CROW);
-        return data;
-    }
+	@Override
+	public float getSoundPitch() {
+		return super.getSoundPitch() * 0.85f;
+	}
 
-    @Override
-    protected float getSoundPitch() {
-        return super.getSoundPitch() * 0.85f;
-    }
+	@Override
+	public IEntityLivingData onSpawnWithEgg(IEntityLivingData data) {
+		data = super.onSpawnWithEgg(data);
+		this.setBirdType(LOTREntityBird.BirdType.CROW);
+		return data;
+	}
 }

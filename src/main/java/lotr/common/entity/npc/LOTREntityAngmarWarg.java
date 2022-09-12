@@ -5,28 +5,26 @@ import lotr.common.fac.LOTRFaction;
 import net.minecraft.item.ItemStack;
 import net.minecraft.world.World;
 
-public class LOTREntityAngmarWarg
-extends LOTREntityWarg {
-    public LOTREntityAngmarWarg(World world) {
-        super(world);
-    }
+public class LOTREntityAngmarWarg extends LOTREntityWarg {
+	public LOTREntityAngmarWarg(World world) {
+		super(world);
+	}
 
-    @Override
-    public LOTREntityNPC createWargRider() {
-        if (this.rand.nextBoolean()) {
-            this.setWargArmor(new ItemStack(LOTRMod.wargArmorAngmar));
-        }
-        return this.worldObj.rand.nextBoolean() ? new LOTREntityAngmarOrcArcher(this.worldObj) : new LOTREntityAngmarOrc(this.worldObj);
-    }
+	@Override
+	public LOTREntityNPC createWargRider() {
+		if (rand.nextBoolean()) {
+			setWargArmor(new ItemStack(LOTRMod.wargArmorAngmar));
+		}
+		return worldObj.rand.nextBoolean() ? new LOTREntityAngmarOrcArcher(worldObj) : new LOTREntityAngmarOrc(worldObj);
+	}
 
-    @Override
-    public LOTRFaction getFaction() {
-        return LOTRFaction.ANGMAR;
-    }
+	@Override
+	public float getAlignmentBonus() {
+		return 2.0f;
+	}
 
-    @Override
-    public float getAlignmentBonus() {
-        return 2.0f;
-    }
+	@Override
+	public LOTRFaction getFaction() {
+		return LOTRFaction.ANGMAR;
+	}
 }
-

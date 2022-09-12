@@ -1,10 +1,6 @@
-Я не могу позволить чужаку нанимать моих воинов, #.
-Кто Вы? Вы друг Харада или союзник Гондора?
-Пока Вы не доказали свою преданность нам, мы не будем бороться за Вас, #.
-Вы боретесь с нами или против нас?
-Кто Ваш хозяин, #?
-Вы должны совершить великие дела во имя Харада, если Вы хотите командовать нашими воинами.
-Вам нужно будет сделать больше добра для наших людей, если Вы хотите командовать могучими воинами, #.
-Харадримы не пойдут в бой за незнакомцем. Вы должны сначала доказать свою преданность!
-Кому Вы служете, #? Великому Повелителю Мордора или мерзким Дунэдайн?
-Вы должны будете доказать преданность моему народу, #.
+You're not a trader, nor from the desert. Why would my men follow you?
+My men serve their own people, not strangers.
+I don't see your caravan anywhere, #. What use would you have for my guards?
+Your sunburns tell me you aren't ready to lead my men.
+The art of trade seems foreign to you still, #.
+Would you even be able to afford paying my men to protect your wares?

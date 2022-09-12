@@ -6,23 +6,23 @@ import lotr.common.fac.LOTRFaction;
 import net.minecraft.world.World;
 
 public class LOTREntityHuorn extends LOTREntityHuornBase {
-    public LOTREntityHuorn(World world) {
-        super(world);
-        this.addTargetTasks(true, LOTREntityAINearestAttackableTargetHuorn.class);
-    }
+	public LOTREntityHuorn(World world) {
+		super(world);
+		this.addTargetTasks(true, LOTREntityAINearestAttackableTargetHuorn.class);
+	}
 
-    @Override
-    public LOTRFaction getFaction() {
-        return LOTRFaction.FANGORN;
-    }
+	@Override
+	public float getAlignmentBonus() {
+		return 2.0f;
+	}
 
-    @Override
-    protected LOTRAchievement getKillAchievement() {
-        return LOTRAchievement.killHuorn;
-    }
+	@Override
+	public LOTRFaction getFaction() {
+		return LOTRFaction.FANGORN;
+	}
 
-    @Override
-    public float getAlignmentBonus() {
-        return 2.0f;
-    }
+	@Override
+	public LOTRAchievement getKillAchievement() {
+		return LOTRAchievement.killHuorn;
+	}
 }

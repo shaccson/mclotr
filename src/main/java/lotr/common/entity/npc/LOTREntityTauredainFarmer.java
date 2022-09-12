@@ -8,69 +8,69 @@ import net.minecraft.item.ItemStack;
 import net.minecraft.world.World;
 
 public class LOTREntityTauredainFarmer extends LOTREntityTauredain implements LOTRTradeable, LOTRUnitTradeable {
-    public LOTREntityTauredainFarmer(World world) {
-        super(world);
-        this.addTargetTasks(false);
-    }
+	public LOTREntityTauredainFarmer(World world) {
+		super(world);
+		this.addTargetTasks(false);
+	}
 
-    @Override
-    public LOTRTradeEntries getBuyPool() {
-        return LOTRTradeEntries.TAUREDAIN_FARMER_BUY;
-    }
+	@Override
+	public boolean canTradeWith(EntityPlayer entityplayer) {
+		return LOTRLevelData.getData(entityplayer).getAlignment(getFaction()) >= 0.0f && isFriendly(entityplayer);
+	}
 
-    @Override
-    public LOTRTradeEntries getSellPool() {
-        return LOTRTradeEntries.TAUREDAIN_FARMER_SELL;
-    }
+	@Override
+	public float getAlignmentBonus() {
+		return 2.0f;
+	}
 
-    @Override
-    public IEntityLivingData onSpawnWithEgg(IEntityLivingData data) {
-        data = super.onSpawnWithEgg(data);
-        this.npcItemsInv.setMeleeWeapon(new ItemStack(LOTRMod.hoeTauredain));
-        this.npcItemsInv.setIdleItem(this.npcItemsInv.getMeleeWeapon());
-        return data;
-    }
+	@Override
+	public LOTRTradeEntries getBuyPool() {
+		return LOTRTradeEntries.TAUREDAIN_FARMER_BUY;
+	}
 
-    @Override
-    public float getAlignmentBonus() {
-        return 2.0f;
-    }
+	@Override
+	public LOTRTradeEntries getSellPool() {
+		return LOTRTradeEntries.TAUREDAIN_FARMER_SELL;
+	}
 
-    @Override
-    public LOTRInvasions getWarhorn() {
-        return null;
-    }
+	@Override
+	public String getSpeechBank(EntityPlayer entityplayer) {
+		if (isFriendly(entityplayer)) {
+			return "tauredain/farmer/friendly";
+		}
+		return "tauredain/farmer/hostile";
+	}
 
-    @Override
-    public boolean canTradeWith(EntityPlayer entityplayer) {
-        return LOTRLevelData.getData(entityplayer).getAlignment(this.getFaction()) >= 0.0f && this.isFriendly(entityplayer);
-    }
+	@Override
+	public LOTRUnitTradeEntries getUnits() {
+		return LOTRUnitTradeEntries.TAUREDAIN_FARMER;
+	}
 
-    @Override
-    public void onPlayerTrade(EntityPlayer entityplayer, LOTRTradeEntries.TradeType type, ItemStack itemstack) {
-        LOTRLevelData.getData(entityplayer).addAchievement(LOTRAchievement.tradeTauredainFarmer);
-    }
+	@Override
+	public LOTRInvasions getWarhorn() {
+		return null;
+	}
 
-    @Override
-    public LOTRUnitTradeEntries getUnits() {
-        return LOTRUnitTradeEntries.TAUREDAIN_FARMER;
-    }
+	@Override
+	public void onPlayerTrade(EntityPlayer entityplayer, LOTRTradeEntries.TradeType type, ItemStack itemstack) {
+		LOTRLevelData.getData(entityplayer).addAchievement(LOTRAchievement.tradeTauredainFarmer);
+	}
 
-    @Override
-    public void onUnitTrade(EntityPlayer entityplayer) {
-        LOTRLevelData.getData(entityplayer).addAchievement(LOTRAchievement.hireTauredainFarmer);
-    }
+	@Override
+	public IEntityLivingData onSpawnWithEgg(IEntityLivingData data) {
+		data = super.onSpawnWithEgg(data);
+		npcItemsInv.setMeleeWeapon(new ItemStack(LOTRMod.hoeTauredain));
+		npcItemsInv.setIdleItem(npcItemsInv.getMeleeWeapon());
+		return data;
+	}
 
-    @Override
-    public boolean shouldTraderRespawn() {
-        return true;
-    }
+	@Override
+	public void onUnitTrade(EntityPlayer entityplayer) {
+		LOTRLevelData.getData(entityplayer).addAchievement(LOTRAchievement.hireTauredainFarmer);
+	}
 
-    @Override
-    public String getSpeechBank(EntityPlayer entityplayer) {
-        if(this.isFriendly(entityplayer)) {
-            return "tauredain/farmer/friendly";
-        }
-        return "tauredain/farmer/hostile";
-    }
+	@Override
+	public boolean shouldTraderRespawn() {
+		return true;
+	}
 }

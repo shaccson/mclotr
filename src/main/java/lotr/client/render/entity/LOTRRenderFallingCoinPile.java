@@ -13,36 +13,36 @@ import net.minecraft.util.*;
 import net.minecraft.world.World;
 
 public class LOTRRenderFallingCoinPile extends Render {
-    private static final RenderBlocks blockRenderer = new RenderBlocks();
+	public static RenderBlocks blockRenderer = new RenderBlocks();
 
-    public LOTRRenderFallingCoinPile() {
-        this.shadowSize = 0.5f;
-    }
+	public LOTRRenderFallingCoinPile() {
+		shadowSize = 0.5f;
+	}
 
-    @Override
-    public void doRender(Entity entity, double d, double d1, double d2, float f, float f1) {
-        LOTREntityFallingTreasure fallingCoin = (LOTREntityFallingTreasure) entity;
-        World world = fallingCoin.worldObj;
-        Block block = fallingCoin.theBlock;
-        int meta = fallingCoin.theBlockMeta;
-        int i = MathHelper.floor_double(fallingCoin.posX);
-        int j = MathHelper.floor_double(fallingCoin.posY);
-        int k = MathHelper.floor_double(fallingCoin.posZ);
-        if(block != null && block != world.getBlock(i, j, k)) {
-            GL11.glPushMatrix();
-            GL11.glTranslatef((float) d, (float) d1, (float) d2);
-            this.bindEntityTexture(fallingCoin);
-            GL11.glDisable(2896);
-            LOTRBlockTreasurePile.setTreasureBlockBounds(block, meta);
-            blockRenderer.setRenderBoundsFromBlock(block);
-            blockRenderer.renderBlockSandFalling(block, world, i, j, k, meta);
-            GL11.glEnable(2896);
-            GL11.glPopMatrix();
-        }
-    }
+	@Override
+	public void doRender(Entity entity, double d, double d1, double d2, float f, float f1) {
+		LOTREntityFallingTreasure fallingCoin = (LOTREntityFallingTreasure) entity;
+		World world = fallingCoin.worldObj;
+		Block block = fallingCoin.theBlock;
+		int meta = fallingCoin.theBlockMeta;
+		int i = MathHelper.floor_double(fallingCoin.posX);
+		int j = MathHelper.floor_double(fallingCoin.posY);
+		int k = MathHelper.floor_double(fallingCoin.posZ);
+		if (block != null && block != world.getBlock(i, j, k)) {
+			GL11.glPushMatrix();
+			GL11.glTranslatef((float) d, (float) d1, (float) d2);
+			bindEntityTexture(fallingCoin);
+			GL11.glDisable(2896);
+			LOTRBlockTreasurePile.setTreasureBlockBounds(block, meta);
+			blockRenderer.setRenderBoundsFromBlock(block);
+			blockRenderer.renderBlockSandFalling(block, world, i, j, k, meta);
+			GL11.glEnable(2896);
+			GL11.glPopMatrix();
+		}
+	}
 
-    @Override
-    protected ResourceLocation getEntityTexture(Entity entity) {
-        return TextureMap.locationBlocksTexture;
-    }
+	@Override
+	public ResourceLocation getEntityTexture(Entity entity) {
+		return TextureMap.locationBlocksTexture;
+	}
 }

@@ -21,611 +21,661 @@ import net.minecraft.world.*;
 import net.minecraftforge.common.util.ForgeDirection;
 
 public class LOTRHiredNPCInfo {
-    private LOTREntityNPC theEntity;
-    private UUID hiringPlayerUUID;
-    public boolean isActive;
-    public float alignmentRequiredToCommand;
-    public LOTRUnitTradeEntry.PledgeType pledgeType = LOTRUnitTradeEntry.PledgeType.NONE;
-    private Task hiredTask = Task.WARRIOR;
-    private boolean canMove = true;
-    public boolean teleportAutomatically = true;
-    public int mobKills;
-    public int xp = 0;
-    public int xpLevel = 1;
-    public static final int XP_COLOR = 16733440;
-    private String hiredSquadron;
-    public boolean guardMode;
-    public static int GUARD_RANGE_MIN = 1;
-    public static int GUARD_RANGE_DEFAULT = 8;
-    public static int GUARD_RANGE_MAX = 64;
-    private int guardRange = GUARD_RANGE_DEFAULT;
-    private LOTRInventoryNPC hiredInventory;
-    public boolean inCombat;
-    private boolean prevInCombat;
-    public boolean isGuiOpen;
-    private boolean targetFromCommandSword;
-    public boolean wasAttackCommanded = false;
-    private boolean doneFirstUpdate = false;
-    private boolean resendBasicData = true;
+	public static int XP_COLOR = 16733440;
+	public static int GUARD_RANGE_MIN = 1;
+	public static int GUARD_RANGE_DEFAULT = 8;
+	public static int GUARD_RANGE_MAX = 64;
+	public LOTREntityNPC theEntity;
+	public UUID hiringPlayerUUID;
+	public boolean isActive;
+	public float alignmentRequiredToCommand;
+	public LOTRUnitTradeEntry.PledgeType pledgeType = LOTRUnitTradeEntry.PledgeType.NONE;
+	public Task hiredTask = Task.WARRIOR;
+	public boolean canMove = true;
+	public boolean teleportAutomatically = true;
+	public int mobKills;
+	public int xp = 0;
+	public int xpLevel = 1;
+	public String hiredSquadron;
+	public boolean guardMode;
+	public int guardRange = GUARD_RANGE_DEFAULT;
+	public LOTRInventoryNPC hiredInventory;
+	public boolean inCombat;
+	public boolean prevInCombat;
+	public boolean isGuiOpen;
+	public boolean targetFromCommandSword;
+	public boolean wasAttackCommanded = false;
+	public boolean doneFirstUpdate = false;
+	public boolean resendBasicData = true;
 
-    public LOTRHiredNPCInfo(LOTREntityNPC npc) {
-        this.theEntity = npc;
-    }
+	public LOTRHiredNPCInfo(LOTREntityNPC npc) {
+		theEntity = npc;
+	}
 
-    public void hireUnit(EntityPlayer entityplayer, boolean setLocation, LOTRFaction hiringFaction, LOTRUnitTradeEntry tradeEntry, String squadron, Entity mount) {
-        float alignment = tradeEntry.alignmentRequired;
-        LOTRUnitTradeEntry.PledgeType pledge = tradeEntry.getPledgeType();
-        Task task = tradeEntry.task;
-        if (setLocation) {
-            this.theEntity.setLocationAndAngles(entityplayer.posX, entityplayer.boundingBox.minY, entityplayer.posZ, entityplayer.rotationYaw + 180.0f, 0.0f);
-        }
-        this.isActive = true;
-        this.alignmentRequiredToCommand = alignment;
-        this.pledgeType = pledge;
-        this.setHiringPlayer(entityplayer);
-        this.setTask(task);
-        this.setSquadron(squadron);
-        if (hiringFaction != null && hiringFaction.isPlayableAlignmentFaction()) {
-            LOTRLevelData.getData(entityplayer).getFactionData(hiringFaction).addHire();
-        }
-        if (mount != null) {
-            mount.setLocationAndAngles(this.theEntity.posX, this.theEntity.boundingBox.minY, this.theEntity.posZ, this.theEntity.rotationYaw, 0.0f);
-            if (mount instanceof LOTREntityNPC) {
-                LOTREntityNPC hiredMountNPC = (LOTREntityNPC)mount;
-                hiredMountNPC.hiredNPCInfo.hireUnit(entityplayer, setLocation, hiringFaction, tradeEntry, squadron, null);
-            }
-            this.theEntity.mountEntity(mount);
-            if (mount instanceof LOTRNPCMount && !(mount instanceof LOTREntityNPC)) {
-                this.theEntity.setRidingHorse(true);
-                LOTRNPCMount hiredHorse = (LOTRNPCMount)mount;
-                hiredHorse.setBelongsToNPC(true);
-                LOTRMountFunctions.setNavigatorRangeFromNPC(hiredHorse, this.theEntity);
-            }
-        }
-    }
+	public void addExperience(int xpAdd) {
+		this.addExperience(xpAdd, true);
+	}
 
-    public void setHiringPlayer(EntityPlayer entityplayer) {
-        this.hiringPlayerUUID = entityplayer == null ? null : entityplayer.getUniqueID();
-        this.markDirty();
-    }
+	public void addExperience(int xpAdd, boolean passToRiderOrMount) {
+		xp += xpAdd;
+		while (xp >= LOTRHiredNPCInfo.totalXPForLevel(xpLevel + 1)) {
+			++xpLevel;
+			markDirty();
+			onLevelUp();
+		}
+		sendClientPacket(false);
+		if (passToRiderOrMount) {
+			addExperienceIfApplicable(theEntity.riddenByEntity, xpAdd);
+			addExperienceIfApplicable(theEntity.ridingEntity, xpAdd);
+		}
+	}
 
-    public EntityPlayer getHiringPlayer() {
-        if (this.hiringPlayerUUID == null) {
-            return null;
-        }
-        return this.theEntity.worldObj.func_152378_a(this.hiringPlayerUUID);
-    }
+	public void addExperienceIfApplicable(Entity maybeNPC, int xpAdd) {
+		if (maybeNPC instanceof LOTREntityNPC) {
+			LOTREntityNPC otherNPC = (LOTREntityNPC) maybeNPC;
+			if (otherNPC.hiredNPCInfo.isActive && getHiringPlayerUUID().equals(otherNPC.hiredNPCInfo.getHiringPlayerUUID())) {
+				otherNPC.hiredNPCInfo.addExperience(xpAdd, false);
+			}
+		}
+	}
 
-    public UUID getHiringPlayerUUID() {
-        return this.hiringPlayerUUID;
-    }
+	public void addLevelUpHealthGain(EntityLivingBase gainingEntity) {
+		float healthBoost = 1.0f;
+		IAttributeInstance attrHealth = gainingEntity.getEntityAttribute(SharedMonsterAttributes.maxHealth);
+		attrHealth.setBaseValue(attrHealth.getBaseValue() + healthBoost);
+		gainingEntity.heal(healthBoost);
+	}
 
-    public Task getTask() {
-        return this.hiredTask;
-    }
+	public void commandSwordAttack(EntityLivingBase target) {
+		if (target != null && LOTRMod.canNPCAttackEntity(theEntity, target, true)) {
+			theEntity.getNavigator().clearPathEntity();
+			theEntity.setRevengeTarget(target);
+			theEntity.setAttackTarget(target);
+			targetFromCommandSword = true;
+		}
+	}
 
-    public void setTask(Task t) {
-        if (t != this.hiredTask) {
-            this.hiredTask = t;
-            this.markDirty();
-        }
-        if (this.hiredTask == Task.FARMER) {
-            this.hiredInventory = new LOTRInventoryNPC("HiredInventory", this.theEntity, 4);
-        }
-    }
+	public void commandSwordCancel() {
+		if (targetFromCommandSword) {
+			theEntity.getNavigator().clearPathEntity();
+			theEntity.setRevengeTarget(null);
+			theEntity.setAttackTarget(null);
+			targetFromCommandSword = false;
+		}
+	}
 
-    public LOTRInventoryNPC getHiredInventory() {
-        return this.hiredInventory;
-    }
+	public void correctOutdatedLevelUpHealthGain() {
+		int levelsGained = xpLevel - 1;
+		if (levelsGained > 0) {
+			float oldHealthGain = 2.0f;
+			float newHealthGain = 1.0f;
+			float healthCorrectionReduction = (oldHealthGain - newHealthGain) * levelsGained;
+			IAttributeInstance attrHealth = theEntity.getEntityAttribute(SharedMonsterAttributes.maxHealth);
+			attrHealth.setBaseValue(attrHealth.getBaseValue() - healthCorrectionReduction);
+			theEntity.setHealth(theEntity.getHealth());
+		}
+	}
 
-    private void markDirty() {
-        if (!this.theEntity.worldObj.isRemote) {
-            if (this.theEntity.ticksExisted > 0) {
-                this.resendBasicData = true;
-            } else {
-                this.sendBasicDataToAllWatchers();
-            }
-        }
-    }
+	public void dismissUnit(boolean isDesertion) {
+		if (isDesertion) {
+			getHiringPlayer().addChatMessage(new ChatComponentTranslation("lotr.hiredNPC.desert", theEntity.getCommandSenderName()));
+		} else {
+			getHiringPlayer().addChatMessage(new ChatComponentTranslation("lotr.hiredNPC.dismiss", theEntity.getCommandSenderName()));
+		}
+		if (hiredTask == Task.FARMER && hiredInventory != null) {
+			hiredInventory.dropAllItems();
+		}
+		isActive = false;
+		canMove = true;
+		sendClientPacket(false);
+		setHiringPlayer(null);
+	}
 
-    public boolean hasHiringRequirements() {
-        return this.theEntity.getHiringFaction().isPlayableAlignmentFaction() && this.alignmentRequiredToCommand >= 0.0f;
-    }
+	public int getGuardRange() {
+		return guardRange;
+	}
 
-    public void onUpdate() {
-        if (!this.theEntity.worldObj.isRemote) {
-            EntityPlayer entityplayer;
-            if (!this.doneFirstUpdate) {
-                this.doneFirstUpdate = true;
-            }
-            if (this.resendBasicData) {
-                this.sendBasicDataToAllWatchers();
-                this.resendBasicData = false;
-            }
-            if (this.hasHiringRequirements() && this.isActive && (entityplayer = this.getHiringPlayer()) != null) {
-                LOTRFaction fac = this.theEntity.getHiringFaction();
-                LOTRPlayerData pd = LOTRLevelData.getData(entityplayer);
-                boolean canCommand = true;
-                if (pd.getAlignment(fac) < this.alignmentRequiredToCommand) {
-                    canCommand = false;
-                }
-                if (!this.pledgeType.canAcceptPlayer(entityplayer, fac)) {
-                    canCommand = false;
-                }
-                if (!canCommand) {
-                    this.dismissUnit(true);
-                }
-            }
-            this.inCombat = this.theEntity.getAttackTarget() != null;
-            if (this.inCombat != this.prevInCombat) {
-                this.sendClientPacket(false);
-            }
-            this.prevInCombat = this.inCombat;
-            if (this.getTask() == Task.WARRIOR && !this.inCombat && this.shouldFollowPlayer() && this.theEntity.getRNG().nextInt(4000) == 0) {
-                String speechBank;
-                EntityPlayer hiringPlayer = this.getHiringPlayer();
-                double range = 16.0;
-                if (hiringPlayer != null && this.theEntity.getDistanceSqToEntity(hiringPlayer) < range * range && (speechBank = this.theEntity.getSpeechBank(hiringPlayer)) != null) {
-                    this.theEntity.sendSpeechBank(hiringPlayer, speechBank);
-                }
-            }
-        }
-    }
+	public LOTRInventoryNPC getHiredInventory() {
+		return hiredInventory;
+	}
 
-    public void dismissUnit(boolean isDesertion) {
-        if (isDesertion) {
-            this.getHiringPlayer().addChatMessage(new ChatComponentTranslation("lotr.hiredNPC.desert", this.theEntity.getCommandSenderName()));
-        } else {
-            this.getHiringPlayer().addChatMessage(new ChatComponentTranslation("lotr.hiredNPC.dismiss", this.theEntity.getCommandSenderName()));
-        }
-        if (this.hiredTask == Task.FARMER && this.hiredInventory != null) {
-            this.hiredInventory.dropAllItems();
-        }
-        this.isActive = false;
-        this.canMove = true;
-        this.sendClientPacket(false);
-        this.setHiringPlayer(null);
-    }
+	public EntityPlayer getHiringPlayer() {
+		if (hiringPlayerUUID == null) {
+			return null;
+		}
+		return theEntity.worldObj.func_152378_a(hiringPlayerUUID);
+	}
 
-    public void onDeath(DamageSource damagesource) {
-        EntityPlayer hiringPlayer;
-        if (!this.theEntity.worldObj.isRemote && this.isActive && this.getHiringPlayer() != null && LOTRLevelData.getData(hiringPlayer = this.getHiringPlayer()).getEnableHiredDeathMessages()) {
-            hiringPlayer.addChatMessage(new ChatComponentTranslation("lotr.hiredNPC.death", this.theEntity.func_110142_aN().func_151521_b()));
-        }
-        if (!this.theEntity.worldObj.isRemote && this.hiredInventory != null) {
-            this.hiredInventory.dropAllItems();
-        }
-    }
+	public UUID getHiringPlayerUUID() {
+		return hiringPlayerUUID;
+	}
 
-    public void halt() {
-        this.canMove = false;
-        this.theEntity.setAttackTarget(null);
-        this.sendClientPacket(false);
-    }
+	public boolean getObeyCommandSword() {
+		if (hiredTask != Task.WARRIOR) {
+			return false;
+		}
+		return !guardMode;
+	}
 
-    public void ready() {
-        this.canMove = true;
-        this.sendClientPacket(false);
-    }
+	public boolean getObeyHornHaltReady() {
+		if (hiredTask != Task.WARRIOR) {
+			return false;
+		}
+		return !guardMode;
+	}
 
-    public boolean isHalted() {
-        return !this.guardMode && !this.canMove;
-    }
+	public boolean getObeyHornSummon() {
+		if (hiredTask != Task.WARRIOR) {
+			return false;
+		}
+		return !guardMode;
+	}
 
-    public boolean shouldFollowPlayer() {
-        return !this.guardMode && this.canMove;
-    }
+	public float getProgressToNextLevel() {
+		int cap = LOTRHiredNPCInfo.totalXPForLevel(xpLevel + 1);
+		int start = LOTRHiredNPCInfo.totalXPForLevel(xpLevel);
+		return (float) (xp - start) / (float) (cap - start);
+	}
 
-    public boolean getObeyHornHaltReady() {
-        if (this.hiredTask != Task.WARRIOR) {
-            return false;
-        }
-        return !this.guardMode;
-    }
+	public String getSquadron() {
+		return hiredSquadron;
+	}
 
-    public boolean getObeyHornSummon() {
-        if (this.hiredTask != Task.WARRIOR) {
-            return false;
-        }
-        return !this.guardMode;
-    }
+	public String getStatusString() {
+		String status = "";
+		if (hiredTask == Task.WARRIOR) {
+			status = inCombat ? StatCollector.translateToLocal("lotr.hiredNPC.status.combat") : isHalted() ? StatCollector.translateToLocal("lotr.hiredNPC.status.halted") : guardMode ? StatCollector.translateToLocal("lotr.hiredNPC.status.guard") : StatCollector.translateToLocal("lotr.hiredNPC.status.ready");
+		} else if (hiredTask == Task.FARMER) {
+			status = guardMode ? StatCollector.translateToLocal("lotr.hiredNPC.status.farming") : StatCollector.translateToLocal("lotr.hiredNPC.status.following");
+		}
+		return StatCollector.translateToLocalFormatted("lotr.hiredNPC.status", status);
+	}
 
-    public boolean getObeyCommandSword() {
-        if (this.hiredTask != Task.WARRIOR) {
-            return false;
-        }
-        return !this.guardMode;
-    }
+	public Task getTask() {
+		return hiredTask;
+	}
 
-    public boolean isGuardMode() {
-        return this.guardMode;
-    }
+	public void halt() {
+		canMove = false;
+		theEntity.setAttackTarget(null);
+		sendClientPacket(false);
+	}
 
-    public void setGuardMode(boolean flag) {
-        this.guardMode = flag;
-        if (flag) {
-            int i = MathHelper.floor_double(this.theEntity.posX);
-            int j = MathHelper.floor_double(this.theEntity.posY);
-            int k = MathHelper.floor_double(this.theEntity.posZ);
-            this.theEntity.setHomeArea(i, j, k, this.guardRange);
-        } else {
-            this.theEntity.detachHome();
-        }
-    }
+	public boolean hasHiringRequirements() {
+		return theEntity.getHiringFaction().isPlayableAlignmentFaction() && alignmentRequiredToCommand >= 0.0f;
+	}
 
-    public int getGuardRange() {
-        return this.guardRange;
-    }
+	public void hireUnit(EntityPlayer entityplayer, boolean setLocation, LOTRFaction hiringFaction, LOTRUnitTradeEntry tradeEntry, String squadron, Entity mount) {
+		float alignment = tradeEntry.alignmentRequired;
+		LOTRUnitTradeEntry.PledgeType pledge = tradeEntry.getPledgeType();
+		Task task = tradeEntry.task;
+		if (setLocation) {
+			theEntity.setLocationAndAngles(entityplayer.posX, entityplayer.boundingBox.minY, entityplayer.posZ, entityplayer.rotationYaw + 180.0f, 0.0f);
+		}
+		isActive = true;
+		alignmentRequiredToCommand = alignment;
+		pledgeType = pledge;
+		setHiringPlayer(entityplayer);
+		setTask(task);
+		setSquadron(squadron);
+		if (hiringFaction != null && hiringFaction.isPlayableAlignmentFaction()) {
+			LOTRLevelData.getData(entityplayer).getFactionData(hiringFaction).addHire();
+		}
+		if (mount != null) {
+			mount.setLocationAndAngles(theEntity.posX, theEntity.boundingBox.minY, theEntity.posZ, theEntity.rotationYaw, 0.0f);
+			if (mount instanceof LOTREntityNPC) {
+				LOTREntityNPC hiredMountNPC = (LOTREntityNPC) mount;
+				hiredMountNPC.hiredNPCInfo.hireUnit(entityplayer, setLocation, hiringFaction, tradeEntry, squadron, null);
+			}
+			theEntity.mountEntity(mount);
+			if (mount instanceof LOTRNPCMount && !(mount instanceof LOTREntityNPC)) {
+				theEntity.setRidingHorse(true);
+				LOTRNPCMount hiredHorse = (LOTRNPCMount) mount;
+				hiredHorse.setBelongsToNPC(true);
+				LOTRMountFunctions.setNavigatorRangeFromNPC(hiredHorse, theEntity);
+			}
+		}
+	}
 
-    public void setGuardRange(int range) {
-        this.guardRange = MathHelper.clamp_int(range, GUARD_RANGE_MIN, GUARD_RANGE_MAX);
-        if (this.guardMode) {
-            int i = MathHelper.floor_double(this.theEntity.posX);
-            int j = MathHelper.floor_double(this.theEntity.posY);
-            int k = MathHelper.floor_double(this.theEntity.posZ);
-            this.theEntity.setHomeArea(i, j, k, this.guardRange);
-        }
-    }
+	public boolean isGuardMode() {
+		return guardMode;
+	}
 
-    public String getSquadron() {
-        return this.hiredSquadron;
-    }
+	public boolean isHalted() {
+		return !guardMode && !canMove;
+	}
 
-    public void setSquadron(String s) {
-        this.hiredSquadron = s;
-        this.markDirty();
-    }
+	public void markDirty() {
+		if (!theEntity.worldObj.isRemote) {
+			if (theEntity.ticksExisted > 0) {
+				resendBasicData = true;
+			} else {
+				sendBasicDataToAllWatchers();
+			}
+		}
+	}
 
-    public String getStatusString() {
-        String status = "";
-        if (this.hiredTask == Task.WARRIOR) {
-            status = this.inCombat ? StatCollector.translateToLocal("lotr.hiredNPC.status.combat") : (this.isHalted() ? StatCollector.translateToLocal("lotr.hiredNPC.status.halted") : (this.guardMode ? StatCollector.translateToLocal("lotr.hiredNPC.status.guard") : StatCollector.translateToLocal("lotr.hiredNPC.status.ready")));
-        } else if (this.hiredTask == Task.FARMER) {
-            status = this.guardMode ? StatCollector.translateToLocal("lotr.hiredNPC.status.farming") : StatCollector.translateToLocal("lotr.hiredNPC.status.following");
-        }
-        String s = StatCollector.translateToLocalFormatted("lotr.hiredNPC.status", status);
-        return s;
-    }
+	public void onDeath(DamageSource damagesource) {
+		EntityPlayer hiringPlayer;
+		if (!theEntity.worldObj.isRemote && isActive && getHiringPlayer() != null && LOTRLevelData.getData(hiringPlayer = getHiringPlayer()).getEnableHiredDeathMessages()) {
+			hiringPlayer.addChatMessage(new ChatComponentTranslation("lotr.hiredNPC.death", theEntity.func_110142_aN().func_151521_b()));
+		}
+		if (!theEntity.worldObj.isRemote && hiredInventory != null) {
+			hiredInventory.dropAllItems();
+		}
+	}
 
-    public void onSetTarget(EntityLivingBase newTarget, EntityLivingBase prevTarget) {
-        if (newTarget == null || newTarget != prevTarget) {
-            this.targetFromCommandSword = false;
-            this.wasAttackCommanded = false;
-        }
-    }
+	public void onKillEntity(EntityLivingBase target) {
+		if (!theEntity.worldObj.isRemote && isActive) {
+			++mobKills;
+			sendClientPacket(false);
+			if (getTask() == Task.WARRIOR) {
+				boolean wasEnemy = false;
+				int addXP = 0;
+				LOTRFaction unitFaction = theEntity.getHiringFaction();
+				if (target instanceof EntityPlayer) {
+					wasEnemy = LOTRLevelData.getData((EntityPlayer) target).getAlignment(unitFaction) < 0.0f;
+				} else {
+					LOTRFaction targetFaction = LOTRMod.getNPCFaction(target);
+					if (targetFaction.isBadRelation(unitFaction) || unitFaction == LOTRFaction.RUFFIAN && targetFaction != LOTRFaction.UNALIGNED && targetFaction != LOTRFaction.RUFFIAN) {
+						wasEnemy = true;
+						addXP = 1;
+					}
+				}
+				if (wasEnemy && theEntity.getRNG().nextInt(3) == 0) {
+					String speechBank;
+					EntityPlayer hiringPlayer = getHiringPlayer();
+					if (hiringPlayer != null && theEntity.getDistanceSqToEntity(hiringPlayer) < 256.0 && (speechBank = theEntity.getSpeechBank(hiringPlayer)) != null) {
+						theEntity.sendSpeechBank(hiringPlayer, speechBank);
+					}
+				}
+				if (addXP > 0 && LOTRConfig.enableUnitLevelling) {
+					this.addExperience(addXP);
+				}
+			}
+		}
+	}
 
-    public void commandSwordAttack(EntityLivingBase target) {
-        if (target != null && LOTRMod.canNPCAttackEntity(this.theEntity, target, true)) {
-            this.theEntity.getNavigator().clearPathEntity();
-            this.theEntity.setRevengeTarget(target);
-            this.theEntity.setAttackTarget(target);
-            this.targetFromCommandSword = true;
-        }
-    }
+	public void onLevelUp() {
+		EntityPlayer hirer;
+		addLevelUpHealthGain(theEntity);
+		Entity mount = theEntity.ridingEntity;
+		if (mount instanceof EntityLivingBase && !(mount instanceof LOTREntityNPC)) {
+			addLevelUpHealthGain((EntityLivingBase) mount);
+		}
+		hirer = getHiringPlayer();
+		if (hirer != null) {
+			hirer.addChatMessage(new ChatComponentTranslation("lotr.hiredNPC.levelUp", theEntity.getCommandSenderName(), xpLevel));
+		}
+		spawnLevelUpFireworks();
+	}
 
-    public void commandSwordCancel() {
-        if (this.targetFromCommandSword) {
-            this.theEntity.getNavigator().clearPathEntity();
-            this.theEntity.setRevengeTarget(null);
-            this.theEntity.setAttackTarget(null);
-            this.targetFromCommandSword = false;
-        }
-    }
+	public void onSetTarget(EntityLivingBase newTarget, EntityLivingBase prevTarget) {
+		if (newTarget == null || newTarget != prevTarget) {
+			targetFromCommandSword = false;
+			wasAttackCommanded = false;
+		}
+	}
 
-    public void onKillEntity(EntityLivingBase target) {
-        if (!this.theEntity.worldObj.isRemote && this.isActive) {
-            ++this.mobKills;
-            this.sendClientPacket(false);
-            if (this.getTask() == Task.WARRIOR) {
-                boolean wasEnemy = false;
-                int addXP = 0;
-                LOTRFaction unitFaction = this.theEntity.getHiringFaction();
-                if (target instanceof EntityPlayer) {
-                    wasEnemy = LOTRLevelData.getData((EntityPlayer)target).getAlignment(unitFaction) < 0.0f;
-                } else {
-                    LOTRFaction targetFaction = LOTRMod.getNPCFaction(target);
-                    if (targetFaction.isBadRelation(unitFaction) || unitFaction == LOTRFaction.RUFFIAN && targetFaction != LOTRFaction.UNALIGNED && targetFaction != LOTRFaction.RUFFIAN) {
-                        wasEnemy = true;
-                        addXP = 1;
-                    }
-                }
-                if (wasEnemy && this.theEntity.getRNG().nextInt(3) == 0) {
-                    String speechBank;
-                    EntityPlayer hiringPlayer = this.getHiringPlayer();
-                    if (hiringPlayer != null && this.theEntity.getDistanceSqToEntity(hiringPlayer) < 256.0 && (speechBank = this.theEntity.getSpeechBank(hiringPlayer)) != null) {
-                        this.theEntity.sendSpeechBank(hiringPlayer, speechBank);
-                    }
-                }
-                if (addXP > 0 && LOTRConfig.enableUnitLevelling) {
-                    this.addExperience(addXP);
-                }
-            }
-        }
-    }
+	public void onUpdate() {
+		if (!theEntity.worldObj.isRemote) {
+			EntityPlayer entityplayer;
+			if (!doneFirstUpdate) {
+				doneFirstUpdate = true;
+			}
+			if (resendBasicData) {
+				sendBasicDataToAllWatchers();
+				resendBasicData = false;
+			}
+			if (hasHiringRequirements() && isActive && (entityplayer = getHiringPlayer()) != null) {
+				LOTRFaction fac = theEntity.getHiringFaction();
+				LOTRPlayerData pd = LOTRLevelData.getData(entityplayer);
+				boolean canCommand = true;
+				if (pd.getAlignment(fac) < alignmentRequiredToCommand) {
+					canCommand = false;
+				}
+				if (!pledgeType.canAcceptPlayer(entityplayer, fac)) {
+					canCommand = false;
+				}
+				if (!canCommand) {
+					dismissUnit(true);
+				}
+			}
+			inCombat = theEntity.getAttackTarget() != null;
+			if (inCombat != prevInCombat) {
+				sendClientPacket(false);
+			}
+			prevInCombat = inCombat;
+			if (getTask() == Task.WARRIOR && !inCombat && shouldFollowPlayer() && theEntity.getRNG().nextInt(4000) == 0) {
+				String speechBank;
+				EntityPlayer hiringPlayer = getHiringPlayer();
+				double range = 16.0;
+				if (hiringPlayer != null && theEntity.getDistanceSqToEntity(hiringPlayer) < range * range && (speechBank = theEntity.getSpeechBank(hiringPlayer)) != null) {
+					theEntity.sendSpeechBank(hiringPlayer, speechBank);
+				}
+			}
+		}
+	}
 
-    private void addExperience(int i) {
-        this.xp += i;
-        while (this.xp >= this.totalXPForLevel(this.xpLevel + 1)) {
-            ++this.xpLevel;
-            this.markDirty();
-            this.onLevelUp();
-        }
-        this.sendClientPacket(false);
-    }
+	public void readFromNBT(NBTTagCompound nbt) {
+		NBTTagCompound data = nbt.getCompoundTag("HiredNPCInfo");
+		if (data != null) {
+			String savedUUID;
+			if (data.hasKey("HiringPlayerName")) {
+				String name = data.getString("HiringPlayerName");
+				hiringPlayerUUID = UUID.fromString(PreYggdrasilConverter.func_152719_a(name));
+			} else if (data.hasKey("HiringPlayerUUID") && !StringUtils.isNullOrEmpty(savedUUID = data.getString("HiringPlayerUUID"))) {
+				hiringPlayerUUID = UUID.fromString(savedUUID);
+			}
+			isActive = data.getBoolean("IsActive");
+			alignmentRequiredToCommand = data.hasKey("AlignmentRequired") ? (float) data.getInteger("AlignmentRequired") : data.getFloat("AlignReqF");
+			if (data.hasKey("PledgeType")) {
+				byte pledgeID = data.getByte("PledgeType");
+				pledgeType = LOTRUnitTradeEntry.PledgeType.forID(pledgeID);
+			}
+			canMove = data.getBoolean("CanMove");
+			if (data.hasKey("TeleportAutomatically")) {
+				teleportAutomatically = data.getBoolean("TeleportAutomatically");
+				mobKills = data.getInteger("MobKills");
+				setGuardMode(data.getBoolean("GuardMode"));
+				setGuardRange(data.getInteger("GuardRange"));
+			}
+			setTask(Task.forID(data.getInteger("Task")));
+			if (data.hasKey("Xp")) {
+				xp = data.getInteger("Xp");
+			}
+			if (data.hasKey("XpLevel")) {
+				xpLevel = data.getInteger("XpLevel");
+			} else if (data.hasKey("XpLvl")) {
+				xpLevel = data.getInteger("XpLvl");
+				correctOutdatedLevelUpHealthGain();
+			}
+			if (data.hasKey("Squadron")) {
+				hiredSquadron = data.getString("Squadron");
+			}
+			if (hiredInventory != null) {
+				hiredInventory.readFromNBT(data);
+			}
+		}
+	}
 
-    public int totalXPForLevel(int lvl) {
-        if (lvl <= 1) {
-            return 0;
-        }
-        double d = 3.0 * (lvl - 1) * Math.pow(1.08, lvl - 2);
-        return MathHelper.floor_double(d);
-    }
+	public void ready() {
+		canMove = true;
+		sendClientPacket(false);
+	}
 
-    public float getProgressToNextLevel() {
-        int cap = this.totalXPForLevel(this.xpLevel + 1);
-        int start = this.totalXPForLevel(this.xpLevel);
-        return (float)(this.xp - start) / (float)(cap - start);
-    }
+	public void receiveBasicData(LOTRPacketHiredInfo packet) {
+		hiringPlayerUUID = packet.hiringPlayer;
+		setTask(packet.task);
+		setSquadron(packet.squadron);
+		xpLevel = packet.xpLvl;
+	}
 
-    private void onLevelUp() {
-        float healthBoost = 2.0f;
-        IAttributeInstance attrHealth = this.theEntity.getEntityAttribute(SharedMonsterAttributes.maxHealth);
-        attrHealth.setBaseValue(attrHealth.getBaseValue() + healthBoost);
-        this.theEntity.heal(healthBoost);
-        EntityPlayer hirer = this.getHiringPlayer();
-        if (hirer != null) {
-            hirer.addChatMessage(new ChatComponentTranslation("lotr.hiredNPC.levelUp", this.theEntity.getCommandSenderName(), this.xpLevel));
-        }
-        boolean bigLvlUp = this.xpLevel % 5 == 0;
-        World world = this.theEntity.worldObj;
-        ItemStack itemstack = new ItemStack(Items.fireworks);
-        NBTTagCompound itemData = new NBTTagCompound();
-        NBTTagCompound fireworkData = new NBTTagCompound();
-        NBTTagList explosionsList = new NBTTagList();
-        int explosions = 1;
-        for (int l = 0; l < explosions; ++l) {
-            NBTTagCompound explosionData = new NBTTagCompound();
-            explosionData.setBoolean("Flicker", true);
-            explosionData.setBoolean("Trail", bigLvlUp);
-            int[] colors = new int[]{16733440, this.theEntity.getFaction().getFactionColor()};
-            explosionData.setIntArray("Colors", colors);
-            boolean effectType = bigLvlUp;
-            explosionData.setByte("Type", (byte)(effectType ? 1 : 0));
-            explosionsList.appendTag(explosionData);
-        }
-        fireworkData.setTag("Explosions", explosionsList);
-        itemData.setTag("Fireworks", fireworkData);
-        itemstack.setTagCompound(itemData);
-        EntityFireworkRocket firework = new EntityFireworkRocket(world, this.theEntity.posX, this.theEntity.boundingBox.minY + this.theEntity.height, this.theEntity.posZ, itemstack);
-        NBTTagCompound fireworkNBT = new NBTTagCompound();
-        firework.writeEntityToNBT(fireworkNBT);
-        fireworkNBT.setInteger("LifeTime", bigLvlUp ? 20 : 15);
-        firework.readEntityFromNBT(fireworkNBT);
-        world.spawnEntityInWorld(firework);
-    }
+	public void receiveClientPacket(LOTRPacketHiredGui packet) {
+		isActive = packet.isActive;
+		canMove = packet.canMove;
+		teleportAutomatically = packet.teleportAutomatically;
+		mobKills = packet.mobKills;
+		xp = packet.xp;
+		alignmentRequiredToCommand = packet.alignmentRequired;
+		pledgeType = packet.pledgeType;
+		inCombat = packet.inCombat;
+		guardMode = packet.guardMode;
+		guardRange = packet.guardRange;
+	}
 
-    public boolean tryTeleportToHiringPlayer(boolean failsafe) {
-        World world = this.theEntity.worldObj;
-        if (!world.isRemote) {
-            EntityPlayer entityplayer = this.getHiringPlayer();
-            if (this.isActive && entityplayer != null && this.theEntity.riddenByEntity == null) {
-                int i = MathHelper.floor_double(entityplayer.posX);
-                int j = MathHelper.floor_double(entityplayer.boundingBox.minY);
-                int k = MathHelper.floor_double(entityplayer.posZ);
-                float minDist = 3.0f;
-                float maxDist = 6.0f;
-                float extraDist = this.theEntity.width / 2.0f;
-                if (this.theEntity.ridingEntity instanceof EntityLiving) {
-                    extraDist = Math.max(this.theEntity.width, this.theEntity.ridingEntity.width) / 2.0f;
-                }
-                minDist += extraDist;
-                maxDist += extraDist;
-                int attempts = 120;
-                for (int l = 0; l < attempts; ++l) {
-                    float yExtra;
-                    double d2;
-                    float angle = world.rand.nextFloat() * 3.1415927f * 2.0f;
-                    float sin = MathHelper.sin(angle);
-                    float cos = MathHelper.cos(angle);
-                    float r = MathHelper.randomFloatClamp(world.rand, minDist, maxDist);
-                    int i1 = MathHelper.floor_double(i + 0.5 + cos * r);
-                    int k1 = MathHelper.floor_double(k + 0.5 + sin * r);
-                    double d = i1 + 0.5;
-                    float halfWidth = this.theEntity.width / 2.0f;
-                    int j1 = MathHelper.getRandomIntegerInRange(world.rand, j - 4, j + 4);
-                    double d1 = j1;
-                    AxisAlignedBB npcBB = AxisAlignedBB.getBoundingBox(d - halfWidth, d1 + (yExtra = -this.theEntity.yOffset + this.theEntity.ySize), (d2 = k1 + 0.5) - halfWidth, d + halfWidth, d1 + yExtra + (this.theEntity.height), d2 + halfWidth);
-                    if (!world.func_147461_a(npcBB).isEmpty() || !world.getBlock(i1, j1 - 1, k1).isSideSolid(world, i1, j1 - 1, k1, ForgeDirection.UP)) continue;
-                    if (this.theEntity.ridingEntity instanceof EntityLiving) {
-                        EntityLiving mount = (EntityLiving)this.theEntity.ridingEntity;
-                        float mHalfWidth = mount.width / 2.0f;
-                        float mYExtra = -mount.yOffset + mount.ySize;
-                        float mHeight = mount.height;
-                        AxisAlignedBB mountBB = AxisAlignedBB.getBoundingBox(d - mHalfWidth, d1 + mYExtra, d2 - mHalfWidth, d + mHalfWidth, d1 + mYExtra + mHeight, d2 + mHalfWidth);
-                        if (!world.func_147461_a(mountBB).isEmpty()) continue;
-                        mount.setLocationAndAngles(d, d1, d2, this.theEntity.rotationYaw, this.theEntity.rotationPitch);
-                        mount.fallDistance = 0.0f;
-                        mount.getNavigator().clearPathEntity();
-                        mount.setAttackTarget(null);
-                        this.theEntity.fallDistance = 0.0f;
-                        this.theEntity.getNavigator().clearPathEntity();
-                        this.theEntity.setAttackTarget(null);
-                        return true;
-                    }
-                    this.theEntity.setLocationAndAngles(d, d1, d2, this.theEntity.rotationYaw, this.theEntity.rotationPitch);
-                    this.theEntity.fallDistance = 0.0f;
-                    this.theEntity.getNavigator().clearPathEntity();
-                    this.theEntity.setAttackTarget(null);
-                    return true;
-                }
-                if (failsafe) {
-                    double d = i + 0.5;
-                    double d1 = j;
-                    double d2 = k + 0.5;
-                    if (world.getBlock(i, j - 1, k).isSideSolid(world, i, j - 1, k, ForgeDirection.UP)) {
-                        if (this.theEntity.ridingEntity instanceof EntityLiving) {
-                            EntityLiving mount = (EntityLiving)this.theEntity.ridingEntity;
-                            mount.setLocationAndAngles(d, d1, d2, this.theEntity.rotationYaw, this.theEntity.rotationPitch);
-                            mount.fallDistance = 0.0f;
-                            mount.getNavigator().clearPathEntity();
-                            mount.setAttackTarget(null);
-                            this.theEntity.fallDistance = 0.0f;
-                            this.theEntity.getNavigator().clearPathEntity();
-                            this.theEntity.setAttackTarget(null);
-                            return true;
-                        }
-                        this.theEntity.setLocationAndAngles(d, d1, d2, this.theEntity.rotationYaw, this.theEntity.rotationPitch);
-                        this.theEntity.fallDistance = 0.0f;
-                        this.theEntity.getNavigator().clearPathEntity();
-                        this.theEntity.setAttackTarget(null);
-                        return true;
-                    }
-                }
-            }
-        }
-        return false;
-    }
+	public void sendBasicData(EntityPlayerMP entityplayer) {
+		LOTRPacketHiredInfo packet = new LOTRPacketHiredInfo(theEntity.getEntityId(), hiringPlayerUUID, hiredTask, getSquadron(), xpLevel);
+		LOTRPacketHandler.networkWrapper.sendTo(packet, entityplayer);
+	}
 
-    public void writeToNBT(NBTTagCompound nbt) {
-        NBTTagCompound data = new NBTTagCompound();
-        data.setBoolean("IsActive", this.isActive);
-        if (this.hiringPlayerUUID != null) {
-            data.setString("HiringPlayerUUID", this.hiringPlayerUUID.toString());
-        }
-        data.setFloat("AlignReqF", this.alignmentRequiredToCommand);
-        data.setByte("PledgeType", (byte)this.pledgeType.typeID);
-        data.setBoolean("CanMove", this.canMove);
-        data.setBoolean("TeleportAutomatically", this.teleportAutomatically);
-        data.setInteger("MobKills", this.mobKills);
-        data.setBoolean("GuardMode", this.guardMode);
-        data.setInteger("GuardRange", this.guardRange);
-        data.setInteger("Task", this.hiredTask.ordinal());
-        data.setInteger("Xp", this.xp);
-        data.setInteger("XpLvl", this.xpLevel);
-        if (!StringUtils.isNullOrEmpty(this.hiredSquadron)) {
-            data.setString("Squadron", this.hiredSquadron);
-        }
-        if (this.hiredInventory != null) {
-            this.hiredInventory.writeToNBT(data);
-        }
-        nbt.setTag("HiredNPCInfo", data);
-    }
+	public void sendBasicDataToAllWatchers() {
+		int x = MathHelper.floor_double(theEntity.posX) >> 4;
+		int z = MathHelper.floor_double(theEntity.posZ) >> 4;
+		PlayerManager playermanager = ((WorldServer) theEntity.worldObj).getPlayerManager();
+		List players = theEntity.worldObj.playerEntities;
+		for (Object obj : players) {
+			EntityPlayerMP entityplayer = (EntityPlayerMP) obj;
+			if (!playermanager.isPlayerWatchingChunk(entityplayer, x, z)) {
+				continue;
+			}
+			sendBasicData(entityplayer);
+		}
+	}
 
-    public void readFromNBT(NBTTagCompound nbt) {
-        NBTTagCompound data = nbt.getCompoundTag("HiredNPCInfo");
-        if (data != null) {
-            String savedUUID;
-            if (data.hasKey("HiringPlayerName")) {
-                String name = data.getString("HiringPlayerName");
-                this.hiringPlayerUUID = UUID.fromString(PreYggdrasilConverter.func_152719_a(name));
-            } else if (data.hasKey("HiringPlayerUUID") && !StringUtils.isNullOrEmpty(savedUUID = data.getString("HiringPlayerUUID"))) {
-                this.hiringPlayerUUID = UUID.fromString(savedUUID);
-            }
-            this.isActive = data.getBoolean("IsActive");
-            this.alignmentRequiredToCommand = data.hasKey("AlignmentRequired") ? (float)data.getInteger("AlignmentRequired") : data.getFloat("AlignReqF");
-            if (data.hasKey("PledgeType")) {
-                byte pledgeID = data.getByte("PledgeType");
-                this.pledgeType = LOTRUnitTradeEntry.PledgeType.forID(pledgeID);
-            }
-            this.canMove = data.getBoolean("CanMove");
-            if (data.hasKey("TeleportAutomatically")) {
-                this.teleportAutomatically = data.getBoolean("TeleportAutomatically");
-                this.mobKills = data.getInteger("MobKills");
-                this.setGuardMode(data.getBoolean("GuardMode"));
-                this.setGuardRange(data.getInteger("GuardRange"));
-            }
-            this.setTask(Task.forID(data.getInteger("Task")));
-            if (data.hasKey("Xp")) {
-                this.xp = data.getInteger("Xp");
-            }
-            if (data.hasKey("XpLvl")) {
-                this.xpLevel = data.getInteger("XpLvl");
-            }
-            if (data.hasKey("Squadron")) {
-                this.hiredSquadron = data.getString("Squadron");
-            }
-            if (this.hiredInventory != null) {
-                this.hiredInventory.readFromNBT(data);
-            }
-        }
-    }
+	public void sendClientPacket(boolean shouldOpenGui) {
+		if (theEntity.worldObj.isRemote || getHiringPlayer() == null) {
+			return;
+		}
+		LOTRPacketHiredGui packet = new LOTRPacketHiredGui(theEntity.getEntityId(), shouldOpenGui);
+		packet.isActive = isActive;
+		packet.canMove = canMove;
+		packet.teleportAutomatically = teleportAutomatically;
+		packet.mobKills = mobKills;
+		packet.xp = xp;
+		packet.alignmentRequired = alignmentRequiredToCommand;
+		packet.pledgeType = pledgeType;
+		packet.inCombat = inCombat;
+		packet.guardMode = guardMode;
+		packet.guardRange = guardRange;
+		LOTRPacketHandler.networkWrapper.sendTo((IMessage) packet, (EntityPlayerMP) getHiringPlayer());
+		if (shouldOpenGui) {
+			isGuiOpen = true;
+		}
+	}
 
-    public void sendBasicData(EntityPlayerMP entityplayer) {
-        LOTRPacketHiredInfo packet = new LOTRPacketHiredInfo(this.theEntity.getEntityId(), this.hiringPlayerUUID, this.hiredTask, this.getSquadron(), this.xpLevel);
-        LOTRPacketHandler.networkWrapper.sendTo(packet, entityplayer);
-    }
+	public void setGuardMode(boolean flag) {
+		guardMode = flag;
+		if (flag) {
+			int i = MathHelper.floor_double(theEntity.posX);
+			int j = MathHelper.floor_double(theEntity.posY);
+			int k = MathHelper.floor_double(theEntity.posZ);
+			theEntity.setHomeArea(i, j, k, guardRange);
+		} else {
+			theEntity.detachHome();
+		}
+	}
 
-    private void sendBasicDataToAllWatchers() {
-        int x = MathHelper.floor_double(this.theEntity.posX) >> 4;
-        int z = MathHelper.floor_double(this.theEntity.posZ) >> 4;
-        PlayerManager playermanager = ((WorldServer)this.theEntity.worldObj).getPlayerManager();
-        List players = this.theEntity.worldObj.playerEntities;
-        for (Object obj : players) {
-            EntityPlayerMP entityplayer = (EntityPlayerMP)obj;
-            if (!playermanager.isPlayerWatchingChunk(entityplayer, x, z)) continue;
-            this.sendBasicData(entityplayer);
-        }
-    }
+	public void setGuardRange(int range) {
+		guardRange = MathHelper.clamp_int(range, GUARD_RANGE_MIN, GUARD_RANGE_MAX);
+		if (guardMode) {
+			int i = MathHelper.floor_double(theEntity.posX);
+			int j = MathHelper.floor_double(theEntity.posY);
+			int k = MathHelper.floor_double(theEntity.posZ);
+			theEntity.setHomeArea(i, j, k, guardRange);
+		}
+	}
 
-    public void receiveBasicData(LOTRPacketHiredInfo packet) {
-        this.hiringPlayerUUID = packet.hiringPlayer;
-        this.setTask(packet.task);
-        this.setSquadron(packet.squadron);
-        this.xpLevel = packet.xpLvl;
-    }
+	public void setHiringPlayer(EntityPlayer entityplayer) {
+		hiringPlayerUUID = entityplayer == null ? null : entityplayer.getUniqueID();
+		markDirty();
+	}
 
-    public void sendClientPacket(boolean shouldOpenGui) {
-        if (this.theEntity.worldObj.isRemote || this.getHiringPlayer() == null) {
-            return;
-        }
-        LOTRPacketHiredGui packet = new LOTRPacketHiredGui(this.theEntity.getEntityId(), shouldOpenGui);
-        packet.isActive = this.isActive;
-        packet.canMove = this.canMove;
-        packet.teleportAutomatically = this.teleportAutomatically;
-        packet.mobKills = this.mobKills;
-        packet.xp = this.xp;
-        packet.alignmentRequired = this.alignmentRequiredToCommand;
-        packet.pledgeType = this.pledgeType;
-        packet.inCombat = this.inCombat;
-        packet.guardMode = this.guardMode;
-        packet.guardRange = this.guardRange;
-        LOTRPacketHandler.networkWrapper.sendTo((IMessage)packet, (EntityPlayerMP)this.getHiringPlayer());
-        if (shouldOpenGui) {
-            this.isGuiOpen = true;
-        }
-    }
+	public void setSquadron(String s) {
+		hiredSquadron = s;
+		markDirty();
+	}
 
-    public void receiveClientPacket(LOTRPacketHiredGui packet) {
-        this.isActive = packet.isActive;
-        this.canMove = packet.canMove;
-        this.teleportAutomatically = packet.teleportAutomatically;
-        this.mobKills = packet.mobKills;
-        this.xp = packet.xp;
-        this.alignmentRequiredToCommand = packet.alignmentRequired;
-        this.pledgeType = packet.pledgeType;
-        this.inCombat = packet.inCombat;
-        this.guardMode = packet.guardMode;
-        this.guardRange = packet.guardRange;
-    }
+	public void setTask(Task t) {
+		if (t != hiredTask) {
+			hiredTask = t;
+			markDirty();
+		}
+		if (hiredTask == Task.FARMER) {
+			hiredInventory = new LOTRInventoryNPC("HiredInventory", theEntity, 4);
+		}
+	}
 
-    public enum Task {
-        WARRIOR(true),
-        FARMER(false);
+	public boolean shouldFollowPlayer() {
+		return !guardMode && canMove;
+	}
 
-        public final boolean displayXpLevel;
+	public void spawnLevelUpFireworks() {
+		boolean bigLvlUp = xpLevel % 5 == 0;
+		World world = theEntity.worldObj;
+		ItemStack itemstack = new ItemStack(Items.fireworks);
+		NBTTagCompound itemData = new NBTTagCompound();
+		NBTTagCompound fireworkData = new NBTTagCompound();
+		NBTTagList explosionsList = new NBTTagList();
+		int explosions = 1;
+		for (int l = 0; l < explosions; ++l) {
+			NBTTagCompound explosionData = new NBTTagCompound();
+			explosionData.setBoolean("Flicker", true);
+			explosionData.setBoolean("Trail", bigLvlUp);
+			int[] colors = { 16733440, theEntity.getFaction().getFactionColor() };
+			explosionData.setIntArray("Colors", colors);
+			boolean effectType = bigLvlUp;
+			explosionData.setByte("Type", (byte) (effectType ? 1 : 0));
+			explosionsList.appendTag(explosionData);
+		}
+		fireworkData.setTag("Explosions", explosionsList);
+		itemData.setTag("Fireworks", fireworkData);
+		itemstack.setTagCompound(itemData);
+		EntityFireworkRocket firework = new EntityFireworkRocket(world, theEntity.posX, theEntity.boundingBox.minY + theEntity.height, theEntity.posZ, itemstack);
+		NBTTagCompound fireworkNBT = new NBTTagCompound();
+		firework.writeEntityToNBT(fireworkNBT);
+		fireworkNBT.setInteger("LifeTime", bigLvlUp ? 20 : 15);
+		firework.readEntityFromNBT(fireworkNBT);
+		world.spawnEntityInWorld(firework);
+	}
 
-        Task(boolean displayLvl) {
-            this.displayXpLevel = displayLvl;
-        }
+	public boolean tryTeleportToHiringPlayer(boolean failsafe) {
+		World world = theEntity.worldObj;
+		if (!world.isRemote) {
+			EntityPlayer entityplayer = getHiringPlayer();
+			if (isActive && entityplayer != null && theEntity.riddenByEntity == null) {
+				int i = MathHelper.floor_double(entityplayer.posX);
+				int j = MathHelper.floor_double(entityplayer.boundingBox.minY);
+				int k = MathHelper.floor_double(entityplayer.posZ);
+				float minDist = 3.0f;
+				float maxDist = 6.0f;
+				float extraDist = theEntity.width / 2.0f;
+				if (theEntity.ridingEntity instanceof EntityLiving) {
+					extraDist = Math.max(theEntity.width, theEntity.ridingEntity.width) / 2.0f;
+				}
+				minDist += extraDist;
+				maxDist += extraDist;
+				int attempts = 120;
+				for (int l = 0; l < attempts; ++l) {
+					float yExtra;
+					double d2;
+					float angle = world.rand.nextFloat() * 3.1415927f * 2.0f;
+					float sin = MathHelper.sin(angle);
+					float cos = MathHelper.cos(angle);
+					float r = MathHelper.randomFloatClamp(world.rand, minDist, maxDist);
+					int i1 = MathHelper.floor_double(i + 0.5 + cos * r);
+					int k1 = MathHelper.floor_double(k + 0.5 + sin * r);
+					double d = i1 + 0.5;
+					float halfWidth = theEntity.width / 2.0f;
+					int j1 = MathHelper.getRandomIntegerInRange(world.rand, j - 4, j + 4);
+					double d1 = j1;
+					AxisAlignedBB npcBB = AxisAlignedBB.getBoundingBox(d - halfWidth, d1 + (yExtra = -theEntity.yOffset + theEntity.ySize), (d2 = k1 + 0.5) - halfWidth, d + halfWidth, d1 + yExtra + theEntity.height, d2 + halfWidth);
+					if (!world.func_147461_a(npcBB).isEmpty() || !world.getBlock(i1, j1 - 1, k1).isSideSolid(world, i1, j1 - 1, k1, ForgeDirection.UP)) {
+						continue;
+					}
+					if (theEntity.ridingEntity instanceof EntityLiving) {
+						EntityLiving mount = (EntityLiving) theEntity.ridingEntity;
+						float mHalfWidth = mount.width / 2.0f;
+						float mYExtra = -mount.yOffset + mount.ySize;
+						float mHeight = mount.height;
+						AxisAlignedBB mountBB = AxisAlignedBB.getBoundingBox(d - mHalfWidth, d1 + mYExtra, d2 - mHalfWidth, d + mHalfWidth, d1 + mYExtra + mHeight, d2 + mHalfWidth);
+						if (!world.func_147461_a(mountBB).isEmpty()) {
+							continue;
+						}
+						mount.setLocationAndAngles(d, d1, d2, theEntity.rotationYaw, theEntity.rotationPitch);
+						mount.fallDistance = 0.0f;
+						mount.getNavigator().clearPathEntity();
+						mount.setAttackTarget(null);
+						theEntity.fallDistance = 0.0f;
+						theEntity.getNavigator().clearPathEntity();
+						theEntity.setAttackTarget(null);
+						return true;
+					}
+					theEntity.setLocationAndAngles(d, d1, d2, theEntity.rotationYaw, theEntity.rotationPitch);
+					theEntity.fallDistance = 0.0f;
+					theEntity.getNavigator().clearPathEntity();
+					theEntity.setAttackTarget(null);
+					return true;
+				}
+				if (failsafe) {
+					double d = i + 0.5;
+					double d1 = j;
+					double d2 = k + 0.5;
+					if (world.getBlock(i, j - 1, k).isSideSolid(world, i, j - 1, k, ForgeDirection.UP)) {
+						if (theEntity.ridingEntity instanceof EntityLiving) {
+							EntityLiving mount = (EntityLiving) theEntity.ridingEntity;
+							mount.setLocationAndAngles(d, d1, d2, theEntity.rotationYaw, theEntity.rotationPitch);
+							mount.fallDistance = 0.0f;
+							mount.getNavigator().clearPathEntity();
+							mount.setAttackTarget(null);
+							theEntity.fallDistance = 0.0f;
+							theEntity.getNavigator().clearPathEntity();
+							theEntity.setAttackTarget(null);
+							return true;
+						}
+						theEntity.setLocationAndAngles(d, d1, d2, theEntity.rotationYaw, theEntity.rotationPitch);
+						theEntity.fallDistance = 0.0f;
+						theEntity.getNavigator().clearPathEntity();
+						theEntity.setAttackTarget(null);
+						return true;
+					}
+				}
+			}
+		}
+		return false;
+	}
 
-        public static Task forID(int id) {
-            for (Task task : Task.values()) {
-                if (task.ordinal() != id) continue;
-                return task;
-            }
-            return WARRIOR;
-        }
-    }
+	public void writeToNBT(NBTTagCompound nbt) {
+		NBTTagCompound data = new NBTTagCompound();
+		data.setBoolean("IsActive", isActive);
+		if (hiringPlayerUUID != null) {
+			data.setString("HiringPlayerUUID", hiringPlayerUUID.toString());
+		}
+		data.setFloat("AlignReqF", alignmentRequiredToCommand);
+		data.setByte("PledgeType", (byte) pledgeType.typeID);
+		data.setBoolean("CanMove", canMove);
+		data.setBoolean("TeleportAutomatically", teleportAutomatically);
+		data.setInteger("MobKills", mobKills);
+		data.setBoolean("GuardMode", guardMode);
+		data.setInteger("GuardRange", guardRange);
+		data.setInteger("Task", hiredTask.ordinal());
+		data.setInteger("Xp", xp);
+		data.setInteger("XpLevel", xpLevel);
+		if (!StringUtils.isNullOrEmpty(hiredSquadron)) {
+			data.setString("Squadron", hiredSquadron);
+		}
+		if (hiredInventory != null) {
+			hiredInventory.writeToNBT(data);
+		}
+		nbt.setTag("HiredNPCInfo", data);
+	}
+
+	public static int totalXPForLevel(int lvl) {
+		if (lvl <= 1) {
+			return 0;
+		}
+		double d = 3.0 * (lvl - 1) * Math.pow(1.08, lvl - 2);
+		return MathHelper.floor_double(d);
+	}
+
+	public enum Task {
+		WARRIOR(true), FARMER(false);
+
+		public boolean displayXpLevel;
+
+		Task(boolean displayLvl) {
+			displayXpLevel = displayLvl;
+		}
+
+		public static Task forID(int id) {
+			for (Task task : Task.values()) {
+				if (task.ordinal() != id) {
+					continue;
+				}
+				return task;
+			}
+			return WARRIOR;
+		}
+	}
 
 }
-

@@ -9,61 +9,59 @@ import net.minecraft.item.ItemStack;
 import net.minecraft.world.World;
 
 public class LOTREntityGondorRenegade extends LOTREntityGondorSoldier {
-    private static ItemStack[] weaponsUmbar = new ItemStack[] {new ItemStack(LOTRMod.scimitarNearHarad), new ItemStack(LOTRMod.scimitarNearHarad), new ItemStack(LOTRMod.scimitarNearHarad), new ItemStack(LOTRMod.poleaxeNearHarad), new ItemStack(LOTRMod.poleaxeNearHarad), new ItemStack(LOTRMod.maceNearHarad), new ItemStack(LOTRMod.pikeNearHarad)};
+	public static ItemStack[] weaponsUmbar = { new ItemStack(LOTRMod.scimitarNearHarad), new ItemStack(LOTRMod.scimitarNearHarad), new ItemStack(LOTRMod.scimitarNearHarad), new ItemStack(LOTRMod.poleaxeNearHarad), new ItemStack(LOTRMod.poleaxeNearHarad), new ItemStack(LOTRMod.maceNearHarad), new ItemStack(LOTRMod.pikeNearHarad) };
 
-    public LOTREntityGondorRenegade(World world) {
-        super(world);
-        this.npcShield = null;
-        this.spawnRidingHorse = false;
-        this.questInfo.setOfferChance(4000);
-        this.questInfo.setMinAlignment(50.0f);
-    }
+	public LOTREntityGondorRenegade(World world) {
+		super(world);
+		npcShield = null;
+		spawnRidingHorse = false;
+		questInfo.setOfferChance(4000);
+		questInfo.setMinAlignment(50.0f);
+	}
 
-    @Override
-    public IEntityLivingData onSpawnWithEgg(IEntityLivingData data) {
-        data = super.onSpawnWithEgg(data);
-        int i = this.rand.nextInt(weaponsUmbar.length);
-        this.npcItemsInv.setMeleeWeapon(weaponsUmbar[i].copy());
-        this.npcItemsInv.setMeleeWeaponMounted(this.npcItemsInv.getMeleeWeapon());
-        if(this.rand.nextInt(5) == 0) {
-            this.npcItemsInv.setSpearBackup(this.npcItemsInv.getMeleeWeapon());
-            this.npcItemsInv.setMeleeWeapon(new ItemStack(LOTRMod.spearNearHarad));
-        }
-        this.npcItemsInv.setIdleItem(this.npcItemsInv.getMeleeWeapon());
-        this.npcItemsInv.setIdleItemMounted(this.npcItemsInv.getMeleeWeaponMounted());
-        if(this.rand.nextInt(3) == 0) {
-            this.setCurrentItemOrArmor(1, new ItemStack(LOTRMod.bootsPelargir));
-            this.setCurrentItemOrArmor(2, new ItemStack(LOTRMod.legsPelargir));
-            this.setCurrentItemOrArmor(3, new ItemStack(LOTRMod.bodyPelargir));
-            this.setCurrentItemOrArmor(4, null);
-        }
-        else {
-            this.setCurrentItemOrArmor(1, new ItemStack(LOTRMod.bootsGondor));
-            this.setCurrentItemOrArmor(2, new ItemStack(LOTRMod.legsGondor));
-            this.setCurrentItemOrArmor(3, new ItemStack(LOTRMod.bodyGondor));
-            this.setCurrentItemOrArmor(4, null);
-        }
-        return data;
-    }
+	@Override
+	public LOTRMiniQuest createMiniQuest() {
+		return LOTRMiniQuestFactory.GONDOR_RENEGADE.createQuest(this);
+	}
 
-    @Override
-    public LOTRFaction getFaction() {
-        return LOTRFaction.NEAR_HARAD;
-    }
+	@Override
+	public LOTRFaction getFaction() {
+		return LOTRFaction.NEAR_HARAD;
+	}
 
-    @Override
-    public String getSpeechBank(EntityPlayer entityplayer) {
-        if(this.isFriendly(entityplayer)) {
-            if(this.hiredNPCInfo.getHiringPlayer() == entityplayer) {
-                return "nearHarad/renegade/hired";
-            }
-            return "nearHarad/renegade/friendly";
-        }
-        return "nearHarad/renegade/hostile";
-    }
+	@Override
+	public String getSpeechBank(EntityPlayer entityplayer) {
+		if (isFriendlyAndAligned(entityplayer)) {
+			if (hiredNPCInfo.getHiringPlayer() == entityplayer) {
+				return "nearHarad/renegade/hired";
+			}
+			return "nearHarad/renegade/friendly";
+		}
+		return "nearHarad/renegade/hostile";
+	}
 
-    @Override
-    public LOTRMiniQuest createMiniQuest() {
-        return LOTRMiniQuestFactory.GONDOR_RENEGADE.createQuest(this);
-    }
+	@Override
+	public IEntityLivingData onSpawnWithEgg(IEntityLivingData data) {
+		data = super.onSpawnWithEgg(data);
+		int i = rand.nextInt(weaponsUmbar.length);
+		npcItemsInv.setMeleeWeapon(weaponsUmbar[i].copy());
+		npcItemsInv.setMeleeWeaponMounted(npcItemsInv.getMeleeWeapon());
+		if (rand.nextInt(5) == 0) {
+			npcItemsInv.setSpearBackup(npcItemsInv.getMeleeWeapon());
+			npcItemsInv.setMeleeWeapon(new ItemStack(LOTRMod.spearNearHarad));
+		}
+		npcItemsInv.setIdleItem(npcItemsInv.getMeleeWeapon());
+		npcItemsInv.setIdleItemMounted(npcItemsInv.getMeleeWeaponMounted());
+		if (rand.nextInt(5) == 0) {
+			setCurrentItemOrArmor(1, new ItemStack(LOTRMod.bootsPelargir));
+			setCurrentItemOrArmor(2, new ItemStack(LOTRMod.legsPelargir));
+			setCurrentItemOrArmor(3, new ItemStack(LOTRMod.bodyPelargir));
+		} else {
+			setCurrentItemOrArmor(1, new ItemStack(LOTRMod.bootsGondor));
+			setCurrentItemOrArmor(2, new ItemStack(LOTRMod.legsGondor));
+			setCurrentItemOrArmor(3, new ItemStack(LOTRMod.bodyGondor));
+		}
+		setCurrentItemOrArmor(4, null);
+		return data;
+	}
 }

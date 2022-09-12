@@ -9,31 +9,31 @@ import net.minecraft.init.Blocks;
 import net.minecraft.util.IIcon;
 
 public class LOTRBlockGundabadTable extends LOTRBlockCraftingTable {
-    @SideOnly(value = Side.CLIENT)
-    private IIcon[] tableIcons;
+	@SideOnly(value = Side.CLIENT)
+	public IIcon[] tableIcons;
 
-    public LOTRBlockGundabadTable() {
-        super(Material.rock, LOTRFaction.GUNDABAD, 31);
-        this.setStepSound(Block.soundTypeStone);
-    }
+	public LOTRBlockGundabadTable() {
+		super(Material.rock, LOTRFaction.GUNDABAD, 31);
+		setStepSound(Block.soundTypeStone);
+	}
 
-    @SideOnly(value = Side.CLIENT)
-    @Override
-    public IIcon getIcon(int i, int j) {
-        if(i == 1) {
-            return this.tableIcons[1];
-        }
-        if(i == 0) {
-            return Blocks.cobblestone.getIcon(i, 0);
-        }
-        return this.tableIcons[0];
-    }
+	@SideOnly(value = Side.CLIENT)
+	@Override
+	public IIcon getIcon(int i, int j) {
+		if (i == 1) {
+			return tableIcons[1];
+		}
+		if (i == 0) {
+			return Blocks.cobblestone.getIcon(i, 0);
+		}
+		return tableIcons[0];
+	}
 
-    @SideOnly(value = Side.CLIENT)
-    @Override
-    public void registerBlockIcons(IIconRegister iconregister) {
-        this.tableIcons = new IIcon[2];
-        this.tableIcons[0] = iconregister.registerIcon(this.getTextureName() + "_side");
-        this.tableIcons[1] = iconregister.registerIcon(this.getTextureName() + "_top");
-    }
+	@SideOnly(value = Side.CLIENT)
+	@Override
+	public void registerBlockIcons(IIconRegister iconregister) {
+		tableIcons = new IIcon[2];
+		tableIcons[0] = iconregister.registerIcon(getTextureName() + "_side");
+		tableIcons[1] = iconregister.registerIcon(getTextureName() + "_top");
+	}
 }

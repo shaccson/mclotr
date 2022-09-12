@@ -5,34 +5,34 @@ import net.minecraft.nbt.NBTTagCompound;
 import net.minecraft.world.WorldServer;
 
 public class LOTRPlayerQuestData {
-    private LOTRPlayerData playerData;
-    private boolean givenFirstPouches = false;
+	public LOTRPlayerData playerData;
+	public boolean givenFirstPouches = false;
 
-    public LOTRPlayerQuestData(LOTRPlayerData pd) {
-        this.playerData = pd;
-    }
+	public LOTRPlayerQuestData(LOTRPlayerData pd) {
+		playerData = pd;
+	}
 
-    public void save(NBTTagCompound questData) {
-        questData.setBoolean("Pouches", this.givenFirstPouches);
-    }
+	public boolean getGivenFirstPouches() {
+		return givenFirstPouches;
+	}
 
-    public void load(NBTTagCompound questData) {
-        this.givenFirstPouches = questData.getBoolean("Pouches");
-    }
+	public void load(NBTTagCompound questData) {
+		givenFirstPouches = questData.getBoolean("Pouches");
+	}
 
-    public void onUpdate(EntityPlayerMP entityplayer, WorldServer world) {
-    }
+	public void markDirty() {
+		playerData.markDirty();
+	}
 
-    private void markDirty() {
-        this.playerData.markDirty();
-    }
+	public void onUpdate(EntityPlayerMP entityplayer, WorldServer world) {
+	}
 
-    public boolean getGivenFirstPouches() {
-        return this.givenFirstPouches;
-    }
+	public void save(NBTTagCompound questData) {
+		questData.setBoolean("Pouches", givenFirstPouches);
+	}
 
-    public void setGivenFirstPouches(boolean flag) {
-        this.givenFirstPouches = flag;
-        this.markDirty();
-    }
+	public void setGivenFirstPouches(boolean flag) {
+		givenFirstPouches = flag;
+		markDirty();
+	}
 }

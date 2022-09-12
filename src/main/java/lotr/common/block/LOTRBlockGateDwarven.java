@@ -12,42 +12,42 @@ import net.minecraft.util.IIcon;
 import net.minecraft.world.*;
 
 public class LOTRBlockGateDwarven extends LOTRBlockGate {
-    public LOTRBlockGateDwarven() {
-        super(Material.rock, false);
-        this.setHardness(4.0f);
-        this.setResistance(10.0f);
-        this.setStepSound(Block.soundTypeStone);
-        this.setFullBlock();
-    }
+	public LOTRBlockGateDwarven() {
+		super(Material.rock, false);
+		setHardness(4.0f);
+		setResistance(10.0f);
+		setStepSound(Block.soundTypeStone);
+		setFullBlock();
+	}
 
-    @SideOnly(value = Side.CLIENT)
-    @Override
-    public void registerBlockIcons(IIconRegister iconregister) {
-        LOTRConnectedTextures.registerNonConnectedGateIcons(iconregister, this, 0, Blocks.stone.getIcon(0, 0).getIconName());
-    }
+	@SideOnly(value = Side.CLIENT)
+	@Override
+	public IIcon getIcon(IBlockAccess world, int i, int j, int k, int side) {
+		boolean open = LOTRBlockGate.isGateOpen(world, i, j, k);
+		if (open) {
+			return LOTRConnectedTextures.getConnectedIconBlock(this, world, i, j, k, side, false);
+		}
+		return Blocks.stone.getIcon(side, 0);
+	}
 
-    @SideOnly(value = Side.CLIENT)
-    @Override
-    public IIcon getIcon(IBlockAccess world, int i, int j, int k, int side) {
-        boolean open = LOTRBlockGate.isGateOpen(world, i, j, k);
-        if(open) {
-            return LOTRConnectedTextures.getConnectedIconBlock(this, world, i, j, k, side, false);
-        }
-        return Blocks.stone.getIcon(side, 0);
-    }
+	@SideOnly(value = Side.CLIENT)
+	@Override
+	public IIcon getIcon(int i, int j) {
+		return Blocks.stone.getIcon(i, 0);
+	}
 
-    @SideOnly(value = Side.CLIENT)
-    @Override
-    public IIcon getIcon(int i, int j) {
-        return Blocks.stone.getIcon(i, 0);
-    }
+	@Override
+	public boolean onBlockActivated(World world, int i, int j, int k, EntityPlayer entityplayer, int side, float f, float f1, float f2) {
+		boolean flag = super.onBlockActivated(world, i, j, k, entityplayer, side, f, f1, f2);
+		if (flag && !world.isRemote) {
+			LOTRLevelData.getData(entityplayer).addAchievement(LOTRAchievement.useDwarvenDoor);
+		}
+		return flag;
+	}
 
-    @Override
-    public boolean onBlockActivated(World world, int i, int j, int k, EntityPlayer entityplayer, int side, float f, float f1, float f2) {
-        boolean flag = super.onBlockActivated(world, i, j, k, entityplayer, side, f, f1, f2);
-        if(flag && !world.isRemote) {
-            LOTRLevelData.getData(entityplayer).addAchievement(LOTRAchievement.useDwarvenDoor);
-        }
-        return flag;
-    }
+	@SideOnly(value = Side.CLIENT)
+	@Override
+	public void registerBlockIcons(IIconRegister iconregister) {
+		LOTRConnectedTextures.registerNonConnectedGateIcons(iconregister, this, 0, Blocks.stone.getIcon(0, 0).getIconName());
+	}
 }

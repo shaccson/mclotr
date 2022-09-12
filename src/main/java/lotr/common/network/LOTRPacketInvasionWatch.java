@@ -5,36 +5,36 @@ import io.netty.buffer.ByteBuf;
 import lotr.common.LOTRMod;
 import lotr.common.entity.LOTREntityInvasionSpawner;
 
-public class LOTRPacketInvasionWatch
-implements IMessage {
-    private int invasionEntityID;
-    private boolean overrideAlreadyWatched;
+public class LOTRPacketInvasionWatch implements IMessage {
+	public int invasionEntityID;
+	public boolean overrideAlreadyWatched;
 
-    public LOTRPacketInvasionWatch() {
-    }
+	public LOTRPacketInvasionWatch() {
+	}
 
-    public LOTRPacketInvasionWatch(LOTREntityInvasionSpawner invasion, boolean override) {
-        this.invasionEntityID = invasion.getEntityId();
-        this.overrideAlreadyWatched = override;
-    }
+	public LOTRPacketInvasionWatch(LOTREntityInvasionSpawner invasion, boolean override) {
+		invasionEntityID = invasion.getEntityId();
+		overrideAlreadyWatched = override;
+	}
 
-    public void toBytes(ByteBuf data) {
-        data.writeInt(this.invasionEntityID);
-        data.writeBoolean(this.overrideAlreadyWatched);
-    }
+	@Override
+	public void fromBytes(ByteBuf data) {
+		invasionEntityID = data.readInt();
+		overrideAlreadyWatched = data.readBoolean();
+	}
 
-    public void fromBytes(ByteBuf data) {
-        this.invasionEntityID = data.readInt();
-        this.overrideAlreadyWatched = data.readBoolean();
-    }
+	@Override
+	public void toBytes(ByteBuf data) {
+		data.writeInt(invasionEntityID);
+		data.writeBoolean(overrideAlreadyWatched);
+	}
 
-    public static class Handler
-    implements IMessageHandler<LOTRPacketInvasionWatch, IMessage> {
-        public IMessage onMessage(LOTRPacketInvasionWatch packet, MessageContext context) {
-            LOTRMod.proxy.handleInvasionWatch(packet.invasionEntityID, packet.overrideAlreadyWatched);
-            return null;
-        }
-    }
+	public static class Handler implements IMessageHandler<LOTRPacketInvasionWatch, IMessage> {
+		@Override
+		public IMessage onMessage(LOTRPacketInvasionWatch packet, MessageContext context) {
+			LOTRMod.proxy.handleInvasionWatch(packet.invasionEntityID, packet.overrideAlreadyWatched);
+			return null;
+		}
+	}
 
 }
-

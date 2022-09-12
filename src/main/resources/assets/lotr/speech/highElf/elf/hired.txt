@@ -1,16 +1,17 @@
-Мы, эльфы, одни из лучших воинов во всём Средиземье.
-Много времени прошло с тех пор, когда люди и эльфы сражались бок о бок, #.
-Мало кто может сравниться с доблестью эльфа в бою.
-Моргульские твари погибнут от лука и клинка!
-Мы доверяем вам, #.
-Я стремлюсь защитить всё прекрасные в этом мире.
-Пусть благодать Валар защитит нас в бою, #.
-Серебро не особо ценится среди эльфов, #, но мы боремся за общее дело.
-Я готов к битве, #!
-Кости ваших врагов будут блестеть на солнце, #.
-Давайте очистим этот мир от отродий Мордора!
-С каждым днём тьма усиливается, становится всё холоднее. Но надежда ещё есть, и мы будем биться за неё.
-Я боюсь, что Безымянный вернулся. Тьма должна быть уничтожена до того, как будет уже слишком поздно.
-Зло засело в Дол Гулдуре, мы должны уничтожить его!
-Во имя всего добра, давайте очистим этот мир от зла!
-Мы не должны допустить господства Саурона над Средиземьем!
+We Elves are among the finest warriors in all Middle-earth.
+It has been long indeed since the races of Men and Elves fought side by side, #.
+Few can match the prowess of an Elf in combat.
+The Morgul-scum shall perish by bow and blade!
+You have our allegiance, #.
+I seek to defend all that is good in this world.
+For Lindon!
+May the grace of the Valar protect us in combat, #.
+Silver means little to an Elf, #, but we fight for a common cause.
+My bow shall sing with your sword, #!
+The bones of our foes will gleam under the Sun, #.
+I shall follow you through shadow and flame! None shall withstand the gleaming light of our swords!
+Let us cleanse this world of the foul scum of Morgoth!
+The days grow dark and cold, but the light of the Elves is not yet gone!
+I fear that the Nameless One has returned. The Shadow must be destroyed before it is too late.
+In the name of all that is good, let us cleanse this world of evil!
+We must not allow evil to spread!

@@ -8,51 +8,51 @@ import net.minecraft.entity.player.EntityPlayerMP;
 import net.minecraft.network.NetHandlerPlayServer;
 
 public class LOTRPacketMountControl implements IMessage {
-    public double posX;
-    public double posY;
-    public double posZ;
-    public float rotationYaw;
-    public float rotationPitch;
+	public double posX;
+	public double posY;
+	public double posZ;
+	public float rotationYaw;
+	public float rotationPitch;
 
-    public LOTRPacketMountControl() {
-    }
+	public LOTRPacketMountControl() {
+	}
 
-    public LOTRPacketMountControl(Entity entity) {
-        this.posX = entity.posX;
-        this.posY = entity.posY;
-        this.posZ = entity.posZ;
-        this.rotationYaw = entity.rotationYaw;
-        this.rotationPitch = entity.rotationPitch;
-    }
+	public LOTRPacketMountControl(Entity entity) {
+		posX = entity.posX;
+		posY = entity.posY;
+		posZ = entity.posZ;
+		rotationYaw = entity.rotationYaw;
+		rotationPitch = entity.rotationPitch;
+	}
 
-    @Override
-    public void toBytes(ByteBuf data) {
-        data.writeDouble(this.posX);
-        data.writeDouble(this.posY);
-        data.writeDouble(this.posZ);
-        data.writeFloat(this.rotationYaw);
-        data.writeFloat(this.rotationPitch);
-    }
+	@Override
+	public void fromBytes(ByteBuf data) {
+		posX = data.readDouble();
+		posY = data.readDouble();
+		posZ = data.readDouble();
+		rotationYaw = data.readFloat();
+		rotationPitch = data.readFloat();
+	}
 
-    @Override
-    public void fromBytes(ByteBuf data) {
-        this.posX = data.readDouble();
-        this.posY = data.readDouble();
-        this.posZ = data.readDouble();
-        this.rotationYaw = data.readFloat();
-        this.rotationPitch = data.readFloat();
-    }
+	@Override
+	public void toBytes(ByteBuf data) {
+		data.writeDouble(posX);
+		data.writeDouble(posY);
+		data.writeDouble(posZ);
+		data.writeFloat(rotationYaw);
+		data.writeFloat(rotationPitch);
+	}
 
-    public static class Handler implements IMessageHandler<LOTRPacketMountControl, IMessage> {
-        @Override
-        public IMessage onMessage(LOTRPacketMountControl packet, MessageContext context) {
-            EntityPlayerMP entityplayer = context.getServerHandler().playerEntity;
-            NetHandlerPlayServer handler = entityplayer.playerNetServerHandler;
-            if(handler instanceof LOTRNetHandlerPlayServer) {
-                ((LOTRNetHandlerPlayServer) handler).processMountControl(packet);
-            }
-            return null;
-        }
-    }
+	public static class Handler implements IMessageHandler<LOTRPacketMountControl, IMessage> {
+		@Override
+		public IMessage onMessage(LOTRPacketMountControl packet, MessageContext context) {
+			EntityPlayerMP entityplayer = context.getServerHandler().playerEntity;
+			NetHandlerPlayServer handler = entityplayer.playerNetServerHandler;
+			if (handler instanceof LOTRNetHandlerPlayServer) {
+				((LOTRNetHandlerPlayServer) handler).processMountControl(packet);
+			}
+			return null;
+		}
+	}
 
 }

@@ -1,13 +1,14 @@
-#title:Долийские рецепты, p. 106
-#author:{name:dale_female} из Дейла
+#Written by LordDainTheAwsome
+#
+#title:Dalish Recipes, p. 106
+#author:{name:dale_female} of Dale
 #types:dale
 #reward
 #
-Долийский Крам.
+Dalish Cram.
 
-Ингредиенты:
-* Ровные руки из нужного места;
-* 2 фунта муки;
-* 1 тарелка;
+Ingredients:
+* 2 pounds of wheat grain
+* 1 bowl of...
 
-[Здесь рецепт оторван. Похоже, д не хотят, чтобы вы узнали секрет их выпечки.]
+[Here the recipe cuts off. It seems the Dalish don't want you to learn the secret of their cram-baking.]

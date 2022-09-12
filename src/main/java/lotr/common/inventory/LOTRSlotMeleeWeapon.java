@@ -8,23 +8,23 @@ import net.minecraft.item.ItemStack;
 import net.minecraft.util.IIcon;
 
 public class LOTRSlotMeleeWeapon extends Slot {
-    public LOTRSlotMeleeWeapon(IInventory inv, int i, int j, int k) {
-        super(inv, i, j, k);
-    }
+	public LOTRSlotMeleeWeapon(IInventory inv, int i, int j, int k) {
+		super(inv, i, j, k);
+	}
 
-    @Override
-    public int getSlotStackLimit() {
-        return 1;
-    }
+	@SideOnly(value = Side.CLIENT)
+	@Override
+	public IIcon getBackgroundIconIndex() {
+		return LOTRCommonIcons.iconMeleeWeapon;
+	}
 
-    @Override
-    public boolean isItemValid(ItemStack itemstack) {
-        return LOTRWeaponStats.isMeleeWeapon(itemstack);
-    }
+	@Override
+	public int getSlotStackLimit() {
+		return 1;
+	}
 
-    @SideOnly(value = Side.CLIENT)
-    @Override
-    public IIcon getBackgroundIconIndex() {
-        return LOTRCommonIcons.iconMeleeWeapon;
-    }
+	@Override
+	public boolean isItemValid(ItemStack itemstack) {
+		return LOTRWeaponStats.isMeleeWeapon(itemstack);
+	}
 }

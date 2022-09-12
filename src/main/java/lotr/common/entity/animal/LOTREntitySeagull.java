@@ -9,66 +9,66 @@ import net.minecraft.item.*;
 import net.minecraft.world.World;
 
 public class LOTREntitySeagull extends LOTREntityBird {
-    public static float SEAGULL_SCALE = 1.4f;
+	public static float SEAGULL_SCALE = 1.4f;
 
-    public LOTREntitySeagull(World world) {
-        super(world);
-        this.setSize(this.width * SEAGULL_SCALE, this.height * SEAGULL_SCALE);
-    }
+	public LOTREntitySeagull(World world) {
+		super(world);
+		setSize(width * SEAGULL_SCALE, height * SEAGULL_SCALE);
+	}
 
-    @Override
-    public String getBirdTextureDir() {
-        return "seagull";
-    }
+	@Override
+	public void applyEntityAttributes() {
+		super.applyEntityAttributes();
+	}
 
-    @Override
-    protected void applyEntityAttributes() {
-        super.applyEntityAttributes();
-    }
+	@Override
+	public boolean canBirdSpawnHere() {
+		if (LOTRAmbientSpawnChecks.canSpawn(this, 8, 4, 40, 4, Material.leaves, Material.sand)) {
+			double range = 16.0;
+			List nearbyGulls = worldObj.getEntitiesWithinAABB(LOTREntitySeagull.class, boundingBox.expand(range, range, range));
+			return nearbyGulls.size() < 2;
+		}
+		return false;
+	}
 
-    @Override
-    public IEntityLivingData onSpawnWithEgg(IEntityLivingData data) {
-        data = super.onSpawnWithEgg(data);
-        this.setBirdType(LOTREntityBird.BirdType.COMMON);
-        return data;
-    }
+	@Override
+	public boolean canStealItems() {
+		return true;
+	}
 
-    @Override
-    protected boolean canStealItems() {
-        return true;
-    }
+	@Override
+	public String getBirdTextureDir() {
+		return "seagull";
+	}
 
-    @Override
-    protected boolean isStealable(ItemStack itemstack) {
-        Item item = itemstack.getItem();
-        if(item == Items.fish || item == Items.cooked_fished) {
-            return true;
-        }
-        return super.isStealable(itemstack);
-    }
+	@Override
+	public String getDeathSound() {
+		return "lotr:bird.seagull.hurt";
+	}
 
-    @Override
-    protected boolean canBirdSpawnHere() {
-        if(LOTRAmbientSpawnChecks.canSpawn(this, 8, 4, 40, 4, Material.leaves, Material.sand)) {
-            double range = 16.0;
-            List nearbyGulls = this.worldObj.getEntitiesWithinAABB(LOTREntitySeagull.class, this.boundingBox.expand(range, range, range));
-            return nearbyGulls.size() < 2;
-        }
-        return false;
-    }
+	@Override
+	public String getHurtSound() {
+		return "lotr:bird.seagull.hurt";
+	}
 
-    @Override
-    protected String getLivingSound() {
-        return "lotr:bird.seagull.say";
-    }
+	@Override
+	public String getLivingSound() {
+		return "lotr:bird.seagull.say";
+	}
 
-    @Override
-    protected String getHurtSound() {
-        return "lotr:bird.seagull.hurt";
-    }
+	@Override
+	public boolean isStealable(ItemStack itemstack) {
+		Item item = itemstack.getItem();
+		if (item == Items.fish || item == Items.cooked_fished) {
+			return true;
+		}
+		return super.isStealable(itemstack);
+	}
 
-    @Override
-    protected String getDeathSound() {
-        return "lotr:bird.seagull.hurt";
-    }
+	@Override
+	public IEntityLivingData onSpawnWithEgg(IEntityLivingData data) {
+		data = super.onSpawnWithEgg(data);
+		this.setBirdType(LOTREntityBird.BirdType.COMMON);
+		return data;
+	}
 }

@@ -5,12 +5,12 @@ import net.minecraft.entity.Entity;
 import net.minecraft.util.ResourceLocation;
 
 public class LOTRRenderGiraffeRug extends LOTRRenderRugBase {
-    public LOTRRenderGiraffeRug() {
-        super(new LOTRModelGiraffeRug());
-    }
+	public LOTRRenderGiraffeRug() {
+		super(new LOTRModelGiraffeRug());
+	}
 
-    @Override
-    protected ResourceLocation getEntityTexture(Entity entity) {
-        return LOTRRenderGiraffe.texture;
-    }
+	@Override
+	public ResourceLocation getEntityTexture(Entity entity) {
+		return LOTRRenderGiraffe.texture;
+	}
 }

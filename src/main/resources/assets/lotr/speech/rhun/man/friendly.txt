@@ -1,47 +1,46 @@
-Добро пожаловать, путник с Запада. Вы друг или враг?
-Добро пожаловать, #.
-Я не забыл, какое зло нам причинили люди Нуменора.
-Холмы этих земель золотом блестят.
-Воздух здесь сладок.
-Вино Дорвиниона - высшее благо. Но если эта страна примкнёт Гондору, нам придётся обойтись без их виноградных напитков.
-Мы отправляемся на юг, на войну, #. Готовы ли Вы взяться за оружие? Сразиться против Гондора?
-Берегись лесных эльфов, #. Они убивают наших людей стрелами и крадут их тела.
-Лучше не ходи в лес секвой, #. Мне рассказывали, что там живут демоны с заострёнными ушами и острыми клыками.
-Люди повозок родственны нам, #, но нам не особо интересно, что там у них происходит.
-Остров, что в море, покрыт туманом. Говорят, что те, кто попал на его берега, так никогда и не вернулись.
-Временами, #, когда туман рассеивается, открывается прекрасный вид на остров в центре моря. На прекрасный опасный остров.
-Давным давно, #, когда сила людей Запада была ещё велика, к нам пришли люди Нуменора. Они разбили наше войско и поработили нас. Но придёт время, мой друг... придёт время, и мы отомстим!
-Жители Дорвиниона живут среди демонов.
-Я как-то видел гнома на дороге. Даже не один, а пару раз. Но в последнее время они здесь редко появляются.
-Какие новости Вы принесли с Запада?
-Расскажите что-нибудь о дальних странах.
-Гномы иногда проходят по этим дорогам, направляясь в Красные горы.
-У тебя акцент как у западников, #.
-А не друг ли ты Гондора?
-А ты уже был в Дэйле, #? Говорят, что люди той далёкой земли дружат с Гондором.
-Люди с Юга часто приезжают сюда, чтобы обменяться товарами и интересными историями. От них я и услышал о великих лесах и могучих деревьях, что находятся за пределами нашей страны.
-Я бы на Вашем месте на запад не совался, #. Там полно варваров и чародеев, злых лесных духов и ходячих деревьев, которые только и ждут, чтобы человечинкой полакомиться.
-Многие называют нас вастаками, однако ж есть земле ещё восточней Рудэля. И вот что меня пугает, так это то, что мы и знать не знаем ничего об этих землях.
-Добро пожаловать друг! Расскажите мне какую-нибудь интересную историю.
-Не забывай, #, мы сами творим свою историю.
-Прежде чем открывать рот - думай. Таков мой совет.
-Говорю ж тебе, #, Гондор и Дэйл по сравнению с нашей империей - ничто.
-Эти гондорцы не настолько сильны, как тем хвастаются. Не верьте им, #.
-Мы люди верные, #. Будьте таким же, не предавайте нас, как это некогда сделал Гондор.
-Честно говоря, я рад, что купцы Дорвиниона, приходящие к нам - люди, а не эти ехидные остроухие.
-#, Вы поможете нам добиться справедливости?
-Лет пять тому назад я отправился в поход на восток, хотел поглядеть, узнать, что там творится. Но ничего особо интересного я там не обнаружил.
-Те, кого Вы называете "Балхот" когда-то жили к западу отсюда, но они давно уже покинули эти земли. А знаешь, почему? Бравые гондорские рыцари вырезали половину их людей, даже детей не щадили! Учти это, когда к тебе в голову снова взбредёт дурная мысль о том, что гондорцы не такие уж и плохие.
-Как мне сказали, на Западе нас называют "людьми тьмы". Хех! Истинная тьма лежит в сердце каждого гондорца, #.
-Никогда не пойму, почему наши родичи с степей не хотят жить цевилизованной, осёдлой жизнью. Кочевое варварство - прошлый век.
-До меня дошли истории о королевстве Рохан, в котором поклоняются лошадям. Ну и глупые же они.
-Истинный вастак не бросит своего меча, #. Погибнет, но не выпустит его из рук.
-На западе поклоняются лошадям, на юге едят змей... Интересно, мы единственные нормальные люди в этом мире?
-Будь счастлив.
-Будь счастлив, #.
-Не сказал бы, что люблю орков, но они не плохо помогают нам в войне.
-Внешность обманчива, #.
-Может, наконец, прекратишь в меня тыкать?
-Интересно, люди с Белого Города снимают вообще с себя доспехи? А что если им нужно облегчиться?
-Иди с миром, #.
-Чертовы скряги! Жадные кебабокупцы! Они постоянно пытаются меня обсчитать!
+Welcome, traveller from the West. Are you friend, or foe?
+Welcome, #.
+I have not forgotten the evil of the Men of Númenor.
+The hills in these lands are rich with gold.
+The air is sweet here.
+The wine of Dorwinion is sweet, but if they ally with Gondor, then we will have to make do without it.
+There is talk of war in the South, #. Are you ready to take up arms against Gondor?
+Beware the forest-sprites, #. They poison our men with darts, and steal their bodies.
+Do not go lightly into the redwoods, #. I have heard tales of forest-demons with pointy ears and sharp teeth.
+The Wainriders are kin to us, #, but I don't care for their way of life.
+The island in the Sea is shrouded in mist. They say no man has ever set foot there and returned.
+Sometimes, #, when the mists are clear, you can see the island in the Sea.
+Long ago, the Men of Númenor rode into our lands and enslaved our forefathers. But the time is soon coming when we shall have our vengeance!
+The Men of Dorwinion live among demons.
+I have seen Dwarves on the road before now, once or twice, but these days they are coming less and less.
+What news do you bring from the West?
+Do you bring tales out of the West?
+Dwarves sometimes pass through this land, on the road to the Red Mountains.
+You have the manner of a Westerling, #.
+You are no friend to Gondor, are you?
+Have you been to Dale, #? They say the people of that faraway land are in league with Gondor.
+The Men of the South come here often, to trade goods and stories. I have heard tales of great forests, and the beasts that live within...
+I would keep out of the Westlands, #. They are full of barbarians and sorcerers, and wicked forest-spirits, and trees that walk!
+Some call us Easterlings, but there are lands further East that even we know nothing of.
+Welcome, friend! Tell me, what stories do you bring?
+Never forget that we make our own stories, #. Be sure yours is one worth telling!
+I tell you, #, Gondor and Dale are nothing compared to our great empire.
+Those Gondorians are not as perfect as they think. Do not trust them, #.
+We are a people of trust, #. Do not betray us, like Gondor once did.
+I must say I am glad that the Men of Dorwinion bring their wares here, instead of those Elves.
+#, will you march with us on the path to justice?
+I once made a journey further East. There was little there to interest me.
+Those you call the Balchoth once lived West of here, but they are gone now. It was the Men of Gondor and their friends who slaughtered them all - even the children! Do not forget it, #.
+I heard that in the West they call us Men of Darkness. The true Darkness lies in the hearts of every Man in Gondor, #.
+I will never understand why our kinsfolk in the plains choose to live such an uncivilised life.
+There are tales of a land named Rohan, where people worship horses. How foolish.
+May you die in battle with a blade in your hand, #.
+In the West they worship horses, in the South they eat snakes... I wonder, are we the only sane people in the world?
+Be pleased.
+Be pleased, #.
+I cannot say I am a great friend to Orcs, but they do weary our enemies for us.
+Appearances deceive, #.
+Can you stop poking me?
+I wonder, do the Men in the White City ever relieve themselves onto the heads of those in the lower rings?
+Go with my favour, #.
+Those greedy Southron kebab-merchants! Always they try to cheat me!

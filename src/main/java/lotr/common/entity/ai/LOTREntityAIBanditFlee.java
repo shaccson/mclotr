@@ -3,71 +3,72 @@ package lotr.common.entity.ai;
 import java.util.List;
 
 import lotr.common.entity.npc.*;
-import net.minecraft.entity.*;
+import net.minecraft.entity.SharedMonsterAttributes;
 import net.minecraft.entity.ai.*;
 import net.minecraft.entity.player.EntityPlayer;
 import net.minecraft.util.Vec3;
 
-public class LOTREntityAIBanditFlee
-extends EntityAIBase {
-    private IBandit theBandit;
-    private LOTREntityNPC theBanditAsNPC;
-    private double speed;
-    private double range;
-    private EntityPlayer targetPlayer;
+public class LOTREntityAIBanditFlee extends EntityAIBase {
+	public IBandit theBandit;
+	public LOTREntityNPC theBanditAsNPC;
+	public double speed;
+	public double range;
+	public EntityPlayer targetPlayer;
 
-    public LOTREntityAIBanditFlee(IBandit bandit, double d) {
-        this.theBandit = bandit;
-        this.theBanditAsNPC = this.theBandit.getBanditAsNPC();
-        this.speed = d;
-        this.range = this.theBanditAsNPC.getEntityAttribute(SharedMonsterAttributes.followRange).getAttributeValue();
-        this.setMutexBits(3);
-    }
+	public LOTREntityAIBanditFlee(IBandit bandit, double d) {
+		theBandit = bandit;
+		theBanditAsNPC = theBandit.getBanditAsNPC();
+		speed = d;
+		range = theBanditAsNPC.getEntityAttribute(SharedMonsterAttributes.followRange).getAttributeValue();
+		setMutexBits(3);
+	}
 
-    public boolean shouldExecute() {
-        if (this.theBanditAsNPC.getAttackTarget() != null) {
-            return false;
-        }
-        if (this.theBandit.getBanditInventory().isEmpty()) {
-            return false;
-        }
-        this.targetPlayer = this.findNearestPlayer();
-        return this.targetPlayer != null;
-    }
+	@Override
+	public boolean continueExecuting() {
+		if (targetPlayer == null || !targetPlayer.isEntityAlive() || targetPlayer.capabilities.isCreativeMode) {
+			return false;
+		}
+		return theBanditAsNPC.getAttackTarget() == null && theBanditAsNPC.getDistanceSqToEntity(targetPlayer) < range * range;
+	}
 
-    private EntityPlayer findNearestPlayer() {
-        List players = this.theBanditAsNPC.worldObj.getEntitiesWithinAABB(EntityPlayer.class, this.theBanditAsNPC.boundingBox.expand(this.range, this.range, this.range));
-        double distance = this.range;
-        EntityPlayer ret = null;
-        for (int i = 0; i < players.size(); ++i) {
-            double d;
-            EntityPlayer entityplayer = (EntityPlayer)players.get(i);
-            if (entityplayer.capabilities.isCreativeMode || ((d = this.theBanditAsNPC.getDistanceToEntity(entityplayer)) >= distance)) continue;
-            distance = d;
-            ret = entityplayer;
-        }
-        return ret;
-    }
+	public EntityPlayer findNearestPlayer() {
+		List players = theBanditAsNPC.worldObj.getEntitiesWithinAABB(EntityPlayer.class, theBanditAsNPC.boundingBox.expand(range, range, range));
+		double distance = range;
+		EntityPlayer ret = null;
+		for (Object player : players) {
+			double d;
+			EntityPlayer entityplayer = (EntityPlayer) player;
+			if (entityplayer.capabilities.isCreativeMode || (d = theBanditAsNPC.getDistanceToEntity(entityplayer)) >= distance) {
+				continue;
+			}
+			distance = d;
+			ret = entityplayer;
+		}
+		return ret;
+	}
 
-    public void updateTask() {
-        if (this.theBanditAsNPC.getNavigator().noPath()) {
-            Vec3 away = RandomPositionGenerator.findRandomTargetBlockAwayFrom(this.theBanditAsNPC, ((int)this.range), 10, Vec3.createVectorHelper(this.targetPlayer.posX, this.targetPlayer.posY, this.targetPlayer.posZ));
-            if (away != null) {
-                this.theBanditAsNPC.getNavigator().tryMoveToXYZ(away.xCoord, away.yCoord, away.zCoord, this.speed);
-            }
-            this.targetPlayer = this.findNearestPlayer();
-        }
-    }
+	@Override
+	public void resetTask() {
+		targetPlayer = null;
+	}
 
-    public boolean continueExecuting() {
-        if (this.targetPlayer == null || !this.targetPlayer.isEntityAlive() || this.targetPlayer.capabilities.isCreativeMode) {
-            return false;
-        }
-        return this.theBanditAsNPC.getAttackTarget() == null && this.theBanditAsNPC.getDistanceSqToEntity(this.targetPlayer) < this.range * this.range;
-    }
+	@Override
+	public boolean shouldExecute() {
+		if (theBanditAsNPC.getAttackTarget() != null || theBandit.getBanditInventory().isEmpty()) {
+			return false;
+		}
+		targetPlayer = findNearestPlayer();
+		return targetPlayer != null;
+	}
 
-    public void resetTask() {
-        this.targetPlayer = null;
-    }
+	@Override
+	public void updateTask() {
+		if (theBanditAsNPC.getNavigator().noPath()) {
+			Vec3 away = RandomPositionGenerator.findRandomTargetBlockAwayFrom(theBanditAsNPC, (int) range, 10, Vec3.createVectorHelper(targetPlayer.posX, targetPlayer.posY, targetPlayer.posZ));
+			if (away != null) {
+				theBanditAsNPC.getNavigator().tryMoveToXYZ(away.xCoord, away.yCoord, away.zCoord, speed);
+			}
+			targetPlayer = findNearestPlayer();
+		}
+	}
 }
-

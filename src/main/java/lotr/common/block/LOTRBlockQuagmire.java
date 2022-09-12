@@ -8,27 +8,28 @@ import net.minecraft.entity.Entity;
 import net.minecraft.util.AxisAlignedBB;
 import net.minecraft.world.World;
 
-public class LOTRBlockQuagmire
-extends Block {
-    public LOTRBlockQuagmire() {
-        super(Material.ground);
-        this.setCreativeTab(LOTRCreativeTabs.tabBlock);
-    }
+public class LOTRBlockQuagmire extends Block {
+	public LOTRBlockQuagmire() {
+		super(Material.ground);
+		setCreativeTab(LOTRCreativeTabs.tabBlock);
+	}
 
-    public void onEntityCollidedWithBlock(World world, int i, int j, int k, Entity entity) {
-        if (entity instanceof LOTREntitySpiderBase) {
-            ((LOTREntitySpiderBase)entity).setInQuag();
-        } else {
-            entity.setInWeb();
-        }
-    }
+	@Override
+	public AxisAlignedBB getCollisionBoundingBoxFromPool(World world, int i, int j, int k) {
+		return null;
+	}
 
-    public boolean isOpaqueCube() {
-        return false;
-    }
+	@Override
+	public boolean isOpaqueCube() {
+		return false;
+	}
 
-    public AxisAlignedBB getCollisionBoundingBoxFromPool(World world, int i, int j, int k) {
-        return null;
-    }
+	@Override
+	public void onEntityCollidedWithBlock(World world, int i, int j, int k, Entity entity) {
+		if (entity instanceof LOTREntitySpiderBase) {
+			((LOTREntitySpiderBase) entity).setInQuag();
+		} else {
+			entity.setInWeb();
+		}
+	}
 }
-

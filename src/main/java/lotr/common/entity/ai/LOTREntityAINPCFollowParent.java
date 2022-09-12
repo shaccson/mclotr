@@ -4,56 +4,53 @@ import lotr.common.entity.npc.LOTREntityNPC;
 import net.minecraft.entity.ai.EntityAIBase;
 
 public class LOTREntityAINPCFollowParent extends EntityAIBase {
-    private LOTREntityNPC theNPC;
-    private LOTREntityNPC parentNPC;
-    private double moveSpeed;
-    private int followTick;
+	public LOTREntityNPC theNPC;
+	public LOTREntityNPC parentNPC;
+	public double moveSpeed;
+	public int followTick;
 
-    public LOTREntityAINPCFollowParent(LOTREntityNPC npc, double d) {
-        this.theNPC = npc;
-        this.moveSpeed = d;
-    }
+	public LOTREntityAINPCFollowParent(LOTREntityNPC npc, double d) {
+		theNPC = npc;
+		moveSpeed = d;
+	}
 
-    @Override
-    public boolean shouldExecute() {
-        if(this.theNPC.familyInfo.getAge() >= 0) {
-            return false;
-        }
-        LOTREntityNPC parent = this.theNPC.familyInfo.getParentToFollow();
-        if(parent == null) {
-            return false;
-        }
-        if(this.theNPC.getDistanceSqToEntity(parent) < 9.0 || this.theNPC.getDistanceSqToEntity(parent) >= 256.0) {
-            return false;
-        }
-        this.parentNPC = parent;
-        return true;
-    }
+	@Override
+	public boolean continueExecuting() {
+		if (!parentNPC.isEntityAlive()) {
+			return false;
+		}
+		double d = theNPC.getDistanceSqToEntity(parentNPC);
+		return d >= 9.0 && d <= 256.0;
+	}
 
-    @Override
-    public boolean continueExecuting() {
-        if(!this.parentNPC.isEntityAlive()) {
-            return false;
-        }
-        double d = this.theNPC.getDistanceSqToEntity(this.parentNPC);
-        return d >= 9.0 && d <= 256.0;
-    }
+	@Override
+	public void resetTask() {
+		parentNPC = null;
+	}
 
-    @Override
-    public void startExecuting() {
-        this.followTick = 0;
-    }
+	@Override
+	public boolean shouldExecute() {
+		if (theNPC.familyInfo.getAge() >= 0) {
+			return false;
+		}
+		LOTREntityNPC parent = theNPC.familyInfo.getParentToFollow();
+		if (parent == null || theNPC.getDistanceSqToEntity(parent) < 9.0 || theNPC.getDistanceSqToEntity(parent) >= 256.0) {
+			return false;
+		}
+		parentNPC = parent;
+		return true;
+	}
 
-    @Override
-    public void resetTask() {
-        this.parentNPC = null;
-    }
+	@Override
+	public void startExecuting() {
+		followTick = 0;
+	}
 
-    @Override
-    public void updateTask() {
-        if(this.followTick-- <= 0) {
-            this.followTick = 10;
-            this.theNPC.getNavigator().tryMoveToEntityLiving(this.parentNPC, this.moveSpeed);
-        }
-    }
+	@Override
+	public void updateTask() {
+		if (followTick-- <= 0) {
+			followTick = 10;
+			theNPC.getNavigator().tryMoveToEntityLiving(parentNPC, moveSpeed);
+		}
+	}
 }

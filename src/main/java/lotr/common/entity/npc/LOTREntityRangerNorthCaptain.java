@@ -9,57 +9,57 @@ import net.minecraft.item.ItemStack;
 import net.minecraft.world.World;
 
 public class LOTREntityRangerNorthCaptain extends LOTREntityRangerNorth implements LOTRUnitTradeable {
-    public LOTREntityRangerNorthCaptain(World world) {
-        super(world);
-        this.addTargetTasks(false);
-        this.spawnRidingHorse = false;
-    }
+	public LOTREntityRangerNorthCaptain(World world) {
+		super(world);
+		this.addTargetTasks(false);
+		spawnRidingHorse = false;
+	}
 
-    @Override
-    public IEntityLivingData onSpawnWithEgg(IEntityLivingData data) {
-        data = super.onSpawnWithEgg(data);
-        this.npcItemsInv.setMeleeWeapon(new ItemStack(Items.iron_sword));
-        return data;
-    }
+	@Override
+	public boolean canTradeWith(EntityPlayer entityplayer) {
+		return LOTRLevelData.getData(entityplayer).getAlignment(getFaction()) >= 300.0f && isFriendly(entityplayer);
+	}
 
-    @Override
-    public float getAlignmentBonus() {
-        return 5.0f;
-    }
+	@Override
+	public float getAlignmentBonus() {
+		return 5.0f;
+	}
 
-    @Override
-    public LOTRUnitTradeEntries getUnits() {
-        return LOTRUnitTradeEntries.RANGER_NORTH_CAPTAIN;
-    }
+	@Override
+	public String getSpeechBank(EntityPlayer entityplayer) {
+		if (isFriendly(entityplayer)) {
+			if (canTradeWith(entityplayer)) {
+				return "rangerNorth/captain/friendly";
+			}
+			return "rangerNorth/captain/neutral";
+		}
+		return "rangerNorth/ranger/hostile";
+	}
 
-    @Override
-    public LOTRInvasions getWarhorn() {
-        return LOTRInvasions.RANGER_NORTH;
-    }
+	@Override
+	public LOTRUnitTradeEntries getUnits() {
+		return LOTRUnitTradeEntries.RANGER_NORTH_CAPTAIN;
+	}
 
-    @Override
-    public boolean canTradeWith(EntityPlayer entityplayer) {
-        return LOTRLevelData.getData(entityplayer).getAlignment(this.getFaction()) >= 300.0f && this.isFriendly(entityplayer);
-    }
+	@Override
+	public LOTRInvasions getWarhorn() {
+		return LOTRInvasions.RANGER_NORTH;
+	}
 
-    @Override
-    public void onUnitTrade(EntityPlayer entityplayer) {
-        LOTRLevelData.getData(entityplayer).addAchievement(LOTRAchievement.tradeRangerNorthCaptain);
-    }
+	@Override
+	public IEntityLivingData onSpawnWithEgg(IEntityLivingData data) {
+		data = super.onSpawnWithEgg(data);
+		npcItemsInv.setMeleeWeapon(new ItemStack(Items.iron_sword));
+		return data;
+	}
 
-    @Override
-    public boolean shouldTraderRespawn() {
-        return true;
-    }
+	@Override
+	public void onUnitTrade(EntityPlayer entityplayer) {
+		LOTRLevelData.getData(entityplayer).addAchievement(LOTRAchievement.tradeRangerNorthCaptain);
+	}
 
-    @Override
-    public String getSpeechBank(EntityPlayer entityplayer) {
-        if(this.isFriendly(entityplayer)) {
-            if(this.canTradeWith(entityplayer)) {
-                return "rangerNorth/captain/friendly";
-            }
-            return "rangerNorth/captain/neutral";
-        }
-        return "rangerNorth/ranger/hostile";
-    }
+	@Override
+	public boolean shouldTraderRespawn() {
+		return true;
+	}
 }

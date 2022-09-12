@@ -5,56 +5,56 @@ import java.util.*;
 import lotr.common.world.biome.LOTRMusicRegion;
 
 public class LOTRTrackRegionInfo {
-    private LOTRMusicRegion region;
-    private List<String> subregions = new ArrayList<>();
-    private double weight;
-    private List<LOTRMusicCategory> categories = new ArrayList<>();
+	public LOTRMusicRegion region;
+	public List<String> subregions = new ArrayList<>();
+	public double weight;
+	public List<LOTRMusicCategory> categories = new ArrayList<>();
 
-    public LOTRTrackRegionInfo(LOTRMusicRegion r) {
-        this.region = r;
-        this.weight = 1.0;
-    }
+	public LOTRTrackRegionInfo(LOTRMusicRegion r) {
+		region = r;
+		weight = 1.0;
+	}
 
-    public List<String> getSubregions() {
-        return this.subregions;
-    }
+	public void addAllCategories() {
+		for (LOTRMusicCategory cat : LOTRMusicCategory.values()) {
+			addCategory(cat);
+		}
+	}
 
-    public void addSubregion(String sub) {
-        if(!this.subregions.contains(sub)) {
-            this.subregions.add(sub);
-        }
-    }
+	public void addAllSubregions() {
+		List<String> allSubs = region.getAllSubregions();
+		if (!allSubs.isEmpty()) {
+			for (String sub : allSubs) {
+				addSubregion(sub);
+			}
+		}
+	}
 
-    public void addAllSubregions() {
-        List<String> allSubs = this.region.getAllSubregions();
-        if(!allSubs.isEmpty()) {
-            for(String sub : allSubs) {
-                this.addSubregion(sub);
-            }
-        }
-    }
+	public void addCategory(LOTRMusicCategory cat) {
+		if (!categories.contains(cat)) {
+			categories.add(cat);
+		}
+	}
 
-    public double getWeight() {
-        return this.weight;
-    }
+	public void addSubregion(String sub) {
+		if (!subregions.contains(sub)) {
+			subregions.add(sub);
+		}
+	}
 
-    public void setWeight(double d) {
-        this.weight = d;
-    }
+	public List<LOTRMusicCategory> getCategories() {
+		return categories;
+	}
 
-    public List<LOTRMusicCategory> getCategories() {
-        return this.categories;
-    }
+	public List<String> getSubregions() {
+		return subregions;
+	}
 
-    public void addCategory(LOTRMusicCategory cat) {
-        if(!this.categories.contains(cat)) {
-            this.categories.add(cat);
-        }
-    }
+	public double getWeight() {
+		return weight;
+	}
 
-    public void addAllCategories() {
-        for(LOTRMusicCategory cat : LOTRMusicCategory.values()) {
-            this.addCategory(cat);
-        }
-    }
+	public void setWeight(double d) {
+		weight = d;
+	}
 }

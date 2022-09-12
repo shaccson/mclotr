@@ -1,10 +1,12 @@
-#title:Предупреждение
+# Karseius
+#
+#title:A Warning
 #author:{name:umbar_male}
-#types:harnedor,southron,umbar,gulf
+#types:harnennor,southron,umbar,gulf
 #reward
 #
-Люди всех земель Ахара! Следующее срочное дело, я умоляю вас! Остерегайтесь тех песчаных торговцев!
+People of the lands of all Ahâr! The following is urgent business, I beseech you! Beware of those Sand-Usurers!
 
-Прошло две луны с тех пор, как я приобрел лошадь у в Аюкаф-Амаме за сотню серебряных монет! И что я получил? Непослушное существо, с которым невозможно справиться! Когда я увидел лошадь, я был поражен ее великолепными черно-белыми полосами, и я надеялся, что с ее помощью я смогу произвести впечатление на свою жену, когда наконец приду домой. Теперь я застрял с этим зверем, который отказывается следовать за мной, издавая отвратительные звуки весь день!
+It has been two moons since I acquired a horse from {choose:Ijdi-ilel/Izêm-ulzuz/Ayûkaph-amâm} for the proud price of a hundred silver coins! And what did I get? An unruly creature, impossible to handle! When I saw the horse I was staggered by its magnificent black and white stripes, and I hoped that with it I could impress my wife when I finally came home. Now I am stuck with this beast which refuses to follow me, making hideous noises all day long!
 
-Держитесь подальше от жителей пустыни; они вас обманут!
+Stay away from the desert-dwellers; they will deceive you!

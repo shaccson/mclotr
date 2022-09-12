@@ -5,31 +5,31 @@ import io.netty.buffer.ByteBuf;
 import lotr.common.LOTRMod;
 
 public class LOTRPacketAlignDrain implements IMessage {
-    private int numFactions;
+	public int numFactions;
 
-    public LOTRPacketAlignDrain() {
-    }
+	public LOTRPacketAlignDrain() {
+	}
 
-    public LOTRPacketAlignDrain(int num) {
-        this.numFactions = num;
-    }
+	public LOTRPacketAlignDrain(int num) {
+		numFactions = num;
+	}
 
-    @Override
-    public void toBytes(ByteBuf data) {
-        data.writeByte(this.numFactions);
-    }
+	@Override
+	public void fromBytes(ByteBuf data) {
+		numFactions = data.readByte();
+	}
 
-    @Override
-    public void fromBytes(ByteBuf data) {
-        this.numFactions = data.readByte();
-    }
+	@Override
+	public void toBytes(ByteBuf data) {
+		data.writeByte(numFactions);
+	}
 
-    public static class Handler implements IMessageHandler<LOTRPacketAlignDrain, IMessage> {
-        @Override
-        public IMessage onMessage(LOTRPacketAlignDrain packet, MessageContext context) {
-            LOTRMod.proxy.displayAlignDrain(packet.numFactions);
-            return null;
-        }
-    }
+	public static class Handler implements IMessageHandler<LOTRPacketAlignDrain, IMessage> {
+		@Override
+		public IMessage onMessage(LOTRPacketAlignDrain packet, MessageContext context) {
+			LOTRMod.proxy.displayAlignDrain(packet.numFactions);
+			return null;
+		}
+	}
 
 }

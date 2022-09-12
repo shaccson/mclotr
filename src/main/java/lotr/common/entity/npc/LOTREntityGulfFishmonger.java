@@ -6,24 +6,24 @@ import net.minecraft.item.ItemStack;
 import net.minecraft.world.World;
 
 public class LOTREntityGulfFishmonger extends LOTREntityGulfTrader {
-    public LOTREntityGulfFishmonger(World world) {
-        super(world);
-    }
+	public LOTREntityGulfFishmonger(World world) {
+		super(world);
+	}
 
-    @Override
-    public LOTRTradeEntries getBuyPool() {
-        return LOTRTradeEntries.HARAD_FISHMONGER_BUY;
-    }
+	@Override
+	public LOTRTradeEntries getBuyPool() {
+		return LOTRTradeEntries.HARAD_FISHMONGER_BUY;
+	}
 
-    @Override
-    public LOTRTradeEntries getSellPool() {
-        return LOTRTradeEntries.HARAD_FISHMONGER_SELL;
-    }
+	@Override
+	public LOTRTradeEntries getSellPool() {
+		return LOTRTradeEntries.HARAD_FISHMONGER_SELL;
+	}
 
-    @Override
-    public IEntityLivingData onSpawnWithEgg(IEntityLivingData data) {
-        data = super.onSpawnWithEgg(data);
-        this.npcItemsInv.setIdleItem(new ItemStack(Items.fishing_rod));
-        return data;
-    }
+	@Override
+	public IEntityLivingData onSpawnWithEgg(IEntityLivingData data) {
+		data = super.onSpawnWithEgg(data);
+		npcItemsInv.setIdleItem(new ItemStack(Items.fishing_rod));
+		return data;
+	}
 }

@@ -10,70 +10,70 @@ import net.minecraft.item.ItemStack;
 import net.minecraft.world.World;
 
 public class LOTREntityNearHaradrimWarlord extends LOTREntityNearHaradrimWarrior implements LOTRUnitTradeable {
-    public LOTREntityNearHaradrimWarlord(World world) {
-        super(world);
-        this.addTargetTasks(false);
-        this.npcCape = LOTRCapes.NEAR_HARAD;
-    }
+	public LOTREntityNearHaradrimWarlord(World world) {
+		super(world);
+		this.addTargetTasks(false);
+		npcCape = LOTRCapes.NEAR_HARAD;
+	}
 
-    @Override
-    public EntityAIBase createHaradrimAttackAI() {
-        return new LOTREntityAIAttackOnCollide(this, 1.6, false);
-    }
+	@Override
+	public void applyEntityAttributes() {
+		super.applyEntityAttributes();
+		getEntityAttribute(SharedMonsterAttributes.maxHealth).setBaseValue(25.0);
+	}
 
-    @Override
-    protected void applyEntityAttributes() {
-        super.applyEntityAttributes();
-        this.getEntityAttribute(SharedMonsterAttributes.maxHealth).setBaseValue(25.0);
-    }
+	@Override
+	public boolean canTradeWith(EntityPlayer entityplayer) {
+		return LOTRLevelData.getData(entityplayer).getAlignment(getFaction()) >= 150.0f && isFriendly(entityplayer);
+	}
 
-    @Override
-    public IEntityLivingData onSpawnWithEgg(IEntityLivingData data) {
-        data = super.onSpawnWithEgg(data);
-        this.npcItemsInv.setMeleeWeapon(new ItemStack(LOTRMod.poleaxeNearHarad));
-        this.npcItemsInv.setIdleItem(this.npcItemsInv.getMeleeWeapon());
-        this.setCurrentItemOrArmor(4, new ItemStack(LOTRMod.helmetNearHaradWarlord));
-        return data;
-    }
+	@Override
+	public EntityAIBase createHaradrimAttackAI() {
+		return new LOTREntityAIAttackOnCollide(this, 1.6, false);
+	}
 
-    @Override
-    public float getAlignmentBonus() {
-        return 5.0f;
-    }
+	@Override
+	public float getAlignmentBonus() {
+		return 5.0f;
+	}
 
-    @Override
-    public LOTRUnitTradeEntries getUnits() {
-        return LOTRUnitTradeEntries.NEAR_HARADRIM_WARLORD;
-    }
+	@Override
+	public String getSpeechBank(EntityPlayer entityplayer) {
+		if (isFriendly(entityplayer)) {
+			if (canTradeWith(entityplayer)) {
+				return "nearHarad/coast/warlord/friendly";
+			}
+			return "nearHarad/coast/warlord/neutral";
+		}
+		return "nearHarad/coast/warrior/hostile";
+	}
 
-    @Override
-    public LOTRInvasions getWarhorn() {
-        return LOTRInvasions.NEAR_HARAD_COAST;
-    }
+	@Override
+	public LOTRUnitTradeEntries getUnits() {
+		return LOTRUnitTradeEntries.NEAR_HARADRIM_WARLORD;
+	}
 
-    @Override
-    public boolean canTradeWith(EntityPlayer entityplayer) {
-        return LOTRLevelData.getData(entityplayer).getAlignment(this.getFaction()) >= 150.0f && this.isFriendly(entityplayer);
-    }
+	@Override
+	public LOTRInvasions getWarhorn() {
+		return LOTRInvasions.NEAR_HARAD_COAST;
+	}
 
-    @Override
-    public void onUnitTrade(EntityPlayer entityplayer) {
-        LOTRLevelData.getData(entityplayer).addAchievement(LOTRAchievement.tradeNearHaradWarlord);
-    }
+	@Override
+	public IEntityLivingData onSpawnWithEgg(IEntityLivingData data) {
+		data = super.onSpawnWithEgg(data);
+		npcItemsInv.setMeleeWeapon(new ItemStack(LOTRMod.poleaxeNearHarad));
+		npcItemsInv.setIdleItem(npcItemsInv.getMeleeWeapon());
+		setCurrentItemOrArmor(4, new ItemStack(LOTRMod.helmetNearHaradWarlord));
+		return data;
+	}
 
-    @Override
-    public boolean shouldTraderRespawn() {
-        return true;
-    }
+	@Override
+	public void onUnitTrade(EntityPlayer entityplayer) {
+		LOTRLevelData.getData(entityplayer).addAchievement(LOTRAchievement.tradeNearHaradWarlord);
+	}
 
-    @Override
-    public String getSpeechBank(EntityPlayer entityplayer) {
-        if(this.isFriendly(entityplayer)) {
-            if(this.canTradeWith(entityplayer)) {
-                return "nearHarad/coast/warlord/friendly";
-            }
-            return "nearHarad/coast/warlord/neutral";
-        }
-        return "nearHarad/coast/warrior/hostile";
-    }
+	@Override
+	public boolean shouldTraderRespawn() {
+		return true;
+	}
 }

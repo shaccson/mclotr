@@ -12,68 +12,68 @@ import net.minecraft.entity.Entity;
 import net.minecraft.util.StringUtils;
 import net.minecraft.world.World;
 
-public class LOTRPacketHiredInfo
-implements IMessage {
-    private int entityID;
-    public boolean isHired;
-    public UUID hiringPlayer;
-    public LOTRHiredNPCInfo.Task task;
-    public String squadron;
-    public int xpLvl;
+public class LOTRPacketHiredInfo implements IMessage {
+	public int entityID;
+	public boolean isHired;
+	public UUID hiringPlayer;
+	public LOTRHiredNPCInfo.Task task;
+	public String squadron;
+	public int xpLvl;
 
-    public LOTRPacketHiredInfo() {
-    }
+	public LOTRPacketHiredInfo() {
+	}
 
-    public LOTRPacketHiredInfo(int i, UUID player, LOTRHiredNPCInfo.Task t, String sq, int lvl) {
-        this.entityID = i;
-        this.hiringPlayer = player;
-        this.isHired = this.hiringPlayer != null;
-        this.task = t;
-        this.squadron = sq;
-        this.xpLvl = lvl;
-    }
+	public LOTRPacketHiredInfo(int i, UUID player, LOTRHiredNPCInfo.Task t, String sq, int lvl) {
+		entityID = i;
+		hiringPlayer = player;
+		isHired = hiringPlayer != null;
+		task = t;
+		squadron = sq;
+		xpLvl = lvl;
+	}
 
-    public void toBytes(ByteBuf data) {
-        data.writeInt(this.entityID);
-        data.writeBoolean(this.isHired);
-        if (this.isHired) {
-            data.writeLong(this.hiringPlayer.getMostSignificantBits());
-            data.writeLong(this.hiringPlayer.getLeastSignificantBits());
-        }
-        data.writeByte(this.task.ordinal());
-        if (StringUtils.isNullOrEmpty(this.squadron)) {
-            data.writeShort(-1);
-        } else {
-            byte[] sqBytes = this.squadron.getBytes(Charsets.UTF_8);
-            data.writeShort(sqBytes.length);
-            data.writeBytes(sqBytes);
-        }
-        data.writeShort(this.xpLvl);
-    }
+	@Override
+	public void fromBytes(ByteBuf data) {
+		entityID = data.readInt();
+		isHired = data.readBoolean();
+		hiringPlayer = isHired ? new UUID(data.readLong(), data.readLong()) : null;
+		task = LOTRHiredNPCInfo.Task.forID(data.readByte());
+		short sqLength = data.readShort();
+		if (sqLength > -1) {
+			squadron = data.readBytes(sqLength).toString(Charsets.UTF_8);
+		}
+		xpLvl = data.readShort();
+	}
 
-    public void fromBytes(ByteBuf data) {
-        this.entityID = data.readInt();
-        this.isHired = data.readBoolean();
-        this.hiringPlayer = this.isHired ? new UUID(data.readLong(), data.readLong()) : null;
-        this.task = LOTRHiredNPCInfo.Task.forID(data.readByte());
-        short sqLength = data.readShort();
-        if (sqLength > -1) {
-            this.squadron = data.readBytes(sqLength).toString(Charsets.UTF_8);
-        }
-        this.xpLvl = data.readShort();
-    }
+	@Override
+	public void toBytes(ByteBuf data) {
+		data.writeInt(entityID);
+		data.writeBoolean(isHired);
+		if (isHired) {
+			data.writeLong(hiringPlayer.getMostSignificantBits());
+			data.writeLong(hiringPlayer.getLeastSignificantBits());
+		}
+		data.writeByte(task.ordinal());
+		if (StringUtils.isNullOrEmpty(squadron)) {
+			data.writeShort(-1);
+		} else {
+			byte[] sqBytes = squadron.getBytes(Charsets.UTF_8);
+			data.writeShort(sqBytes.length);
+			data.writeBytes(sqBytes);
+		}
+		data.writeShort(xpLvl);
+	}
 
-    public static class Handler
-    implements IMessageHandler<LOTRPacketHiredInfo, IMessage> {
-        public IMessage onMessage(LOTRPacketHiredInfo packet, MessageContext context) {
-            World world = LOTRMod.proxy.getClientWorld();
-            Entity entity = world.getEntityByID(packet.entityID);
-            if (entity instanceof LOTREntityNPC) {
-                ((LOTREntityNPC)entity).hiredNPCInfo.receiveBasicData(packet);
-            }
-            return null;
-        }
-    }
+	public static class Handler implements IMessageHandler<LOTRPacketHiredInfo, IMessage> {
+		@Override
+		public IMessage onMessage(LOTRPacketHiredInfo packet, MessageContext context) {
+			World world = LOTRMod.proxy.getClientWorld();
+			Entity entity = world.getEntityByID(packet.entityID);
+			if (entity instanceof LOTREntityNPC) {
+				((LOTREntityNPC) entity).hiredNPCInfo.receiveBasicData(packet);
+			}
+			return null;
+		}
+	}
 
 }
-

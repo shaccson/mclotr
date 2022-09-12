@@ -4,21 +4,21 @@ import net.minecraft.item.ItemStack;
 import net.minecraft.util.StatCollector;
 
 public class LOTREnchantmentToolSpeed extends LOTREnchantment {
-    public final float speedFactor;
+	public float speedFactor;
 
-    public LOTREnchantmentToolSpeed(String s, float speed) {
-        super(s, new LOTREnchantmentType[] {LOTREnchantmentType.TOOL, LOTREnchantmentType.SHEARS});
-        this.speedFactor = speed;
-        this.setValueModifier(this.speedFactor);
-    }
+	public LOTREnchantmentToolSpeed(String s, float speed) {
+		super(s, new LOTREnchantmentType[] { LOTREnchantmentType.TOOL, LOTREnchantmentType.SHEARS });
+		speedFactor = speed;
+		setValueModifier(speedFactor);
+	}
 
-    @Override
-    public String getDescription(ItemStack itemstack) {
-        return StatCollector.translateToLocalFormatted("lotr.enchant.toolSpeed.desc", this.formatMultiplicative(this.speedFactor));
-    }
+	@Override
+	public String getDescription(ItemStack itemstack) {
+		return StatCollector.translateToLocalFormatted("lotr.enchant.toolSpeed.desc", formatMultiplicative(speedFactor));
+	}
 
-    @Override
-    public boolean isBeneficial() {
-        return this.speedFactor >= 1.0f;
-    }
+	@Override
+	public boolean isBeneficial() {
+		return speedFactor >= 1.0f;
+	}
 }

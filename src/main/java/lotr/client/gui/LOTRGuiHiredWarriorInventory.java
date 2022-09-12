@@ -10,33 +10,33 @@ import net.minecraft.inventory.Slot;
 import net.minecraft.util.*;
 
 public class LOTRGuiHiredWarriorInventory extends GuiContainer {
-    private static ResourceLocation guiTexture = new ResourceLocation("lotr:gui/npc/hiredWarrior.png");
-    private LOTREntityNPC theNPC;
-    private LOTRContainerHiredWarriorInventory containerInv;
+	public static ResourceLocation guiTexture = new ResourceLocation("lotr:gui/npc/hiredWarrior.png");
+	public LOTREntityNPC theNPC;
+	public LOTRContainerHiredWarriorInventory containerInv;
 
-    public LOTRGuiHiredWarriorInventory(InventoryPlayer inv, LOTREntityNPC entity) {
-        super(new LOTRContainerHiredWarriorInventory(inv, entity));
-        this.theNPC = entity;
-        this.containerInv = (LOTRContainerHiredWarriorInventory) this.inventorySlots;
-        this.ySize = 188;
-    }
+	public LOTRGuiHiredWarriorInventory(InventoryPlayer inv, LOTREntityNPC entity) {
+		super(new LOTRContainerHiredWarriorInventory(inv, entity));
+		theNPC = entity;
+		containerInv = (LOTRContainerHiredWarriorInventory) inventorySlots;
+		ySize = 188;
+	}
 
-    @Override
-    protected void drawGuiContainerForegroundLayer(int i, int j) {
-        String s = StatCollector.translateToLocal("lotr.gui.warrior.openInv");
-        this.fontRendererObj.drawString(s, this.xSize / 2 - this.fontRendererObj.getStringWidth(s) / 2, 6, 4210752);
-        this.fontRendererObj.drawString(StatCollector.translateToLocal("container.inventory"), 8, 95, 4210752);
-    }
+	@Override
+	public void drawGuiContainerBackgroundLayer(float f, int i, int j) {
+		GL11.glColor4f(1.0f, 1.0f, 1.0f, 1.0f);
+		mc.getTextureManager().bindTexture(guiTexture);
+		drawTexturedModalRect(guiLeft, guiTop, 0, 0, xSize, ySize);
+		if (theNPC instanceof LOTREntityOrc && ((LOTREntityOrc) theNPC).isOrcBombardier()) {
+			Slot slotBomb = containerInv.getSlotFromInventory(containerInv.proxyInv, 5);
+			Slot slotMelee = containerInv.getSlotFromInventory(containerInv.proxyInv, 4);
+			drawTexturedModalRect(guiLeft + slotBomb.xDisplayPosition - 1, guiTop + slotBomb.yDisplayPosition - 1, slotMelee.xDisplayPosition - 1, slotMelee.yDisplayPosition - 1, 18, 18);
+		}
+	}
 
-    @Override
-    protected void drawGuiContainerBackgroundLayer(float f, int i, int j) {
-        GL11.glColor4f(1.0f, 1.0f, 1.0f, 1.0f);
-        this.mc.getTextureManager().bindTexture(guiTexture);
-        this.drawTexturedModalRect(this.guiLeft, this.guiTop, 0, 0, this.xSize, this.ySize);
-        if(this.theNPC instanceof LOTREntityOrc && ((LOTREntityOrc) this.theNPC).isOrcBombardier()) {
-            Slot slotBomb = this.containerInv.getSlotFromInventory(this.containerInv.proxyInv, 5);
-            Slot slotMelee = this.containerInv.getSlotFromInventory(this.containerInv.proxyInv, 4);
-            this.drawTexturedModalRect(this.guiLeft + slotBomb.xDisplayPosition - 1, this.guiTop + slotBomb.yDisplayPosition - 1, slotMelee.xDisplayPosition - 1, slotMelee.yDisplayPosition - 1, 18, 18);
-        }
-    }
+	@Override
+	public void drawGuiContainerForegroundLayer(int i, int j) {
+		String s = StatCollector.translateToLocal("lotr.gui.warrior.openInv");
+		fontRendererObj.drawString(s, xSize / 2 - fontRendererObj.getStringWidth(s) / 2, 6, 4210752);
+		fontRendererObj.drawString(StatCollector.translateToLocal("container.inventory"), 8, 95, 4210752);
+	}
 }

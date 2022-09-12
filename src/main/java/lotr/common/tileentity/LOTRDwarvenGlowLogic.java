@@ -4,71 +4,68 @@ import net.minecraft.util.MathHelper;
 import net.minecraft.world.*;
 
 public class LOTRDwarvenGlowLogic {
-    private static final float[] lightValueSqrts = new float[16];
-    private boolean playersNearby;
-    private int glowTick;
-    private int prevGlowTick;
-    private int maxGlowTick = 120;
-    private int playerRange = 8;
-    private float fullGlow = 0.7f;
+	public static float[] lightValueSqrts = new float[16];
+	static {
+		for (int i = 0; i <= 15; ++i) {
+			LOTRDwarvenGlowLogic.lightValueSqrts[i] = MathHelper.sqrt_float(i / 15.0f);
+		}
+	}
+	public int glowTick;
+	public int prevGlowTick;
+	public int maxGlowTick = 120;
+	public int playerRange = 8;
 
-    public LOTRDwarvenGlowLogic setGlowTime(int i) {
-        this.maxGlowTick = i;
-        return this;
-    }
+	public float fullGlow = 0.7f;
 
-    public LOTRDwarvenGlowLogic setPlayerRange(int i) {
-        this.playerRange = i;
-        return this;
-    }
+	public float getGlowBrightness(World world, int i, int j, int k, float tick) {
+		float glow = (prevGlowTick + (glowTick - prevGlowTick) * tick) / maxGlowTick;
+		glow *= fullGlow;
+		world.getSunBrightness(tick);
+		float night = 0.5f;
+		if (night < 0.0f) {
+			night = 0.0f;
+		}
+		float skylight = lightValueSqrts[world.getSkyBlockTypeBrightness(EnumSkyBlock.Sky, i, j, k)];
+		return glow * (night *= 2.0f) * skylight;
+	}
 
-    public LOTRDwarvenGlowLogic setFullGlow(float f) {
-        this.fullGlow = f;
-        return this;
-    }
+	public int getGlowTick() {
+		return glowTick;
+	}
 
-    public void update(World world, int i, int j, int k) {
-        this.prevGlowTick = this.glowTick;
-        if(world.isRemote) {
-            this.playersNearby = world.getClosestPlayer(i + 0.5, j + 0.5, k + 0.5, this.playerRange) != null;
-            if(this.playersNearby && this.glowTick < this.maxGlowTick) {
-                ++this.glowTick;
-            }
-            else if(!this.playersNearby && this.glowTick > 0) {
-                --this.glowTick;
-            }
-        }
-    }
+	public void resetGlowTick() {
+		prevGlowTick = 0;
+		glowTick = 0;
+	}
 
-    public float getGlowBrightness(World world, int i, int j, int k, float tick) {
-        float glow = (this.prevGlowTick + (this.glowTick - this.prevGlowTick) * tick) / this.maxGlowTick;
-        glow *= this.fullGlow;
-        float sun = world.getSunBrightness(tick);
-        float sunNorml = (sun - 0.2f) / 0.8f;
-        float night = 1.0f - sunNorml;
-        if((night -= 0.5f) < 0.0f) {
-            night = 0.0f;
-        }
-        float skylight = lightValueSqrts[world.getSkyBlockTypeBrightness(EnumSkyBlock.Sky, i, j, k)];
-        return glow * (night *= 2.0f) * skylight;
-    }
+	public LOTRDwarvenGlowLogic setFullGlow(float f) {
+		fullGlow = f;
+		return this;
+	}
 
-    public int getGlowTick() {
-        return this.glowTick;
-    }
+	public void setGlowTick(int i) {
+		glowTick = prevGlowTick = i;
+	}
 
-    public void setGlowTick(int i) {
-        this.glowTick = this.prevGlowTick = i;
-    }
+	public LOTRDwarvenGlowLogic setGlowTime(int i) {
+		maxGlowTick = i;
+		return this;
+	}
 
-    public void resetGlowTick() {
-        this.prevGlowTick = 0;
-        this.glowTick = 0;
-    }
+	public LOTRDwarvenGlowLogic setPlayerRange(int i) {
+		playerRange = i;
+		return this;
+	}
 
-    static {
-        for(int i = 0; i <= 15; ++i) {
-            LOTRDwarvenGlowLogic.lightValueSqrts[i] = MathHelper.sqrt_float(i / 15.0f);
-        }
-    }
+	public void update(World world, int i, int j, int k) {
+		prevGlowTick = glowTick;
+		if (world.isRemote) {
+			boolean playersNearby = world.getClosestPlayer(i + 0.5, j + 0.5, k + 0.5, playerRange) != null;
+			if (playersNearby && glowTick < maxGlowTick) {
+				++glowTick;
+			} else if (!playersNearby && glowTick > 0) {
+				--glowTick;
+			}
+		}
+	}
 }

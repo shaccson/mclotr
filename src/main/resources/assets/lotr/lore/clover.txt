@@ -1,8 +1,13 @@
-#title:Шмели и клевер
+# Written by the mod team as an example.
+#
+#title:Of Clover
 #author:{name:hobbit_female} {name:hobbit_surname}
-#types:shire
+#types:shire,bree
 #reward
 #
-Ах, какой же милый мохнатый шмель! Он собирает нектар с клевера. А какое же красивое поле! Как колышется на ветру! 
+Ah, the green clovers! How they grow in the field! How they sway in the breeze!
 
-Мой дед говорил такую примету: "Не стоит ехать без клевера в любые поездки. Клевер приносит удачу, особенно четырёхлистный".
+How do you tell if you're in decent places? You just look around for clover, of course. Anywhere without clover isn't worth the trip.
+# this line won't be included!
+
+My old Gaffer used to say that sometimes, if you're out a-wandering in the field, and you're very lucky, you might find a clover with four leaves. And if you take it home and put it in a frame, you'll have good luck for a year.

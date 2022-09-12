@@ -5,26 +5,25 @@ import java.util.*;
 import net.minecraft.world.ChunkCoordIntPair;
 
 public class LOTRVillagePositionCache {
-    private Map<ChunkCoordIntPair, LocationInfo> cacheMap = new HashMap<>();
-    public LocationInfo markResult(int chunkX, int chunkZ, LocationInfo result) {
-        if (this.cacheMap.size() >= 20000) {
-            this.clearCache();
-        }
-        this.cacheMap.put(this.getChunkKey(chunkX, chunkZ), result);
-        return result;
-    }
+	public Map<ChunkCoordIntPair, LocationInfo> cacheMap = new HashMap<>();
 
-    public LocationInfo getLocationAt(int chunkX, int chunkZ) {
-        LocationInfo loc = this.cacheMap.get(this.getChunkKey(chunkX, chunkZ));
-        return loc;
-    }
+	public void clearCache() {
+		cacheMap.clear();
+	}
 
-    private ChunkCoordIntPair getChunkKey(int chunkX, int chunkZ) {
-        return new ChunkCoordIntPair(chunkX, chunkZ);
-    }
+	public ChunkCoordIntPair getChunkKey(int chunkX, int chunkZ) {
+		return new ChunkCoordIntPair(chunkX, chunkZ);
+	}
 
-    public void clearCache() {
-        this.cacheMap.clear();
-    }
+	public LocationInfo getLocationAt(int chunkX, int chunkZ) {
+		return cacheMap.get(getChunkKey(chunkX, chunkZ));
+	}
+
+	public LocationInfo markResult(int chunkX, int chunkZ, LocationInfo result) {
+		if (cacheMap.size() >= 20000) {
+			clearCache();
+		}
+		cacheMap.put(getChunkKey(chunkX, chunkZ), result);
+		return result;
+	}
 }
-

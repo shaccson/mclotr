@@ -6,29 +6,29 @@ import net.minecraft.item.ItemStack;
 import net.minecraft.world.World;
 
 public class LOTREntityUmbarButcher extends LOTREntityUmbarTrader {
-    public LOTREntityUmbarButcher(World world) {
-        super(world);
-    }
+	public LOTREntityUmbarButcher(World world) {
+		super(world);
+	}
 
-    @Override
-    public LOTRTradeEntries getBuyPool() {
-        return LOTRTradeEntries.HARAD_BUTCHER_BUY;
-    }
+	@Override
+	public LOTRTradeEntries getBuyPool() {
+		return LOTRTradeEntries.HARAD_BUTCHER_BUY;
+	}
 
-    @Override
-    public LOTRTradeEntries getSellPool() {
-        return LOTRTradeEntries.HARAD_BUTCHER_SELL;
-    }
+	@Override
+	public LOTRTradeEntries getSellPool() {
+		return LOTRTradeEntries.HARAD_BUTCHER_SELL;
+	}
 
-    @Override
-    public void setupNPCGender() {
-        this.familyInfo.setMale(true);
-    }
+	@Override
+	public IEntityLivingData onSpawnWithEgg(IEntityLivingData data) {
+		data = super.onSpawnWithEgg(data);
+		npcItemsInv.setIdleItem(new ItemStack(LOTRMod.camelRaw));
+		return data;
+	}
 
-    @Override
-    public IEntityLivingData onSpawnWithEgg(IEntityLivingData data) {
-        data = super.onSpawnWithEgg(data);
-        this.npcItemsInv.setIdleItem(new ItemStack(LOTRMod.camelRaw));
-        return data;
-    }
+	@Override
+	public void setupNPCGender() {
+		familyInfo.setMale(true);
+	}
 }

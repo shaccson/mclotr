@@ -6,32 +6,32 @@ import net.minecraft.entity.*;
 import net.minecraft.util.ResourceLocation;
 
 public class LOTRRenderDwarfCommander extends LOTRRenderDwarf {
-    private static ResourceLocation cloak = new ResourceLocation("lotr:mob/dwarf/commander_cloak.png");
-    private static ResourceLocation blueCloak = new ResourceLocation("lotr:mob/dwarf/blueMountains_commander_cloak.png");
-    private LOTRModelDwarf cloakModel = new LOTRModelDwarf(1.5f);
+	public static ResourceLocation cloak = new ResourceLocation("lotr:mob/dwarf/commander_cloak.png");
+	public static ResourceLocation blueCloak = new ResourceLocation("lotr:mob/dwarf/blueMountains_commander_cloak.png");
+	public LOTRModelDwarf cloakModel = new LOTRModelDwarf(1.5f);
 
-    protected ResourceLocation getCloakTexture(EntityLivingBase entity) {
-        return entity instanceof LOTREntityBlueDwarf ? blueCloak : cloak;
-    }
+	public ResourceLocation getCloakTexture(EntityLivingBase entity) {
+		return entity instanceof LOTREntityBlueDwarf ? blueCloak : cloak;
+	}
 
-    @Override
-    public int shouldRenderPass(EntityLiving entity, int pass, float f) {
-        if(pass == 0) {
-            this.bindTexture(this.getCloakTexture(entity));
-            this.cloakModel.bipedHead.showModel = false;
-            this.cloakModel.bipedHeadwear.showModel = false;
-            this.cloakModel.bipedBody.showModel = true;
-            this.cloakModel.bipedRightArm.showModel = true;
-            this.cloakModel.bipedLeftArm.showModel = true;
-            this.cloakModel.bipedRightLeg.showModel = false;
-            this.cloakModel.bipedLeftLeg.showModel = false;
-            this.setRenderPassModel(this.cloakModel);
-            this.cloakModel.onGround = this.mainModel.onGround;
-            this.cloakModel.isRiding = this.mainModel.isRiding;
-            this.cloakModel.isChild = this.mainModel.isChild;
-            this.cloakModel.heldItemRight = this.modelBipedMain.heldItemRight;
-            return 1;
-        }
-        return super.shouldRenderPass(entity, pass, f);
-    }
+	@Override
+	public int shouldRenderPass(EntityLiving entity, int pass, float f) {
+		if (pass == 0) {
+			bindTexture(getCloakTexture(entity));
+			cloakModel.bipedHead.showModel = false;
+			cloakModel.bipedHeadwear.showModel = false;
+			cloakModel.bipedBody.showModel = true;
+			cloakModel.bipedRightArm.showModel = true;
+			cloakModel.bipedLeftArm.showModel = true;
+			cloakModel.bipedRightLeg.showModel = false;
+			cloakModel.bipedLeftLeg.showModel = false;
+			setRenderPassModel(cloakModel);
+			cloakModel.onGround = mainModel.onGround;
+			cloakModel.isRiding = mainModel.isRiding;
+			cloakModel.isChild = mainModel.isChild;
+			cloakModel.heldItemRight = modelBipedMain.heldItemRight;
+			return 1;
+		}
+		return super.shouldRenderPass(entity, pass, f);
+	}
 }

@@ -7,22 +7,22 @@ import net.minecraft.init.Blocks;
 import net.minecraft.util.IIcon;
 
 public class LOTRBlockSmoothStoneV extends LOTRBlockSmoothStoneBase {
-    public LOTRBlockSmoothStoneV() {
-        this.setBrickNames("stone");
-        this.setCreativeTab(CreativeTabs.tabBlock);
-    }
+	public LOTRBlockSmoothStoneV() {
+		setBrickNames("stone");
+		setCreativeTab(CreativeTabs.tabBlock);
+	}
 
-    @SideOnly(value = Side.CLIENT)
-    @Override
-    public IIcon getIcon(int i, int j) {
-        if(j == 0) {
-            return Blocks.stone_slab.getIcon(i, 0);
-        }
-        return super.getIcon(i, j);
-    }
+	@SideOnly(value = Side.CLIENT)
+	@Override
+	public IIcon getIcon(int i, int j) {
+		if (j == 0) {
+			return Blocks.stone_slab.getIcon(i, 0);
+		}
+		return super.getIcon(i, j);
+	}
 
-    @SideOnly(value = Side.CLIENT)
-    @Override
-    public void registerBlockIcons(IIconRegister iconregister) {
-    }
+	@SideOnly(value = Side.CLIENT)
+	@Override
+	public void registerBlockIcons(IIconRegister iconregister) {
+	}
 }

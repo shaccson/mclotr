@@ -8,27 +8,27 @@ import net.minecraft.item.ItemStack;
 import net.minecraft.world.World;
 
 public class LOTREntityAngmarOrcBombardier extends LOTREntityAngmarOrc {
-    public LOTREntityAngmarOrcBombardier(World world) {
-        super(world);
-    }
+	public LOTREntityAngmarOrcBombardier(World world) {
+		super(world);
+	}
 
-    @Override
-    public EntityAIBase createOrcAttackAI() {
-        this.tasks.addTask(4, new LOTREntityAIOrcPlaceBomb(this, 1.4));
-        return new LOTREntityAIAttackOnCollide(this, 1.4, false);
-    }
+	@Override
+	public EntityAIBase createOrcAttackAI() {
+		tasks.addTask(4, new LOTREntityAIOrcPlaceBomb(this, 1.4));
+		return new LOTREntityAIAttackOnCollide(this, 1.4, false);
+	}
 
-    @Override
-    public boolean isOrcBombardier() {
-        return true;
-    }
+	@Override
+	public boolean isOrcBombardier() {
+		return true;
+	}
 
-    @Override
-    public IEntityLivingData onSpawnWithEgg(IEntityLivingData data) {
-        data = super.onSpawnWithEgg(data);
-        this.npcItemsInv.setBombingItem(new ItemStack(LOTRMod.orcTorchItem));
-        this.npcItemsInv.setBomb(new ItemStack(LOTRMod.orcBomb, 1, 0));
-        this.setCurrentItemOrArmor(4, new ItemStack(LOTRMod.helmetAngmar));
-        return data;
-    }
+	@Override
+	public IEntityLivingData onSpawnWithEgg(IEntityLivingData data) {
+		data = super.onSpawnWithEgg(data);
+		npcItemsInv.setBombingItem(new ItemStack(LOTRMod.orcTorchItem));
+		npcItemsInv.setBomb(new ItemStack(LOTRMod.orcBomb, 1, 0));
+		setCurrentItemOrArmor(4, new ItemStack(LOTRMod.helmetAngmar));
+		return data;
+	}
 }

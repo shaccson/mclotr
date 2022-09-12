@@ -6,36 +6,35 @@ import cpw.mods.fml.common.FMLLog;
 import lotr.common.world.biome.LOTRBiome;
 
 public class LOTRBiomeInvasionSpawns {
-    private LOTRBiome theBiome;
-    private Map<LOTREventSpawner.EventChance, List<LOTRInvasions>> invasionsByChance = new HashMap<>();
-    private List<LOTRInvasions> registeredInvasions = new ArrayList<>();
+	public LOTRBiome theBiome;
+	public Map<LOTREventSpawner.EventChance, List<LOTRInvasions>> invasionsByChance = new HashMap<>();
+	public List<LOTRInvasions> registeredInvasions = new ArrayList<>();
 
-    public LOTRBiomeInvasionSpawns(LOTRBiome biome) {
-        this.theBiome = biome;
-    }
+	public LOTRBiomeInvasionSpawns(LOTRBiome biome) {
+		theBiome = biome;
+	}
 
-    public void addInvasion(LOTRInvasions invasion, LOTREventSpawner.EventChance chance) {
-        List<LOTRInvasions> chanceList = this.getInvasionsForChance(chance);
-        if(chanceList.contains(invasion) || this.registeredInvasions.contains(invasion)) {
-            FMLLog.warning("LOTR biome %s already has invasion %s registered", this.theBiome.biomeName, invasion.codeName());
-        }
-        else {
-            chanceList.add(invasion);
-            this.registeredInvasions.add(invasion);
-        }
-    }
+	public void addInvasion(LOTRInvasions invasion, LOTREventSpawner.EventChance chance) {
+		List<LOTRInvasions> chanceList = getInvasionsForChance(chance);
+		if (chanceList.contains(invasion) || registeredInvasions.contains(invasion)) {
+			FMLLog.warning("LOTR biome %s already has invasion %s registered", theBiome.biomeName, invasion.codeName());
+		} else {
+			chanceList.add(invasion);
+			registeredInvasions.add(invasion);
+		}
+	}
 
-    public void clearInvasions() {
-        this.invasionsByChance.clear();
-        this.registeredInvasions.clear();
-    }
+	public void clearInvasions() {
+		invasionsByChance.clear();
+		registeredInvasions.clear();
+	}
 
-    public List<LOTRInvasions> getInvasionsForChance(LOTREventSpawner.EventChance chance) {
-        List<LOTRInvasions> chanceList = this.invasionsByChance.get(chance);
-        if(chanceList == null) {
-            chanceList = new ArrayList<>();
-        }
-        this.invasionsByChance.put(chance, chanceList);
-        return chanceList;
-    }
+	public List<LOTRInvasions> getInvasionsForChance(LOTREventSpawner.EventChance chance) {
+		List<LOTRInvasions> chanceList = invasionsByChance.get(chance);
+		if (chanceList == null) {
+			chanceList = new ArrayList<>();
+		}
+		invasionsByChance.put(chance, chanceList);
+		return chanceList;
+	}
 }

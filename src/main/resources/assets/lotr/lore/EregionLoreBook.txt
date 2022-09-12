@@ -1,7 +1,7 @@
-#title:Плач
-#author:{name:sindarin_male} из Эрегиона
+#title:Lamentation
+#author:{name:sindarin_male} of Eregion
 #types:eregion,rivendell
 #
-Мое сердце скорбит, что королевства Нолдор пали. Сначала был Белый город Гондолин, величественный и гордый, цветок над равниной; и Нарготронд прекрасный. Но наше время здесь угасает, и священные залы Мандоса вновь призывают нас.
+It grieves my heart to see the Noldorin kingdoms fall to waste. First there was the White City of Gondolin, majestic and proud, a flower over the plain; and Nargothrond the fair. But our time here is fading, and the hallowed halls of Mandos call once more for us.
 
-Даже далекие эльфы были омрачены тьмой. Ах, я ждал слишком долго, надеялся, что царства эльфов будут востановлены. Теперь я должен уйти на Тол-Эрессеа, и дальше, в Чертоги Мандоса на западе. Я должен уйти быстро, прежде чем последнее королевство падёт от рук врага.
+Even the deep delvings of Hadhodrond are tarnished with a darkness. Ah, how I long for these kingdoms to be restored, for life and light to come back - but I must depart for Tol Eressëa and Elvenhome in the West. I must leave quickly, before this last kingdom falls to the Enemy.

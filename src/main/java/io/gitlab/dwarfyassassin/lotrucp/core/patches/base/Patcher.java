@@ -5,27 +5,27 @@ import java.util.*;
 import org.objectweb.asm.tree.ClassNode;
 
 public abstract class Patcher {
-	protected Map<String, ConsumerImplBecauseNoLambdas<ClassNode>> classes = new HashMap<>();
-	private String patcherName;
+	public Map<String, ConsumerImplBecauseNoLambdas<ClassNode>> classes = new HashMap<>();
+	public String patcherName;
 
 	public Patcher(String name) {
 		patcherName = name;
+	}
+
+	public boolean canRun(String className) {
+		return classes.containsKey(className);
 	}
 
 	public LoadingPhase getLoadPhase() {
 		return LoadingPhase.CORE_MOD_LOADING;
 	}
 
-	public boolean shouldInit() {
-		return true;
+	public String getName() {
+		return patcherName;
 	}
 
 	public boolean isDone() {
 		return classes.isEmpty();
-	}
-
-	public boolean canRun(String className) {
-		return classes.containsKey(className);
 	}
 
 	public void run(String className, ClassNode classNode) {
@@ -33,17 +33,17 @@ public abstract class Patcher {
 		classes.remove(className);
 	}
 
-	public String getName() {
-		return patcherName;
+	public boolean shouldInit() {
+		return true;
+	}
+
+	public interface ConsumerImplBecauseNoLambdas<T> {
+		void accept(T var1);
 	}
 
 	public enum LoadingPhase {
 		CORE_MOD_LOADING, FORGE_MOD_LOADING;
 
-	}
-
-	public interface ConsumerImplBecauseNoLambdas<T> {
-		void accept(T var1);
 	}
 
 }

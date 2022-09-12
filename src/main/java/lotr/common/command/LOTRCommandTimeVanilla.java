@@ -6,19 +6,23 @@ import net.minecraft.server.MinecraftServer;
 import net.minecraft.world.WorldServer;
 
 public class LOTRCommandTimeVanilla extends CommandTime {
-    @Override
-    protected void setTime(ICommandSender sender, int time) {
-        for(WorldServer world : MinecraftServer.getServer().worldServers) {
-            if(world.provider instanceof LOTRWorldProvider) continue;
-            world.setWorldTime(time);
-        }
-    }
+	@Override
+	public void addTime(ICommandSender sender, int time) {
+		for (WorldServer world : MinecraftServer.getServer().worldServers) {
+			if (world.provider instanceof LOTRWorldProvider) {
+				continue;
+			}
+			world.setWorldTime(world.getWorldTime() + time);
+		}
+	}
 
-    @Override
-    protected void addTime(ICommandSender sender, int time) {
-        for(WorldServer world : MinecraftServer.getServer().worldServers) {
-            if(world.provider instanceof LOTRWorldProvider) continue;
-            world.setWorldTime(world.getWorldTime() + time);
-        }
-    }
+	@Override
+	public void setTime(ICommandSender sender, int time) {
+		for (WorldServer world : MinecraftServer.getServer().worldServers) {
+			if (world.provider instanceof LOTRWorldProvider) {
+				continue;
+			}
+			world.setWorldTime(time);
+		}
+	}
 }

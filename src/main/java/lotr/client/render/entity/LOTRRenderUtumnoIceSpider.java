@@ -4,10 +4,10 @@ import net.minecraft.entity.Entity;
 import net.minecraft.util.ResourceLocation;
 
 public class LOTRRenderUtumnoIceSpider extends LOTRRenderSpiderBase {
-    private static ResourceLocation spiderSkin = new ResourceLocation("lotr:mob/spider/spider_utumnoIce.png");
+	public static ResourceLocation spiderSkin = new ResourceLocation("lotr:mob/spider/spider_utumnoIce.png");
 
-    @Override
-    protected ResourceLocation getEntityTexture(Entity entity) {
-        return spiderSkin;
-    }
+	@Override
+	public ResourceLocation getEntityTexture(Entity entity) {
+		return spiderSkin;
+	}
 }

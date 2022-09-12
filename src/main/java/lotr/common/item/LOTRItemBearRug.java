@@ -6,14 +6,14 @@ import net.minecraft.item.ItemStack;
 import net.minecraft.world.World;
 
 public class LOTRItemBearRug extends LOTRItemRugBase {
-    public LOTRItemBearRug() {
-        super(LOTREntityBear.BearType.bearTypeNames());
-    }
+	public LOTRItemBearRug() {
+		super(LOTREntityBear.BearType.bearTypeNames());
+	}
 
-    @Override
-    protected LOTREntityRugBase createRug(World world, ItemStack itemstack) {
-        LOTREntityBearRug rug = new LOTREntityBearRug(world);
-        rug.setRugType(LOTREntityBear.BearType.forID(itemstack.getItemDamage()));
-        return rug;
-    }
+	@Override
+	public LOTREntityRugBase createRug(World world, ItemStack itemstack) {
+		LOTREntityBearRug rug = new LOTREntityBearRug(world);
+		rug.setRugType(LOTREntityBear.BearType.forID(itemstack.getItemDamage()));
+		return rug;
+	}
 }

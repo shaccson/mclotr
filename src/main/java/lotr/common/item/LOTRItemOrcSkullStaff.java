@@ -4,17 +4,17 @@ import net.minecraft.init.Items;
 import net.minecraft.item.*;
 
 public class LOTRItemOrcSkullStaff extends LOTRItemSword {
-    public LOTRItemOrcSkullStaff() {
-        super(LOTRMaterial.MORDOR);
-    }
+	public LOTRItemOrcSkullStaff() {
+		super(LOTRMaterial.MORDOR);
+	}
 
-    @Override
-    public boolean getIsRepairable(ItemStack itemstack, ItemStack repairItem) {
-        return repairItem.getItem() == Items.skull;
-    }
+	@Override
+	public boolean getIsRepairable(ItemStack itemstack, ItemStack repairItem) {
+		return repairItem.getItem() == Items.skull;
+	}
 
-    @Override
-    public EnumAction getItemUseAction(ItemStack itemstack) {
-        return null;
-    }
+	@Override
+	public EnumAction getItemUseAction(ItemStack itemstack) {
+		return null;
+	}
 }

@@ -13,48 +13,46 @@ import net.minecraft.nbt.NBTTagCompound;
 import net.minecraft.network.PacketBuffer;
 
 public class LOTRPacketTraderInfo implements IMessage {
-    public NBTTagCompound traderData;
+	public NBTTagCompound traderData;
 
-    public LOTRPacketTraderInfo() {
-    }
+	public LOTRPacketTraderInfo() {
+	}
 
-    public LOTRPacketTraderInfo(NBTTagCompound nbt) {
-        this.traderData = nbt;
-    }
+	public LOTRPacketTraderInfo(NBTTagCompound nbt) {
+		traderData = nbt;
+	}
 
-    @Override
-    public void toBytes(ByteBuf data) {
-        try {
-            new PacketBuffer(data).writeNBTTagCompoundToBuffer(this.traderData);
-        }
-        catch(IOException e) {
-            FMLLog.severe("Error writing trader data");
-            e.printStackTrace();
-        }
-    }
+	@Override
+	public void fromBytes(ByteBuf data) {
+		try {
+			traderData = new PacketBuffer(data).readNBTTagCompoundFromBuffer();
+		} catch (IOException e) {
+			FMLLog.severe("Error reading trader data");
+			e.printStackTrace();
+		}
+	}
 
-    @Override
-    public void fromBytes(ByteBuf data) {
-        try {
-            this.traderData = new PacketBuffer(data).readNBTTagCompoundFromBuffer();
-        }
-        catch(IOException e) {
-            FMLLog.severe("Error reading trader data");
-            e.printStackTrace();
-        }
-    }
+	@Override
+	public void toBytes(ByteBuf data) {
+		try {
+			new PacketBuffer(data).writeNBTTagCompoundToBuffer(traderData);
+		} catch (IOException e) {
+			FMLLog.severe("Error writing trader data");
+			e.printStackTrace();
+		}
+	}
 
-    public static class Handler implements IMessageHandler<LOTRPacketTraderInfo, IMessage> {
-        @Override
-        public IMessage onMessage(LOTRPacketTraderInfo packet, MessageContext context) {
-            EntityPlayer entityplayer = LOTRMod.proxy.getClientPlayer();
-            Container container = entityplayer.openContainer;
-            if(container instanceof LOTRContainerTrade) {
-                LOTRContainerTrade containerTrade = (LOTRContainerTrade) container;
-                containerTrade.theTraderNPC.traderNPCInfo.receiveClientPacket(packet);
-            }
-            return null;
-        }
-    }
+	public static class Handler implements IMessageHandler<LOTRPacketTraderInfo, IMessage> {
+		@Override
+		public IMessage onMessage(LOTRPacketTraderInfo packet, MessageContext context) {
+			EntityPlayer entityplayer = LOTRMod.proxy.getClientPlayer();
+			Container container = entityplayer.openContainer;
+			if (container instanceof LOTRContainerTrade) {
+				LOTRContainerTrade containerTrade = (LOTRContainerTrade) container;
+				containerTrade.theTraderNPC.traderNPCInfo.receiveClientPacket(packet);
+			}
+			return null;
+		}
+	}
 
 }

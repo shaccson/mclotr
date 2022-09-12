@@ -8,27 +8,27 @@ import net.minecraft.item.ItemStack;
 import net.minecraft.world.World;
 
 public class LOTREntityGondorFishmonger extends LOTREntityGondorMarketTrader {
-    public LOTREntityGondorFishmonger(World world) {
-        super(world);
-    }
+	public LOTREntityGondorFishmonger(World world) {
+		super(world);
+	}
 
-    @Override
-    public LOTRTradeEntries getBuyPool() {
-        return LOTRTradeEntries.GONDOR_FISHMONGER_BUY;
-    }
+	@Override
+	public LOTRTradeEntries getBuyPool() {
+		return LOTRTradeEntries.GONDOR_FISHMONGER_BUY;
+	}
 
-    @Override
-    public LOTRTradeEntries getSellPool() {
-        return LOTRTradeEntries.GONDOR_FISHMONGER_SELL;
-    }
+	@Override
+	public LOTRTradeEntries getSellPool() {
+		return LOTRTradeEntries.GONDOR_FISHMONGER_SELL;
+	}
 
-    @Override
-    public IEntityLivingData onSpawnWithEgg(IEntityLivingData data) {
-        data = super.onSpawnWithEgg(data);
-        this.npcItemsInv.setIdleItem(new ItemStack(Items.fishing_rod));
-        ItemStack hat = new ItemStack(LOTRMod.leatherHat);
-        LOTRItemLeatherHat.setHatColor(hat, 9013900);
-        this.setCurrentItemOrArmor(4, hat);
-        return data;
-    }
+	@Override
+	public IEntityLivingData onSpawnWithEgg(IEntityLivingData data) {
+		data = super.onSpawnWithEgg(data);
+		npcItemsInv.setIdleItem(new ItemStack(Items.fishing_rod));
+		ItemStack hat = new ItemStack(LOTRMod.leatherHat);
+		LOTRItemLeatherHat.setHatColor(hat, 9013900);
+		setCurrentItemOrArmor(4, hat);
+		return data;
+	}
 }

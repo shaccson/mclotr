@@ -1,2 +1,2 @@
-Как дела? Как дела? Есть ли вещи у тебя?
-#, ну как, у тебя есть $?
+My floor is almost flooded, have you gotten $ yet, #?
+Have you gotten the $? Before the rain gets too heavy?

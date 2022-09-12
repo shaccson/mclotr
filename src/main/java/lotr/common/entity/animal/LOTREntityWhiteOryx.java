@@ -9,47 +9,47 @@ import net.minecraft.init.Items;
 import net.minecraft.world.World;
 
 public class LOTREntityWhiteOryx extends LOTREntityGemsbok implements LOTRRandomSkinEntity {
-    public static final float ORYX_SCALE = 0.9f;
+	public static float ORYX_SCALE = 0.9f;
 
-    public LOTREntityWhiteOryx(World world) {
-        super(world);
-        this.setSize(this.width * 0.9f, this.height * 0.9f);
-    }
+	public LOTREntityWhiteOryx(World world) {
+		super(world);
+		setSize(width * 0.9f, height * 0.9f);
+	}
 
-    @Override
-    protected void applyEntityAttributes() {
-        super.applyEntityAttributes();
-        this.getEntityAttribute(SharedMonsterAttributes.maxHealth).setBaseValue(16.0);
-    }
+	@Override
+	public void applyEntityAttributes() {
+		super.applyEntityAttributes();
+		getEntityAttribute(SharedMonsterAttributes.maxHealth).setBaseValue(16.0);
+	}
 
-    @Override
-    public void setUniqueID(UUID uuid) {
-        this.entityUniqueID = uuid;
-    }
+	@Override
+	public EntityAgeable createChild(EntityAgeable entity) {
+		return new LOTREntityWhiteOryx(worldObj);
+	}
 
-    @Override
-    public EntityAgeable createChild(EntityAgeable entity) {
-        return new LOTREntityWhiteOryx(this.worldObj);
-    }
+	@Override
+	public void dropFewItems(boolean flag, int i) {
+		int hide = rand.nextInt(3) + rand.nextInt(1 + i);
+		for (int l = 0; l < hide; ++l) {
+			dropItem(Items.leather, 1);
+		}
+		int meat = rand.nextInt(3) + rand.nextInt(1 + i);
+		for (int l = 0; l < meat; ++l) {
+			if (isBurning()) {
+				dropItem(LOTRMod.deerCooked, 1);
+				continue;
+			}
+			dropItem(LOTRMod.deerRaw, 1);
+		}
+	}
 
-    @Override
-    protected void dropFewItems(boolean flag, int i) {
-        int hide = this.rand.nextInt(3) + this.rand.nextInt(1 + i);
-        for(int l = 0; l < hide; ++l) {
-            this.dropItem(Items.leather, 1);
-        }
-        int meat = this.rand.nextInt(3) + this.rand.nextInt(1 + i);
-        for(int l = 0; l < meat; ++l) {
-            if(this.isBurning()) {
-                this.dropItem(LOTRMod.deerCooked, 1);
-                continue;
-            }
-            this.dropItem(LOTRMod.deerRaw, 1);
-        }
-    }
+	@Override
+	public float getGemsbokSoundPitch() {
+		return 0.9f;
+	}
 
-    @Override
-    protected float getGemsbokSoundPitch() {
-        return 0.9f;
-    }
+	@Override
+	public void setUniqueID(UUID uuid) {
+		entityUniqueID = uuid;
+	}
 }

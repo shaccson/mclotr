@@ -10,53 +10,52 @@ import lotr.common.world.map.LOTRCustomWaypoint;
 import net.minecraft.entity.player.EntityPlayerMP;
 
 public class LOTRPacketShareCWP implements IMessage {
-    private int wpID;
-    private String fsName;
-    private boolean adding;
+	public int wpID;
+	public String fsName;
+	public boolean adding;
 
-    public LOTRPacketShareCWP() {
-    }
+	public LOTRPacketShareCWP() {
+	}
 
-    public LOTRPacketShareCWP(LOTRCustomWaypoint wp, String s, boolean add) {
-        this.wpID = wp.getID();
-        this.fsName = s;
-        this.adding = add;
-    }
+	public LOTRPacketShareCWP(LOTRCustomWaypoint wp, String s, boolean add) {
+		wpID = wp.getID();
+		fsName = s;
+		adding = add;
+	}
 
-    @Override
-    public void toBytes(ByteBuf data) {
-        data.writeInt(this.wpID);
-        byte[] nameBytes = this.fsName.getBytes(Charsets.UTF_8);
-        data.writeShort(nameBytes.length);
-        data.writeBytes(nameBytes);
-        data.writeBoolean(this.adding);
-    }
+	@Override
+	public void fromBytes(ByteBuf data) {
+		wpID = data.readInt();
+		short length = data.readShort();
+		fsName = data.readBytes(length).toString(Charsets.UTF_8);
+		adding = data.readBoolean();
+	}
 
-    @Override
-    public void fromBytes(ByteBuf data) {
-        this.wpID = data.readInt();
-        short length = data.readShort();
-        this.fsName = data.readBytes(length).toString(Charsets.UTF_8);
-        this.adding = data.readBoolean();
-    }
+	@Override
+	public void toBytes(ByteBuf data) {
+		data.writeInt(wpID);
+		byte[] nameBytes = fsName.getBytes(Charsets.UTF_8);
+		data.writeShort(nameBytes.length);
+		data.writeBytes(nameBytes);
+		data.writeBoolean(adding);
+	}
 
-    public static class Handler implements IMessageHandler<LOTRPacketShareCWP, IMessage> {
-        @Override
-        public IMessage onMessage(LOTRPacketShareCWP packet, MessageContext context) {
-            LOTRFellowship fellowship;
-            EntityPlayerMP entityplayer = context.getServerHandler().playerEntity;
-            LOTRPlayerData pd = LOTRLevelData.getData(entityplayer);
-            LOTRCustomWaypoint cwp = pd.getCustomWaypointByID(packet.wpID);
-            if(cwp != null && (fellowship = pd.getFellowshipByName(packet.fsName)) != null) {
-                if(packet.adding) {
-                    pd.customWaypointAddSharedFellowship(cwp, fellowship);
-                }
-                else {
-                    pd.customWaypointRemoveSharedFellowship(cwp, fellowship);
-                }
-            }
-            return null;
-        }
-    }
+	public static class Handler implements IMessageHandler<LOTRPacketShareCWP, IMessage> {
+		@Override
+		public IMessage onMessage(LOTRPacketShareCWP packet, MessageContext context) {
+			LOTRFellowship fellowship;
+			EntityPlayerMP entityplayer = context.getServerHandler().playerEntity;
+			LOTRPlayerData pd = LOTRLevelData.getData(entityplayer);
+			LOTRCustomWaypoint cwp = pd.getCustomWaypointByID(packet.wpID);
+			if (cwp != null && (fellowship = pd.getFellowshipByName(packet.fsName)) != null) {
+				if (packet.adding) {
+					pd.customWaypointAddSharedFellowship(cwp, fellowship);
+				} else {
+					pd.customWaypointRemoveSharedFellowship(cwp, fellowship);
+				}
+			}
+			return null;
+		}
+	}
 
 }

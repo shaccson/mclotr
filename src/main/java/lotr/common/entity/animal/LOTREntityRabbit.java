@@ -17,129 +17,129 @@ import net.minecraft.util.*;
 import net.minecraft.world.World;
 
 public class LOTREntityRabbit extends EntityCreature implements LOTRAmbientCreature, LOTRRandomSkinEntity {
-    private static final String fleeSound = "lotr:rabbit.flee";
+	public static String fleeSound = "lotr:rabbit.flee";
 
-    public LOTREntityRabbit(World world) {
-        super(world);
-        this.setSize(0.5f, 0.5f);
-        this.getNavigator().setAvoidsWater(true);
-        this.tasks.addTask(0, new EntityAISwimming(this));
-        this.tasks.addTask(1, new LOTREntityAIFlee(this, 2.0));
-        this.tasks.addTask(2, new LOTREntityAIAvoidWithChance(this, EntityPlayer.class, 4.0f, 1.3, 1.5, 0.05f, fleeSound));
-        this.tasks.addTask(2, new LOTREntityAIAvoidWithChance(this, LOTREntityNPC.class, 4.0f, 1.3, 1.5, 0.05f, fleeSound));
-        this.tasks.addTask(3, new LOTREntityAIRabbitEatCrops(this, 1.2));
-        this.tasks.addTask(4, new EntityAIWander(this, 1.0));
-        this.tasks.addTask(5, new EntityAIWatchClosest(this, EntityLivingBase.class, 8.0f, 0.05f));
-        this.tasks.addTask(6, new EntityAILookIdle(this));
-    }
+	public LOTREntityRabbit(World world) {
+		super(world);
+		setSize(0.5f, 0.5f);
+		getNavigator().setAvoidsWater(true);
+		tasks.addTask(0, new EntityAISwimming(this));
+		tasks.addTask(1, new LOTREntityAIFlee(this, 2.0));
+		tasks.addTask(2, new LOTREntityAIAvoidWithChance(this, EntityPlayer.class, 4.0f, 1.3, 1.5, 0.05f, fleeSound));
+		tasks.addTask(2, new LOTREntityAIAvoidWithChance(this, LOTREntityNPC.class, 4.0f, 1.3, 1.5, 0.05f, fleeSound));
+		tasks.addTask(3, new LOTREntityAIRabbitEatCrops(this, 1.2));
+		tasks.addTask(4, new EntityAIWander(this, 1.0));
+		tasks.addTask(5, new EntityAIWatchClosest(this, EntityLivingBase.class, 8.0f, 0.05f));
+		tasks.addTask(6, new EntityAILookIdle(this));
+	}
 
-    @Override
-    public void entityInit() {
-        super.entityInit();
-        this.dataWatcher.addObject(17, (byte) 0);
-    }
+	public boolean anyFarmhandsNearby(int i, int j, int k) {
+		int range = 16;
+		List farmhands = worldObj.getEntitiesWithinAABB(LOTRFarmhand.class, AxisAlignedBB.getBoundingBox(i, j, k, i + 1, j + 1, k + 1).expand(range, range, range));
+		return !farmhands.isEmpty();
+	}
 
-    public boolean isRabbitEating() {
-        return this.dataWatcher.getWatchableObjectByte(17) == 1;
-    }
+	@Override
+	public void applyEntityAttributes() {
+		super.applyEntityAttributes();
+		getEntityAttribute(SharedMonsterAttributes.maxHealth).setBaseValue(4.0);
+		getEntityAttribute(SharedMonsterAttributes.movementSpeed).setBaseValue(0.25);
+	}
 
-    public void setRabbitEating(boolean flag) {
-        this.dataWatcher.updateObject(17, flag ? (byte) 1 : 0);
-    }
+	@Override
+	public boolean attackEntityFrom(DamageSource damagesource, float f) {
+		boolean flag = super.attackEntityFrom(damagesource, f);
+		if (flag && !worldObj.isRemote && damagesource.getEntity() instanceof EntityPlayer && isRabbitEating()) {
+			EntityPlayer entityplayer = (EntityPlayer) damagesource.getEntity();
+			LOTRLevelData.getData(entityplayer).addAchievement(LOTRAchievement.attackRabbit);
+		}
+		return flag;
+	}
 
-    @Override
-    protected void applyEntityAttributes() {
-        super.applyEntityAttributes();
-        this.getEntityAttribute(SharedMonsterAttributes.maxHealth).setBaseValue(4.0);
-        this.getEntityAttribute(SharedMonsterAttributes.movementSpeed).setBaseValue(0.25);
-    }
+	@Override
+	public boolean canDespawn() {
+		return true;
+	}
 
-    @Override
-    public void setUniqueID(UUID uuid) {
-        this.entityUniqueID = uuid;
-    }
+	@Override
+	public void dropFewItems(boolean flag, int i) {
+		int meat = rand.nextInt(3) + rand.nextInt(1 + i);
+		for (int l = 0; l < meat; ++l) {
+			if (isBurning()) {
+				dropItem(LOTRMod.rabbitCooked, 1);
+				continue;
+			}
+			dropItem(LOTRMod.rabbitRaw, 1);
+		}
+	}
 
-    @Override
-    protected boolean isAIEnabled() {
-        return true;
-    }
+	@Override
+	public void entityInit() {
+		super.entityInit();
+		dataWatcher.addObject(17, (byte) 0);
+	}
 
-    @Override
-    public boolean attackEntityFrom(DamageSource damagesource, float f) {
-        boolean flag = super.attackEntityFrom(damagesource, f);
-        if(flag && !this.worldObj.isRemote && damagesource.getEntity() instanceof EntityPlayer && this.isRabbitEating()) {
-            EntityPlayer entityplayer = (EntityPlayer) damagesource.getEntity();
-            LOTRLevelData.getData(entityplayer).addAchievement(LOTRAchievement.attackRabbit);
-        }
-        return flag;
-    }
+	@Override
+	public float getBlockPathWeight(int i, int j, int k) {
+		Block block = worldObj.getBlock(i, j - 1, k);
+		if (block == Blocks.grass) {
+			return 10.0f;
+		}
+		return worldObj.getLightBrightness(i, j, k) - 0.5f;
+	}
 
-    @Override
-    public void dropFewItems(boolean flag, int i) {
-        int meat = this.rand.nextInt(3) + this.rand.nextInt(1 + i);
-        for(int l = 0; l < meat; ++l) {
-            if(this.isBurning()) {
-                this.dropItem(LOTRMod.rabbitCooked, 1);
-                continue;
-            }
-            this.dropItem(LOTRMod.rabbitRaw, 1);
-        }
-    }
+	@Override
+	public boolean getCanSpawnHere() {
+		if (super.getCanSpawnHere()) {
+			boolean flag = LOTRAmbientSpawnChecks.canSpawn(this, 8, 4, 32, 4, Material.plants, Material.vine);
+			if (flag) {
+				int i = MathHelper.floor_double(posX);
+				return !anyFarmhandsNearby(i, MathHelper.floor_double(posY), MathHelper.floor_double(posZ));
+			}
+		}
+		return false;
+	}
 
-    @Override
-    protected boolean canDespawn() {
-        return true;
-    }
+	@Override
+	public String getDeathSound() {
+		return "lotr:rabbit.death";
+	}
 
-    @Override
-    public boolean getCanSpawnHere() {
-        if(super.getCanSpawnHere()) {
-            boolean flag = LOTRAmbientSpawnChecks.canSpawn(this, 8, 4, 32, 4, Material.plants, Material.vine);
-            if(flag) {
-                int i = MathHelper.floor_double(this.posX);
-                return !this.anyFarmhandsNearby(i, MathHelper.floor_double(this.posY), MathHelper.floor_double(this.posZ));
-            }
-        }
-        return false;
-    }
+	@Override
+	public int getExperiencePoints(EntityPlayer entityplayer) {
+		return 1 + rand.nextInt(2);
+	}
 
-    public boolean anyFarmhandsNearby(int i, int j, int k) {
-        int range = 16;
-        List farmhands = this.worldObj.getEntitiesWithinAABB(LOTRFarmhand.class, AxisAlignedBB.getBoundingBox(i, j, k, i + 1, j + 1, k + 1).expand(range, range, range));
-        return !farmhands.isEmpty();
-    }
+	@Override
+	public String getHurtSound() {
+		return "lotr:rabbit.hurt";
+	}
 
-    @Override
-    public float getBlockPathWeight(int i, int j, int k) {
-        Block block = this.worldObj.getBlock(i, j - 1, k);
-        if(block == Blocks.grass) {
-            return 10.0f;
-        }
-        return this.worldObj.getLightBrightness(i, j, k) - 0.5f;
-    }
+	@Override
+	public ItemStack getPickedResult(MovingObjectPosition target) {
+		return new ItemStack(LOTRMod.spawnEgg, 1, LOTREntities.getEntityID(this));
+	}
 
-    @Override
-    protected int getExperiencePoints(EntityPlayer entityplayer) {
-        return 1 + this.rand.nextInt(2);
-    }
+	@Override
+	public int getTalkInterval() {
+		return 200;
+	}
 
-    @Override
-    protected String getHurtSound() {
-        return "lotr:rabbit.hurt";
-    }
+	@Override
+	public boolean isAIEnabled() {
+		return true;
+	}
 
-    @Override
-    protected String getDeathSound() {
-        return "lotr:rabbit.death";
-    }
+	public boolean isRabbitEating() {
+		return dataWatcher.getWatchableObjectByte(17) == 1;
+	}
 
-    @Override
-    public int getTalkInterval() {
-        return 200;
-    }
+	public void setRabbitEating(boolean flag) {
+		dataWatcher.updateObject(17, flag ? (byte) 1 : 0);
+	}
 
-    @Override
-    public ItemStack getPickedResult(MovingObjectPosition target) {
-        return new ItemStack(LOTRMod.spawnEgg, 1, LOTREntities.getEntityID(this));
-    }
+	@Override
+	public void setUniqueID(UUID uuid) {
+		entityUniqueID = uuid;
+	}
 }

@@ -3,18 +3,17 @@ package lotr.common.entity.npc;
 import net.minecraft.item.ItemStack;
 
 public interface LOTRNPCMount {
-    boolean isMountSaddled();
+	boolean getBelongsToNPC();
 
-    boolean getBelongsToNPC();
+	String getMountArmorTexture();
 
-    void setBelongsToNPC(boolean var1);
+	float getStepHeightWhileRiddenByPlayer();
 
-    void super_moveEntityWithHeading(float var1, float var2);
+	boolean isMountArmorValid(ItemStack var1);
 
-    float getStepHeightWhileRiddenByPlayer();
+	boolean isMountSaddled();
 
-    String getMountArmorTexture();
+	void setBelongsToNPC(boolean var1);
 
-    boolean isMountArmorValid(ItemStack var1);
+	void super_moveEntityWithHeading(float var1, float var2);
 }
-

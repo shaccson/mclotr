@@ -7,51 +7,50 @@ import lotr.common.fac.LOTRFaction;
 import net.minecraft.entity.player.EntityPlayer;
 
 public class LOTRPacketBrokenPledge implements IMessage {
-    private int cooldown;
-    private int cooldownStart;
-    private LOTRFaction brokenFac;
+	public int cooldown;
+	public int cooldownStart;
+	public LOTRFaction brokenFac;
 
-    public LOTRPacketBrokenPledge() {
-    }
+	public LOTRPacketBrokenPledge() {
+	}
 
-    public LOTRPacketBrokenPledge(int cd, int start, LOTRFaction f) {
-        this.cooldown = cd;
-        this.cooldownStart = start;
-        this.brokenFac = f;
-    }
+	public LOTRPacketBrokenPledge(int cd, int start, LOTRFaction f) {
+		cooldown = cd;
+		cooldownStart = start;
+		brokenFac = f;
+	}
 
-    @Override
-    public void toBytes(ByteBuf data) {
-        data.writeInt(this.cooldown);
-        data.writeInt(this.cooldownStart);
-        if(this.brokenFac == null) {
-            data.writeByte(-1);
-        }
-        else {
-            data.writeByte(this.brokenFac.ordinal());
-        }
-    }
+	@Override
+	public void fromBytes(ByteBuf data) {
+		cooldown = data.readInt();
+		cooldownStart = data.readInt();
+		byte facID = data.readByte();
+		if (facID >= 0) {
+			brokenFac = LOTRFaction.forID(facID);
+		}
+	}
 
-    @Override
-    public void fromBytes(ByteBuf data) {
-        this.cooldown = data.readInt();
-        this.cooldownStart = data.readInt();
-        byte facID = data.readByte();
-        if(facID >= 0) {
-            this.brokenFac = LOTRFaction.forID(facID);
-        }
-    }
+	@Override
+	public void toBytes(ByteBuf data) {
+		data.writeInt(cooldown);
+		data.writeInt(cooldownStart);
+		if (brokenFac == null) {
+			data.writeByte(-1);
+		} else {
+			data.writeByte(brokenFac.ordinal());
+		}
+	}
 
-    public static class Handler implements IMessageHandler<LOTRPacketBrokenPledge, IMessage> {
-        @Override
-        public IMessage onMessage(LOTRPacketBrokenPledge packet, MessageContext context) {
-            EntityPlayer entityplayer = LOTRMod.proxy.getClientPlayer();
-            LOTRPlayerData pd = LOTRLevelData.getData(entityplayer);
-            pd.setPledgeBreakCooldown(packet.cooldown);
-            pd.setPledgeBreakCooldownStart(packet.cooldownStart);
-            pd.setBrokenPledgeFaction(packet.brokenFac);
-            return null;
-        }
-    }
+	public static class Handler implements IMessageHandler<LOTRPacketBrokenPledge, IMessage> {
+		@Override
+		public IMessage onMessage(LOTRPacketBrokenPledge packet, MessageContext context) {
+			EntityPlayer entityplayer = LOTRMod.proxy.getClientPlayer();
+			LOTRPlayerData pd = LOTRLevelData.getData(entityplayer);
+			pd.setPledgeBreakCooldown(packet.cooldown);
+			pd.setPledgeBreakCooldownStart(packet.cooldownStart);
+			pd.setBrokenPledgeFaction(packet.brokenFac);
+			return null;
+		}
+	}
 
 }

@@ -16,72 +16,72 @@ import net.minecraft.util.*;
 import net.minecraft.world.World;
 
 public class LOTRBlockUtumnoPortal extends BlockContainer {
-    public LOTRBlockUtumnoPortal() {
-        super(Material.portal);
-        this.setHardness(-1.0f);
-        this.setResistance(Float.MAX_VALUE);
-        this.setStepSound(Block.soundTypeStone);
-    }
+	public LOTRBlockUtumnoPortal() {
+		super(Material.portal);
+		setHardness(-1.0f);
+		setResistance(Float.MAX_VALUE);
+		setStepSound(Block.soundTypeStone);
+	}
 
-    @Override
-    public TileEntity createNewTileEntity(World world, int i) {
-        return new LOTRTileEntityUtumnoPortal();
-    }
+	@Override
+	public void addCollisionBoxesToList(World world, int i, int j, int k, AxisAlignedBB aabb, List list, Entity entity) {
+	}
 
-    @Override
-    public void addCollisionBoxesToList(World world, int i, int j, int k, AxisAlignedBB aabb, List list, Entity entity) {
-    }
+	@Override
+	public TileEntity createNewTileEntity(World world, int i) {
+		return new LOTRTileEntityUtumnoPortal();
+	}
 
-    @Override
-    public void onEntityCollidedWithBlock(World world, int i, int j, int k, Entity entity) {
-        entity.setInWeb();
-        TileEntity te = world.getTileEntity(i, j, k);
-        if(te instanceof LOTRTileEntityUtumnoPortal) {
-            ((LOTRTileEntityUtumnoPortal) te).transferEntity(entity);
-        }
-    }
+	@SideOnly(value = Side.CLIENT)
+	@Override
+	public IIcon getIcon(int i, int j) {
+		return Blocks.portal.getIcon(i, j);
+	}
 
-    @Override
-    public boolean isOpaqueCube() {
-        return false;
-    }
+	@SideOnly(value = Side.CLIENT)
+	@Override
+	public Item getItem(World world, int i, int j, int k) {
+		return Item.getItemById(0);
+	}
 
-    @Override
-    public boolean renderAsNormalBlock() {
-        return false;
-    }
+	@Override
+	public int getRenderType() {
+		return -1;
+	}
 
-    @Override
-    public int quantityDropped(Random par1Random) {
-        return 0;
-    }
+	@Override
+	public boolean isOpaqueCube() {
+		return false;
+	}
 
-    @Override
-    public int getRenderType() {
-        return -1;
-    }
+	@Override
+	public void onBlockAdded(World world, int i, int j, int k) {
+		if (world.provider.dimensionId != LOTRDimension.MIDDLE_EARTH.dimensionID) {
+			world.setBlockToAir(i, j, k);
+		}
+	}
 
-    @Override
-    public void onBlockAdded(World world, int i, int j, int k) {
-        if(world.provider.dimensionId != LOTRDimension.MIDDLE_EARTH.dimensionID) {
-            world.setBlockToAir(i, j, k);
-        }
-    }
+	@Override
+	public void onEntityCollidedWithBlock(World world, int i, int j, int k, Entity entity) {
+		entity.setInWeb();
+		TileEntity te = world.getTileEntity(i, j, k);
+		if (te instanceof LOTRTileEntityUtumnoPortal) {
+			((LOTRTileEntityUtumnoPortal) te).transferEntity(entity);
+		}
+	}
 
-    @SideOnly(value = Side.CLIENT)
-    @Override
-    public Item getItem(World world, int i, int j, int k) {
-        return Item.getItemById(0);
-    }
+	@Override
+	public int quantityDropped(Random par1Random) {
+		return 0;
+	}
 
-    @SideOnly(value = Side.CLIENT)
-    @Override
-    public IIcon getIcon(int i, int j) {
-        return Blocks.portal.getIcon(i, j);
-    }
+	@SideOnly(value = Side.CLIENT)
+	@Override
+	public void registerBlockIcons(IIconRegister iconregister) {
+	}
 
-    @SideOnly(value = Side.CLIENT)
-    @Override
-    public void registerBlockIcons(IIconRegister iconregister) {
-    }
+	@Override
+	public boolean renderAsNormalBlock() {
+		return false;
+	}
 }

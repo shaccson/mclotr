@@ -1,6 +1,8 @@
-#title:Уведомление о торгах
+# Karseius
+#
+#title:Auction Notice
 #author:{name:nomad_male}
-#types:harnedor,southron,umbar,nomad,gulf
+#types:harnennor,southron,umbar,nomad,gulf
 #reward
 #
-Друзья из ближних и дальних песков! Торги верблюдами приближаются! Большие верблюды, сильные верблюды, быстрые верблюды, красивые верблюды, у нас есть все, на любой вкус и цвет! Приносите свои сбережения и вознаградите себя новым компаньоном, который гарантированно проведет вас по пескам! Приходите в {choose:Ижди-Илель/Изем-Улзуз/Аюкаф-Амам} и присоединяйтесь к праздникам. Вместе с верблюдами!
+Friends from near and far away! Read and rejoice, for the great yearly Camel Auction draws near! Big camels, strong camels, fast camels, beautiful camels, we have them all! Bring your savings and reward yourself with a fine new companion, guaranteed to guide you safely through the sands! Come to {choose:Ijdi-ilel/Izêm-ulzuz/Ayûkaph-amâm} and join the festivities. Camel along!

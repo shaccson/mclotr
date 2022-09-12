@@ -1,2 +1,2 @@
-Как дела? Как дела? Есть ли вещи у тебя?
-#, ну как, у тебя есть $?
+Any luck finding my tools, #?
+I can't continue my work until I have my $.

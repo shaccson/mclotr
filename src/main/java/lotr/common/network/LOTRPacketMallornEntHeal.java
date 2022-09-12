@@ -13,52 +13,50 @@ import net.minecraft.network.PacketBuffer;
 import net.minecraft.world.World;
 
 public class LOTRPacketMallornEntHeal implements IMessage {
-    private int entityID;
-    public NBTTagCompound healingData;
+	public int entityID;
+	public NBTTagCompound healingData;
 
-    public LOTRPacketMallornEntHeal() {
-    }
+	public LOTRPacketMallornEntHeal() {
+	}
 
-    public LOTRPacketMallornEntHeal(int id, NBTTagCompound nbt) {
-        this.entityID = id;
-        this.healingData = nbt;
-    }
+	public LOTRPacketMallornEntHeal(int id, NBTTagCompound nbt) {
+		entityID = id;
+		healingData = nbt;
+	}
 
-    @Override
-    public void toBytes(ByteBuf data) {
-        data.writeInt(this.entityID);
-        try {
-            new PacketBuffer(data).writeNBTTagCompoundToBuffer(this.healingData);
-        }
-        catch(IOException e) {
-            FMLLog.severe("Error writing MEnt healing data");
-            e.printStackTrace();
-        }
-    }
+	@Override
+	public void fromBytes(ByteBuf data) {
+		entityID = data.readInt();
+		try {
+			healingData = new PacketBuffer(data).readNBTTagCompoundFromBuffer();
+		} catch (IOException e) {
+			FMLLog.severe("Error reading MEnt healing data");
+			e.printStackTrace();
+		}
+	}
 
-    @Override
-    public void fromBytes(ByteBuf data) {
-        this.entityID = data.readInt();
-        try {
-            this.healingData = new PacketBuffer(data).readNBTTagCompoundFromBuffer();
-        }
-        catch(IOException e) {
-            FMLLog.severe("Error reading MEnt healing data");
-            e.printStackTrace();
-        }
-    }
+	@Override
+	public void toBytes(ByteBuf data) {
+		data.writeInt(entityID);
+		try {
+			new PacketBuffer(data).writeNBTTagCompoundToBuffer(healingData);
+		} catch (IOException e) {
+			FMLLog.severe("Error writing MEnt healing data");
+			e.printStackTrace();
+		}
+	}
 
-    public static class Handler implements IMessageHandler<LOTRPacketMallornEntHeal, IMessage> {
-        @Override
-        public IMessage onMessage(LOTRPacketMallornEntHeal packet, MessageContext context) {
-            World world = LOTRMod.proxy.getClientWorld();
-            Entity entity = world.getEntityByID(packet.entityID);
-            if(entity instanceof LOTREntityMallornEnt) {
-                LOTREntityMallornEnt ent = (LOTREntityMallornEnt) entity;
-                ent.receiveClientHealing(packet.healingData);
-            }
-            return null;
-        }
-    }
+	public static class Handler implements IMessageHandler<LOTRPacketMallornEntHeal, IMessage> {
+		@Override
+		public IMessage onMessage(LOTRPacketMallornEntHeal packet, MessageContext context) {
+			World world = LOTRMod.proxy.getClientWorld();
+			Entity entity = world.getEntityByID(packet.entityID);
+			if (entity instanceof LOTREntityMallornEnt) {
+				LOTREntityMallornEnt ent = (LOTREntityMallornEnt) entity;
+				ent.receiveClientHealing(packet.healingData);
+			}
+			return null;
+		}
+	}
 
 }

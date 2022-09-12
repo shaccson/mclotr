@@ -9,16 +9,6 @@ import net.minecraft.item.*;
 import net.minecraftforge.oredict.OreDictionary;
 
 public class GenericModHooks {
-	public static void setItemDelagateName(Item item, String name) {
-		RegistryDelegate.Delegate delegate = (RegistryDelegate.Delegate) item.delegate;
-		ReflectionHelper.setPrivateValue(RegistryDelegate.Delegate.class, delegate, (Object) name, "name");
-	}
-
-	public static void setBlockDelagateName(Block block, String name) {
-		RegistryDelegate.Delegate delegate = (RegistryDelegate.Delegate) block.delegate;
-		ReflectionHelper.setPrivateValue(RegistryDelegate.Delegate.class, delegate, (Object) name, "name");
-	}
-
 	public static void removeBlockFromOreDictionary(Block block) {
 		GenericModHooks.removeItemFromOreDictionary(Item.getItemFromBlock(block));
 	}
@@ -51,5 +41,15 @@ public class GenericModHooks {
 		int stackId = GameData.getItemRegistry().getId(registryName);
 		Map stackIdToOreId = (Map) ReflectionHelper.getPrivateValue(OreDictionary.class, null, "stackToId");
 		stackIdToOreId.remove(stackId);
+	}
+
+	public static void setBlockDelagateName(Block block, String name) {
+		RegistryDelegate.Delegate delegate = (RegistryDelegate.Delegate) block.delegate;
+		ReflectionHelper.setPrivateValue(RegistryDelegate.Delegate.class, delegate, (Object) name, "name");
+	}
+
+	public static void setItemDelagateName(Item item, String name) {
+		RegistryDelegate.Delegate delegate = (RegistryDelegate.Delegate) item.delegate;
+		ReflectionHelper.setPrivateValue(RegistryDelegate.Delegate.class, delegate, (Object) name, "name");
 	}
 }

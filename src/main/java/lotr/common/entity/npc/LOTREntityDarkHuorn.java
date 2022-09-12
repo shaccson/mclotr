@@ -8,34 +8,34 @@ import net.minecraft.world.World;
 import net.minecraft.world.biome.BiomeGenBase;
 
 public class LOTREntityDarkHuorn extends LOTREntityHuornBase {
-    public LOTREntityDarkHuorn(World world) {
-        super(world);
-        this.addTargetTasks(true, LOTREntityAINearestAttackableTargetHuorn.class);
-    }
+	public LOTREntityDarkHuorn(World world) {
+		super(world);
+		this.addTargetTasks(true, LOTREntityAINearestAttackableTargetHuorn.class);
+	}
 
-    @Override
-    protected void entityInit() {
-        super.entityInit();
-        this.setTreeType(0);
-    }
+	@Override
+	public void entityInit() {
+		super.entityInit();
+		setTreeType(0);
+	}
 
-    @Override
-    public LOTRFaction getFaction() {
-        return LOTRFaction.DARK_HUORN;
-    }
+	@Override
+	public float getAlignmentBonus() {
+		return 1.0f;
+	}
 
-    @Override
-    public float getAlignmentBonus() {
-        return 1.0f;
-    }
+	@Override
+	public LOTRFaction getFaction() {
+		return LOTRFaction.DARK_HUORN;
+	}
 
-    @Override
-    protected LOTRAchievement getKillAchievement() {
-        return LOTRAchievement.killDarkHuorn;
-    }
+	@Override
+	public LOTRAchievement getKillAchievement() {
+		return LOTRAchievement.killDarkHuorn;
+	}
 
-    @Override
-    protected boolean isTreeHomeBiome(BiomeGenBase biome) {
-        return biome instanceof LOTRBiomeGenOldForest;
-    }
+	@Override
+	public boolean isTreeHomeBiome(BiomeGenBase biome) {
+		return biome instanceof LOTRBiomeGenOldForest;
+	}
 }

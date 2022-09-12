@@ -1,20 +1,22 @@
+# Written by Goran
+#
 #author:{name:dunlending_female}
-#title:Бриг и Сумеречный Лес
+#title:Brieg and the Haunted Wood
 #types:dunland
 #reward
 #
-Давным-давно, когда наш народ еще жил на широких равнинах Юга, жил мальчик по имени Бриг.
+Long ago, when our people still dwelt in the wide plains of the South, there was a boy named Brieg the Curious.
 
-Молодой Бриг всегда задавал вопросы, которые иногда гневили старейшин и доставляли им неприятности. Бриг любил истории и сказки, и была одна сказка, которую он любил больше всего: Сказка о злых днях и сказка о призрачном лесе.
+Young Brieg was always asking questions, which would sometimes anger the village elders, and get him into trouble. But he loved stories and tales, and there was one tale he loved the most: the Tale of the Evil Fays and the Haunted Wood.
 
-Эта сказка-одна из наших древнейших сказок. В этой сказке говориться о призрачном лесу болезненных желтых деревьев, далеко на севере. Лес являлся домом для злых существ, которыми правит злая ведьма. Все, кто попадает под её чары, не могут освободиться.
+This tale is one of our oldest tales. It tells of a haunted forest of sickly yellow trees, far to the North. The forest is home to the Evil Fays, who are ruled by the Great Fay: a wicked witch of terrible power. All who dare enter are ensnared by her spells, never to walk free again.
 
-Но в отличие от большинства мальчиков, Бриг не боялся. И однажды он решил отправиться на север в призрачный лес. Какое безумие привело его туда... Я никогда этого не узнаю.
+But unlike most boys, Brieg wasn't scared. And one day, he decided he would go North, to seek out the Haunted Wood. What madness drove him there... I will never know.
 
-Прошло много месяцев, прежде чем Бриг вернулся в деревню. Когда он это сделал, он не был тем кратким Бригом, которого они знали. Он совсем обезумел!
+Many months passed before Brieg came back to the village. When he did, he was not the same Brieg they had known. He was turned mad!
 
-Хотя он ушел почти на целый год, Бриг поклялся, что его пребывание в лесу длилось всего несколько дней! После своего возвращения он говорил о злых ведьмах и их царстве. Он рассказывал истории о странных деревьях, белых, как кость, с домиками на ветвях, о цветах холодных как падшие звЭзды. Вскоре он был захвачен злыми ведьмами и доставлен к Великой Ведьме. Там, говорят, она наложила на него ужасное заклятие, которое навсегда изменило его!
+Though he had been gone for nigh on a full year, Brieg swore that his stay in the forest had lasted only a few days! He then spoke of the Evil Fays and their realm. He told tales of strange trees white as bone with Fay-houses in their branches, and flowers like cold stars upon the earth. Before long, he was captured by the Evil Fays, and brought to the Great Fay. There, it is said, she put a horrible enchantment on him that changed his ways forever!
 
-Какие ужасные чары наложили на него ведьмы, я не могу себе представить, но ему посчастливилось сбежать. Старейшины, по крайней мере, были убеждены в зле ведьм. Они предупредили своих детей, чтобы они не бродили, как Бриг, в поисках ведьм, иначе они наверняка умрут - или хуже.
+What terrible enchantment the Fays laid on Brieg I cannot imagine, but he was lucky to escape with his life. The Elders, at least, were convinced of the evil of the Fays. They warned their children not to go wandering like Brieg in search of Fays, else they would surely die - or worse.
 
-А что стало с Бригом? Повзрослев, он покинул деревню. Некоторые говорят, что в своем безумии он вернулся в лес с привидениями, и его больше никогда не видели.
+And what became of Brieg, you may wonder? Once he had grown up, he left the village. Some say that in his madness he went back to the Haunted Wood, and was never seen again.

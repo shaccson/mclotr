@@ -3,7 +3,7 @@ package lotr.common.entity;
 import java.util.UUID;
 
 public interface LOTRRandomSkinEntity {
-    UUID getUniqueID();
+	UUID getUniqueID();
 
-    void setUniqueID(UUID var1);
+	void setUniqueID(UUID var1);
 }

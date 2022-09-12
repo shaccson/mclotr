@@ -1,12 +1,12 @@
-Вы предлагаете помочь, #? Вы уже, кажется, довольно зан¤ты.
-Сначала вы должны выполнить свои обещания, #.
-Вы уже обязались помогать другим, #. Вспомни свои обещания!
-Вы уже не заняты?
-я не мог спросить больше о ком-то столь же зан¤том, как ты.
-Вы занятой человек, #. я не могу обремен¤ть тебя больше.
-Не беспокойся, #! я попрошу кого-нибудь еще о помощи.
-Было бы неправильно с моей стороны нести свое бремя на вас, # занятым, как вы.
-Иди и закончи то, что начал! Тогда посмотрим, как мне помочь.
-Нет, #, я не могу попросить тебя о помощи, пока у теб¤ столько незаконченных дел.
-Разве вы уже не обещали помочь другим?
-Вы слишком занят, чтобы помочь мне.
+Are you offering to help, #? You already seem to be rather busy.
+You should make good on your other promises first, #.
+You have already pledged to help others, #. Honour your promises!
+Aren't you already busy?
+I couldn't possibly ask more of someone as busy as yourself.
+You're a busy fellow, #. I can't burden you with more.
+Not to worry, #! I'll ask someone else for help.
+It would not be right of me to load my burdens upon you, #, busy as you are.
+Go and finish what you started! Then we'll see about helping me.
+Well, #, I couldn't ask you for help while you have so much unfinished business.
+Haven't you already promised to help some others?
+You're too busy to help me.

@@ -6,46 +6,52 @@ import net.minecraft.item.ItemStack;
 import net.minecraft.world.World;
 
 public class LOTREntityDwarfWarrior extends LOTREntityDwarf {
-    public LOTREntityDwarfWarrior(World world) {
-        super(world);
-        this.npcShield = LOTRShields.ALIGNMENT_DWARF;
-    }
+	public LOTREntityDwarfWarrior(World world) {
+		super(world);
+		npcShield = LOTRShields.ALIGNMENT_DWARF;
+	}
 
-    @Override
-    public IEntityLivingData onSpawnWithEgg(IEntityLivingData data) {
-        data = super.onSpawnWithEgg(data);
-        int i = this.rand.nextInt(7);
-        if(i == 0) {
-            this.npcItemsInv.setMeleeWeapon(new ItemStack(LOTRMod.swordDwarven));
-        }
-        else if(i == 1 || i == 2) {
-            this.npcItemsInv.setMeleeWeapon(new ItemStack(LOTRMod.battleaxeDwarven));
-        }
-        else if(i == 3 || i == 4) {
-            this.npcItemsInv.setMeleeWeapon(new ItemStack(LOTRMod.hammerDwarven));
-        }
-        else if(i == 5) {
-            this.npcItemsInv.setMeleeWeapon(new ItemStack(LOTRMod.mattockDwarven));
-        }
-        else if(i == 6) {
-            this.npcItemsInv.setMeleeWeapon(new ItemStack(LOTRMod.pikeDwarven));
-        }
-        if(this.rand.nextInt(6) == 0) {
-            this.npcItemsInv.setSpearBackup(this.npcItemsInv.getMeleeWeapon());
-            this.npcItemsInv.setMeleeWeapon(new ItemStack(LOTRMod.spearDwarven));
-        }
-        this.npcItemsInv.setIdleItem(this.npcItemsInv.getMeleeWeapon());
-        this.setCurrentItemOrArmor(1, new ItemStack(LOTRMod.bootsDwarven));
-        this.setCurrentItemOrArmor(2, new ItemStack(LOTRMod.legsDwarven));
-        this.setCurrentItemOrArmor(3, new ItemStack(LOTRMod.bodyDwarven));
-        if(this.rand.nextInt(10) != 0) {
-            this.setCurrentItemOrArmor(4, new ItemStack(LOTRMod.helmetDwarven));
-        }
-        return data;
-    }
+	@Override
+	public float getAlignmentBonus() {
+		return 2.0f;
+	}
 
-    @Override
-    public float getAlignmentBonus() {
-        return 2.0f;
-    }
+	@Override
+	public IEntityLivingData onSpawnWithEgg(IEntityLivingData data) {
+		data = super.onSpawnWithEgg(data);
+		int i = rand.nextInt(7);
+		switch (i) {
+		case 0:
+			npcItemsInv.setMeleeWeapon(new ItemStack(LOTRMod.swordDwarven));
+			break;
+		case 1:
+		case 2:
+			npcItemsInv.setMeleeWeapon(new ItemStack(LOTRMod.battleaxeDwarven));
+			break;
+		case 3:
+		case 4:
+			npcItemsInv.setMeleeWeapon(new ItemStack(LOTRMod.hammerDwarven));
+			break;
+		case 5:
+			npcItemsInv.setMeleeWeapon(new ItemStack(LOTRMod.mattockDwarven));
+			break;
+		case 6:
+			npcItemsInv.setMeleeWeapon(new ItemStack(LOTRMod.pikeDwarven));
+			break;
+		default:
+			break;
+		}
+		if (rand.nextInt(6) == 0) {
+			npcItemsInv.setSpearBackup(npcItemsInv.getMeleeWeapon());
+			npcItemsInv.setMeleeWeapon(new ItemStack(LOTRMod.spearDwarven));
+		}
+		npcItemsInv.setIdleItem(npcItemsInv.getMeleeWeapon());
+		setCurrentItemOrArmor(1, new ItemStack(LOTRMod.bootsDwarven));
+		setCurrentItemOrArmor(2, new ItemStack(LOTRMod.legsDwarven));
+		setCurrentItemOrArmor(3, new ItemStack(LOTRMod.bodyDwarven));
+		if (rand.nextInt(10) != 0) {
+			setCurrentItemOrArmor(4, new ItemStack(LOTRMod.helmetDwarven));
+		}
+		return data;
+	}
 }

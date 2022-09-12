@@ -3,11 +3,11 @@ package lotr.common.fellowship;
 import java.util.UUID;
 
 public class LOTRFellowshipInvite {
-    public final UUID fellowshipID;
-    public final UUID inviterID;
+	public UUID fellowshipID;
+	public UUID inviterID;
 
-    public LOTRFellowshipInvite(UUID fs, UUID inviter) {
-        this.fellowshipID = fs;
-        this.inviterID = inviter;
-    }
+	public LOTRFellowshipInvite(UUID fs, UUID inviter) {
+		fellowshipID = fs;
+		inviterID = inviter;
+	}
 }

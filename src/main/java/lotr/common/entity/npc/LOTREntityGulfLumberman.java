@@ -6,30 +6,30 @@ import net.minecraft.item.ItemStack;
 import net.minecraft.world.World;
 
 public class LOTREntityGulfLumberman extends LOTREntityGulfTrader {
-    public LOTREntityGulfLumberman(World world) {
-        super(world);
-    }
+	public LOTREntityGulfLumberman(World world) {
+		super(world);
+	}
 
-    @Override
-    public LOTRTradeEntries getBuyPool() {
-        return LOTRTradeEntries.GULF_LUMBERMAN_BUY;
-    }
+	@Override
+	public LOTRTradeEntries getBuyPool() {
+		return LOTRTradeEntries.GULF_LUMBERMAN_BUY;
+	}
 
-    @Override
-    public LOTRTradeEntries getSellPool() {
-        return LOTRTradeEntries.GULF_LUMBERMAN_SELL;
-    }
+	@Override
+	public LOTRTradeEntries getSellPool() {
+		return LOTRTradeEntries.GULF_LUMBERMAN_SELL;
+	}
 
-    @Override
-    public void setupNPCGender() {
-        this.familyInfo.setMale(true);
-    }
+	@Override
+	public IEntityLivingData onSpawnWithEgg(IEntityLivingData data) {
+		data = super.onSpawnWithEgg(data);
+		npcItemsInv.setMeleeWeapon(new ItemStack(LOTRMod.axeBronze));
+		npcItemsInv.setIdleItem(npcItemsInv.getMeleeWeapon());
+		return data;
+	}
 
-    @Override
-    public IEntityLivingData onSpawnWithEgg(IEntityLivingData data) {
-        data = super.onSpawnWithEgg(data);
-        this.npcItemsInv.setMeleeWeapon(new ItemStack(LOTRMod.axeBronze));
-        this.npcItemsInv.setIdleItem(this.npcItemsInv.getMeleeWeapon());
-        return data;
-    }
+	@Override
+	public void setupNPCGender() {
+		familyInfo.setMale(true);
+	}
 }

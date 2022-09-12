@@ -4,107 +4,107 @@ import lotr.common.LOTRPlayerData;
 import net.minecraft.nbt.NBTTagCompound;
 
 public class LOTRFactionData {
-    private LOTRPlayerData playerData;
-    private LOTRFaction theFaction;
-    private int npcsKilled;
-    private int enemiesKilled;
-    private int tradeCount;
-    private int hireCount;
-    private int miniQuestsCompleted;
-    private float conquestEarned;
-    private boolean hasConquestHorn;
+	public LOTRPlayerData playerData;
+	public LOTRFaction theFaction;
+	public int npcsKilled;
+	public int enemiesKilled;
+	public int tradeCount;
+	public int hireCount;
+	public int miniQuestsCompleted;
+	public float conquestEarned;
+	public boolean hasConquestHorn;
 
-    public LOTRFactionData(LOTRPlayerData data, LOTRFaction faction) {
-        this.playerData = data;
-        this.theFaction = faction;
-    }
+	public LOTRFactionData(LOTRPlayerData data, LOTRFaction faction) {
+		playerData = data;
+		theFaction = faction;
+	}
 
-    public void save(NBTTagCompound nbt) {
-        nbt.setInteger("NPCKill", this.npcsKilled);
-        nbt.setInteger("EnemyKill", this.enemiesKilled);
-        nbt.setInteger("Trades", this.tradeCount);
-        nbt.setInteger("Hired", this.hireCount);
-        nbt.setInteger("MiniQuests", this.miniQuestsCompleted);
-        if(this.conquestEarned != 0.0f) {
-            nbt.setFloat("Conquest", this.conquestEarned);
-        }
-        nbt.setBoolean("ConquestHorn", this.hasConquestHorn);
-    }
+	public void addConquest(float f) {
+		conquestEarned += f;
+		updateFactionData();
+	}
 
-    public void load(NBTTagCompound nbt) {
-        this.npcsKilled = nbt.getInteger("NPCKill");
-        this.enemiesKilled = nbt.getInteger("EnemyKill");
-        this.tradeCount = nbt.getInteger("Trades");
-        this.hireCount = nbt.getInteger("Hired");
-        this.miniQuestsCompleted = nbt.getInteger("MiniQuests");
-        this.conquestEarned = nbt.getFloat("Conquest");
-        this.hasConquestHorn = nbt.getBoolean("ConquestHorn");
-    }
+	public void addEnemyKill() {
+		++enemiesKilled;
+		updateFactionData();
+	}
 
-    private void updateFactionData() {
-        this.playerData.updateFactionData(this.theFaction, this);
-    }
+	public void addHire() {
+		++hireCount;
+		updateFactionData();
+	}
 
-    public int getNPCsKilled() {
-        return this.npcsKilled;
-    }
+	public void addNPCKill() {
+		++npcsKilled;
+		updateFactionData();
+	}
 
-    public void addNPCKill() {
-        ++this.npcsKilled;
-        this.updateFactionData();
-    }
+	public void addTrade() {
+		++tradeCount;
+		updateFactionData();
+	}
 
-    public int getEnemiesKilled() {
-        return this.enemiesKilled;
-    }
+	public void completeMiniQuest() {
+		++miniQuestsCompleted;
+		updateFactionData();
+	}
 
-    public void addEnemyKill() {
-        ++this.enemiesKilled;
-        this.updateFactionData();
-    }
+	public float getConquestEarned() {
+		return conquestEarned;
+	}
 
-    public int getTradeCount() {
-        return this.tradeCount;
-    }
+	public int getEnemiesKilled() {
+		return enemiesKilled;
+	}
 
-    public void addTrade() {
-        ++this.tradeCount;
-        this.updateFactionData();
-    }
+	public int getHireCount() {
+		return hireCount;
+	}
 
-    public int getHireCount() {
-        return this.hireCount;
-    }
+	public int getMiniQuestsCompleted() {
+		return miniQuestsCompleted;
+	}
 
-    public void addHire() {
-        ++this.hireCount;
-        this.updateFactionData();
-    }
+	public int getNPCsKilled() {
+		return npcsKilled;
+	}
 
-    public int getMiniQuestsCompleted() {
-        return this.miniQuestsCompleted;
-    }
+	public int getTradeCount() {
+		return tradeCount;
+	}
 
-    public void completeMiniQuest() {
-        ++this.miniQuestsCompleted;
-        this.updateFactionData();
-    }
+	public boolean hasConquestHorn() {
+		return hasConquestHorn;
+	}
 
-    public float getConquestEarned() {
-        return this.conquestEarned;
-    }
+	public void load(NBTTagCompound nbt) {
+		npcsKilled = nbt.getInteger("NPCKill");
+		enemiesKilled = nbt.getInteger("EnemyKill");
+		tradeCount = nbt.getInteger("Trades");
+		hireCount = nbt.getInteger("Hired");
+		miniQuestsCompleted = nbt.getInteger("MiniQuests");
+		conquestEarned = nbt.getFloat("Conquest");
+		hasConquestHorn = nbt.getBoolean("ConquestHorn");
+	}
 
-    public void addConquest(float f) {
-        this.conquestEarned += f;
-        this.updateFactionData();
-    }
+	public void save(NBTTagCompound nbt) {
+		nbt.setInteger("NPCKill", npcsKilled);
+		nbt.setInteger("EnemyKill", enemiesKilled);
+		nbt.setInteger("Trades", tradeCount);
+		nbt.setInteger("Hired", hireCount);
+		nbt.setInteger("MiniQuests", miniQuestsCompleted);
+		if (conquestEarned != 0.0f) {
+			nbt.setFloat("Conquest", conquestEarned);
+		}
+		nbt.setBoolean("ConquestHorn", hasConquestHorn);
+	}
 
-    public boolean hasConquestHorn() {
-        return this.hasConquestHorn;
-    }
+	public void takeConquestHorn() {
+		hasConquestHorn = true;
+		updateFactionData();
+	}
 
-    public void takeConquestHorn() {
-        this.hasConquestHorn = true;
-        this.updateFactionData();
-    }
+	public void updateFactionData() {
+		playerData.updateFactionData(theFaction, this);
+	}
 }

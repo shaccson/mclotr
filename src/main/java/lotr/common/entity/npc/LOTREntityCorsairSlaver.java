@@ -8,57 +8,57 @@ import net.minecraft.item.ItemStack;
 import net.minecraft.world.World;
 
 public class LOTREntityCorsairSlaver extends LOTREntityCorsair implements LOTRUnitTradeable {
-    public LOTREntityCorsairSlaver(World world) {
-        super(world);
-        this.addTargetTasks(false);
-    }
+	public LOTREntityCorsairSlaver(World world) {
+		super(world);
+		this.addTargetTasks(false);
+	}
 
-    @Override
-    public IEntityLivingData onSpawnWithEgg(IEntityLivingData data) {
-        data = super.onSpawnWithEgg(data);
-        this.npcItemsInv.setIdleItem(new ItemStack(LOTRMod.brandingIron));
-        this.setCurrentItemOrArmor(4, null);
-        return data;
-    }
+	@Override
+	public boolean canTradeWith(EntityPlayer entityplayer) {
+		return LOTRLevelData.getData(entityplayer).getAlignment(getFaction()) >= 0.0f && isFriendly(entityplayer);
+	}
 
-    @Override
-    public float getAlignmentBonus() {
-        return 2.0f;
-    }
+	@Override
+	public float getAlignmentBonus() {
+		return 2.0f;
+	}
 
-    @Override
-    public LOTRUnitTradeEntries getUnits() {
-        return LOTRUnitTradeEntries.CORSAIR_SLAVER;
-    }
+	@Override
+	public String getSpeechBank(EntityPlayer entityplayer) {
+		if (isFriendly(entityplayer)) {
+			if (canTradeWith(entityplayer)) {
+				return "nearHarad/umbar/corsairSlaver/friendly";
+			}
+			return "nearHarad/umbar/corsairSlaver/neutral";
+		}
+		return "nearHarad/umbar/corsair/hostile";
+	}
 
-    @Override
-    public LOTRInvasions getWarhorn() {
-        return null;
-    }
+	@Override
+	public LOTRUnitTradeEntries getUnits() {
+		return LOTRUnitTradeEntries.CORSAIR_SLAVER;
+	}
 
-    @Override
-    public boolean canTradeWith(EntityPlayer entityplayer) {
-        return LOTRLevelData.getData(entityplayer).getAlignment(this.getFaction()) >= 0.0f && this.isFriendly(entityplayer);
-    }
+	@Override
+	public LOTRInvasions getWarhorn() {
+		return null;
+	}
 
-    @Override
-    public void onUnitTrade(EntityPlayer entityplayer) {
-        LOTRLevelData.getData(entityplayer).addAchievement(LOTRAchievement.hireHaradSlave);
-    }
+	@Override
+	public IEntityLivingData onSpawnWithEgg(IEntityLivingData data) {
+		data = super.onSpawnWithEgg(data);
+		npcItemsInv.setIdleItem(new ItemStack(LOTRMod.brandingIron));
+		setCurrentItemOrArmor(4, null);
+		return data;
+	}
 
-    @Override
-    public boolean shouldTraderRespawn() {
-        return true;
-    }
+	@Override
+	public void onUnitTrade(EntityPlayer entityplayer) {
+		LOTRLevelData.getData(entityplayer).addAchievement(LOTRAchievement.hireHaradSlave);
+	}
 
-    @Override
-    public String getSpeechBank(EntityPlayer entityplayer) {
-        if(this.isFriendly(entityplayer)) {
-            if(this.canTradeWith(entityplayer)) {
-                return "nearHarad/umbar/corsairSlaver/friendly";
-            }
-            return "nearHarad/umbar/corsairSlaver/neutral";
-        }
-        return "nearHarad/umbar/corsair/hostile";
-    }
+	@Override
+	public boolean shouldTraderRespawn() {
+		return true;
+	}
 }

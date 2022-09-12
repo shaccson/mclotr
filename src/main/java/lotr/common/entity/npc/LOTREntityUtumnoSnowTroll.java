@@ -5,18 +5,18 @@ import lotr.common.fac.LOTRFaction;
 import net.minecraft.world.World;
 
 public class LOTREntityUtumnoSnowTroll extends LOTREntitySnowTroll {
-    public LOTREntityUtumnoSnowTroll(World world) {
-        super(world);
-        this.isChilly = true;
-    }
+	public LOTREntityUtumnoSnowTroll(World world) {
+		super(world);
+		isChilly = true;
+	}
 
-    @Override
-    public LOTRFaction getFaction() {
-        return LOTRFaction.UTUMNO;
-    }
+	@Override
+	public LOTRFaction getFaction() {
+		return LOTRFaction.UTUMNO;
+	}
 
-    @Override
-    protected LOTRAchievement getKillAchievement() {
-        return LOTRAchievement.killUtumnoTroll;
-    }
+	@Override
+	public LOTRAchievement getKillAchievement() {
+		return LOTRAchievement.killUtumnoTroll;
+	}
 }

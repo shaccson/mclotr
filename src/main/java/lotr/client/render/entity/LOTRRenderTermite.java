@@ -8,20 +8,20 @@ import net.minecraft.entity.*;
 import net.minecraft.util.ResourceLocation;
 
 public class LOTRRenderTermite extends RenderLiving {
-    private static ResourceLocation texture = new ResourceLocation("lotr:mob/termite.png");
+	public static ResourceLocation texture = new ResourceLocation("lotr:mob/termite.png");
 
-    public LOTRRenderTermite() {
-        super(new LOTRModelTermite(), 0.2f);
-    }
+	public LOTRRenderTermite() {
+		super(new LOTRModelTermite(), 0.2f);
+	}
 
-    @Override
-    protected ResourceLocation getEntityTexture(Entity entity) {
-        return texture;
-    }
+	@Override
+	public ResourceLocation getEntityTexture(Entity entity) {
+		return texture;
+	}
 
-    @Override
-    protected void preRenderCallback(EntityLivingBase entity, float f) {
-        float scale = 0.25f;
-        GL11.glScalef(scale, scale, scale);
-    }
+	@Override
+	public void preRenderCallback(EntityLivingBase entity, float f) {
+		float scale = 0.25f;
+		GL11.glScalef(scale, scale, scale);
+	}
 }

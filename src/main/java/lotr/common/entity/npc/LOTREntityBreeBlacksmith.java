@@ -7,76 +7,73 @@ import net.minecraft.init.Items;
 import net.minecraft.item.ItemStack;
 import net.minecraft.world.World;
 
-public class LOTREntityBreeBlacksmith
-extends LOTREntityBreeMan
-implements LOTRTradeable.Smith {
-    public LOTREntityBreeBlacksmith(World world) {
-        super(world);
-        this.addTargetTasks(false);
-    }
+public class LOTREntityBreeBlacksmith extends LOTREntityBreeMan implements LOTRTradeable.Smith {
+	public LOTREntityBreeBlacksmith(World world) {
+		super(world);
+		this.addTargetTasks(false);
+	}
 
-    @Override
-    public LOTRTradeEntries getBuyPool() {
-        return LOTRTradeEntries.BREE_BLACKSMITH_BUY;
-    }
+	@Override
+	public void applyEntityAttributes() {
+		super.applyEntityAttributes();
+		getEntityAttribute(SharedMonsterAttributes.maxHealth).setBaseValue(25.0);
+	}
 
-    @Override
-    public LOTRTradeEntries getSellPool() {
-        return LOTRTradeEntries.BREE_BLACKSMITH_SELL;
-    }
+	@Override
+	public boolean canTradeWith(EntityPlayer entityplayer) {
+		return LOTRLevelData.getData(entityplayer).getAlignment(getFaction()) >= 50.0f && isFriendlyAndAligned(entityplayer);
+	}
 
-    @Override
-    public void setupNPCGender() {
-        this.familyInfo.setMale(true);
-    }
+	@Override
+	public void dropFewItems(boolean flag, int i) {
+		super.dropFewItems(flag, i);
+		int ingots = 1 + rand.nextInt(3) + rand.nextInt(i + 1);
+		for (int l = 0; l < ingots; ++l) {
+			dropItem(Items.iron_ingot, 1);
+		}
+	}
 
-    @Override
-    protected void applyEntityAttributes() {
-        super.applyEntityAttributes();
-        this.getEntityAttribute(SharedMonsterAttributes.maxHealth).setBaseValue(25.0);
-    }
+	@Override
+	public float getAlignmentBonus() {
+		return 2.0f;
+	}
 
-    @Override
-    public IEntityLivingData onSpawnWithEgg(IEntityLivingData data) {
-        data = super.onSpawnWithEgg(data);
-        this.npcItemsInv.setMeleeWeapon(new ItemStack(LOTRMod.blacksmithHammer));
-        this.npcItemsInv.setIdleItem(this.npcItemsInv.getMeleeWeapon());
-        return data;
-    }
+	@Override
+	public LOTRTradeEntries getBuyPool() {
+		return LOTRTradeEntries.BREE_BLACKSMITH_BUY;
+	}
 
-    @Override
-    public float getAlignmentBonus() {
-        return 2.0f;
-    }
+	@Override
+	public LOTRTradeEntries getSellPool() {
+		return LOTRTradeEntries.BREE_BLACKSMITH_SELL;
+	}
 
-    @Override
-    protected void dropFewItems(boolean flag, int i) {
-        super.dropFewItems(flag, i);
-        int ingots = 1 + this.rand.nextInt(3) + this.rand.nextInt(i + 1);
-        for (int l = 0; l < ingots; ++l) {
-            this.dropItem(Items.iron_ingot, 1);
-        }
-    }
+	@Override
+	public String getSpeechBank(EntityPlayer entityplayer) {
+		if (isFriendlyAndAligned(entityplayer)) {
+			if (canTradeWith(entityplayer)) {
+				return "bree/blacksmith/friendly";
+			}
+			return "bree/blacksmith/neutral";
+		}
+		return "bree/blacksmith/hostile";
+	}
 
-    @Override
-    public boolean canTradeWith(EntityPlayer entityplayer) {
-        return LOTRLevelData.getData(entityplayer).getAlignment(this.getFaction()) >= 50.0f && this.isFriendlyAndAligned(entityplayer);
-    }
+	@Override
+	public void onPlayerTrade(EntityPlayer entityplayer, LOTRTradeEntries.TradeType type, ItemStack itemstack) {
+		LOTRLevelData.getData(entityplayer).addAchievement(LOTRAchievement.tradeBreeBlacksmith);
+	}
 
-    @Override
-    public void onPlayerTrade(EntityPlayer entityplayer, LOTRTradeEntries.TradeType type, ItemStack itemstack) {
-        LOTRLevelData.getData(entityplayer).addAchievement(LOTRAchievement.tradeBreeBlacksmith);
-    }
+	@Override
+	public IEntityLivingData onSpawnWithEgg(IEntityLivingData data) {
+		data = super.onSpawnWithEgg(data);
+		npcItemsInv.setMeleeWeapon(new ItemStack(LOTRMod.blacksmithHammer));
+		npcItemsInv.setIdleItem(npcItemsInv.getMeleeWeapon());
+		return data;
+	}
 
-    @Override
-    public String getSpeechBank(EntityPlayer entityplayer) {
-        if (this.isFriendlyAndAligned(entityplayer)) {
-            if (this.canTradeWith(entityplayer)) {
-                return "bree/blacksmith/friendly";
-            }
-            return "bree/blacksmith/neutral";
-        }
-        return "bree/blacksmith/hostile";
-    }
+	@Override
+	public void setupNPCGender() {
+		familyInfo.setMale(true);
+	}
 }
-

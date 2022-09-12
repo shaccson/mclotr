@@ -1,24 +1,23 @@
-Добро пожаловать, путник. Что привело Вас в эти земли?
-Привет, # с Севера.
-Добро пожаловать во владение Харад.
-Вы проделали долгий путь, #.
-Что Вы ищете? Союза, торговли или войны?
-Не часто встретишь в наших землях народ с Северо-запада.
-Вы друг Харадримов или пришли искать ссоры?
-Будем надеяться Вы не друг Гондора, #.
-Впервые мы, люди Харада, приветствуем людей с Севера.
-Как Вы сюда попали, #, и зачем?
-Мы не приветствуем рабов развращённого Гондора в наших землях. Я надеюсь, что Вы не служите Гондору, #!
-Я видел всего несколько людей с Севера в течение всей моей жизни.
-Хотите помочь нам, чтобы выступить вместе войной против Гондора?
-Я бы поприветствовал Вас, #, но я не доверяю путешественникам с Севера.
-Я надеюсь, что Вы не друг Дунэдайн, #. Хотя, если бы Вы были оттуда, Вы были бы просто выжженными солнцем костьми...
-Добро пожаловать, #, в земли, которые называют Ближний Харад.
-Это ли не удивительно, что Вы в одиночку из Севера пересекли Великую пустыню и выжили.
-А Вы далеко продвинулись, #.
-Вы служите Повелителю Мордора, или мерзким гондорцам?
-Добро пожаловать в наши тёплые края, путешественник с севера.
-Что за вести Вы принесли нам с севера?
-Вы должно быть действительно благословенны, раз избежали гнева Великой пустыни! Добро пожаловать!
-Добро пожаловать на наши земли, путешественник.
-Я не видел людей с севера уже очень много лет.
+I see you too are a friend of the great Eye.
+The Lord of the Black Land shall come to rule the earth. Once I understood this, #, the way forward was clear.
+Hail, #. Do you come to ally yourself with Umbar?
+In Gondor, they speak much ill of the Haradrim. Not a word of it is true.
+My homeland of Gondor was once a great kingdom, but today the people are weak and foolish.
+These Southrons are sure to win the coming war. Only a fool would deny it.
+In the service of the lords of Harad I have earned riches beyond all my dreams.
+The Lord Sauron promised wealth and glory. What man would have refused it?
+Umbar was a great city, once, before the Kings of Gondor let it fall into ruin.
+The city of Umbar is the true heir to Númenor's glory, #. Not old, foolish Gondor.
+Umbar was once a mighty realm of Númenor. King Ar-Pharazôn himself once walked here.
+I was once a poor soldier in the service of the White City.
+There are many lies told about the Southrons, and about the great Lord Sauron. One must trust to one's wisdom, #.
+The lords of Umbar are generous, #, as is the mighty one whom they serve.
+Welcome to Umbar, #. It is a most pleasant land.
+Before I came into the service of Umbar, I was a man of Gondor... blind, and foolish, just like all the others.
+Lord Sauron the Great is generous, #. He will not forget his loyal servants.
+Oh, how I wish that more of my countrymen would see the true way of the world.
+When the war is done, we Men of Umbar shall restore the White City to its ancient glory.
+In Gondor, they call me deserter, traitor, they curse my name. But I care not, for here I have earned treasures beyond their imagining.
+The lords of Gondor fear the might of the South - and with good cause.
+The lords of Gondor have put a hefty price upon my head.
+It is in Umbar that the true legacy of Númenor continues.

@@ -1,2 +1,2 @@
-Ну что, как продвигается заказ?
-#, ну как, убил $?
+Have you killed the $ you were tasked with?
+What's the state of the Orc advancements, #?

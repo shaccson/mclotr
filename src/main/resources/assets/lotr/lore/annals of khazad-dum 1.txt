@@ -1,12 +1,12 @@
-#title:Анналы  Кхазад-дума, 1 часть
-#author:{name:dwarf_male} из Эребора
+#title:Annals of Khazad-dûm, Volume I
+#author:{name:dwarf_female} of Erebor
 #types:durins_folk,dale,rivendell,blue_mountains
 #reward
 #
-Давным-давно, в эпоху давно потерянную и забытую, королевство Кхазад-Дум было самой великой твердыней в Средиземье. Это были золотые дни нашего падшего города, и они описаны здесь.
+Long ago, in an age now forgotten and lost to time, the kingdom of Khazad-dûm was the mightiest realm in all Middle-earth. Those were the golden days of our fallen city, and are described herein.
 
-После ужасных катастроф первой эпохи и потопления Белерианда многие гномы из Синих гор переселились в великие чертоги Кхазад-Дума. Они принесли с собой много полезных чертежей и знаний, чтобы обогатить наш город. Наш город процветал в те дни, это было время пика славы и величия Кхазад-Дума.
+After the terrible catastrophes of the First Age, and the drowning of the Elder West, many of our kin from the Blue Mountains migrated to our great halls in Khazad-dûm. They brought with them much skill, craft, and lore, to enrich our city. Our people prospered greatly in those days, during which, it is said, Khazad-dûm reached the height of its glory and magnificence.
 
-Прошло несколько лет, и пустые земли к западу от гор были заселены высшими эльфами запада, которые спасались от великого потопа. Сначала мы были подозрительны,н о вскоре наши народы подружились; это была сильная дружба эльфов с гномами, которой раньше никогда не видели и сейчас вряд ли найдут. Вместе наши королевства росли и процветали. Эльфийский король Келебримбор работал с Нарви, великим мастером нашего народа, и они создали много прекрасного вместе.
+Some years passed, and the empty lands of Hollin west of the Mountains were settled by Deep-elves of the West, fleeing the ruin of their sunken realms. At first we were suspicious, but our peoples soon came to befriend one another; there was a friendship of Elves and Dwarves of a kind never seen before, nor in the many ages since. Together, our kingdoms grew and prospered. The Elven King Celebrimbor worked with Narvi, a great craftsman of our people, and they created many wonders together.
 
-Именно в это время наша великая цель была достигнута: мы прорубили горы с востока на запад, соединяя дикие земли с путынными землями.
+It was at this time that the great purpose of our toiling and tunnelling was achieved: at long last, the delvings of Khazad-dûm traversed the Mountains from East to West, connecting the wide regions of Wilderland and the Lone-lands.

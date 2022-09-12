@@ -5,31 +5,31 @@ import net.minecraft.entity.*;
 import net.minecraft.util.ResourceLocation;
 
 public class LOTRRenderWickedDwarf extends LOTRRenderDwarf {
-    private static LOTRRandomSkins wickedSkinsMale;
-    private static final ResourceLocation apronTexture;
+	public static LOTRRandomSkins wickedSkinsMale;
+	public static ResourceLocation apronTexture;
 
-    public LOTRRenderWickedDwarf() {
-        wickedSkinsMale = LOTRRandomSkins.loadSkinsList("lotr:mob/dwarf/wicked_male");
-    }
+	static {
+		apronTexture = new ResourceLocation("lotr:mob/dwarf/wicked_apron.png");
+	}
 
-    @Override
-    public ResourceLocation getEntityTexture(Entity entity) {
-        LOTREntityDwarf dwarf = (LOTREntityDwarf) entity;
-        return wickedSkinsMale.getRandomSkin(dwarf);
-    }
+	public LOTRRenderWickedDwarf() {
+		wickedSkinsMale = LOTRRandomSkins.loadSkinsList("lotr:mob/dwarf/wicked_male");
+	}
 
-    @Override
-    public int shouldRenderPass(EntityLiving entity, int pass, float f) {
-        LOTREntityDwarf dwarf = (LOTREntityDwarf) entity;
-        if(pass == 1 && dwarf.getEquipmentInSlot(3) == null) {
-            this.setRenderPassModel(this.standardRenderPassModel);
-            this.bindTexture(apronTexture);
-            return 1;
-        }
-        return super.shouldRenderPass(entity, pass, f);
-    }
+	@Override
+	public ResourceLocation getEntityTexture(Entity entity) {
+		LOTREntityDwarf dwarf = (LOTREntityDwarf) entity;
+		return wickedSkinsMale.getRandomSkin(dwarf);
+	}
 
-    static {
-        apronTexture = new ResourceLocation("lotr:mob/dwarf/wicked_apron.png");
-    }
+	@Override
+	public int shouldRenderPass(EntityLiving entity, int pass, float f) {
+		LOTREntityDwarf dwarf = (LOTREntityDwarf) entity;
+		if (pass == 1 && dwarf.getEquipmentInSlot(3) == null) {
+			setRenderPassModel(standardRenderPassModel);
+			bindTexture(apronTexture);
+			return 1;
+		}
+		return super.shouldRenderPass(entity, pass, f);
+	}
 }

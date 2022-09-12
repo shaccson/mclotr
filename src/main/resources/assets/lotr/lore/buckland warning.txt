@@ -1,8 +1,10 @@
-#title:Предупреждение для всех Брендибаков
-#author:Ширифф {name:hobbit_male} {name:hobbit_surname}
-#types:shire
+#written by Boost the Cat
+#
+#title:A Warning to All Bucklanders
+#author:Shirriff {name:hobbit_male} {name:hobbit_surname}
+#types:shire,bree
 #reward
 #
-К нам присылали {choose:многократные/участившиеся} сообщения о пропавших без вести лицах за последнее время. Пропавших в последний раз {choose:увидели/узрели} входящими в старый лес.
+We have had {choose:multiple/several/a great many} reported Missing Person incidents of late, the subjects of which are all {choose:stated/said/rumoured} to have last been {choose:seen/sighted} entering the Old Forest.
 
-Все мы {choose:знаем/очень хорошо знаем}, что {choose:Старый Лес/Лес} {choose:совершенно дикий/очень опасный}, деревья в лесу {choose:ходячие/злые}, и {choose:не надо/не нужно} входить в лес при любых обстоятельствах. Если {choose:кто-то/кто угодно} войдет в лес, вы должны сообщить ширрифу {choose:сразу/вмиг}.
+As we {choose:are all aware/all very well know}, the {choose:Old Forest/Forest} is {choose:quite wild/very dangerous}, its trees {choose:awake/angry}, and it is {choose:never/not} to be entered, under any circumstances. If you should see {choose:someone/a Hobbit/anyone} entering the Forest, you must alert the Shirriffs {choose:immediately/at once}.

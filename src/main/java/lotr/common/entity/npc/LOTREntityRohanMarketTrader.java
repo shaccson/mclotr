@@ -6,46 +6,45 @@ import net.minecraft.item.ItemStack;
 import net.minecraft.world.World;
 
 public abstract class LOTREntityRohanMarketTrader extends LOTREntityRohanMan implements LOTRTradeable {
-    public LOTREntityRohanMarketTrader(World world) {
-        super(world);
-        this.addTargetTasks(false);
-    }
+	public LOTREntityRohanMarketTrader(World world) {
+		super(world);
+		this.addTargetTasks(false);
+	}
 
-    @Override
-    public void onAttackModeChange(LOTREntityNPC.AttackMode mode, boolean mounted) {
-        if(mode == LOTREntityNPC.AttackMode.IDLE) {
-            this.setCurrentItemOrArmor(0, this.npcItemsInv.getIdleItem());
-        }
-        else {
-            this.setCurrentItemOrArmor(0, this.npcItemsInv.getMeleeWeapon());
-        }
-    }
+	@Override
+	public boolean canTradeWith(EntityPlayer entityplayer) {
+		return LOTRLevelData.getData(entityplayer).getAlignment(getFaction()) >= 0.0f && isFriendly(entityplayer);
+	}
 
-    @Override
-    public float getAlignmentBonus() {
-        return 2.0f;
-    }
+	@Override
+	public float getAlignmentBonus() {
+		return 2.0f;
+	}
 
-    @Override
-    public boolean canTradeWith(EntityPlayer entityplayer) {
-        return LOTRLevelData.getData(entityplayer).getAlignment(this.getFaction()) >= 0.0f && this.isFriendly(entityplayer);
-    }
+	@Override
+	public String getSpeechBank(EntityPlayer entityplayer) {
+		if (isFriendly(entityplayer)) {
+			return "rohan/marketTrader/friendly";
+		}
+		return "rohan/marketTrader/hostile";
+	}
 
-    @Override
-    public void onPlayerTrade(EntityPlayer entityplayer, LOTRTradeEntries.TradeType type, ItemStack itemstack) {
-        LOTRLevelData.getData(entityplayer).addAchievement(LOTRAchievement.tradeRohanMarketTrader);
-    }
+	@Override
+	public void onAttackModeChange(LOTREntityNPC.AttackMode mode, boolean mounted) {
+		if (mode == LOTREntityNPC.AttackMode.IDLE) {
+			setCurrentItemOrArmor(0, npcItemsInv.getIdleItem());
+		} else {
+			setCurrentItemOrArmor(0, npcItemsInv.getMeleeWeapon());
+		}
+	}
 
-    @Override
-    public boolean shouldTraderRespawn() {
-        return true;
-    }
+	@Override
+	public void onPlayerTrade(EntityPlayer entityplayer, LOTRTradeEntries.TradeType type, ItemStack itemstack) {
+		LOTRLevelData.getData(entityplayer).addAchievement(LOTRAchievement.tradeRohanMarketTrader);
+	}
 
-    @Override
-    public String getSpeechBank(EntityPlayer entityplayer) {
-        if(this.isFriendly(entityplayer)) {
-            return "rohan/marketTrader/friendly";
-        }
-        return "rohan/marketTrader/hostile";
-    }
+	@Override
+	public boolean shouldTraderRespawn() {
+		return true;
+	}
 }

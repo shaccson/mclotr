@@ -7,27 +7,27 @@ import net.minecraft.util.MathHelper;
 import net.minecraft.world.World;
 
 public class LOTREntityUtumnoKillFX extends EntityFlameFX {
-    private double paramMotionX;
-    private double paramMotionY;
-    private double paramMotionZ;
+	public double paramMotionX;
+	public double paramMotionY;
+	public double paramMotionZ;
 
-    public LOTREntityUtumnoKillFX(World world, double d, double d1, double d2, double d3, double d4, double d5) {
-        super(world, d, d1, d2, d3, d4, d5);
-        this.paramMotionX = this.motionX = d3;
-        this.paramMotionY = this.motionY = d4;
-        this.paramMotionZ = this.motionZ = d5;
-        this.setParticleTextureIndex(144 + this.rand.nextInt(3));
-    }
+	public LOTREntityUtumnoKillFX(World world, double d, double d1, double d2, double d3, double d4, double d5) {
+		super(world, d, d1, d2, d3, d4, d5);
+		paramMotionX = motionX = d3;
+		paramMotionY = motionY = d4;
+		paramMotionZ = motionZ = d5;
+		setParticleTextureIndex(144 + rand.nextInt(3));
+	}
 
-    @Override
-    public void onUpdate() {
-        super.onUpdate();
-        this.motionX = this.paramMotionX;
-        this.motionY = this.paramMotionY;
-        this.motionZ = this.paramMotionZ;
-        Block block = this.worldObj.getBlock(MathHelper.floor_double(this.posX), MathHelper.floor_double(this.posY), MathHelper.floor_double(this.posZ));
-        if(block == LOTRMod.utumnoReturnPortalBase) {
-            this.setDead();
-        }
-    }
+	@Override
+	public void onUpdate() {
+		super.onUpdate();
+		motionX = paramMotionX;
+		motionY = paramMotionY;
+		motionZ = paramMotionZ;
+		Block block = worldObj.getBlock(MathHelper.floor_double(posX), MathHelper.floor_double(posY), MathHelper.floor_double(posZ));
+		if (block == LOTRMod.utumnoReturnPortalBase) {
+			setDead();
+		}
+	}
 }

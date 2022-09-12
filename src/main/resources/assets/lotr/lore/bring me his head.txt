@@ -1,12 +1,14 @@
-#title:Принеси мне его голову!
-#author:{name:orc_prefix}{name:orc_suffix}
+#written by:Gorbag12
+#
+#title:Bring me his head!
+#author:{name:orc_prefix}{name:orc_suffix}, scribe of {name:orc_prefix}{name:orc_suffix}
 #types:ruins,gundabad,angmar,dol_guldur,mordor,isengard
 #reward
 #
-Эй, ты, червяк! Вожак сказал мне, что ты хорошо охотишься!
+Hey, you, maggot! The Boss told me that you're good at hunting!
 
-Он просил меня написать тебе письмо, слизняк, с просьбой принести голову вонючего человека по имени {name:gondor_male}. Этот дурак смеялся над мощью вожака. Посмотрим, сможет ли он еще смеяться, когда его голова упадёт с плеч!
+He asked me, the scribe, if I could write a letter to you little maggot, telling you to bring the him the head of the stinking tark {name:gondor_male}. That fool laughed at the might of the Boss. Let's see if he can still laugh when his head's separated from his shoulders!
 
-Если ты принесешь вожаку голову человека, он даст тебе пятьсот серебряных монет в награду за твой вонючий поступок! А если нет, то вожак заберет твою грязную голову, маленький слизняк!
+If you bring the Boss the tark's head, he will give you five hundred silver pieces as a reward for your stinking deed! And if not, the Boss will take your foul head instead, little maggot!
 
-А теперь иди и делай, как тебе приказали!
+Now go ahead and do as you've been ordered!

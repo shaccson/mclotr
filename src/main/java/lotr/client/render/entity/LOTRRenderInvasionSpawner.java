@@ -11,34 +11,34 @@ import net.minecraft.util.ResourceLocation;
 import net.minecraftforge.client.IItemRenderer;
 
 public class LOTRRenderInvasionSpawner extends Render {
-    @Override
-    protected ResourceLocation getEntityTexture(Entity entity) {
-        return TextureMap.locationItemsTexture;
-    }
+	@Override
+	public void doRender(Entity entity, double d, double d1, double d2, float f, float f1) {
+		LOTREntityInvasionSpawner spawner = (LOTREntityInvasionSpawner) entity;
+		GL11.glPushMatrix();
+		GL11.glEnable(32826);
+		GL11.glTranslatef((float) d, (float) d1, (float) d2);
+		float rotation = interpolateRotation(spawner.prevSpawnerSpin, spawner.spawnerSpin, f1);
+		float scale = 1.5f;
+		GL11.glRotatef(rotation, 0.0f, 1.0f, 0.0f);
+		GL11.glScalef(scale, scale, scale);
+		ItemStack item = spawner.getInvasionItem();
+		renderManager.itemRenderer.renderItem(renderManager.livingPlayer, item, 0, IItemRenderer.ItemRenderType.EQUIPPED);
+		GL11.glDisable(32826);
+		GL11.glPopMatrix();
+	}
 
-    @Override
-    public void doRender(Entity entity, double d, double d1, double d2, float f, float f1) {
-        LOTREntityInvasionSpawner spawner = (LOTREntityInvasionSpawner) entity;
-        GL11.glPushMatrix();
-        GL11.glEnable(32826);
-        GL11.glTranslatef((float) d, (float) d1, (float) d2);
-        float rotation = this.interpolateRotation(spawner.prevSpawnerSpin, spawner.spawnerSpin, f1);
-        float scale = 1.5f;
-        GL11.glRotatef(rotation, 0.0f, 1.0f, 0.0f);
-        GL11.glScalef(scale, scale, scale);
-        ItemStack item = spawner.getInvasionItem();
-        this.renderManager.itemRenderer.renderItem(this.renderManager.livingPlayer, item, 0, IItemRenderer.ItemRenderType.EQUIPPED);
-        GL11.glDisable(32826);
-        GL11.glPopMatrix();
-    }
+	@Override
+	public ResourceLocation getEntityTexture(Entity entity) {
+		return TextureMap.locationItemsTexture;
+	}
 
-    private float interpolateRotation(float prevRotation, float newRotation, float tick) {
-        float interval;
-        for(interval = newRotation - prevRotation; interval < -180.0f; interval += 360.0f) {
-        }
-        while(interval >= 180.0f) {
-            interval -= 360.0f;
-        }
-        return prevRotation + tick * interval;
-    }
+	public float interpolateRotation(float prevRotation, float newRotation, float tick) {
+		float interval;
+		for (interval = newRotation - prevRotation; interval < -180.0f; interval += 360.0f) {
+		}
+		while (interval >= 180.0f) {
+			interval -= 360.0f;
+		}
+		return prevRotation + tick * interval;
+	}
 }

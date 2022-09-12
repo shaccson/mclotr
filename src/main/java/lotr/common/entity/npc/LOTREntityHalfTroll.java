@@ -15,207 +15,215 @@ import net.minecraft.nbt.NBTTagCompound;
 import net.minecraft.world.World;
 
 public class LOTREntityHalfTroll extends LOTREntityNPC {
-    public LOTREntityHalfTroll(World world) {
-        super(world);
-        this.setSize(1.0f, 2.4f);
-        this.getNavigator().setAvoidsWater(true);
-        this.tasks.addTask(0, new EntityAISwimming(this));
-        this.tasks.addTask(1, new LOTREntityAIHiredRemainStill(this));
-        this.tasks.addTask(2, this.createHalfTrollAttackAI());
-        this.tasks.addTask(3, new LOTREntityAIFollowHiringPlayer(this));
-        this.tasks.addTask(4, new EntityAIWander(this, 1.0));
-        this.tasks.addTask(5, new LOTREntityAIEat(this, LOTRFoods.HALF_TROLL, 6000));
-        this.tasks.addTask(5, new LOTREntityAIDrink(this, LOTRFoods.HALF_TROLL_DRINK, 6000));
-        this.tasks.addTask(6, new EntityAIWatchClosest2(this, EntityPlayer.class, 8.0f, 0.02f));
-        this.tasks.addTask(6, new EntityAIWatchClosest2(this, LOTREntityNPC.class, 5.0f, 0.02f));
-        this.tasks.addTask(7, new EntityAIWatchClosest(this, EntityLiving.class, 8.0f, 0.02f));
-        this.tasks.addTask(8, new EntityAILookIdle(this));
-        int target = this.addTargetTasks(true);
-        this.targetTasks.addTask(target + 1, new LOTREntityAINearestAttackableTargetBasic(this, LOTREntityRabbit.class, 1000, false));
-        this.spawnsInDarkness = true;
-    }
+	public LOTREntityHalfTroll(World world) {
+		super(world);
+		setSize(1.0f, 2.4f);
+		getNavigator().setAvoidsWater(true);
+		tasks.addTask(0, new EntityAISwimming(this));
+		tasks.addTask(1, new LOTREntityAIHiredRemainStill(this));
+		tasks.addTask(2, createHalfTrollAttackAI());
+		tasks.addTask(3, new LOTREntityAIFollowHiringPlayer(this));
+		tasks.addTask(4, new EntityAIWander(this, 1.0));
+		tasks.addTask(5, new LOTREntityAIEat(this, LOTRFoods.HALF_TROLL, 6000));
+		tasks.addTask(5, new LOTREntityAIDrink(this, LOTRFoods.HALF_TROLL_DRINK, 6000));
+		tasks.addTask(6, new EntityAIWatchClosest2(this, EntityPlayer.class, 8.0f, 0.02f));
+		tasks.addTask(6, new EntityAIWatchClosest2(this, LOTREntityNPC.class, 5.0f, 0.02f));
+		tasks.addTask(7, new EntityAIWatchClosest(this, EntityLiving.class, 8.0f, 0.02f));
+		tasks.addTask(8, new EntityAILookIdle(this));
+		int target = this.addTargetTasks(true);
+		targetTasks.addTask(target + 1, new LOTREntityAINearestAttackableTargetBasic(this, LOTREntityRabbit.class, 1000, false));
+		spawnsInDarkness = true;
+	}
 
-    public EntityAIBase createHalfTrollAttackAI() {
-        return new LOTREntityAIAttackOnCollide(this, 1.4, false);
-    }
+	@Override
+	public void applyEntityAttributes() {
+		super.applyEntityAttributes();
+		getEntityAttribute(SharedMonsterAttributes.maxHealth).setBaseValue(35.0);
+		getEntityAttribute(SharedMonsterAttributes.followRange).setBaseValue(24.0);
+		getEntityAttribute(SharedMonsterAttributes.movementSpeed).setBaseValue(0.2);
+		getEntityAttribute(npcAttackDamage).setBaseValue(6.0);
+		getEntityAttribute(horseAttackSpeed).setBaseValue(1.5);
+	}
 
-    @Override
-    public void entityInit() {
-        super.entityInit();
-        this.dataWatcher.addObject(17, (byte) 0);
-    }
+	@Override
+	public boolean canReEquipHired(int slot, ItemStack itemstack) {
+		block3: {
+			block2: {
+				switch (slot) {
+				case 0:
+					break block2;
+				case 1:
+					break block2;
+				case 2:
+					break block2;
+				default:
+					break;
+				}
+				if (slot != 3) {
+					break block3;
+				}
+			}
+			return itemstack != null && itemstack.getItem() instanceof ItemArmor && ((ItemArmor) itemstack.getItem()).getArmorMaterial() == LOTRMaterial.HALF_TROLL.toArmorMaterial();
+		}
+		return super.canReEquipHired(slot, itemstack);
+	}
 
-    @Override
-    public void setupNPCName() {
-        this.familyInfo.setName(LOTRNames.getOrcName(this.rand));
-    }
+	public EntityAIBase createHalfTrollAttackAI() {
+		return new LOTREntityAIAttackOnCollide(this, 1.4, false);
+	}
 
-    private boolean getHalfTrollModelFlag(int part) {
-        byte i = this.dataWatcher.getWatchableObjectByte(17);
-        return (i & (1 << part)) != 0;
-    }
+	@Override
+	public LOTRMiniQuest createMiniQuest() {
+		return LOTRMiniQuestFactory.HALF_TROLL.createQuest(this);
+	}
 
-    private void setHalfTrollModelFlag(int part, boolean flag) {
-        int i = this.dataWatcher.getWatchableObjectByte(17);
-        int pow2 = 1 << part;
-        i = flag ? (i |= pow2) : (i &= ~pow2);
-        this.dataWatcher.updateObject(17, (byte) i);
-    }
+	@Override
+	public void dropFewItems(boolean flag, int i) {
+		super.dropFewItems(flag, i);
+		int flesh = rand.nextInt(3) + rand.nextInt(i + 1);
+		for (int l = 0; l < flesh; ++l) {
+			dropItem(Items.rotten_flesh, 1);
+		}
+		int bones = rand.nextInt(2) + rand.nextInt(i + 1);
+		for (int l = 0; l < bones; ++l) {
+			dropItem(LOTRMod.trollBone, 1);
+		}
+	}
 
-    public boolean hasMohawk() {
-        return this.getHalfTrollModelFlag(1);
-    }
+	@Override
+	public void entityInit() {
+		super.entityInit();
+		dataWatcher.addObject(17, (byte) 0);
+	}
 
-    public void setHasMohawk(boolean flag) {
-        this.setHalfTrollModelFlag(1, flag);
-    }
+	@Override
+	public float getAlignmentBonus() {
+		return 1.0f;
+	}
 
-    public boolean hasHorns() {
-        return this.getHalfTrollModelFlag(2);
-    }
+	@Override
+	public LOTRMiniQuestFactory getBountyHelpSpeechDir() {
+		return LOTRMiniQuestFactory.HALF_TROLL;
+	}
 
-    public void setHasHorns(boolean flag) {
-        this.setHalfTrollModelFlag(2, flag);
-    }
+	@Override
+	public String getDeathSound() {
+		return "lotr:halfTroll.death";
+	}
 
-    public boolean hasFullHorns() {
-        return this.getHalfTrollModelFlag(3);
-    }
+	@Override
+	public LOTRFaction getFaction() {
+		return LOTRFaction.HALF_TROLL;
+	}
 
-    public void setHasFullHorns(boolean flag) {
-        this.setHalfTrollModelFlag(3, flag);
-    }
+	public boolean getHalfTrollModelFlag(int part) {
+		byte i = dataWatcher.getWatchableObjectByte(17);
+		return (i & 1 << part) != 0;
+	}
 
-    @Override
-    protected void applyEntityAttributes() {
-        super.applyEntityAttributes();
-        this.getEntityAttribute(SharedMonsterAttributes.maxHealth).setBaseValue(35.0);
-        this.getEntityAttribute(SharedMonsterAttributes.followRange).setBaseValue(24.0);
-        this.getEntityAttribute(SharedMonsterAttributes.movementSpeed).setBaseValue(0.2);
-        this.getEntityAttribute(npcAttackDamage).setBaseValue(6.0);
-        this.getEntityAttribute(horseAttackSpeed).setBaseValue(1.5);
-    }
+	@Override
+	public String getHurtSound() {
+		return "lotr:halfTroll.hurt";
+	}
 
-    @Override
-    public IEntityLivingData onSpawnWithEgg(IEntityLivingData data) {
-        data = super.onSpawnWithEgg(data);
-        this.setHasMohawk(this.rand.nextBoolean());
-        if(this.rand.nextBoolean()) {
-            this.setHasHorns(true);
-            this.setHasFullHorns(this.rand.nextBoolean());
-        }
-        return data;
-    }
+	@Override
+	public LOTRAchievement getKillAchievement() {
+		return LOTRAchievement.killHalfTroll;
+	}
 
-    @Override
-    protected void onAttackModeChange(LOTREntityNPC.AttackMode mode, boolean mounted) {
-        if(mode == LOTREntityNPC.AttackMode.IDLE) {
-            this.setCurrentItemOrArmor(0, this.npcItemsInv.getIdleItem());
-        }
-        else {
-            this.setCurrentItemOrArmor(0, this.npcItemsInv.getMeleeWeapon());
-        }
-    }
+	@Override
+	public String getLivingSound() {
+		return "lotr:halfTroll.say";
+	}
 
-    @Override
-    public LOTRFaction getFaction() {
-        return LOTRFaction.HALF_TROLL;
-    }
+	@Override
+	public String getNPCName() {
+		return familyInfo.getName();
+	}
 
-    @Override
-    public String getNPCName() {
-        return this.familyInfo.getName();
-    }
+	@Override
+	public String getSpeechBank(EntityPlayer entityplayer) {
+		if (isFriendly(entityplayer)) {
+			if (hiredNPCInfo.getHiringPlayer() == entityplayer) {
+				return "halfTroll/halfTroll/hired";
+			}
+			return "halfTroll/halfTroll/friendly";
+		}
+		return "halfTroll/halfTroll/hostile";
+	}
 
-    @Override
-    public void writeEntityToNBT(NBTTagCompound nbt) {
-        super.writeEntityToNBT(nbt);
-        nbt.setBoolean("Mohawk", this.hasMohawk());
-        nbt.setBoolean("Horns", this.hasHorns());
-        nbt.setBoolean("HornsFull", this.hasFullHorns());
-    }
+	public boolean hasFullHorns() {
+		return getHalfTrollModelFlag(3);
+	}
 
-    @Override
-    public void readEntityFromNBT(NBTTagCompound nbt) {
-        super.readEntityFromNBT(nbt);
-        this.setHasMohawk(nbt.getBoolean("Mohawk"));
-        this.setHasHorns(nbt.getBoolean("Horns"));
-        this.setHasFullHorns(nbt.getBoolean("HornsFull"));
-        if(nbt.hasKey("HalfTrollName")) {
-            this.familyInfo.setName(nbt.getString("HalfTrollName"));
-        }
-    }
+	public boolean hasHorns() {
+		return getHalfTrollModelFlag(2);
+	}
 
-    @Override
-    protected void dropFewItems(boolean flag, int i) {
-        super.dropFewItems(flag, i);
-        int flesh = this.rand.nextInt(3) + this.rand.nextInt(i + 1);
-        for(int l = 0; l < flesh; ++l) {
-            this.dropItem(Items.rotten_flesh, 1);
-        }
-        int bones = this.rand.nextInt(2) + this.rand.nextInt(i + 1);
-        for(int l = 0; l < bones; ++l) {
-            this.dropItem(LOTRMod.trollBone, 1);
-        }
-    }
+	public boolean hasMohawk() {
+		return getHalfTrollModelFlag(1);
+	}
 
-    @Override
-    public float getAlignmentBonus() {
-        return 1.0f;
-    }
+	@Override
+	public void onAttackModeChange(LOTREntityNPC.AttackMode mode, boolean mounted) {
+		if (mode == LOTREntityNPC.AttackMode.IDLE) {
+			setCurrentItemOrArmor(0, npcItemsInv.getIdleItem());
+		} else {
+			setCurrentItemOrArmor(0, npcItemsInv.getMeleeWeapon());
+		}
+	}
 
-    @Override
-    protected LOTRAchievement getKillAchievement() {
-        return LOTRAchievement.killHalfTroll;
-    }
+	@Override
+	public IEntityLivingData onSpawnWithEgg(IEntityLivingData data) {
+		data = super.onSpawnWithEgg(data);
+		setHasMohawk(rand.nextBoolean());
+		if (rand.nextBoolean()) {
+			setHasHorns(true);
+			setHasFullHorns(rand.nextBoolean());
+		}
+		return data;
+	}
 
-    @Override
-    protected String getLivingSound() {
-        return "lotr:halfTroll.say";
-    }
+	@Override
+	public void readEntityFromNBT(NBTTagCompound nbt) {
+		super.readEntityFromNBT(nbt);
+		setHasMohawk(nbt.getBoolean("Mohawk"));
+		setHasHorns(nbt.getBoolean("Horns"));
+		setHasFullHorns(nbt.getBoolean("HornsFull"));
+		if (nbt.hasKey("HalfTrollName")) {
+			familyInfo.setName(nbt.getString("HalfTrollName"));
+		}
+	}
 
-    @Override
-    protected String getHurtSound() {
-        return "lotr:halfTroll.hurt";
-    }
+	public void setHalfTrollModelFlag(int part, boolean flag) {
+		int i = dataWatcher.getWatchableObjectByte(17);
+		int pow2 = 1 << part;
+		i = flag ? (i |= pow2) : (i &= ~pow2);
+		dataWatcher.updateObject(17, (byte) i);
+	}
 
-    @Override
-    protected String getDeathSound() {
-        return "lotr:halfTroll.death";
-    }
+	public void setHasFullHorns(boolean flag) {
+		setHalfTrollModelFlag(3, flag);
+	}
 
-    @Override
-    public String getSpeechBank(EntityPlayer entityplayer) {
-        if(this.isFriendly(entityplayer)) {
-            if(this.hiredNPCInfo.getHiringPlayer() == entityplayer) {
-                return "halfTroll/halfTroll/hired";
-            }
-            return "halfTroll/halfTroll/friendly";
-        }
-        return "halfTroll/halfTroll/hostile";
-    }
+	public void setHasHorns(boolean flag) {
+		setHalfTrollModelFlag(2, flag);
+	}
 
-    @Override
-    public LOTRMiniQuest createMiniQuest() {
-        return LOTRMiniQuestFactory.HALF_TROLL.createQuest(this);
-    }
+	public void setHasMohawk(boolean flag) {
+		setHalfTrollModelFlag(1, flag);
+	}
 
-    @Override
-    public LOTRMiniQuestFactory getBountyHelpSpeechDir() {
-        return LOTRMiniQuestFactory.HALF_TROLL;
-    }
+	@Override
+	public void setupNPCName() {
+		familyInfo.setName(LOTRNames.getOrcName(rand));
+	}
 
-    @Override
-    public boolean canReEquipHired(int slot, ItemStack itemstack) {
-        block3: {
-            block2: {
-                if(slot == 0) break block2;
-                if(slot == 1) break block2;
-                if(slot == 2) break block2;
-                if(slot != 3) break block3;
-            }
-            return itemstack != null && itemstack.getItem() instanceof ItemArmor && ((ItemArmor) itemstack.getItem()).getArmorMaterial() == LOTRMaterial.HALF_TROLL.toArmorMaterial();
-        }
-        return super.canReEquipHired(slot, itemstack);
-    }
+	@Override
+	public void writeEntityToNBT(NBTTagCompound nbt) {
+		super.writeEntityToNBT(nbt);
+		nbt.setBoolean("Mohawk", hasMohawk());
+		nbt.setBoolean("Horns", hasHorns());
+		nbt.setBoolean("HornsFull", hasFullHorns());
+	}
 }

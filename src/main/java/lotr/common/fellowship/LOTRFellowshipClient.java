@@ -2,194 +2,239 @@ package lotr.common.fellowship;
 
 import java.util.*;
 
+import com.mojang.authlib.GameProfile;
+
 import lotr.common.LOTRTitle;
 import net.minecraft.item.ItemStack;
 
 public class LOTRFellowshipClient {
-    private UUID fellowshipID;
-    private String fellowshipName;
-    private ItemStack fellowshipIcon;
-    private boolean isOwned;
-    private boolean isAdminned;
-    private String ownerName;
-    private List<String> memberNames = new ArrayList<>();
-    private Map<String, LOTRTitle.PlayerTitle> titleMap = new HashMap<>();
-    private Set<String> adminNames = new HashSet<>();
-    private boolean preventPVP;
-    private boolean preventHiredFF;
-    private boolean showMapLocations;
+	public UUID fellowshipID;
+	public String fellowshipName;
+	public ItemStack fellowshipIcon;
+	public boolean isOwned;
+	public boolean isAdminned;
+	public UUID ownerUUID;
+	public List<UUID> memberUUIDs = new ArrayList<>();
+	public Map<UUID, String> usernameMap = new HashMap<>();
+	public Map<UUID, LOTRTitle.PlayerTitle> titleMap = new HashMap<>();
+	public Set<UUID> adminUUIDs = new HashSet<>();
+	public boolean preventPVP;
+	public boolean preventHiredFF;
+	public boolean showMapLocations;
 
-    public LOTRFellowshipClient(UUID id, String name, boolean owned, boolean admin, String owner, List<String> members) {
-        this.fellowshipID = id;
-        this.fellowshipName = name;
-        this.isOwned = owned;
-        this.isAdminned = admin;
-        this.ownerName = owner;
-        this.memberNames = members;
-    }
+	public LOTRFellowshipClient(UUID id, String name, boolean owned, boolean admin, GameProfile owner, List<GameProfile> members) {
+		fellowshipID = id;
+		fellowshipName = name;
+		isOwned = owned;
+		isAdminned = admin;
+		ownerUUID = owner.getId();
+		usernameMap.put(ownerUUID, owner.getName());
+		for (GameProfile member : members) {
+			memberUUIDs.add(member.getId());
+			usernameMap.put(member.getId(), member.getName());
+		}
+	}
 
-    public void setOwner(String newOwner, boolean owned) {
-        String prevOwner = this.ownerName;
-        if (!prevOwner.equals(newOwner)) {
-            if (!this.memberNames.contains(prevOwner)) {
-                this.memberNames.add(0, prevOwner);
-            }
-            this.ownerName = newOwner;
-            if (this.memberNames.contains(newOwner)) {
-                this.memberNames.remove(newOwner);
-            }
-            if (this.adminNames.contains(newOwner)) {
-                this.adminNames.remove(newOwner);
-            }
-            this.isOwned = owned;
-            if (this.isOwned) {
-                this.isAdminned = false;
-            }
-        }
-    }
+	public void addMember(GameProfile member, LOTRTitle.PlayerTitle title) {
+		UUID memberUuid = member.getId();
+		if (!memberUUIDs.contains(memberUuid)) {
+			memberUUIDs.add(memberUuid);
+			usernameMap.put(memberUuid, member.getName());
+			titleMap.put(memberUuid, title);
+		}
+	}
 
-    public void addMember(String member, LOTRTitle.PlayerTitle title) {
-        if (!this.memberNames.contains(member)) {
-            this.memberNames.add(member);
-            this.titleMap.put(member, title);
-        }
-    }
+	public boolean containsPlayer(UUID playerUuid) {
+		return ownerUUID.equals(playerUuid) || memberUUIDs.contains(playerUuid);
+	}
 
-    public void removeMember(String member) {
-        if (this.memberNames.contains(member)) {
-            this.memberNames.remove(member);
-            if (this.adminNames.contains(member)) {
-                this.adminNames.remove(member);
-            }
-            this.titleMap.remove(member);
-        }
-    }
+	public boolean containsPlayerUsername(String username) {
+		return usernameMap.containsValue(username);
+	}
 
-    public void setTitles(Map<String, LOTRTitle.PlayerTitle> titles) {
-        this.titleMap = titles;
-    }
+	public List<GameProfile> getAllPlayerProfiles() {
+		return getProfilesFor(getAllPlayerUuids());
+	}
 
-    public void updatePlayerTitle(String player, LOTRTitle.PlayerTitle title) {
-        if (title == null) {
-            this.titleMap.remove(player);
-        } else {
-            this.titleMap.put(player, title);
-        }
-    }
+	public List<UUID> getAllPlayerUuids() {
+		ArrayList<UUID> allPlayers = new ArrayList<>();
+		allPlayers.add(ownerUUID);
+		allPlayers.addAll(memberUUIDs);
+		return allPlayers;
+	}
 
-    public void setAdmins(Set<String> admins) {
-        this.adminNames = admins;
-    }
+	public UUID getFellowshipID() {
+		return fellowshipID;
+	}
 
-    public void setAdmin(String admin, boolean adminned) {
-        if (!this.adminNames.contains(admin)) {
-            this.adminNames.add(admin);
-            this.isAdminned = adminned;
-        }
-    }
+	public ItemStack getIcon() {
+		return fellowshipIcon;
+	}
 
-    public void removeAdmin(String admin, boolean adminned) {
-        if (this.adminNames.contains(admin)) {
-            this.adminNames.remove(admin);
-            this.isAdminned = adminned;
-        }
-    }
+	public List<GameProfile> getMemberProfiles() {
+		return getProfilesFor(memberUUIDs);
+	}
 
-    public void setName(String name) {
-        this.fellowshipName = name;
-    }
+	public List<UUID> getMemberUuids() {
+		return memberUUIDs;
+	}
 
-    public void setIcon(ItemStack itemstack) {
-        this.fellowshipIcon = itemstack;
-    }
+	public String getName() {
+		return fellowshipName;
+	}
 
-    public void setPreventPVP(boolean flag) {
-        this.preventPVP = flag;
-    }
+	public GameProfile getOwnerProfile() {
+		return getProfileFor(ownerUUID);
+	}
 
-    public void setPreventHiredFriendlyFire(boolean flag) {
-        this.preventHiredFF = flag;
-    }
+	public UUID getOwnerUuid() {
+		return ownerUUID;
+	}
 
-    public void setShowMapLocations(boolean flag) {
-        this.showMapLocations = flag;
-    }
+	public int getPlayerCount() {
+		return memberUUIDs.size() + 1;
+	}
 
-    public UUID getFellowshipID() {
-        return this.fellowshipID;
-    }
+	public boolean getPreventHiredFriendlyFire() {
+		return preventHiredFF;
+	}
 
-    public String getName() {
-        return this.fellowshipName;
-    }
+	public boolean getPreventPVP() {
+		return preventPVP;
+	}
 
-    public boolean isOwned() {
-        return this.isOwned;
-    }
+	public GameProfile getProfileFor(UUID playerUuid) {
+		return new GameProfile(playerUuid, getUsernameFor(playerUuid));
+	}
 
-    public boolean isAdminned() {
-        return this.isAdminned;
-    }
+	public List<GameProfile> getProfilesFor(List<UUID> playerUuids) {
+		ArrayList<GameProfile> list = new ArrayList<>();
+		for (UUID playerUuid : playerUuids) {
+			list.add(getProfileFor(playerUuid));
+		}
+		return list;
+	}
 
-    public String getOwnerName() {
-        return this.ownerName;
-    }
+	public boolean getShowMapLocations() {
+		return showMapLocations;
+	}
 
-    public List<String> getMemberNames() {
-        return this.memberNames;
-    }
+	public LOTRTitle.PlayerTitle getTitleFor(UUID playerUuid) {
+		return titleMap.get(playerUuid);
+	}
 
-    public List<String> getAllPlayerNames() {
-        ArrayList<String> allPlayers = new ArrayList<>();
-        allPlayers.add(this.ownerName);
-        allPlayers.addAll(this.memberNames);
-        return allPlayers;
-    }
+	public String getUsernameFor(UUID playerUuid) {
+		return usernameMap.get(playerUuid);
+	}
 
-    public boolean isPlayerIn(String name) {
-        return this.ownerName.equals(name) || this.memberNames.contains(name);
-    }
+	public boolean isAdmin(UUID playerUuid) {
+		return adminUUIDs.contains(playerUuid);
+	}
 
-    public int getMemberCount() {
-        return this.memberNames.size() + 1;
-    }
+	public boolean isAdminned() {
+		return isAdminned;
+	}
 
-    public LOTRTitle.PlayerTitle getTitleFor(String name) {
-        return this.titleMap.get(name);
-    }
+	public boolean isOwned() {
+		return isOwned;
+	}
 
-    public boolean isAdmin(String name) {
-        return this.adminNames.contains(name);
-    }
+	public void removeAdmin(UUID playerUuid, boolean adminned) {
+		if (adminUUIDs.contains(playerUuid)) {
+			adminUUIDs.remove(playerUuid);
+			isAdminned = adminned;
+		}
+	}
 
-    public ItemStack getIcon() {
-        return this.fellowshipIcon;
-    }
+	public void removeMember(GameProfile member) {
+		UUID memberUuid = member.getId();
+		if (memberUUIDs.contains(memberUuid)) {
+			memberUUIDs.remove(memberUuid);
+			usernameMap.remove(memberUuid);
+			if (adminUUIDs.contains(memberUuid)) {
+				adminUUIDs.remove(memberUuid);
+			}
+			titleMap.remove(memberUuid);
+		}
+	}
 
-    public boolean getPreventPVP() {
-        return this.preventPVP;
-    }
+	public void setAdmin(UUID playerUuid, boolean adminned) {
+		if (!adminUUIDs.contains(playerUuid)) {
+			adminUUIDs.add(playerUuid);
+			isAdminned = adminned;
+		}
+	}
 
-    public boolean getPreventHiredFriendlyFire() {
-        return this.preventHiredFF;
-    }
+	public void setAdmins(Set<UUID> admins) {
+		adminUUIDs = admins;
+	}
 
-    public boolean getShowMapLocations() {
-        return this.showMapLocations;
-    }
+	public void setIcon(ItemStack itemstack) {
+		fellowshipIcon = itemstack;
+	}
 
-    public void updateDataFrom(LOTRFellowshipClient other) {
-        this.fellowshipName = other.fellowshipName;
-        this.fellowshipIcon = other.fellowshipIcon;
-        this.isOwned = other.isOwned;
-        this.isAdminned = other.isAdminned;
-        this.ownerName = other.ownerName;
-        this.memberNames = other.memberNames;
-        this.titleMap = other.titleMap;
-        this.adminNames = other.adminNames;
-        this.preventPVP = other.preventPVP;
-        this.preventHiredFF = other.preventHiredFF;
-        this.showMapLocations = other.showMapLocations;
-    }
+	public void setName(String name) {
+		fellowshipName = name;
+	}
+
+	public void setOwner(GameProfile newOwner, boolean owned) {
+		UUID prevOwnerUuid = ownerUUID;
+		UUID newOwnerUuid = newOwner.getId();
+		if (!prevOwnerUuid.equals(newOwnerUuid)) {
+			if (!memberUUIDs.contains(prevOwnerUuid)) {
+				memberUUIDs.add(0, prevOwnerUuid);
+			}
+			ownerUUID = newOwnerUuid;
+			usernameMap.put(ownerUUID, newOwner.getName());
+			if (memberUUIDs.contains(newOwnerUuid)) {
+				memberUUIDs.remove(newOwnerUuid);
+			}
+			if (adminUUIDs.contains(newOwnerUuid)) {
+				adminUUIDs.remove(newOwnerUuid);
+			}
+			isOwned = owned;
+			if (isOwned) {
+				isAdminned = false;
+			}
+		}
+	}
+
+	public void setPreventHiredFriendlyFire(boolean flag) {
+		preventHiredFF = flag;
+	}
+
+	public void setPreventPVP(boolean flag) {
+		preventPVP = flag;
+	}
+
+	public void setShowMapLocations(boolean flag) {
+		showMapLocations = flag;
+	}
+
+	public void setTitles(Map<UUID, LOTRTitle.PlayerTitle> titles) {
+		titleMap = titles;
+	}
+
+	public void updateDataFrom(LOTRFellowshipClient other) {
+		fellowshipName = other.fellowshipName;
+		fellowshipIcon = other.fellowshipIcon;
+		isOwned = other.isOwned;
+		isAdminned = other.isAdminned;
+		ownerUUID = other.ownerUUID;
+		memberUUIDs = other.memberUUIDs;
+		usernameMap = other.usernameMap;
+		titleMap = other.titleMap;
+		adminUUIDs = other.adminUUIDs;
+		preventPVP = other.preventPVP;
+		preventHiredFF = other.preventHiredFF;
+		showMapLocations = other.showMapLocations;
+	}
+
+	public void updatePlayerTitle(UUID playerUuid, LOTRTitle.PlayerTitle title) {
+		if (title == null) {
+			titleMap.remove(playerUuid);
+		} else {
+			titleMap.put(playerUuid, title);
+		}
+	}
 }
-

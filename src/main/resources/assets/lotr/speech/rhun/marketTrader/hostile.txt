@@ -1,13 +1,13 @@
-Ничем не могу помочь, #! Для Вас товаров нет!
-Я не буду торговать с Вами!
-Я ничего тебе не продам!
-Вам здесь не рады, #!
-Убирайся прочь, гондорский прислужник!
-Уходи, #. Я не буду с тобой торговать!
-Да зарубит меня стража, если я хоть когда-нибудь сглуплю и продам что-нибудь гондорцу!
-Убирайся, гондорец!
-Прочь! Покинь Восток!
-Возвращайся в свой гадюшник, беги на запад!
-Нет, #. Я не заинтересован в торговле с Вами!
-Стража всё видит, #! И они тебя недолюбливают!
-Нет, #! Вашу печень я не куплю!
+I have nothing to sell to you, #!
+I will do no trade with you!
+There is nothing here for you, my friend!
+You are not welcome here, #!
+You are no friend to me, my friend!
+Go away, #. I am not interested!
+The guards would have my head if I made any deals with you!
+Off with you, wretch of Gondor!
+Away with you, scum of the West!
+Go back to your stinking Westlands! I am not interested.
+No, #. I am not interested!
+The guards are watching, #! They do not like you!
+No, #! I will take no liver from you!

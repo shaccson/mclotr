@@ -11,158 +11,154 @@ import net.minecraft.util.DamageSource;
 import net.minecraft.world.World;
 
 public abstract class LOTREntityRanger extends LOTREntityDunedain {
-    public EntityAIBase rangedAttackAI = this.createDunedainRangedAI();
-    public EntityAIBase meleeAttackAI;
-    private int sneakCooldown = 0;
-    private EntityLivingBase prevRangerTarget;
+	public EntityAIBase rangedAttackAI = createDunedainRangedAI();
+	public EntityAIBase meleeAttackAI;
+	public int sneakCooldown = 0;
+	public EntityLivingBase prevRangerTarget;
 
-    public LOTREntityRanger(World world) {
-        super(world);
-        this.addTargetTasks(true);
-        this.npcCape = LOTRCapes.RANGER;
-    }
+	public LOTREntityRanger(World world) {
+		super(world);
+		this.addTargetTasks(true);
+		npcCape = LOTRCapes.RANGER;
+	}
 
-    @Override
-    protected EntityAIBase createDunedainAttackAI() {
-        this.meleeAttackAI = new LOTREntityAIAttackOnCollide(this, 1.5, true);
-        return this.meleeAttackAI;
-    }
+	@Override
+	public void applyEntityAttributes() {
+		super.applyEntityAttributes();
+		getEntityAttribute(SharedMonsterAttributes.maxHealth).setBaseValue(25.0);
+		getEntityAttribute(SharedMonsterAttributes.followRange).setBaseValue(24.0);
+		getEntityAttribute(SharedMonsterAttributes.movementSpeed).setBaseValue(0.25);
+		getEntityAttribute(npcRangedAccuracy).setBaseValue(0.5);
+	}
 
-    protected EntityAIBase createDunedainRangedAI() {
-        return new LOTREntityAIRangedAttack(this, 1.25, 20, 40, 20.0f);
-    }
+	@Override
+	public boolean attackEntityFrom(DamageSource damagesource, float f) {
+		boolean flag = super.attackEntityFrom(damagesource, f);
+		if (flag && !worldObj.isRemote && isRangerSneaking()) {
+			setRangerSneaking(false);
+		}
+		return flag;
+	}
 
-    @Override
-    public void entityInit() {
-        super.entityInit();
-        this.dataWatcher.addObject(17, (byte) 0);
-    }
+	@Override
+	public EntityAIBase createDunedainAttackAI() {
+		meleeAttackAI = new LOTREntityAIAttackOnCollide(this, 1.5, true);
+		return meleeAttackAI;
+	}
 
-    @Override
-    public void setupNPCGender() {
-        this.familyInfo.setMale(true);
-    }
+	public EntityAIBase createDunedainRangedAI() {
+		return new LOTREntityAIRangedAttack(this, 1.25, 20, 40, 20.0f);
+	}
 
-    public boolean isRangerSneaking() {
-        return this.dataWatcher.getWatchableObjectByte(17) == 1;
-    }
+	@Override
+	public void dropFewItems(boolean flag, int i) {
+		super.dropFewItems(flag, i);
+		dropNPCArrows(i);
+	}
 
-    public void setRangerSneaking(boolean flag) {
-        this.dataWatcher.updateObject(17, flag ? (byte) 1 : 0);
-        if(flag) {
-            this.sneakCooldown = 20;
-        }
-    }
+	@Override
+	public void entityInit() {
+		super.entityInit();
+		dataWatcher.addObject(17, (byte) 0);
+	}
 
-    @Override
-    protected void applyEntityAttributes() {
-        super.applyEntityAttributes();
-        this.getEntityAttribute(SharedMonsterAttributes.maxHealth).setBaseValue(25.0);
-        this.getEntityAttribute(SharedMonsterAttributes.followRange).setBaseValue(24.0);
-        this.getEntityAttribute(SharedMonsterAttributes.movementSpeed).setBaseValue(0.25);
-        this.getEntityAttribute(npcRangedAccuracy).setBaseValue(0.5);
-    }
+	@Override
+	public void func_145780_a(int i, int j, int k, Block block) {
+		if (!isRangerSneaking()) {
+			super.func_145780_a(i, j, k, block);
+		}
+	}
 
-    @Override
-    public IEntityLivingData onSpawnWithEgg(IEntityLivingData data) {
-        data = super.onSpawnWithEgg(data);
-        this.npcItemsInv.setMeleeWeapon(new ItemStack(LOTRMod.daggerIron));
-        this.npcItemsInv.setRangedWeapon(new ItemStack(Items.bow));
-        this.npcItemsInv.setIdleItem(null);
-        this.setCurrentItemOrArmor(1, new ItemStack(LOTRMod.bootsRanger));
-        this.setCurrentItemOrArmor(2, new ItemStack(LOTRMod.legsRanger));
-        this.setCurrentItemOrArmor(3, new ItemStack(LOTRMod.bodyRanger));
-        this.setCurrentItemOrArmor(4, new ItemStack(LOTRMod.helmetRanger));
-        return data;
-    }
+	public boolean isRangerSneaking() {
+		return dataWatcher.getWatchableObjectByte(17) == 1;
+	}
 
-    @Override
-    public void onLivingUpdate() {
-        super.onLivingUpdate();
-        if(!this.worldObj.isRemote) {
-            if(this.ridingEntity == null) {
-                if(this.isRangerSneaking()) {
-                    if(this.getAttackTarget() == null) {
-                        if(this.sneakCooldown > 0) {
-                            --this.sneakCooldown;
-                        }
-                        else {
-                            this.setRangerSneaking(false);
-                        }
-                    }
-                    else {
-                        this.sneakCooldown = 20;
-                    }
-                }
-                else {
-                    this.sneakCooldown = 0;
-                }
-            }
-            else if(this.isRangerSneaking()) {
-                this.setRangerSneaking(false);
-            }
-        }
-    }
+	@Override
+	public void onAttackModeChange(LOTREntityNPC.AttackMode mode, boolean mounted) {
+		if (mode == LOTREntityNPC.AttackMode.IDLE) {
+			tasks.removeTask(meleeAttackAI);
+			tasks.removeTask(rangedAttackAI);
+			setCurrentItemOrArmor(0, npcItemsInv.getIdleItem());
+		}
+		if (mode == LOTREntityNPC.AttackMode.MELEE) {
+			tasks.removeTask(meleeAttackAI);
+			tasks.removeTask(rangedAttackAI);
+			tasks.addTask(2, meleeAttackAI);
+			setCurrentItemOrArmor(0, npcItemsInv.getMeleeWeapon());
+		}
+		if (mode == LOTREntityNPC.AttackMode.RANGED) {
+			tasks.removeTask(meleeAttackAI);
+			tasks.removeTask(rangedAttackAI);
+			tasks.addTask(2, rangedAttackAI);
+			setCurrentItemOrArmor(0, npcItemsInv.getRangedWeapon());
+		}
+	}
 
-    @Override
-    public void onAttackModeChange(LOTREntityNPC.AttackMode mode, boolean mounted) {
-        if(mode == LOTREntityNPC.AttackMode.IDLE) {
-            this.tasks.removeTask(this.meleeAttackAI);
-            this.tasks.removeTask(this.rangedAttackAI);
-            this.setCurrentItemOrArmor(0, this.npcItemsInv.getIdleItem());
-        }
-        if(mode == LOTREntityNPC.AttackMode.MELEE) {
-            this.tasks.removeTask(this.meleeAttackAI);
-            this.tasks.removeTask(this.rangedAttackAI);
-            this.tasks.addTask(2, this.meleeAttackAI);
-            this.setCurrentItemOrArmor(0, this.npcItemsInv.getMeleeWeapon());
-        }
-        if(mode == LOTREntityNPC.AttackMode.RANGED) {
-            this.tasks.removeTask(this.meleeAttackAI);
-            this.tasks.removeTask(this.rangedAttackAI);
-            this.tasks.addTask(2, this.rangedAttackAI);
-            this.setCurrentItemOrArmor(0, this.npcItemsInv.getRangedWeapon());
-        }
-    }
+	@Override
+	public void onLivingUpdate() {
+		super.onLivingUpdate();
+		if (!worldObj.isRemote) {
+			if (ridingEntity == null) {
+				if (isRangerSneaking()) {
+					if (getAttackTarget() == null) {
+						if (sneakCooldown > 0) {
+							--sneakCooldown;
+						} else {
+							setRangerSneaking(false);
+						}
+					} else {
+						sneakCooldown = 20;
+					}
+				} else {
+					sneakCooldown = 0;
+				}
+			} else if (isRangerSneaking()) {
+				setRangerSneaking(false);
+			}
+		}
+	}
 
-    @Override
-    public void setAttackTarget(EntityLivingBase target, boolean speak) {
-        super.setAttackTarget(target, speak);
-        if (target != null && target != this.prevRangerTarget) {
-            this.prevRangerTarget = target;
-            if (!this.worldObj.isRemote && !this.isRangerSneaking() && this.ridingEntity == null) {
-                this.setRangerSneaking(true);
-            }
-        }
-    }
+	@Override
+	public IEntityLivingData onSpawnWithEgg(IEntityLivingData data) {
+		data = super.onSpawnWithEgg(data);
+		npcItemsInv.setMeleeWeapon(new ItemStack(LOTRMod.daggerIron));
+		npcItemsInv.setRangedWeapon(new ItemStack(Items.bow));
+		npcItemsInv.setIdleItem(null);
+		setCurrentItemOrArmor(1, new ItemStack(LOTRMod.bootsRanger));
+		setCurrentItemOrArmor(2, new ItemStack(LOTRMod.legsRanger));
+		setCurrentItemOrArmor(3, new ItemStack(LOTRMod.bodyRanger));
+		setCurrentItemOrArmor(4, new ItemStack(LOTRMod.helmetRanger));
+		return data;
+	}
 
-    @Override
-    public boolean attackEntityFrom(DamageSource damagesource, float f) {
-        boolean flag = super.attackEntityFrom(damagesource, f);
-        if(flag && !this.worldObj.isRemote && this.isRangerSneaking()) {
-            this.setRangerSneaking(false);
-        }
-        return flag;
-    }
+	@Override
+	public void setAttackTarget(EntityLivingBase target, boolean speak) {
+		super.setAttackTarget(target, speak);
+		if (target != null && target != prevRangerTarget) {
+			prevRangerTarget = target;
+			if (!worldObj.isRemote && !isRangerSneaking() && ridingEntity == null) {
+				setRangerSneaking(true);
+			}
+		}
+	}
 
-    @Override
-    public void swingItem() {
-        super.swingItem();
-        if(!this.worldObj.isRemote && this.isRangerSneaking()) {
-            this.setRangerSneaking(false);
-        }
-    }
+	public void setRangerSneaking(boolean flag) {
+		dataWatcher.updateObject(17, flag ? (byte) 1 : 0);
+		if (flag) {
+			sneakCooldown = 20;
+		}
+	}
 
-    @Override
-    protected void dropFewItems(boolean flag, int i) {
-        super.dropFewItems(flag, i);
-        this.dropNPCArrows(i);
-    }
+	@Override
+	public void setupNPCGender() {
+		familyInfo.setMale(true);
+	}
 
-    @Override
-    protected void func_145780_a(int i, int j, int k, Block block) {
-        if(!this.isRangerSneaking()) {
-            super.func_145780_a(i, j, k, block);
-        }
-    }
+	@Override
+	public void swingItem() {
+		super.swingItem();
+		if (!worldObj.isRemote && isRangerSneaking()) {
+			setRangerSneaking(false);
+		}
+	}
 }

@@ -10,69 +10,63 @@ import net.minecraft.item.ItemStack;
 import net.minecraft.world.World;
 
 public class LOTREntityGundabadOrcArcher extends LOTREntityGundabadOrc {
-    public LOTREntityGundabadOrcArcher(World world) {
-        super(world);
-    }
+	public LOTREntityGundabadOrcArcher(World world) {
+		super(world);
+	}
 
-    @Override
-    public EntityAIBase createOrcAttackAI() {
-        return new LOTREntityAIRangedAttack(this, 1.25, 30, 60, 16.0f);
-    }
+	@Override
+	public void attackEntityWithRangedAttack(EntityLivingBase target, float f) {
+		if (isCrossbowOrc()) {
+			npcCrossbowAttack(target, f);
+		} else {
+			npcArrowAttack(target, f);
+		}
+	}
 
-    @Override
-    public IEntityLivingData onSpawnWithEgg(IEntityLivingData data) {
-        data = super.onSpawnWithEgg(data);
-        if(this.rand.nextInt(4) == 0) {
-            if(this.rand.nextBoolean()) {
-                this.npcItemsInv.setRangedWeapon(new ItemStack(LOTRMod.ironCrossbow));
-            }
-            else {
-                this.npcItemsInv.setRangedWeapon(new ItemStack(LOTRMod.bronzeCrossbow));
-            }
-        }
-        else if(this.rand.nextBoolean()) {
-            this.npcItemsInv.setRangedWeapon(new ItemStack(LOTRMod.orcBow));
-        }
-        else {
-            this.npcItemsInv.setRangedWeapon(new ItemStack(Items.bow));
-        }
-        this.npcItemsInv.setIdleItem(this.npcItemsInv.getRangedWeapon());
-        return data;
-    }
+	@Override
+	public EntityAIBase createOrcAttackAI() {
+		return new LOTREntityAIRangedAttack(this, 1.25, 30, 60, 16.0f);
+	}
 
-    @Override
-    protected void onAttackModeChange(LOTREntityNPC.AttackMode mode, boolean mounted) {
-        if(mode == LOTREntityNPC.AttackMode.IDLE) {
-            this.setCurrentItemOrArmor(0, this.npcItemsInv.getIdleItem());
-        }
-        else {
-            this.setCurrentItemOrArmor(0, this.npcItemsInv.getRangedWeapon());
-        }
-    }
+	@Override
+	public void dropFewItems(boolean flag, int i) {
+		super.dropFewItems(flag, i);
+		if (isCrossbowOrc()) {
+			dropNPCCrossbowBolts(i);
+		} else {
+			dropNPCArrows(i);
+		}
+	}
 
-    private boolean isCrossbowOrc() {
-        ItemStack itemstack = this.npcItemsInv.getRangedWeapon();
-        return itemstack != null && itemstack.getItem() instanceof LOTRItemCrossbow;
-    }
+	public boolean isCrossbowOrc() {
+		ItemStack itemstack = npcItemsInv.getRangedWeapon();
+		return itemstack != null && itemstack.getItem() instanceof LOTRItemCrossbow;
+	}
 
-    @Override
-    public void attackEntityWithRangedAttack(EntityLivingBase target, float f) {
-        if(this.isCrossbowOrc()) {
-            this.npcCrossbowAttack(target, f);
-        }
-        else {
-            this.npcArrowAttack(target, f);
-        }
-    }
+	@Override
+	public void onAttackModeChange(LOTREntityNPC.AttackMode mode, boolean mounted) {
+		if (mode == LOTREntityNPC.AttackMode.IDLE) {
+			setCurrentItemOrArmor(0, npcItemsInv.getIdleItem());
+		} else {
+			setCurrentItemOrArmor(0, npcItemsInv.getRangedWeapon());
+		}
+	}
 
-    @Override
-    protected void dropFewItems(boolean flag, int i) {
-        super.dropFewItems(flag, i);
-        if(this.isCrossbowOrc()) {
-            this.dropNPCCrossbowBolts(i);
-        }
-        else {
-            this.dropNPCArrows(i);
-        }
-    }
+	@Override
+	public IEntityLivingData onSpawnWithEgg(IEntityLivingData data) {
+		data = super.onSpawnWithEgg(data);
+		if (rand.nextInt(4) == 0) {
+			if (rand.nextBoolean()) {
+				npcItemsInv.setRangedWeapon(new ItemStack(LOTRMod.ironCrossbow));
+			} else {
+				npcItemsInv.setRangedWeapon(new ItemStack(LOTRMod.bronzeCrossbow));
+			}
+		} else if (rand.nextBoolean()) {
+			npcItemsInv.setRangedWeapon(new ItemStack(LOTRMod.orcBow));
+		} else {
+			npcItemsInv.setRangedWeapon(new ItemStack(Items.bow));
+		}
+		npcItemsInv.setIdleItem(npcItemsInv.getRangedWeapon());
+		return data;
+	}
 }

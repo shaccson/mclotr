@@ -14,210 +14,208 @@ import net.minecraft.client.renderer.*;
 import net.minecraft.util.*;
 
 public class LOTRGuiShields extends LOTRGuiMenuBase {
-    private static ModelBiped playerModel = new ModelBiped();
-    private int modelX;
-    private int modelY;
-    private float modelRotation;
-    private float modelRotationPrev;
-    private int isMouseDown;
-    private int mouseX;
-    private int mouseY;
-    private int prevMouseX;
-    private LOTRShields.ShieldType currentShieldType;
-    private static int currentShieldTypeID;
-    private LOTRShields currentShield;
-    private static int currentShieldID;
-    private GuiButton shieldLeft;
-    private GuiButton shieldRight;
-    private GuiButton shieldSelect;
-    private GuiButton shieldRemove;
-    private GuiButton changeCategory;
+	public static ModelBiped playerModel = new ModelBiped();
+	public static int currentShieldTypeID;
+	public static int currentShieldID;
+	static {
+		LOTRGuiShields.playerModel.isChild = false;
+	}
+	public int modelX;
+	public int modelY;
+	public float modelRotation;
+	public float modelRotationPrev;
+	public int isMouseDown;
+	public int mouseX;
+	public int mouseY;
+	public int prevMouseX;
+	public LOTRShields.ShieldType currentShieldType;
+	public LOTRShields currentShield;
+	public GuiButton shieldLeft;
+	public GuiButton shieldRight;
+	public GuiButton shieldSelect;
+	public GuiButton shieldRemove;
 
-    public LOTRGuiShields() {
-        this.modelRotationPrev = this.modelRotation = -140.0f;
-    }
+	public GuiButton changeCategory;
 
-    @Override
-    public void initGui() {
-        super.initGui();
-        this.modelX = this.guiLeft + this.xSize / 2;
-        this.modelY = this.guiTop + 40;
-        this.shieldLeft = new LOTRGuiButtonShieldsArrows(0, true, this.guiLeft + this.xSize / 2 - 64, this.guiTop + 207);
-        this.buttonList.add(this.shieldLeft);
-        this.shieldSelect = new GuiButton(1, this.guiLeft + this.xSize / 2 - 40, this.guiTop + 195, 80, 20, StatCollector.translateToLocal("lotr.gui.shields.select"));
-        this.buttonList.add(this.shieldSelect);
-        this.shieldRight = new LOTRGuiButtonShieldsArrows(2, false, this.guiLeft + this.xSize / 2 + 44, this.guiTop + 207);
-        this.buttonList.add(this.shieldRight);
-        this.shieldRemove = new GuiButton(3, this.guiLeft + this.xSize / 2 - 40, this.guiTop + 219, 80, 20, StatCollector.translateToLocal("lotr.gui.shields.remove"));
-        this.buttonList.add(this.shieldRemove);
-        this.changeCategory = new GuiButton(4, this.guiLeft + this.xSize / 2 - 80, this.guiTop + 250, 160, 20, "");
-        this.buttonList.add(this.changeCategory);
-        LOTRShields equippedShield = this.getPlayerEquippedShield();
-        if(equippedShield != null) {
-            currentShieldTypeID = equippedShield.shieldType.ordinal();
-            currentShieldID = equippedShield.shieldID;
-        }
-        this.updateCurrentShield(0, 0);
-    }
+	public LOTRGuiShields() {
+		modelRotationPrev = modelRotation = -140.0f;
+	}
 
-    private void updateCurrentShield(int shield, int type) {
-        if(shield != 0) {
-            currentShieldID += shield;
-            currentShieldID = Math.max(currentShieldID, 0);
-            currentShieldID = Math.min(currentShieldID, this.currentShieldType.list.size() - 1);
-        }
-        if(type != 0) {
-            if((currentShieldTypeID += type) > LOTRShields.ShieldType.values().length - 1) {
-                currentShieldTypeID = 0;
-            }
-            if(currentShieldTypeID < 0) {
-                currentShieldTypeID = LOTRShields.ShieldType.values().length - 1;
-            }
-            currentShieldID = 0;
-        }
-        this.currentShieldType = LOTRShields.ShieldType.values()[currentShieldTypeID];
-        this.currentShield = this.currentShieldType.list.get(currentShieldID);
-        while(!this.currentShield.canDisplay(this.mc.thePlayer)) {
-            if((shield < 0 || type != 0) && this.canGoLeft()) {
-                this.updateCurrentShield(-1, 0);
-                continue;
-            }
-            if((shield > 0 || type != 0) && this.canGoRight()) {
-                this.updateCurrentShield(1, 0);
-                continue;
-            }
-            this.updateCurrentShield(0, 1);
-        }
-    }
+	@Override
+	public void actionPerformed(GuiButton button) {
+		if (button.enabled) {
+			if (button == shieldLeft) {
+				updateCurrentShield(-1, 0);
+			} else if (button == shieldSelect) {
+				updateCurrentShield(0, 0);
+				LOTRPacketSelectShield packet = new LOTRPacketSelectShield(currentShield);
+				LOTRPacketHandler.networkWrapper.sendToServer(packet);
+			} else if (button == shieldRight) {
+				updateCurrentShield(1, 0);
+			} else if (button == shieldRemove) {
+				updateCurrentShield(0, 0);
+				LOTRPacketSelectShield packet = new LOTRPacketSelectShield(null);
+				LOTRPacketHandler.networkWrapper.sendToServer(packet);
+			} else if (button == changeCategory) {
+				updateCurrentShield(0, 1);
+			} else {
+				super.actionPerformed(button);
+			}
+		}
+	}
 
-    private boolean canGoLeft() {
-        for(int i = 0; i <= currentShieldID - 1; ++i) {
-            LOTRShields shield = this.currentShieldType.list.get(i);
-            if(!shield.canDisplay(this.mc.thePlayer)) continue;
-            return true;
-        }
-        return false;
-    }
+	public boolean canGoLeft() {
+		for (int i = 0; i <= currentShieldID - 1; ++i) {
+			LOTRShields shield = currentShieldType.list.get(i);
+			if (!shield.canDisplay(mc.thePlayer)) {
+				continue;
+			}
+			return true;
+		}
+		return false;
+	}
 
-    private boolean canGoRight() {
-        for(int i = currentShieldID + 1; i <= this.currentShieldType.list.size() - 1; ++i) {
-            LOTRShields shield = this.currentShieldType.list.get(i);
-            if(!shield.canDisplay(this.mc.thePlayer)) continue;
-            return true;
-        }
-        return false;
-    }
+	public boolean canGoRight() {
+		for (int i = currentShieldID + 1; i <= currentShieldType.list.size() - 1; ++i) {
+			LOTRShields shield = currentShieldType.list.get(i);
+			if (!shield.canDisplay(mc.thePlayer)) {
+				continue;
+			}
+			return true;
+		}
+		return false;
+	}
 
-    private LOTRShields getPlayerEquippedShield() {
-        return LOTRLevelData.getData(this.mc.thePlayer).getShield();
-    }
+	@Override
+	public void drawScreen(int i, int j, float f) {
+		mouseX = i;
+		mouseY = j;
+		drawDefaultBackground();
+		GL11.glColor4f(1.0f, 1.0f, 1.0f, 1.0f);
+		String s = StatCollector.translateToLocal("lotr.gui.shields.title");
+		this.drawCenteredString(s, guiLeft + xSize / 2, guiTop - 30, 16777215);
+		GL11.glEnable(2903);
+		RenderHelper.enableStandardItemLighting();
+		GL11.glPushMatrix();
+		GL11.glDisable(2884);
+		GL11.glEnable(32826);
+		GL11.glEnable(3008);
+		GL11.glTranslatef(modelX, modelY, 50.0f);
+		float scale = 55.0f;
+		GL11.glScalef(-scale, scale, scale);
+		GL11.glRotatef(-30.0f, 1.0f, 0.0f, 0.0f);
+		GL11.glRotatef(modelRotationPrev + (modelRotation - modelRotationPrev) * f, 0.0f, 1.0f, 0.0f);
+		mc.getTextureManager().bindTexture(mc.thePlayer.getLocationSkin());
+		playerModel.render(null, 0.0f, 0.0f, 0.0f, 0.0f, 0.0f, 0.0625f);
+		LOTRRenderShield.renderShield(currentShield, null, playerModel);
+		GL11.glDisable(32826);
+		GL11.glEnable(2884);
+		GL11.glPopMatrix();
+		RenderHelper.disableStandardItemLighting();
+		OpenGlHelper.setActiveTexture(OpenGlHelper.lightmapTexUnit);
+		GL11.glDisable(3553);
+		OpenGlHelper.setActiveTexture(OpenGlHelper.defaultTexUnit);
+		GL11.glColor4f(1.0f, 1.0f, 1.0f, 1.0f);
+		int x = guiLeft + xSize / 2;
+		int y = guiTop + 145;
+		s = currentShield.getShieldName();
+		this.drawCenteredString(s, x, y, 16777215);
+		y += fontRendererObj.FONT_HEIGHT * 2;
+		List desc = fontRendererObj.listFormattedStringToWidth(currentShield.getShieldDesc(), 220);
+		for (Object element : desc) {
+			s = (String) element;
+			this.drawCenteredString(s, x, y, 16777215);
+			y += fontRendererObj.FONT_HEIGHT;
+		}
+		shieldLeft.enabled = canGoLeft();
+		shieldSelect.enabled = currentShield.canPlayerWear(mc.thePlayer);
+		shieldSelect.displayString = getPlayerEquippedShield() == currentShield ? StatCollector.translateToLocal("lotr.gui.shields.selected") : StatCollector.translateToLocal("lotr.gui.shields.select");
+		shieldRight.enabled = canGoRight();
+		shieldRemove.enabled = getPlayerEquippedShield() != null && getPlayerEquippedShield() == currentShield;
+		changeCategory.displayString = currentShieldType.getDisplayName();
+		super.drawScreen(i, j, f);
+	}
 
-    @Override
-    public void updateScreen() {
-        boolean mouseWithinModel;
-        super.updateScreen();
-        this.modelRotationPrev = this.modelRotation;
-        this.modelRotationPrev = MathHelper.wrapAngleTo180_float(this.modelRotationPrev);
-        this.modelRotation = MathHelper.wrapAngleTo180_float(this.modelRotation);
-        mouseWithinModel = Math.abs(this.mouseX - this.modelX) <= 60 && Math.abs(this.mouseY - this.modelY) <= 80;
-        if(Mouse.isButtonDown(0)) {
-            if(this.isMouseDown == 0 || this.isMouseDown == 1) {
-                if(this.isMouseDown == 0) {
-                    if(mouseWithinModel) {
-                        this.isMouseDown = 1;
-                    }
-                }
-                else if(this.mouseX != this.prevMouseX) {
-                    float move = (-(this.mouseX - this.prevMouseX)) * 1.0f;
-                    this.modelRotation += move;
-                }
-                this.prevMouseX = this.mouseX;
-            }
-        }
-        else {
-            this.isMouseDown = 0;
-        }
-    }
+	public LOTRShields getPlayerEquippedShield() {
+		return LOTRLevelData.getData(mc.thePlayer).getShield();
+	}
 
-    @Override
-    public void drawScreen(int i, int j, float f) {
-        this.mouseX = i;
-        this.mouseY = j;
-        this.drawDefaultBackground();
-        GL11.glColor4f(1.0f, 1.0f, 1.0f, 1.0f);
-        String s = StatCollector.translateToLocal("lotr.gui.shields.title");
-        this.drawCenteredString(s, this.guiLeft + this.xSize / 2, this.guiTop - 30, 16777215);
-        GL11.glEnable(2903);
-        RenderHelper.enableStandardItemLighting();
-        GL11.glPushMatrix();
-        GL11.glDisable(2884);
-        GL11.glEnable(32826);
-        GL11.glEnable(3008);
-        GL11.glTranslatef(this.modelX, this.modelY, 50.0f);
-        float scale = 55.0f;
-        GL11.glScalef(-scale, scale, scale);
-        GL11.glRotatef(-30.0f, 1.0f, 0.0f, 0.0f);
-        GL11.glRotatef(this.modelRotationPrev + (this.modelRotation - this.modelRotationPrev) * f, 0.0f, 1.0f, 0.0f);
-        this.mc.getTextureManager().bindTexture(this.mc.thePlayer.getLocationSkin());
-        playerModel.render(null, 0.0f, 0.0f, 0.0f, 0.0f, 0.0f, 0.0625f);
-        LOTRRenderShield.renderShield(this.currentShield, null, playerModel);
-        GL11.glDisable(32826);
-        GL11.glEnable(2884);
-        GL11.glPopMatrix();
-        RenderHelper.disableStandardItemLighting();
-        OpenGlHelper.setActiveTexture(OpenGlHelper.lightmapTexUnit);
-        GL11.glDisable(3553);
-        OpenGlHelper.setActiveTexture(OpenGlHelper.defaultTexUnit);
-        GL11.glColor4f(1.0f, 1.0f, 1.0f, 1.0f);
-        int x = this.guiLeft + this.xSize / 2;
-        int y = this.guiTop + 145;
-        s = this.currentShield.getShieldName();
-        this.drawCenteredString(s, x, y, 16777215);
-        y += this.fontRendererObj.FONT_HEIGHT * 2;
-        List desc = this.fontRendererObj.listFormattedStringToWidth(this.currentShield.getShieldDesc(), 220);
-        for(Object element : desc) {
-            s = (String) element;
-            this.drawCenteredString(s, x, y, 16777215);
-            y += this.fontRendererObj.FONT_HEIGHT;
-        }
-        this.shieldLeft.enabled = this.canGoLeft();
-        this.shieldSelect.enabled = this.currentShield.canPlayerWear(this.mc.thePlayer);
-        this.shieldSelect.displayString = this.getPlayerEquippedShield() == this.currentShield ? StatCollector.translateToLocal("lotr.gui.shields.selected") : StatCollector.translateToLocal("lotr.gui.shields.select");
-        this.shieldRight.enabled = this.canGoRight();
-        this.shieldRemove.enabled = this.getPlayerEquippedShield() != null && this.getPlayerEquippedShield() == this.currentShield;
-        this.changeCategory.displayString = this.currentShieldType.getDisplayName();
-        super.drawScreen(i, j, f);
-    }
+	@Override
+	public void initGui() {
+		super.initGui();
+		modelX = guiLeft + xSize / 2;
+		modelY = guiTop + 40;
+		shieldLeft = new LOTRGuiButtonShieldsArrows(0, true, guiLeft + xSize / 2 - 64, guiTop + 207);
+		buttonList.add(shieldLeft);
+		shieldSelect = new GuiButton(1, guiLeft + xSize / 2 - 40, guiTop + 195, 80, 20, StatCollector.translateToLocal("lotr.gui.shields.select"));
+		buttonList.add(shieldSelect);
+		shieldRight = new LOTRGuiButtonShieldsArrows(2, false, guiLeft + xSize / 2 + 44, guiTop + 207);
+		buttonList.add(shieldRight);
+		shieldRemove = new GuiButton(3, guiLeft + xSize / 2 - 40, guiTop + 219, 80, 20, StatCollector.translateToLocal("lotr.gui.shields.remove"));
+		buttonList.add(shieldRemove);
+		changeCategory = new GuiButton(4, guiLeft + xSize / 2 - 80, guiTop + 250, 160, 20, "");
+		buttonList.add(changeCategory);
+		LOTRShields equippedShield = getPlayerEquippedShield();
+		if (equippedShield != null) {
+			currentShieldTypeID = equippedShield.shieldType.ordinal();
+			currentShieldID = equippedShield.shieldID;
+		}
+		updateCurrentShield(0, 0);
+	}
 
-    @Override
-    protected void actionPerformed(GuiButton button) {
-        if(button.enabled) {
-            if(button == this.shieldLeft) {
-                this.updateCurrentShield(-1, 0);
-            }
-            else if(button == this.shieldSelect) {
-                this.updateCurrentShield(0, 0);
-                LOTRPacketSelectShield packet = new LOTRPacketSelectShield(this.currentShield);
-                LOTRPacketHandler.networkWrapper.sendToServer(packet);
-            }
-            else if(button == this.shieldRight) {
-                this.updateCurrentShield(1, 0);
-            }
-            else if(button == this.shieldRemove) {
-                this.updateCurrentShield(0, 0);
-                LOTRPacketSelectShield packet = new LOTRPacketSelectShield(null);
-                LOTRPacketHandler.networkWrapper.sendToServer(packet);
-            }
-            else if(button == this.changeCategory) {
-                this.updateCurrentShield(0, 1);
-            }
-            else {
-                super.actionPerformed(button);
-            }
-        }
-    }
+	public void updateCurrentShield(int shield, int type) {
+		if (shield != 0) {
+			currentShieldID += shield;
+			currentShieldID = Math.max(currentShieldID, 0);
+			currentShieldID = Math.min(currentShieldID, currentShieldType.list.size() - 1);
+		}
+		if (type != 0) {
+			currentShieldTypeID += type;
+			if (currentShieldTypeID > LOTRShields.ShieldType.values().length - 1) {
+				currentShieldTypeID = 0;
+			}
+			if (currentShieldTypeID < 0) {
+				currentShieldTypeID = LOTRShields.ShieldType.values().length - 1;
+			}
+			currentShieldID = 0;
+		}
+		currentShieldType = LOTRShields.ShieldType.values()[currentShieldTypeID];
+		currentShield = currentShieldType.list.get(currentShieldID);
+		while (!currentShield.canDisplay(mc.thePlayer)) {
+			if ((shield < 0 || type != 0) && canGoLeft()) {
+				updateCurrentShield(-1, 0);
+				continue;
+			}
+			if ((shield > 0 || type != 0) && canGoRight()) {
+				updateCurrentShield(1, 0);
+				continue;
+			}
+			updateCurrentShield(0, 1);
+		}
+	}
 
-    static {
-        LOTRGuiShields.playerModel.isChild = false;
-    }
+	@Override
+	public void updateScreen() {
+		boolean mouseWithinModel;
+		super.updateScreen();
+		modelRotationPrev = modelRotation;
+		modelRotationPrev = MathHelper.wrapAngleTo180_float(modelRotationPrev);
+		modelRotation = MathHelper.wrapAngleTo180_float(modelRotation);
+		mouseWithinModel = Math.abs(mouseX - modelX) <= 60 && Math.abs(mouseY - modelY) <= 80;
+		if (Mouse.isButtonDown(0)) {
+			if (isMouseDown == 0 || isMouseDown == 1) {
+				if (isMouseDown == 0) {
+					if (mouseWithinModel) {
+						isMouseDown = 1;
+					}
+				} else if (mouseX != prevMouseX) {
+					float move = -(mouseX - prevMouseX) * 1.0f;
+					modelRotation += move;
+				}
+				prevMouseX = mouseX;
+			}
+		} else {
+			isMouseDown = 0;
+		}
+	}
 }

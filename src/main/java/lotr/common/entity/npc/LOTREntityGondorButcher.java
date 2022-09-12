@@ -6,24 +6,24 @@ import net.minecraft.item.ItemStack;
 import net.minecraft.world.World;
 
 public class LOTREntityGondorButcher extends LOTREntityGondorMarketTrader {
-    public LOTREntityGondorButcher(World world) {
-        super(world);
-    }
+	public LOTREntityGondorButcher(World world) {
+		super(world);
+	}
 
-    @Override
-    public LOTRTradeEntries getBuyPool() {
-        return LOTRTradeEntries.GONDOR_BUTCHER_BUY;
-    }
+	@Override
+	public LOTRTradeEntries getBuyPool() {
+		return LOTRTradeEntries.GONDOR_BUTCHER_BUY;
+	}
 
-    @Override
-    public LOTRTradeEntries getSellPool() {
-        return LOTRTradeEntries.GONDOR_BUTCHER_SELL;
-    }
+	@Override
+	public LOTRTradeEntries getSellPool() {
+		return LOTRTradeEntries.GONDOR_BUTCHER_SELL;
+	}
 
-    @Override
-    public IEntityLivingData onSpawnWithEgg(IEntityLivingData data) {
-        data = super.onSpawnWithEgg(data);
-        this.npcItemsInv.setIdleItem(new ItemStack(Items.porkchop));
-        return data;
-    }
+	@Override
+	public IEntityLivingData onSpawnWithEgg(IEntityLivingData data) {
+		data = super.onSpawnWithEgg(data);
+		npcItemsInv.setIdleItem(new ItemStack(Items.porkchop));
+		return data;
+	}
 }

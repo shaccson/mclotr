@@ -1,18 +1,18 @@
-#title:Руководство Следопыта, том III
-#author:Эрадан Палантир
-#types:eriador, lindon, rivendell, eregion
+#title:A Ranger's Guide, Volume III
+#author:Eradan Palantir
+#types:eriador,lindon,rivendell,eregion
 #reward
 #
-Руководство Следопыта, том III: медицина и травяные знания
+A Ranger's Guide, Volume III: Medicine and Herbal Knowledge
 
-Теперь вы стали воином. Однако, вы еще не Следопыт, осталось узнать две вещи, чтобы стать им.
+You are now a warrior. However, you are not yet a Ranger. Two things remain.
 
-Во-первых, вы должны изучить наше искусство исцеления, а затем вы должны узнать, как мы перемещаемся по диким землям. Эта книга поможет вам узнать, как мы используем целебные травы.
+First, you must learn our healing arts, and then you must learn how we move about the wilderness. This book will guide you to learn how we heal, and the herbs that we use.
 
-Исцеление - это искусство, которое мы, следопыты, сохраняем живым со дня Нуменора. Если я буду жив, я напишу 4 том, про все травы, найденные в Средиземье: их возникновение, их пользу, и их имена как на общем языке, так и на Синдарине. 
+Healing is an art that we Rangers have kept alive since the days of Númenor. You will soon receive a longer book that you will commit to memory, which will list all the herbs found across Middle-earth: their appearances, their uses, and their names in both the Common Tongue and the Noble. This book will, however, cover the basics.
 
-Умелому лекарю часто требуются лечебные травы, которые могут произвести различные благотворные действия. Травы можно заваривать в котле или наносить непосредственно без обработки. Умелую обрабоку использует только квалифицированный лекарь, который знает, что он делает и почему. 
+Skilled healing often demands the use of herbs, which can produce various beneficial effects. Herbs can be either brewed into a tonic or applied directly in a poultice. Poultices are only used by skilled healers that know what they are doing and why. You will eventually learn, but for now you merely need to know to produce a tonic by crushing herbs into a bowl of fresh water and leaving the mixture to sit. Your guide to herbs will explain more.
 
-Существует одно растение, которое имеет особое значение, и оно должно быть упомянуто прежде всего: ацелас. Вы уже должны знать, как он выглядит, где его найти и как за ним ухаживать.
+There is one herb, however, of particular importance, which must be mentioned before all else: Athelas. You should already know what it looks like, where to find it, and how to care for it.
 
-Ацелас дробится в ступке при добавлении воды. Правильно примененный, он может вылечить черное дыхание девяти призраков; он может поднять смертельно раненого человека на ноги; он может предотвратить усталость и боль, как бы предоставляя некоторую меру силы и энергии эльфов. Поистине, ацелас сокровище среди трав; он редок, и поэтому должен только быть использован при редкой необходимости.
+Athelas crushed into a tonic will produce a brew of immeasurable value. Rightly applied, it can cure the Black Breath of the Nine; it can raise a mortally wounded man back onto his feet; it can stave off weariness and hurt, as though granting some measure of the strength and vigour of the Elves. Truly, athelas is a treasure among herbs; it is rare, however, and so should only be used at greatest need.

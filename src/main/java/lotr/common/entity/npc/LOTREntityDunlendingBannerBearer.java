@@ -4,12 +4,12 @@ import lotr.common.item.LOTRItemBanner;
 import net.minecraft.world.World;
 
 public class LOTREntityDunlendingBannerBearer extends LOTREntityDunlendingWarrior implements LOTRBannerBearer {
-    public LOTREntityDunlendingBannerBearer(World world) {
-        super(world);
-    }
+	public LOTREntityDunlendingBannerBearer(World world) {
+		super(world);
+	}
 
-    @Override
-    public LOTRItemBanner.BannerType getBannerType() {
-        return LOTRItemBanner.BannerType.DUNLAND;
-    }
+	@Override
+	public LOTRItemBanner.BannerType getBannerType() {
+		return LOTRItemBanner.BannerType.DUNLAND;
+	}
 }

@@ -8,37 +8,37 @@ import net.minecraft.network.play.server.S35PacketUpdateTileEntity;
 import net.minecraft.tileentity.TileEntity;
 
 public class LOTRTileEntityFlowerPot extends TileEntity {
-    public Item item;
-    public int meta;
+	public Item item;
+	public int meta;
 
-    @Override
-    public void writeToNBT(NBTTagCompound nbt) {
-        super.writeToNBT(nbt);
-        nbt.setInteger("PlantID", Item.getIdFromItem(this.item));
-        nbt.setInteger("PlantMeta", this.meta);
-    }
+	@Override
+	public Packet getDescriptionPacket() {
+		NBTTagCompound data = new NBTTagCompound();
+		writeToNBT(data);
+		return new S35PacketUpdateTileEntity(xCoord, yCoord, zCoord, 0, data);
+	}
 
-    @Override
-    public void readFromNBT(NBTTagCompound nbt) {
-        super.readFromNBT(nbt);
-        this.item = Item.getItemById(nbt.getInteger("PlantID"));
-        this.meta = nbt.getInteger("PlantMeta");
-        if(Block.getBlockFromItem(this.item) == null) {
-            this.item = null;
-            this.meta = 0;
-        }
-    }
+	@Override
+	public void onDataPacket(NetworkManager net, S35PacketUpdateTileEntity packet) {
+		readFromNBT(packet.func_148857_g());
+		worldObj.markBlockForUpdate(xCoord, yCoord, zCoord);
+	}
 
-    @Override
-    public Packet getDescriptionPacket() {
-        NBTTagCompound data = new NBTTagCompound();
-        this.writeToNBT(data);
-        return new S35PacketUpdateTileEntity(this.xCoord, this.yCoord, this.zCoord, 0, data);
-    }
+	@Override
+	public void readFromNBT(NBTTagCompound nbt) {
+		super.readFromNBT(nbt);
+		item = Item.getItemById(nbt.getInteger("PlantID"));
+		meta = nbt.getInteger("PlantMeta");
+		if (Block.getBlockFromItem(item) == null) {
+			item = null;
+			meta = 0;
+		}
+	}
 
-    @Override
-    public void onDataPacket(NetworkManager net, S35PacketUpdateTileEntity packet) {
-        this.readFromNBT(packet.func_148857_g());
-        this.worldObj.markBlockForUpdate(this.xCoord, this.yCoord, this.zCoord);
-    }
+	@Override
+	public void writeToNBT(NBTTagCompound nbt) {
+		super.writeToNBT(nbt);
+		nbt.setInteger("PlantID", Item.getIdFromItem(item));
+		nbt.setInteger("PlantMeta", meta);
+	}
 }

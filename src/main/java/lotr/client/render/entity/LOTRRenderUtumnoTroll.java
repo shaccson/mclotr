@@ -6,19 +6,19 @@ import net.minecraft.entity.*;
 import net.minecraft.util.ResourceLocation;
 
 public class LOTRRenderUtumnoTroll extends LOTRRenderTroll {
-    private static LOTRRandomSkins utumnoTrollSkins;
+	public static LOTRRandomSkins utumnoTrollSkins;
 
-    public LOTRRenderUtumnoTroll() {
-        utumnoTrollSkins = LOTRRandomSkins.loadSkinsList("lotr:mob/troll/utumno");
-    }
+	public LOTRRenderUtumnoTroll() {
+		utumnoTrollSkins = LOTRRandomSkins.loadSkinsList("lotr:mob/troll/utumno");
+	}
 
-    @Override
-    protected ResourceLocation getEntityTexture(Entity entity) {
-        return utumnoTrollSkins.getRandomSkin((LOTREntityTroll) entity);
-    }
+	@Override
+	public ResourceLocation getEntityTexture(Entity entity) {
+		return utumnoTrollSkins.getRandomSkin((LOTREntityTroll) entity);
+	}
 
-    @Override
-    protected void renderTrollWeapon(EntityLivingBase entity, float f) {
-        ((LOTRModelTroll) this.mainModel).renderWoodenClubWithSpikes(0.0625f);
-    }
+	@Override
+	public void renderTrollWeapon(EntityLivingBase entity, float f) {
+		((LOTRModelTroll) mainModel).renderWoodenClubWithSpikes(0.0625f);
+	}
 }

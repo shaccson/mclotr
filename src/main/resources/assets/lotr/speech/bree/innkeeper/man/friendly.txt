@@ -1,27 +1,28 @@
-Добро пожаловать в @.
-Добро пожаловать в @, #!
-Вы не утомились во время своих странствий? Мы подготовили для Вас комнату на втором этаже.
-Голодный? Жаждущий? Чего Вы желаете, #?
-Добро пожаловать в лучшую таверну во всём Бри!
-О, ещё один усталый путник. Подходи, #, купи себе чего-нибудь выпить.
-Добро пожаловать в @! Лучшей компании, чем наши пьяницы, Вы не найдёте!
-Мы раньше встречались, #?
-Давай, пей!
-Мои посетители говорят, что это лучшая таверна во всём Бри. И знаешь что, #? Они абсолютно правы!
-Не стой столбом, #, купи себе чего-нибудь выпить.
-Мои посетители - лучшие люди из тех, кого Вы когда-либо встречали. Не так ли, друзья? Что ж, вернёмся к выпивке... Чего Вы хотите?
-Это место не даром называется @, #.
-Хотите отдохнуть? На втором этаже у нас есть парочка свободных комнат.
-Вы впервые в этих краях, #? Вам следует познакомиться с моими постояльцами. Они весёлые ребята!
-Чего ты стоишь в углу, #? Поговори с кем-нибудь!
-Я много чего повидал за свою жизнь, много чего услышал.
-Будь я на твоём месте, я бы непременно купил у трактирщика что-нибудь выпить.
-Южане - скверный народ. Старайтесь при них не говорить слишком громко, #.
-Вы пить хотите, я понимаю. Дайте мне пару монет, я Вам налью.
-Если в таверне очень весело, если её посетители интересны и дружелюбны, то на качество напитков можно не обращать внимания.
-Лучшие напитки Средиземья только в @!
-Пускай эти южане хвастают своим хлебом и вином, плевать я на них хотел! Как по мне, ничто не может быть лучше моего эля!
-Снова ты, #?
-Животным вход воспрещён! Как и оркам! И тем более, южанам!
-Как-то приходил ко мне один мужик, дурной он был... всё твердил, что моя таверна ненастоящая, а весь наш мир - лишь вымысел обезумевшего учёного. Бедняга... слишком много выпил... слишком много.
-Закрывайте за собой дверь, #.
+Welcome to the land of Bree!
+Welcome to @!
+Welcome to @, #!
+We've been getting more Southerners coming up the Greenway lately.
+You're not one of them Rangers, are you?
+It's been raining a lot lately, have you noticed?
+If you are here for our excellent pipe-weed, we grow them on the southern slopes.
+Not a lot of people know this, but we in Bree were the first to discover pipe-weed.
+We aren't getting a lot of travellers from the West anymore.
+If you plan on heading further East, make sure to stop by the Forsaken Inn - it's the last civilised place that way.
+I'm originally from Archet, a smaller village by the Chetwood.
+Combe is all right, but I prefer Bree-hill myself.
+I love listening to tales and songs from our guests.
+Every time the Dwarves come by, our coffers are filled with gold and our casks are empty of ale.
+News came that something is stirring in the East. I hope it doesn't reach Bree.
+It has been raining an awful lot here lately...
+There's an old saying here in Bree: when the rain comes, strange folk follow.
+Rain, rain, rain. Nothing but rain here in Bree. What I would not do for some snow, instead.
+They say when it rains the best tales are told over a flagon of ale.
+Welcome, welcome! Oh... what was your name again?
+We have rooms for Dwarves, Hobbits, even Elves!
+Join us in the common room, tell a tale or two! We love to hear what's going on outside of Bree!
+We have a fine company tonight, I do hope you will join us in our merrymaking?
+Bree-hill has been our home since the first Men came here.
+I like having the Little Folk around, they do well in keeping the common room cheerful.
+The Little Folk may not seem as much, but Bree-folk would not be the same without them.
+I miss the days the Little Folk from the Shire came over to party. Those were good times.
+@ has long survived on the patronage of Dwarves and Men, and of course the Little Folk.

@@ -10,36 +10,36 @@ import net.minecraft.item.Item;
 import net.minecraft.world.World;
 
 public class LOTRBlockDoor extends BlockDoor {
-    public LOTRBlockDoor() {
-        this(Material.wood);
-        this.setStepSound(Block.soundTypeWood);
-        this.setHardness(3.0f);
-    }
+	public LOTRBlockDoor() {
+		this(Material.wood);
+		setStepSound(Block.soundTypeWood);
+		setHardness(3.0f);
+	}
 
-    public LOTRBlockDoor(Material material) {
-        super(material);
-        this.setCreativeTab(LOTRCreativeTabs.tabUtil);
-    }
+	public LOTRBlockDoor(Material material) {
+		super(material);
+		setCreativeTab(LOTRCreativeTabs.tabUtil);
+	}
 
-    @Override
-    public Item getItemDropped(int i, Random random, int j) {
-        return (i & 8) != 0 ? null : Item.getItemFromBlock(this);
-    }
+	@SideOnly(value = Side.CLIENT)
+	@Override
+	public Item getItem(World world, int i, int j, int k) {
+		return Item.getItemFromBlock(this);
+	}
 
-    @SideOnly(value = Side.CLIENT)
-    @Override
-    public Item getItem(World world, int i, int j, int k) {
-        return Item.getItemFromBlock(this);
-    }
+	@Override
+	public Item getItemDropped(int i, Random random, int j) {
+		return (i & 8) != 0 ? null : Item.getItemFromBlock(this);
+	}
 
-    @SideOnly(value = Side.CLIENT)
-    @Override
-    public String getItemIconName() {
-        return this.getTextureName();
-    }
+	@SideOnly(value = Side.CLIENT)
+	@Override
+	public String getItemIconName() {
+		return getTextureName();
+	}
 
-    @Override
-    public int getRenderType() {
-        return LOTRMod.proxy.getDoorRenderID();
-    }
+	@Override
+	public int getRenderType() {
+		return LOTRMod.proxy.getDoorRenderID();
+	}
 }

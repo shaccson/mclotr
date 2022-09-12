@@ -5,17 +5,17 @@ import java.util.Random;
 import net.minecraft.init.Blocks;
 
 public class LOTRWorldGenGundabadForgeTent extends LOTRWorldGenGundabadTent {
-    public LOTRWorldGenGundabadForgeTent(boolean flag) {
-        super(flag);
-    }
+	public LOTRWorldGenGundabadForgeTent(boolean flag) {
+		super(flag);
+	}
 
-    @Override
-    protected void setupRandomBlocks(Random random) {
-        super.setupRandomBlocks(random);
-        this.tentBlock = Blocks.cobblestone;
-        this.tentMeta = 0;
-        this.fenceBlock = Blocks.cobblestone_wall;
-        this.fenceMeta = 0;
-        this.hasOrcForge = true;
-    }
+	@Override
+	public void setupRandomBlocks(Random random) {
+		super.setupRandomBlocks(random);
+		tentBlock = Blocks.cobblestone;
+		tentMeta = 0;
+		fenceBlock = Blocks.cobblestone_wall;
+		fenceMeta = 0;
+		hasOrcForge = true;
+	}
 }

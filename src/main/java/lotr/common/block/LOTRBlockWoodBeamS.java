@@ -1,7 +1,7 @@
 package lotr.common.block;
 
 public class LOTRBlockWoodBeamS extends LOTRBlockWoodBeam {
-    public LOTRBlockWoodBeamS() {
-        this.setWoodNames("rohan", "rohanGold");
-    }
+	public LOTRBlockWoodBeamS() {
+		setWoodNames("rohan", "rohanGold");
+	}
 }

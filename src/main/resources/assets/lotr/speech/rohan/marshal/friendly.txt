@@ -1,12 +1,12 @@
-Вам нужны воины Риддермарка, #?
-Наши воины - лучшие всадники во всем Средиземье.
-Вы заслужили уважение наших людей, #. Вам нужна помощь в борьбе с Сауроном?
-В обмен на небольшую сумму серебряных монет, мои Рохирримы с удовольствием последуют за вами в бой.
-Я могу предоставить вам помощь Рохиррим в обмен на небольшую сумму серебрянных монет.
-Мы, Рохиррим, благородные воины, но даже благородные воины требуют оплаты.
-У меня имеется множество превосходных солдат. А у Вас есть деньги?
-Мои люди являются лучшими воинами во всём Рохане!
-За несколько серебряных монет, Вы сможете командовать могучими роханскими всадниками.
-Добро пожаловать, #! Хотите командовать моими людьми? За плату позволю.
-Я выделю вам отряд роханцев, но не бесплатно.
-Вы - истинный друг Рохана. Мои люди готовы сражаться за Вас!
+Do you seek to hire a warrior of the Riddermark, #?
+Our warriors are the finest horsemen in all Middle-earth.
+You have earned respect among our people, #. Do you wish to hire any warriors?
+In exchange for a small sum of silver coins, my Rohirrim will gladly follow you into battle.
+I can grant you the might of the Rohirrim in exchange for some silver coins.
+We Rohirrim are noble warriors, but even noble warriors require payment.
+I have many fine warriors for hire. Have you any silver coins?
+My men are the finest warriors in all of Rohan!
+For a few silver coins, you can command the mightiest warriors in Rohan.
+Welcome, #! Do you seek to command the valiant Rohirrim?
+I will give you some of my fine warriors, but you will need to pay me some silver coins first, #.
+You are truly a friend of Rohan. My men will be proud to fight on your side.

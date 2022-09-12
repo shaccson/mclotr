@@ -1,10 +1,15 @@
-Приветствую, #! Я надеюсь, что Вы купите что-нибудь в моём ларьке.
-Что бы Вы пожелали купить? Я продаю сокровища со всего мира!
-Мы - торговцы Харада - много путешествуем, и поэтому у нас всегда изобилие товаров для продажи.
-Я готов поменять товары на серебро, #. Что бы Вы пожелали купить?
-Добро пожаловать на харадский базар, #! Что я могу Вам предложить сегодня?
-Фантастические сокровища со всех концов Арды, всего за несколько серебряных монет!
-Добро пожаловать, #! Добро пожаловать! Я предлагаю Вам множество прекрасных товаров с этих земель!
-За несколько серебряных монет, я могу продать Вам фантастические сокровища!
-Добро пожаловать в мой ларёк! Что я могу Вам предложить?
-Я предлагаю Вам сокровища многих стран!
+You seem like the type who would know a good deal when you see one. I respect that.
+Could I perhaps interest you in some of my wares?
+I am always open to another trade. What are you looking for?
+Competition drives better bargains, #.
+I bring you the best wares from all the regions across the desert.
+I saw you look, yes, my wares are THAT good!
+You have an eye for detail, am I right? Take a closer look at the quality of my wares, #.
+Greetings. Have you come to trade with me?
+I am sure I have something that'll interest you, #!
+A good trader never says no to another trade.
+I think that's a price we can agree on.
+I've already given you my lowest price, #!
+You drive a hard bargain...
+Meet me halfway here, I also have to make a living.
+You expect me to afford the costs of desert travel with that price?

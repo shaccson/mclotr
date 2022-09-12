@@ -11,67 +11,67 @@ import net.minecraft.world.World;
 import net.minecraft.world.biome.BiomeGenBase;
 
 public class LOTREntityGiraffe extends LOTREntityHorse {
-    public LOTREntityGiraffe(World world) {
-        super(world);
-        this.setSize(1.7f, 4.0f);
-    }
+	public LOTREntityGiraffe(World world) {
+		super(world);
+		setSize(1.7f, 4.0f);
+	}
 
-    @Override
-    public int getHorseType() {
-        return 0;
-    }
+	@Override
+	public double clampChildHealth(double health) {
+		return MathHelper.clamp_double(health, 12.0, 34.0);
+	}
 
-    @Override
-    protected void onLOTRHorseSpawn() {
-        double jumpStrength = this.getEntityAttribute(LOTRReflection.getHorseJumpStrength()).getAttributeValue();
-        this.getEntityAttribute(LOTRReflection.getHorseJumpStrength()).setBaseValue(jumpStrength *= 0.8);
-    }
+	@Override
+	public double clampChildJump(double jump) {
+		return MathHelper.clamp_double(jump, 0.2, 1.0);
+	}
 
-    @Override
-    protected double clampChildHealth(double health) {
-        return MathHelper.clamp_double(health, 12.0, 34.0);
-    }
+	@Override
+	public double clampChildSpeed(double speed) {
+		return MathHelper.clamp_double(speed, 0.08, 0.35);
+	}
 
-    @Override
-    protected double clampChildJump(double jump) {
-        return MathHelper.clamp_double(jump, 0.2, 1.0);
-    }
+	@Override
+	public void dropFewItems(boolean flag, int i) {
+		super.dropFewItems(flag, i);
+		if (flag) {
+			int rugChance = 30 - i * 5;
+			if (rand.nextInt(rugChance = Math.max(rugChance, 1)) == 0) {
+				entityDropItem(new ItemStack(LOTRMod.giraffeRug), 0.0f);
+			}
+		}
+	}
 
-    @Override
-    protected double clampChildSpeed(double speed) {
-        return MathHelper.clamp_double(speed, 0.08, 0.35);
-    }
+	@Override
+	public Item getDropItem() {
+		return Items.leather;
+	}
 
-    @Override
-    public boolean isBreedingItem(ItemStack itemstack) {
-        return itemstack != null && Block.getBlockFromItem(itemstack.getItem()) instanceof BlockLeavesBase;
-    }
+	@Override
+	public int getHorseType() {
+		return 0;
+	}
 
-    @Override
-    public void onLivingUpdate() {
-        super.onLivingUpdate();
-        if(!this.worldObj.isRemote && this.riddenByEntity instanceof EntityPlayer && this.isMountSaddled()) {
-            EntityPlayer entityplayer = (EntityPlayer) this.riddenByEntity;
-            BiomeGenBase biome = this.worldObj.getBiomeGenForCoords(MathHelper.floor_double(this.posX), MathHelper.floor_double(this.posZ));
-            if(biome instanceof LOTRBiomeGenShire) {
-                LOTRLevelData.getData(entityplayer).addAchievement(LOTRAchievement.rideGiraffeShire);
-            }
-        }
-    }
+	@Override
+	public boolean isBreedingItem(ItemStack itemstack) {
+		return itemstack != null && Block.getBlockFromItem(itemstack.getItem()) instanceof BlockLeavesBase;
+	}
 
-    @Override
-    protected Item getDropItem() {
-        return Items.leather;
-    }
+	@Override
+	public void onLivingUpdate() {
+		super.onLivingUpdate();
+		if (!worldObj.isRemote && riddenByEntity instanceof EntityPlayer && isMountSaddled()) {
+			EntityPlayer entityplayer = (EntityPlayer) riddenByEntity;
+			BiomeGenBase biome = worldObj.getBiomeGenForCoords(MathHelper.floor_double(posX), MathHelper.floor_double(posZ));
+			if (biome instanceof LOTRBiomeGenShire) {
+				LOTRLevelData.getData(entityplayer).addAchievement(LOTRAchievement.rideGiraffeShire);
+			}
+		}
+	}
 
-    @Override
-    protected void dropFewItems(boolean flag, int i) {
-        super.dropFewItems(flag, i);
-        if(flag) {
-            int rugChance = 30 - i * 5;
-            if(this.rand.nextInt(rugChance = Math.max(rugChance, 1)) == 0) {
-                this.entityDropItem(new ItemStack(LOTRMod.giraffeRug), 0.0f);
-            }
-        }
-    }
+	@Override
+	public void onLOTRHorseSpawn() {
+		double jumpStrength = getEntityAttribute(LOTRReflection.getHorseJumpStrength()).getAttributeValue();
+		getEntityAttribute(LOTRReflection.getHorseJumpStrength()).setBaseValue(jumpStrength *= 0.8);
+	}
 }

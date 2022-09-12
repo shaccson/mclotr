@@ -17,77 +17,77 @@ import net.minecraft.util.IIcon;
 import net.minecraft.world.World;
 
 public class LOTRBlockBookshelfStorage extends BlockContainer {
-    public LOTRBlockBookshelfStorage() {
-        super(Material.wood);
-        this.setHardness(1.5f);
-        this.setStepSound(Block.soundTypeWood);
-        this.setCreativeTab(null);
-    }
+	public LOTRBlockBookshelfStorage() {
+		super(Material.wood);
+		setHardness(1.5f);
+		setStepSound(Block.soundTypeWood);
+		setCreativeTab(null);
+	}
 
-    @Override
-    public TileEntity createNewTileEntity(World world, int i) {
-        return new LOTRTileEntityBookshelf();
-    }
+	@Override
+	public void breakBlock(World world, int i, int j, int k, Block block, int meta) {
+		LOTRTileEntityBookshelf bookshelf = (LOTRTileEntityBookshelf) world.getTileEntity(i, j, k);
+		if (bookshelf != null) {
+			LOTRMod.dropContainerItems(bookshelf, world, i, j, k);
+			world.func_147453_f(i, j, k, block);
+		}
+		super.breakBlock(world, i, j, k, block, meta);
+	}
 
-    @SideOnly(value = Side.CLIENT)
-    @Override
-    public void registerBlockIcons(IIconRegister iconregister) {
-    }
+	@Override
+	public boolean canSilkHarvest() {
+		return true;
+	}
 
-    @SideOnly(value = Side.CLIENT)
-    @Override
-    public IIcon getIcon(int i, int j) {
-        return Blocks.bookshelf.getIcon(i, j);
-    }
+	@Override
+	public TileEntity createNewTileEntity(World world, int i) {
+		return new LOTRTileEntityBookshelf();
+	}
 
-    @Override
-    public ArrayList<ItemStack> getDrops(World world, int i, int j, int k, int meta, int fortune) {
-        return Blocks.bookshelf.getDrops(world, i, j, k, meta, fortune);
-    }
+	@Override
+	public ItemStack createStackedBlock(int i) {
+		return new ItemStack(Blocks.bookshelf);
+	}
 
-    public static boolean canOpenBookshelf(World world, int i, int j, int k, EntityPlayer entityplayer) {
-        ItemStack itemstack = entityplayer.inventory.getCurrentItem();
-        return itemstack == null || itemstack.getItem() != Item.getItemFromBlock(Blocks.bookshelf);
-    }
+	@Override
+	public int getComparatorInputOverride(World world, int i, int j, int k, int direction) {
+		return Container.calcRedstoneFromInventory((IInventory) world.getTileEntity(i, j, k));
+	}
 
-    @Override
-    public boolean onBlockActivated(World world, int i, int j, int k, EntityPlayer entityplayer, int side, float f, float f1, float f2) {
-        if(!LOTRBlockBookshelfStorage.canOpenBookshelf(world, i, j, k, entityplayer)) {
-            return false;
-        }
-        if(!world.isRemote) {
-            entityplayer.openGui(LOTRMod.instance, 55, world, i, j, k);
-        }
-        return true;
-    }
+	@Override
+	public ArrayList<ItemStack> getDrops(World world, int i, int j, int k, int meta, int fortune) {
+		return Blocks.bookshelf.getDrops(world, i, j, k, meta, fortune);
+	}
 
-    @Override
-    public void breakBlock(World world, int i, int j, int k, Block block, int meta) {
-        LOTRTileEntityBookshelf bookshelf = (LOTRTileEntityBookshelf) world.getTileEntity(i, j, k);
-        if(bookshelf != null) {
-            LOTRMod.dropContainerItems(bookshelf, world, i, j, k);
-            world.func_147453_f(i, j, k, block);
-        }
-        super.breakBlock(world, i, j, k, block, meta);
-    }
+	@SideOnly(value = Side.CLIENT)
+	@Override
+	public IIcon getIcon(int i, int j) {
+		return Blocks.bookshelf.getIcon(i, j);
+	}
 
-    @Override
-    public boolean hasComparatorInputOverride() {
-        return true;
-    }
+	@Override
+	public boolean hasComparatorInputOverride() {
+		return true;
+	}
 
-    @Override
-    public int getComparatorInputOverride(World world, int i, int j, int k, int direction) {
-        return Container.calcRedstoneFromInventory((IInventory) (world.getTileEntity(i, j, k)));
-    }
+	@Override
+	public boolean onBlockActivated(World world, int i, int j, int k, EntityPlayer entityplayer, int side, float f, float f1, float f2) {
+		if (!LOTRBlockBookshelfStorage.canOpenBookshelf(world, i, j, k, entityplayer)) {
+			return false;
+		}
+		if (!world.isRemote) {
+			entityplayer.openGui(LOTRMod.instance, 55, world, i, j, k);
+		}
+		return true;
+	}
 
-    @Override
-    protected boolean canSilkHarvest() {
-        return true;
-    }
+	@SideOnly(value = Side.CLIENT)
+	@Override
+	public void registerBlockIcons(IIconRegister iconregister) {
+	}
 
-    @Override
-    protected ItemStack createStackedBlock(int i) {
-        return new ItemStack(Blocks.bookshelf);
-    }
+	public static boolean canOpenBookshelf(World world, int i, int j, int k, EntityPlayer entityplayer) {
+		ItemStack itemstack = entityplayer.inventory.getCurrentItem();
+		return itemstack == null || itemstack.getItem() != Item.getItemFromBlock(Blocks.bookshelf);
+	}
 }

@@ -1,15 +1,17 @@
-#title:Дневник Ольдвина
-#author:Ольдвин из Рохана
+#title:Aldwyn's Diary
+#author:Aldwyn of Rohan
 #types:rohan,dunland,isengard
 #
-{num:1,5} Марта 2984, Третьей эпохи
-Трава колышется на ветру. Несколько стай варгов пришли с гор, но до сих пор никто не подошёл близко,чтобы атаковать. Мне стало интересно, каково охотиться на этих мирных равнинах. Я надеюсь что никогда не узнаю этого.
+# by ThrainStormfist
+#
+{num:1,5} March 2984, Third Age
+The grass sways in the breeze. Several Warg packs have come by, but so far, none have come close enough to harm me. I wonder what it must be like, to be hunted across these peaceful plains. I hope I never find out.
 
-{num:6,9} Марта 2984, Третьей эпохи
-Патрулирую {choose:Истмарк/Альдбург/Эдорас/Вестмарк/Гримслэйд/Волд/Дунхарров} этим утром. Я взял кружку {choose:медовухи/эля}, Затем отправился на сторожевую башню для осмотра. Ничего не обнаружил вокруг.
+{num:6,9} March 2984, Third Age
+On patrol by {choose:Eastmark/Aldburg/Edoras/Westmark/Grimslade/the Folde/Dunharrow} this morning. Grabbed a pint of {choose:mead/ale}, then headed out by the Entwash to survey. Nothing for miles around.
 
-{num:10,15} Марта 2984, Третьей эпохи
-Я скрылся от отряда орков, зашедших на территорию Рохана. Я был на западной границе, недалеко от Дунланда. Я надеялся, что они не придут за нами.
+{num:10,15} March 2984, Third Age
+Just escaped a pack of Orcs wandering where they shouldn't have wandered. I've been conscripted to the western borders, near Dunland. Here's to hoping they don't come after us.
 
-{num:16,20} Марта 2984, Третьей эпохи
-Пока я умираю, истекая кровью на поле битвы, я пожелаю мужества людям Рохана, чтобы земли Марки не были отданы врагу.
+{num:16,20} March 2984, Third Age
+As I lay dying, slain in battle, let me wish that the Mark shall remain, and the courage of Men shall not fail.

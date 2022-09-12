@@ -10,123 +10,119 @@ import net.minecraft.item.ItemStack;
 import net.minecraft.util.*;
 import net.minecraft.world.World;
 
-public class LOTREntityAIGollumFishing
-extends EntityAIBase {
-    private LOTREntityGollum theGollum;
-    private double moveSpeed;
-    private boolean avoidsWater;
-    private World theWorld;
-    private double xPosition;
-    private double yPosition;
-    private double zPosition;
-    private int moveTick;
-    private int fishTick;
-    private boolean finished;
+public class LOTREntityAIGollumFishing extends EntityAIBase {
+	public LOTREntityGollum theGollum;
+	public double moveSpeed;
+	public boolean avoidsWater;
+	public World theWorld;
+	public double xPosition;
+	public double yPosition;
+	public double zPosition;
+	public int moveTick;
+	public int fishTick;
+	public boolean finished;
 
-    public LOTREntityAIGollumFishing(LOTREntityGollum entity, double d) {
-        this.theGollum = entity;
-        this.moveSpeed = d;
-        this.theWorld = entity.worldObj;
-        this.setMutexBits(3);
-    }
+	public LOTREntityAIGollumFishing(LOTREntityGollum entity, double d) {
+		theGollum = entity;
+		moveSpeed = d;
+		theWorld = entity.worldObj;
+		setMutexBits(3);
+	}
 
-    public boolean shouldExecute() {
-        if (this.theGollum.getGollumOwner() == null) {
-            return false;
-        }
-        if (this.theGollum.isGollumSitting()) {
-            return false;
-        }
-        if (this.theGollum.prevFishTime > 0) {
-            return false;
-        }
-        if (this.theGollum.isFishing) {
-            return false;
-        }
-        if (this.theGollum.getEquipmentInSlot(0) != null) {
-            return false;
-        }
-        if (this.theGollum.getRNG().nextInt(60) == 0) {
-            Vec3 vec3 = this.findPossibleFishingLocation();
-            if (vec3 == null) {
-                return false;
-            }
-            this.xPosition = vec3.xCoord;
-            this.yPosition = vec3.yCoord;
-            this.zPosition = vec3.zCoord;
-            return true;
-        }
-        return false;
-    }
+	public boolean atFishingLocation() {
+		if (theGollum.getDistanceSq(xPosition, yPosition, zPosition) < 4.0) {
+			int j;
+			int k;
+			int i = MathHelper.floor_double(theGollum.posX);
+			return theWorld.getBlock(i, j = MathHelper.floor_double(theGollum.boundingBox.minY), k = MathHelper.floor_double(theGollum.posZ)).getMaterial() == Material.water || theWorld.getBlock(i, j - 1, k).getMaterial() == Material.water;
+		}
+		return false;
+	}
 
-    private Vec3 findPossibleFishingLocation() {
-        Random random = this.theGollum.getRNG();
-        for (int l = 0; l < 32; ++l) {
-            int j;
-            int k;
-            int i = MathHelper.floor_double(this.theGollum.posX) - 16 + random.nextInt(33);
-            if (this.theWorld.getBlock(i, (j = MathHelper.floor_double(this.theGollum.boundingBox.minY) - 8 + random.nextInt(17)) + 1, k = MathHelper.floor_double(this.theGollum.posZ) - 16 + random.nextInt(33)).isNormalCube() || this.theWorld.getBlock(i, j, k).isNormalCube() || this.theWorld.getBlock(i, j - 1, k).getMaterial() != Material.water) continue;
-            return Vec3.createVectorHelper(i + 0.5, j + 0.5, k + 0.5);
-        }
-        return null;
-    }
+	@Override
+	public boolean continueExecuting() {
+		return theGollum.getGollumOwner() != null && !theGollum.isGollumSitting() && moveTick < 300 && !finished;
+	}
 
-    public boolean continueExecuting() {
-        return this.theGollum.getGollumOwner() != null && !this.theGollum.isGollumSitting() && this.moveTick < 300 && !this.finished;
-    }
+	public Vec3 findPossibleFishingLocation() {
+		Random random = theGollum.getRNG();
+		for (int l = 0; l < 32; ++l) {
+			int j;
+			int k;
+			int i = MathHelper.floor_double(theGollum.posX) - 16 + random.nextInt(33);
+			if (theWorld.getBlock(i, (j = MathHelper.floor_double(theGollum.boundingBox.minY) - 8 + random.nextInt(17)) + 1, k = MathHelper.floor_double(theGollum.posZ) - 16 + random.nextInt(33)).isNormalCube() || theWorld.getBlock(i, j, k).isNormalCube() || theWorld.getBlock(i, j - 1, k).getMaterial() != Material.water) {
+				continue;
+			}
+			return Vec3.createVectorHelper(i + 0.5, j + 0.5, k + 0.5);
+		}
+		return null;
+	}
 
-    public void startExecuting() {
-        this.avoidsWater = this.theGollum.getNavigator().getAvoidsWater();
-        this.theGollum.getNavigator().setAvoidsWater(false);
-        this.theGollum.isFishing = true;
-    }
+	@Override
+	public void resetTask() {
+		theGollum.getNavigator().clearPathEntity();
+		theGollum.getNavigator().setAvoidsWater(avoidsWater);
+		moveTick = 0;
+		fishTick = 0;
+		if (finished) {
+			finished = false;
+			theGollum.prevFishTime = 3000;
+		} else {
+			theGollum.prevFishTime = 600;
+		}
+		theGollum.isFishing = false;
+	}
 
-    public void resetTask() {
-        this.theGollum.getNavigator().clearPathEntity();
-        this.theGollum.getNavigator().setAvoidsWater(this.avoidsWater);
-        this.moveTick = 0;
-        this.fishTick = 0;
-        if (this.finished) {
-            this.finished = false;
-            this.theGollum.prevFishTime = 3000;
-        } else {
-            this.theGollum.prevFishTime = 600;
-        }
-        this.theGollum.isFishing = false;
-    }
+	@Override
+	public boolean shouldExecute() {
+		if (theGollum.getGollumOwner() == null || theGollum.isGollumSitting() || theGollum.prevFishTime > 0 || theGollum.isFishing) {
+			return false;
+		}
+		if (theGollum.getEquipmentInSlot(0) != null) {
+			return false;
+		}
+		if (theGollum.getRNG().nextInt(60) == 0) {
+			Vec3 vec3 = findPossibleFishingLocation();
+			if (vec3 == null) {
+				return false;
+			}
+			xPosition = vec3.xCoord;
+			yPosition = vec3.yCoord;
+			zPosition = vec3.zCoord;
+			return true;
+		}
+		return false;
+	}
 
-    public void updateTask() {
-        if (this.atFishingLocation()) {
-            if (this.theGollum.isInWater()) {
-                this.theWorld.setEntityState(this.theGollum, (byte)15);
-                if (this.theGollum.getRNG().nextInt(4) == 0) {
-                    this.theWorld.playSoundAtEntity(this.theGollum, this.theGollum.getSplashSound(), 1.0f, 1.0f + (this.theGollum.getRNG().nextFloat() - this.theGollum.getRNG().nextFloat()) * 0.4f);
-                }
-                this.theGollum.getJumpHelper().setJumping();
-                if (this.theGollum.getRNG().nextInt(50) == 0) {
-                    LOTRSpeech.sendSpeech(this.theGollum.getGollumOwner(), this.theGollum, LOTRSpeech.getRandomSpeechForPlayer(this.theGollum, "char/gollum/fishing", this.theGollum.getGollumOwner()));
-                }
-            }
-            ++this.fishTick;
-            if (this.fishTick > 100) {
-                this.theGollum.setCurrentItemOrArmor(0, new ItemStack(Items.fish, 4 + this.theGollum.getRNG().nextInt(9)));
-                this.finished = true;
-                LOTRSpeech.sendSpeech(this.theGollum.getGollumOwner(), this.theGollum, LOTRSpeech.getRandomSpeechForPlayer(this.theGollum, "char/gollum/catchFish", this.theGollum.getGollumOwner()));
-            }
-        } else {
-            this.theGollum.getNavigator().tryMoveToXYZ(this.xPosition, this.yPosition, this.zPosition, this.moveSpeed);
-            ++this.moveTick;
-        }
-    }
+	@Override
+	public void startExecuting() {
+		avoidsWater = theGollum.getNavigator().getAvoidsWater();
+		theGollum.getNavigator().setAvoidsWater(false);
+		theGollum.isFishing = true;
+	}
 
-    private boolean atFishingLocation() {
-        if (this.theGollum.getDistanceSq(this.xPosition, this.yPosition, this.zPosition) < 4.0) {
-            int j;
-            int k;
-            int i = MathHelper.floor_double(this.theGollum.posX);
-            return this.theWorld.getBlock(i, j = MathHelper.floor_double(this.theGollum.boundingBox.minY), k = MathHelper.floor_double(this.theGollum.posZ)).getMaterial() == Material.water || this.theWorld.getBlock(i, j - 1, k).getMaterial() == Material.water;
-        }
-        return false;
-    }
+	@Override
+	public void updateTask() {
+		if (atFishingLocation()) {
+			if (theGollum.isInWater()) {
+				theWorld.setEntityState(theGollum, (byte) 15);
+				if (theGollum.getRNG().nextInt(4) == 0) {
+					theWorld.playSoundAtEntity(theGollum, theGollum.getSplashSound(), 1.0f, 1.0f + (theGollum.getRNG().nextFloat() - theGollum.getRNG().nextFloat()) * 0.4f);
+				}
+				theGollum.getJumpHelper().setJumping();
+				if (theGollum.getRNG().nextInt(50) == 0) {
+					LOTRSpeech.sendSpeech(theGollum.getGollumOwner(), theGollum, LOTRSpeech.getRandomSpeechForPlayer(theGollum, "char/gollum/fishing", theGollum.getGollumOwner()));
+				}
+			}
+			++fishTick;
+			if (fishTick > 100) {
+				theGollum.setCurrentItemOrArmor(0, new ItemStack(Items.fish, 4 + theGollum.getRNG().nextInt(9)));
+				finished = true;
+				LOTRSpeech.sendSpeech(theGollum.getGollumOwner(), theGollum, LOTRSpeech.getRandomSpeechForPlayer(theGollum, "char/gollum/catchFish", theGollum.getGollumOwner()));
+			}
+		} else {
+			theGollum.getNavigator().tryMoveToXYZ(xPosition, yPosition, zPosition, moveSpeed);
+			++moveTick;
+		}
+	}
 }
-

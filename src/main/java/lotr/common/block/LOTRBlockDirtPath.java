@@ -12,45 +12,45 @@ import net.minecraft.item.*;
 import net.minecraft.util.IIcon;
 
 public class LOTRBlockDirtPath extends Block {
-    @SideOnly(value = Side.CLIENT)
-    protected IIcon[] pathIcons;
-    protected String[] pathNames = new String[] {"dirt", "mud"};
+	@SideOnly(value = Side.CLIENT)
+	public IIcon[] pathIcons;
+	public String[] pathNames = { "dirt", "mud" };
 
-    public LOTRBlockDirtPath() {
-        super(Material.ground);
-        this.setHardness(0.5f);
-        this.setStepSound(Block.soundTypeGravel);
-        this.setCreativeTab(LOTRCreativeTabs.tabBlock);
-    }
+	public LOTRBlockDirtPath() {
+		super(Material.ground);
+		setHardness(0.5f);
+		setStepSound(Block.soundTypeGravel);
+		setCreativeTab(LOTRCreativeTabs.tabBlock);
+	}
 
-    @SideOnly(value = Side.CLIENT)
-    @Override
-    public IIcon getIcon(int i, int j) {
-        if(j >= this.pathNames.length) {
-            j = 0;
-        }
-        return this.pathIcons[j];
-    }
+	@Override
+	public int damageDropped(int i) {
+		return i;
+	}
 
-    @SideOnly(value = Side.CLIENT)
-    @Override
-    public void registerBlockIcons(IIconRegister iconregister) {
-        this.pathIcons = new IIcon[this.pathNames.length];
-        for(int i = 0; i < this.pathNames.length; ++i) {
-            this.pathIcons[i] = iconregister.registerIcon(this.getTextureName() + "_" + this.pathNames[i]);
-        }
-    }
+	@SideOnly(value = Side.CLIENT)
+	@Override
+	public IIcon getIcon(int i, int j) {
+		if (j >= pathNames.length) {
+			j = 0;
+		}
+		return pathIcons[j];
+	}
 
-    @Override
-    public int damageDropped(int i) {
-        return i;
-    }
+	@SideOnly(value = Side.CLIENT)
+	@Override
+	public void getSubBlocks(Item item, CreativeTabs tab, List list) {
+		for (int i = 0; i < pathNames.length; ++i) {
+			list.add(new ItemStack(item, 1, i));
+		}
+	}
 
-    @SideOnly(value = Side.CLIENT)
-    @Override
-    public void getSubBlocks(Item item, CreativeTabs tab, List list) {
-        for(int i = 0; i < this.pathNames.length; ++i) {
-            list.add(new ItemStack(item, 1, i));
-        }
-    }
+	@SideOnly(value = Side.CLIENT)
+	@Override
+	public void registerBlockIcons(IIconRegister iconregister) {
+		pathIcons = new IIcon[pathNames.length];
+		for (int i = 0; i < pathNames.length; ++i) {
+			pathIcons[i] = iconregister.registerIcon(getTextureName() + "_" + pathNames[i]);
+		}
+	}
 }

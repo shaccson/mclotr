@@ -6,14 +6,14 @@ import net.minecraft.item.ItemStack;
 import net.minecraft.world.World;
 
 public class LOTREntityLebenninLevyman extends LOTREntityGondorLevyman {
-    public LOTREntityLebenninLevyman(World world) {
-        super(world);
-    }
+	public LOTREntityLebenninLevyman(World world) {
+		super(world);
+	}
 
-    @Override
-    public IEntityLivingData onSpawnWithEgg(IEntityLivingData data) {
-        data = super.onSpawnWithEgg(data);
-        this.setCurrentItemOrArmor(3, new ItemStack(LOTRMod.bodyLebenninGambeson));
-        return data;
-    }
+	@Override
+	public IEntityLivingData onSpawnWithEgg(IEntityLivingData data) {
+		data = super.onSpawnWithEgg(data);
+		setCurrentItemOrArmor(3, new ItemStack(LOTRMod.bodyLebenninGambeson));
+		return data;
+	}
 }

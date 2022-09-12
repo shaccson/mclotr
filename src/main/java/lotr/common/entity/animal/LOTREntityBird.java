@@ -19,583 +19,609 @@ import net.minecraft.init.Items;
 import net.minecraft.item.*;
 import net.minecraft.nbt.NBTTagCompound;
 import net.minecraft.util.*;
-import net.minecraft.world.*;
+import net.minecraft.world.World;
 import net.minecraft.world.biome.BiomeGenBase;
 import net.minecraftforge.common.*;
 import net.minecraftforge.common.util.ForgeDirection;
 
-public class LOTREntityBird
-extends EntityLiving
-implements LOTRAmbientCreature,
-LOTRRandomSkinEntity,
-AnimalJarUpdater {
-    private ChunkCoordinates currentFlightTarget;
-    private int flightTargetTime = 0;
-    public int flapTime = 0;
-    private LOTREntityInventory birdInv = new LOTREntityInventory("BirdItems", this, 9);
-    private EntityItem stealTargetItem;
-    private EntityPlayer stealTargetPlayer;
-    private int stolenTime = 0;
-    private boolean stealingCrops = false;
+public class LOTREntityBird extends EntityLiving implements LOTRAmbientCreature, LOTRRandomSkinEntity, AnimalJarUpdater {
+	public ChunkCoordinates currentFlightTarget;
+	public int flightTargetTime = 0;
+	public int flapTime = 0;
+	public LOTREntityInventory birdInv = new LOTREntityInventory("BirdItems", this, 9);
+	public EntityItem stealTargetItem;
+	public EntityPlayer stealTargetPlayer;
+	public int stolenTime = 0;
+	public boolean stealingCrops = false;
 
-    public LOTREntityBird(World world) {
-        super(world);
-        this.setSize(0.5f, 0.5f);
-        this.tasks.addTask(0, new EntityAIWatchClosest(this, EntityPlayer.class, 12.0f, 0.05f));
-        this.tasks.addTask(1, new EntityAIWatchClosest(this, EntityLiving.class, 12.0f, 0.1f));
-        this.tasks.addTask(2, new EntityAILookIdle(this));
-    }
+	public LOTREntityBird(World world) {
+		super(world);
+		setSize(0.5f, 0.5f);
+		tasks.addTask(0, new EntityAIWatchClosest(this, EntityPlayer.class, 12.0f, 0.05f));
+		tasks.addTask(1, new EntityAIWatchClosest(this, EntityLiving.class, 12.0f, 0.1f));
+		tasks.addTask(2, new EntityAILookIdle(this));
+	}
 
-    public void entityInit() {
-        super.entityInit();
-        this.dataWatcher.addObject(16, (byte)0);
-        this.dataWatcher.addObject(17, (byte)1);
-    }
+	@Override
+	public boolean allowLeashing() {
+		return false;
+	}
 
-    public BirdType getBirdType() {
-        byte i = this.dataWatcher.getWatchableObjectByte(16);
-        if (i < 0 || i >= BirdType.values().length) {
-            i = 0;
-        }
-        return BirdType.values()[i];
-    }
+	@Override
+	public void applyEntityAttributes() {
+		super.applyEntityAttributes();
+		getEntityAttribute(SharedMonsterAttributes.maxHealth).setBaseValue(4.0);
+		getEntityAttribute(SharedMonsterAttributes.movementSpeed).setBaseValue(MathHelper.getRandomDoubleInRange(rand, 0.08, 0.13));
+	}
 
-    public void setBirdType(BirdType type) {
-        this.setBirdType(type.ordinal());
-    }
+	@Override
+	public boolean attackEntityFrom(DamageSource damagesource, float f) {
+		boolean flag = super.attackEntityFrom(damagesource, f);
+		if (flag && !worldObj.isRemote && isBirdStill()) {
+			setBirdStill(false);
+		}
+		return flag;
+	}
 
-    public void setBirdType(int i) {
-        this.dataWatcher.updateObject(16, ((byte)i));
-    }
- 
-    public boolean isBirdStill() {
-        return this.dataWatcher.getWatchableObjectByte(17) == 1;
-    }
+	@Override
+	public boolean canBePushed() {
+		return false;
+	}
 
-    public void setBirdStill(boolean flag) {
-        this.dataWatcher.updateObject(17, flag ? (byte)1 : 0);
-    }
+	public boolean canBirdSit() {
+		int i = MathHelper.floor_double(posX);
+		int j = MathHelper.floor_double(posY);
+		int k = MathHelper.floor_double(posZ);
+		Block block = worldObj.getBlock(i, j, k);
+		Block below = worldObj.getBlock(i, j - 1, k);
+		return block.getBlocksMovement(worldObj, i, j, k) && below.isSideSolid(worldObj, i, j - 1, k, ForgeDirection.UP);
+	}
 
-    public String getBirdTextureDir() {
-        return this.getBirdType().textureDir;
-    }
+	public boolean canBirdSpawnHere() {
+		return LOTRAmbientSpawnChecks.canSpawn(this, 8, 12, 40, 4, Material.leaves);
+	}
 
-    protected void applyEntityAttributes() {
-        super.applyEntityAttributes();
-        this.getEntityAttribute(SharedMonsterAttributes.maxHealth).setBaseValue(4.0);
-        this.getEntityAttribute(SharedMonsterAttributes.movementSpeed).setBaseValue(MathHelper.getRandomDoubleInRange(this.rand, 0.08, 0.13));
-    }
+	public void cancelFlight() {
+		currentFlightTarget = null;
+		flightTargetTime = 0;
+		stealTargetItem = null;
+		stealTargetPlayer = null;
+		stealingCrops = false;
+	}
 
-    public IEntityLivingData onSpawnWithEgg(IEntityLivingData data) {
-        data = super.onSpawnWithEgg(data);
-        int i = MathHelper.floor_double(this.posX);
-        MathHelper.floor_double(this.posY);
-        int k = MathHelper.floor_double(this.posZ);
-        BiomeGenBase biome = this.worldObj.getBiomeGenForCoords(i, k);
-        if (biome instanceof LOTRBiomeGenFarHarad) {
-            if (this.rand.nextInt(8) == 0) {
-                this.setBirdType(BirdType.CROW);
-            } else {
-                this.setBirdType(BirdType.FAR_HARAD);
-            }
-        } else if (this.rand.nextInt(6) == 0) {
-            this.setBirdType(BirdType.CROW);
-        } else if (this.rand.nextInt(10) == 0) {
-            this.setBirdType(BirdType.MAGPIE);
-        } else {
-            this.setBirdType(BirdType.COMMON);
-        }
-        return data;
-    }
+	@Override
+	public boolean canDespawn() {
+		return super.canDespawn();
+	}
 
-    @Override
-    public void setUniqueID(UUID uuid) {
-        this.entityUniqueID = uuid;
-    }
+	public boolean canStealCrops(int i, int j, int k) {
+		Block block = worldObj.getBlock(i, j, k);
+		if (block instanceof BlockCrops) {
+			return true;
+		}
+		if (block instanceof LOTRBlockBerryBush) {
+			int meta = worldObj.getBlockMetadata(i, j, k);
+			return LOTRBlockBerryBush.hasBerries(meta);
+		}
+		return false;
+	}
 
-    public boolean canBePushed() {
-        return false;
-    }
+	public boolean canStealItem(EntityItem entity) {
+		return entity.isEntityAlive() && isStealable(entity.getEntityItem());
+	}
 
-    protected void collideWithEntity(Entity entity) {
-    }
+	public boolean canStealItems() {
+		return getBirdType().canSteal;
+	}
 
-    protected void collideWithNearbyEntities() {
-    }
+	public boolean canStealPlayer(EntityPlayer entityplayer) {
+		if (entityplayer.capabilities.isCreativeMode || !entityplayer.isEntityAlive()) {
+			return false;
+		}
+		List<Integer> slots = getStealablePlayerSlots(entityplayer);
+		return !slots.isEmpty();
+	}
 
-    protected boolean isAIEnabled() {
-        return true;
-    }
+	@Override
+	public boolean canTriggerWalking() {
+		return false;
+	}
 
-    protected boolean canStealItems() {
-        return this.getBirdType().canSteal;
-    }
+	@Override
+	public void collideWithEntity(Entity entity) {
+	}
 
-    protected boolean isStealable(ItemStack itemstack) {
-        BirdType type = this.getBirdType();
-        Item item = itemstack.getItem();
-        if (type == BirdType.COMMON) {
-            return item instanceof IPlantable && ((IPlantable)item).getPlantType(this.worldObj, -1, -1, -1) == EnumPlantType.Crop;
-        }
-        if (type == BirdType.CROW) {
-            return item instanceof ItemFood || LOTRMod.isOreNameEqual(itemstack, "bone");
-        }
-        if (type == BirdType.MAGPIE) {
-            return LOTRValuableItems.canMagpieSteal(itemstack);
-        }
-        return false;
-    }
+	@Override
+	public void collideWithNearbyEntities() {
+	}
 
-    public ItemStack getStolenItem() {
-        return this.getEquipmentInSlot(4);
-    }
+	@Override
+	public boolean doesEntityNotTriggerPressurePlate() {
+		return true;
+	}
 
-    public void setStolenItem(ItemStack itemstack) {
-        this.setCurrentItemOrArmor(4, itemstack);
-    }
+	@Override
+	public void dropEquipment(boolean flag, int i) {
+	}
 
-    public void onUpdate() {
-        super.onUpdate();
-        if (this.isBirdStill()) {
-            this.motionZ = 0.0;
-            this.motionY = 0.0;
-            this.motionX = 0.0;
-            this.posY = MathHelper.floor_double(this.posY);
-            if (this.worldObj.isRemote) {
-                if (this.rand.nextInt(200) == 0) {
-                    this.flapTime = 40;
-                }
-                if (this.flapTime > 0) {
-                    --this.flapTime;
-                }
-            }
-        } else {
-            this.motionY *= 0.6;
-            if (this.worldObj.isRemote) {
-                this.flapTime = 0;
-            }
-        }
-    }
+	@Override
+	public void dropFewItems(boolean flag, int i) {
+		int feathers = rand.nextInt(3) + rand.nextInt(i + 1);
+		for (int l = 0; l < feathers; ++l) {
+			dropItem(Items.feather, 1);
+		}
+	}
 
-    @Override
-    public void updateInAnimalJar() {
-        this.setBirdStill(false);
-    }
+	public void eatCropBlock(int i, int j, int k) {
+		Block block = worldObj.getBlock(i, j, k);
+		if (block instanceof LOTRBlockBerryBush) {
+			int meta = worldObj.getBlockMetadata(i, j, k);
+			meta = LOTRBlockBerryBush.setHasBerries(meta, false);
+			worldObj.setBlockMetadataWithNotify(i, j, k, meta, 3);
+		} else {
+			worldObj.setBlockToAir(i, j, k);
+		}
+	}
 
-    protected void updateAITasks() {
-        super.updateAITasks();
-        if (this.getStolenItem() != null) {
-            ++this.stolenTime;
-            if (this.stolenTime >= 200) {
-                this.setStolenItem(null);
-                this.stolenTime = 0;
-            }
-        }
-        if (this.isBirdStill()) {
-            if (!this.canBirdSit()) {
-                this.setBirdStill(false);
-            } else if (this.rand.nextInt(400) == 0 || this.worldObj.getClosestPlayerToEntity(this, 6.0) != null) {
-                this.setBirdStill(false);
-            }
-        } else {
-            if (this.canStealItems() && !this.stealingCrops && this.stealTargetItem == null && this.stealTargetPlayer == null && !this.birdInv.isFull() && this.rand.nextInt(100) == 0) {
-                double range = 16.0;
-                List players = this.worldObj.selectEntitiesWithinAABB(EntityPlayer.class, this.boundingBox.expand(range, range, range), new IEntitySelector(){
+	@Override
+	public void entityInit() {
+		super.entityInit();
+		dataWatcher.addObject(16, (byte) 0);
+		dataWatcher.addObject(17, (byte) 1);
+	}
 
-                    public boolean isEntityApplicable(Entity e) {
-                        EntityPlayer entityplayer;
-                        if (e instanceof EntityPlayer && LOTREntityBird.this.canStealPlayer(entityplayer = (EntityPlayer)e)) {
-                            ChunkCoordinates coords = LOTREntityBird.this.getPlayerFlightTarget(entityplayer);
-                            return LOTREntityBird.this.isValidFlightTarget(coords);
-                        }
-                        return false;
-                    }
-                });
-                if (!players.isEmpty()) {
-                    this.stealTargetPlayer = (EntityPlayer)players.get(this.rand.nextInt(players.size()));
-                    this.currentFlightTarget = this.getPlayerFlightTarget(this.stealTargetPlayer);
-                    this.newFlight();
-                } else {
-                    List entityItems = this.worldObj.selectEntitiesWithinAABB(EntityItem.class, this.boundingBox.expand(range, range, range), new IEntitySelector(){
+	@Override
+	public void fall(float f) {
+	}
 
-                        public boolean isEntityApplicable(Entity e) {
-                            EntityItem eItem;
-                            if (e instanceof EntityItem && LOTREntityBird.this.canStealItem(eItem = (EntityItem)e)) {
-                                ChunkCoordinates coords = LOTREntityBird.this.getItemFlightTarget(eItem);
-                                return LOTREntityBird.this.isValidFlightTarget(coords);
-                            }
-                            return false;
-                        }
-                    });
-                    if (!entityItems.isEmpty()) {
-                        this.stealTargetItem = (EntityItem)entityItems.get(this.rand.nextInt(entityItems.size()));
-                        this.currentFlightTarget = this.getItemFlightTarget(this.stealTargetItem);
-                        this.newFlight();
-                    }
-                }
-            }
-            if (this.stealTargetItem != null || this.stealTargetPlayer != null) {
-                if (this.birdInv.isFull() || this.currentFlightTarget == null || !this.isValidFlightTarget(this.currentFlightTarget)) {
-                    this.cancelFlight();
-                } else if (this.stealTargetItem != null && !this.canStealItem(this.stealTargetItem)) {
-                    this.cancelFlight();
-                } else if (this.stealTargetPlayer != null && !this.canStealPlayer(this.stealTargetPlayer)) {
-                    this.cancelFlight();
-                } else {
-                    if (this.stealTargetItem != null) {
-                        this.currentFlightTarget = this.getItemFlightTarget(this.stealTargetItem);
-                    } else if (this.stealTargetPlayer != null) {
-                        this.currentFlightTarget = this.getPlayerFlightTarget(this.stealTargetPlayer);
-                    }
-                    if (this.getDistanceSqToFlightTarget() < 1.0) {
-                        ItemStack stolenItem = null;
-                        if (this.stealTargetItem != null) {
-                            ItemStack itemstack = this.stealTargetItem.getEntityItem();
-                            ItemStack stealCopy = itemstack.copy();
-                            stealCopy.stackSize = MathHelper.getRandomIntegerInRange(this.rand, 1, Math.min(stealCopy.stackSize, 4));
-                            ItemStack safeCopy = stealCopy.copy();
-                            if (this.birdInv.addItemToInventory(stealCopy)) {
-                                itemstack.stackSize -= safeCopy.stackSize - stealCopy.stackSize;
-                                if (itemstack.stackSize <= 0) {
-                                    this.stealTargetItem.setDead();
-                                }
-                                stolenItem = safeCopy;
-                            }
-                        } else if (this.stealTargetPlayer != null) {
-                            List<Integer> slots = this.getStealablePlayerSlots(this.stealTargetPlayer);
-                            int randSlot = slots.get(this.rand.nextInt(slots.size()));
-                            ItemStack itemstack = this.stealTargetPlayer.inventory.getStackInSlot(randSlot);
-                            ItemStack stealCopy = itemstack.copy();
-                            stealCopy.stackSize = MathHelper.getRandomIntegerInRange(this.rand, 1, Math.min(stealCopy.stackSize, 4));
-                            ItemStack safeCopy = stealCopy.copy();
-                            if (this.birdInv.addItemToInventory(stealCopy)) {
-                                itemstack.stackSize -= safeCopy.stackSize - stealCopy.stackSize;
-                                if (itemstack.stackSize <= 0) {
-                                    itemstack = null;
-                                }
-                                this.stealTargetPlayer.inventory.setInventorySlotContents(randSlot, itemstack);
-                                stolenItem = safeCopy;
-                            }
-                        }
-                        if (stolenItem != null) {
-                            this.stolenTime = 0;
-                            this.setStolenItem(stolenItem);
-                            this.playSound("random.pop", 0.5f, ((this.rand.nextFloat() - this.rand.nextFloat()) * 0.7f + 1.0f) * 2.0f);
-                        }
-                        this.cancelFlight();
-                    }
-                }
-            } else if (this.stealingCrops) {
-                if (!LOTRMod.canGrief(this.worldObj)) {
-                    this.stealingCrops = false;
-                } else if (this.currentFlightTarget == null || !this.isValidFlightTarget(this.currentFlightTarget)) {
-                    this.cancelFlight();
-                } else {
-                    int i = this.currentFlightTarget.posX;
-                    int j = this.currentFlightTarget.posY;
-                    int k = this.currentFlightTarget.posZ;
-                    if (this.getDistanceSqToFlightTarget() < 1.0) {
-                        if (this.canStealCrops(i, j, k)) {
-                            this.eatCropBlock(i, j, k);
-                            this.playSound("random.eat", 1.0f, (this.worldObj.rand.nextFloat() - this.worldObj.rand.nextFloat()) * 0.2f + 1.0f);
-                        }
-                        this.cancelFlight();
-                    } else if (!this.canStealCrops(i, j, k)) {
-                        this.cancelFlight();
-                    } else if (this.flightTargetTime % 100 == 0 && LOTRScarecrows.anyScarecrowsNearby(this.worldObj, i, j, k)) {
-                        this.cancelFlight();
-                    }
-                }
-            } else {
-                int j;
-                if (LOTRMod.canGrief(this.worldObj) && !this.stealingCrops && this.rand.nextInt(100) == 0) {
-                    int i = MathHelper.floor_double(this.posX);
-                    j = MathHelper.floor_double(this.posY);
-                    int k = MathHelper.floor_double(this.posZ);
-                    int range = 16;
-                    int yRange = 8;
-                    int attempts = 32;
-                    for (int l = 0; l < attempts; ++l) {
-                        int k1;
-                        int j1;
-                        int i1 = i + MathHelper.getRandomIntegerInRange(this.rand, (-range), range);
-                        if (!this.canStealCrops(i1, j1 = j + MathHelper.getRandomIntegerInRange(this.rand, (-yRange), yRange), k1 = k + MathHelper.getRandomIntegerInRange(this.rand, (-range), range)) || LOTRScarecrows.anyScarecrowsNearby(this.worldObj, i1, j1, k1)) continue;
-                        this.stealingCrops = true;
-                        this.currentFlightTarget = new ChunkCoordinates(i1, j1, k1);
-                        this.newFlight();
-                        break;
-                    }
-                }
-                if (!this.stealingCrops) {
-                    if (this.currentFlightTarget != null && !this.isValidFlightTarget(this.currentFlightTarget)) {
-                        this.cancelFlight();
-                    }
-                    if (this.currentFlightTarget == null || this.rand.nextInt(50) == 0 || this.getDistanceSqToFlightTarget() < 4.0) {
-                        int i = MathHelper.floor_double(this.posX);
-                        j = MathHelper.floor_double(this.posY);
-                        int k = MathHelper.floor_double(this.posZ);
-                        this.currentFlightTarget = new ChunkCoordinates(i += this.rand.nextInt(16) - this.rand.nextInt(16), j += MathHelper.getRandomIntegerInRange(this.rand, -2, 3), k += this.rand.nextInt(16) - this.rand.nextInt(16));
-                        this.newFlight();
-                    }
-                }
-            }
-            if (this.currentFlightTarget != null) {
-                double speed = this.getEntityAttribute(SharedMonsterAttributes.movementSpeed).getAttributeValue();
-                double d0 = this.currentFlightTarget.posX + 0.5 - this.posX;
-                double d1 = this.currentFlightTarget.posY + 0.5 - this.posY;
-                double d2 = this.currentFlightTarget.posZ + 0.5 - this.posZ;
-                this.motionX += (Math.signum(d0) * 0.5 - this.motionX) * speed;
-                this.motionY += (Math.signum(d1) * 0.8 - this.motionY) * speed;
-                this.motionZ += (Math.signum(d2) * 0.5 - this.motionZ) * speed;
-                float f = (float)(Math.atan2(this.motionZ, this.motionX) * 180.0 / 3.141592653589793) - 90.0f;
-                float f1 = MathHelper.wrapAngleTo180_float(f - this.rotationYaw);
-                this.moveForward = 0.5f;
-                this.rotationYaw += f1;
-                ++this.flightTargetTime;
-                if (this.flightTargetTime >= 400) {
-                    this.cancelFlight();
-                }
-            }
-            if (this.rand.nextInt(200) == 0 && this.canBirdSit()) {
-                this.setBirdStill(true);
-                this.cancelFlight();
-            }
-        }
-    }
+	public String getBirdTextureDir() {
+		return getBirdType().textureDir;
+	}
 
-    private boolean canBirdSit() {
-        int i = MathHelper.floor_double(this.posX);
-        int j = MathHelper.floor_double(this.posY);
-        int k = MathHelper.floor_double(this.posZ);
-        Block block = this.worldObj.getBlock(i, j, k);
-        Block below = this.worldObj.getBlock(i, j - 1, k);
-        return block.getBlocksMovement(this.worldObj, i, j, k) && below.isSideSolid(this.worldObj, i, j - 1, k, ForgeDirection.UP);
-    }
+	public BirdType getBirdType() {
+		byte i = dataWatcher.getWatchableObjectByte(16);
+		if (i < 0 || i >= BirdType.values().length) {
+			i = 0;
+		}
+		return BirdType.values()[i];
+	}
 
-    private boolean isValidFlightTarget(ChunkCoordinates coords) {
-        int i = coords.posX;
-        int j = coords.posY;
-        int k = coords.posZ;
-        if (j >= 1) {
-            Block block = this.worldObj.getBlock(i, j, k);
-            return block.getBlocksMovement(this.worldObj, i, j, k);
-        }
-        return false;
-    }
+	@Override
+	public boolean getCanSpawnHere() {
+		if (super.getCanSpawnHere()) {
+			return canBirdSpawnHere();
+		}
+		return false;
+	}
 
-    private double getDistanceSqToFlightTarget() {
-        double d = this.currentFlightTarget.posX + 0.5;
-        double d1 = this.currentFlightTarget.posY + 0.5;
-        double d2 = this.currentFlightTarget.posZ + 0.5;
-        return this.getDistanceSq(d, d1, d2);
-    }
+	@Override
+	public String getDeathSound() {
+		BirdType type = getBirdType();
+		if (type == BirdType.CROW) {
+			return "lotr:bird.crow.hurt";
+		}
+		return "lotr:bird.hurt";
+	}
 
-    private void cancelFlight() {
-        this.currentFlightTarget = null;
-        this.flightTargetTime = 0;
-        this.stealTargetItem = null;
-        this.stealTargetPlayer = null;
-        this.stealingCrops = false;
-    }
+	public double getDistanceSqToFlightTarget() {
+		double d = currentFlightTarget.posX + 0.5;
+		double d1 = currentFlightTarget.posY + 0.5;
+		double d2 = currentFlightTarget.posZ + 0.5;
+		return getDistanceSq(d, d1, d2);
+	}
 
-    private void newFlight() {
-        this.flightTargetTime = 0;
-    }
+	@Override
+	public String getHurtSound() {
+		BirdType type = getBirdType();
+		if (type == BirdType.CROW) {
+			return "lotr:bird.crow.hurt";
+		}
+		return "lotr:bird.hurt";
+	}
 
-    private boolean canStealItem(EntityItem entity) {
-        return entity.isEntityAlive() && this.isStealable(entity.getEntityItem());
-    }
+	public ChunkCoordinates getItemFlightTarget(EntityItem entity) {
+		int i = MathHelper.floor_double(entity.posX);
+		int j = MathHelper.floor_double(entity.boundingBox.minY);
+		int k = MathHelper.floor_double(entity.posZ);
+		return new ChunkCoordinates(i, j, k);
+	}
 
-    private boolean canStealPlayer(EntityPlayer entityplayer) {
-        if (entityplayer.capabilities.isCreativeMode || !entityplayer.isEntityAlive()) {
-            return false;
-        }
-        List<Integer> slots = this.getStealablePlayerSlots(entityplayer);
-        return !slots.isEmpty();
-    }
+	@Override
+	public String getLivingSound() {
+		BirdType type = getBirdType();
+		if (type == BirdType.CROW) {
+			return "lotr:bird.crow.say";
+		}
+		return "lotr:bird.say";
+	}
 
-    private List<Integer> getStealablePlayerSlots(EntityPlayer entityplayer) {
-        ArrayList<Integer> slots = new ArrayList<>();
-        for (int i = 0; i <= 8; ++i) {
-            ItemStack itemstack;
-            if (i != entityplayer.inventory.currentItem || (itemstack = entityplayer.inventory.getStackInSlot(i)) == null || !this.isStealable(itemstack)) continue;
-            slots.add(i);
-        }
-        return slots;
-    }
+	@Override
+	public ItemStack getPickedResult(MovingObjectPosition target) {
+		return new ItemStack(LOTRMod.spawnEgg, 1, LOTREntities.getEntityID(this));
+	}
 
-    private ChunkCoordinates getItemFlightTarget(EntityItem entity) {
-        int i = MathHelper.floor_double(entity.posX);
-        int j = MathHelper.floor_double(entity.boundingBox.minY);
-        int k = MathHelper.floor_double(entity.posZ);
-        return new ChunkCoordinates(i, j, k);
-    }
+	public ChunkCoordinates getPlayerFlightTarget(EntityPlayer entityplayer) {
+		int i = MathHelper.floor_double(entityplayer.posX);
+		int j = MathHelper.floor_double(entityplayer.boundingBox.minY + 1.0);
+		int k = MathHelper.floor_double(entityplayer.posZ);
+		return new ChunkCoordinates(i, j, k);
+	}
 
-    private ChunkCoordinates getPlayerFlightTarget(EntityPlayer entityplayer) {
-        int i = MathHelper.floor_double(entityplayer.posX);
-        int j = MathHelper.floor_double(entityplayer.boundingBox.minY + 1.0);
-        int k = MathHelper.floor_double(entityplayer.posZ);
-        return new ChunkCoordinates(i, j, k);
-    }
+	@Override
+	public float getSoundVolume() {
+		return 1.0f;
+	}
 
-    private boolean canStealCrops(int i, int j, int k) {
-        Block block = this.worldObj.getBlock(i, j, k);
-        if (block instanceof BlockCrops) {
-            return true;
-        }
-        if (block instanceof LOTRBlockBerryBush) {
-            int meta = this.worldObj.getBlockMetadata(i, j, k);
-            return LOTRBlockBerryBush.hasBerries(meta);
-        }
-        return false;
-    }
+	public List<Integer> getStealablePlayerSlots(EntityPlayer entityplayer) {
+		ArrayList<Integer> slots = new ArrayList<>();
+		for (int i = 0; i <= 8; ++i) {
+			ItemStack itemstack;
+			if (i != entityplayer.inventory.currentItem || (itemstack = entityplayer.inventory.getStackInSlot(i)) == null || !isStealable(itemstack)) {
+				continue;
+			}
+			slots.add(i);
+		}
+		return slots;
+	}
 
-    private void eatCropBlock(int i, int j, int k) {
-        Block block = this.worldObj.getBlock(i, j, k);
-        if (block instanceof LOTRBlockBerryBush) {
-            int meta = this.worldObj.getBlockMetadata(i, j, k);
-            meta = LOTRBlockBerryBush.setHasBerries(meta, false);
-            this.worldObj.setBlockMetadataWithNotify(i, j, k, meta, 3);
-        } else {
-            this.worldObj.setBlockToAir(i, j, k);
-        }
-    }
+	public ItemStack getStolenItem() {
+		return getEquipmentInSlot(4);
+	}
 
-    protected boolean canTriggerWalking() {
-        return false;
-    }
+	@Override
+	public int getTalkInterval() {
+		return 60;
+	}
 
-    protected void fall(float f) {
-    }
+	@Override
+	public boolean interact(EntityPlayer entityplayer) {
+		return false;
+	}
 
-    protected void updateFallState(double d, boolean flag) {
-    }
+	@Override
+	public boolean isAIEnabled() {
+		return true;
+	}
 
-    public boolean doesEntityNotTriggerPressurePlate() {
-        return true;
-    }
+	public boolean isBirdStill() {
+		return dataWatcher.getWatchableObjectByte(17) == 1;
+	}
 
-    public boolean attackEntityFrom(DamageSource damagesource, float f) {
-        boolean flag = super.attackEntityFrom(damagesource, f);
-        if (flag && !this.worldObj.isRemote && this.isBirdStill()) {
-            this.setBirdStill(false);
-        }
-        return flag;
-    }
+	public boolean isStealable(ItemStack itemstack) {
+		BirdType type = getBirdType();
+		Item item = itemstack.getItem();
+		if (type == BirdType.COMMON) {
+			return item instanceof IPlantable && ((IPlantable) item).getPlantType(worldObj, -1, -1, -1) == EnumPlantType.Crop;
+		}
+		if (type == BirdType.CROW) {
+			return item instanceof ItemFood || LOTRMod.isOreNameEqual(itemstack, "bone");
+		}
+		if (type == BirdType.MAGPIE) {
+			return LOTRValuableItems.canMagpieSteal(itemstack);
+		}
+		return false;
+	}
 
-    protected void dropFewItems(boolean flag, int i) {
-        int feathers = this.rand.nextInt(3) + this.rand.nextInt(i + 1);
-        for (int l = 0; l < feathers; ++l) {
-            this.dropItem(Items.feather, 1);
-        }
-    }
+	public boolean isValidFlightTarget(ChunkCoordinates coords) {
+		int i = coords.posX;
+		int j = coords.posY;
+		int k = coords.posZ;
+		if (j >= 1) {
+			Block block = worldObj.getBlock(i, j, k);
+			return block.getBlocksMovement(worldObj, i, j, k);
+		}
+		return false;
+	}
 
-    public void onDeath(DamageSource damagesource) {
-        super.onDeath(damagesource);
-        if (!this.worldObj.isRemote) {
-            this.birdInv.dropAllItems();
-        }
-    }
+	public void newFlight() {
+		flightTargetTime = 0;
+	}
 
-    public void readEntityFromNBT(NBTTagCompound nbt) {
-        super.readEntityFromNBT(nbt);
-        this.setBirdType(nbt.getInteger("BirdType"));
-        this.setBirdStill(nbt.getBoolean("BirdStill"));
-        this.birdInv.writeToNBT(nbt);
-        nbt.setShort("StealTime", (short)this.stolenTime);
-    }
+	@Override
+	public void onDeath(DamageSource damagesource) {
+		super.onDeath(damagesource);
+		if (!worldObj.isRemote) {
+			setStolenItem(null);
+			birdInv.dropAllItems();
+		}
+	}
 
-    public void writeEntityToNBT(NBTTagCompound nbt) {
-        super.writeEntityToNBT(nbt);
-        nbt.setInteger("BirdType", this.getBirdType().ordinal());
-        nbt.setBoolean("BirdStill", this.isBirdStill());
-        this.birdInv.readFromNBT(nbt);
-        this.stolenTime = nbt.getShort("StealTime");
-    }
+	@Override
+	public IEntityLivingData onSpawnWithEgg(IEntityLivingData data) {
+		data = super.onSpawnWithEgg(data);
+		int i = MathHelper.floor_double(posX);
+		MathHelper.floor_double(posY);
+		int k = MathHelper.floor_double(posZ);
+		BiomeGenBase biome = worldObj.getBiomeGenForCoords(i, k);
+		if (biome instanceof LOTRBiomeGenFarHarad) {
+			if (rand.nextInt(8) == 0) {
+				this.setBirdType(BirdType.CROW);
+			} else {
+				this.setBirdType(BirdType.FAR_HARAD);
+			}
+		} else if (rand.nextInt(6) == 0) {
+			this.setBirdType(BirdType.CROW);
+		} else if (rand.nextInt(10) == 0) {
+			this.setBirdType(BirdType.MAGPIE);
+		} else {
+			this.setBirdType(BirdType.COMMON);
+		}
+		return data;
+	}
 
-    protected boolean canDespawn() {
-        return super.canDespawn();
-    }
+	@Override
+	public void onUpdate() {
+		super.onUpdate();
+		if (isBirdStill()) {
+			motionZ = 0.0;
+			motionY = 0.0;
+			motionX = 0.0;
+			posY = MathHelper.floor_double(posY);
+			if (worldObj.isRemote) {
+				if (rand.nextInt(200) == 0) {
+					flapTime = 40;
+				}
+				if (flapTime > 0) {
+					--flapTime;
+				}
+			}
+		} else {
+			motionY *= 0.6;
+			if (worldObj.isRemote) {
+				flapTime = 0;
+			}
+		}
+	}
 
-    public boolean getCanSpawnHere() {
-        if (super.getCanSpawnHere()) {
-            return this.canBirdSpawnHere();
-        }
-        return false;
-    }
+	@Override
+	public void playLivingSound() {
+		boolean sound = true;
+		if (!worldObj.isDaytime()) {
+			sound = rand.nextInt(20) == 0;
+		}
+		if (sound) {
+			super.playLivingSound();
+		}
+	}
 
-    protected boolean canBirdSpawnHere() {
-        return LOTRAmbientSpawnChecks.canSpawn(this, 8, 12, 40, 4, Material.leaves);
-    }
+	@Override
+	public void readEntityFromNBT(NBTTagCompound nbt) {
+		super.readEntityFromNBT(nbt);
+		this.setBirdType(nbt.getInteger("BirdType"));
+		setBirdStill(nbt.getBoolean("BirdStill"));
+		birdInv.writeToNBT(nbt);
+		nbt.setShort("StealTime", (short) stolenTime);
+	}
 
-    public boolean allowLeashing() {
-        return false;
-    }
+	public void setBirdStill(boolean flag) {
+		dataWatcher.updateObject(17, flag ? (byte) 1 : 0);
+	}
 
-    protected boolean interact(EntityPlayer entityplayer) {
-        return false;
-    }
+	public void setBirdType(BirdType type) {
+		this.setBirdType(type.ordinal());
+	}
 
-    public int getTalkInterval() {
-        return 60;
-    }
+	public void setBirdType(int i) {
+		dataWatcher.updateObject(16, (byte) i);
+	}
 
-    public void playLivingSound() {
-        boolean sound = true;
-        if (!this.worldObj.isDaytime()) {
-            sound = this.rand.nextInt(20) == 0;
-        }
-        if (sound) {
-            super.playLivingSound();
-        }
-    }
+	public void setStolenItem(ItemStack itemstack) {
+		setCurrentItemOrArmor(4, itemstack);
+	}
 
-    protected float getSoundVolume() {
-        return 1.0f;
-    }
+	@Override
+	public void setUniqueID(UUID uuid) {
+		entityUniqueID = uuid;
+	}
 
-    protected String getLivingSound() {
-        BirdType type = this.getBirdType();
-        if (type == BirdType.CROW) {
-            return "lotr:bird.crow.say";
-        }
-        return "lotr:bird.say";
-    }
+	@Override
+	public void updateAITasks() {
+		super.updateAITasks();
+		if (getStolenItem() != null) {
+			++stolenTime;
+			if (stolenTime >= 200) {
+				setStolenItem(null);
+				stolenTime = 0;
+			}
+		}
+		if (isBirdStill()) {
+			if (!canBirdSit() || rand.nextInt(400) == 0 || worldObj.getClosestPlayerToEntity(this, 6.0) != null) {
+				setBirdStill(false);
+			}
+		} else {
+			if (canStealItems() && !stealingCrops && stealTargetItem == null && stealTargetPlayer == null && !birdInv.isFull() && rand.nextInt(100) == 0) {
+				double range = 16.0;
+				List players = worldObj.selectEntitiesWithinAABB(EntityPlayer.class, boundingBox.expand(range, range, range), new IEntitySelector() {
 
-    protected String getHurtSound() {
-        BirdType type = this.getBirdType();
-        if (type == BirdType.CROW) {
-            return "lotr:bird.crow.hurt";
-        }
-        return "lotr:bird.hurt";
-    }
+					@Override
+					public boolean isEntityApplicable(Entity e) {
+						EntityPlayer entityplayer;
+						if (e instanceof EntityPlayer && LOTREntityBird.this.canStealPlayer(entityplayer = (EntityPlayer) e)) {
+							ChunkCoordinates coords = LOTREntityBird.this.getPlayerFlightTarget(entityplayer);
+							return LOTREntityBird.this.isValidFlightTarget(coords);
+						}
+						return false;
+					}
+				});
+				if (!players.isEmpty()) {
+					stealTargetPlayer = (EntityPlayer) players.get(rand.nextInt(players.size()));
+					currentFlightTarget = getPlayerFlightTarget(stealTargetPlayer);
+					newFlight();
+				} else {
+					List entityItems = worldObj.selectEntitiesWithinAABB(EntityItem.class, boundingBox.expand(range, range, range), new IEntitySelector() {
 
-    protected String getDeathSound() {
-        BirdType type = this.getBirdType();
-        if (type == BirdType.CROW) {
-            return "lotr:bird.crow.hurt";
-        }
-        return "lotr:bird.hurt";
-    }
+						@Override
+						public boolean isEntityApplicable(Entity e) {
+							EntityItem eItem;
+							if (e instanceof EntityItem && LOTREntityBird.this.canStealItem(eItem = (EntityItem) e)) {
+								ChunkCoordinates coords = LOTREntityBird.this.getItemFlightTarget(eItem);
+								return LOTREntityBird.this.isValidFlightTarget(coords);
+							}
+							return false;
+						}
+					});
+					if (!entityItems.isEmpty()) {
+						stealTargetItem = (EntityItem) entityItems.get(rand.nextInt(entityItems.size()));
+						currentFlightTarget = getItemFlightTarget(stealTargetItem);
+						newFlight();
+					}
+				}
+			}
+			if (stealTargetItem != null || stealTargetPlayer != null) {
+				if (birdInv.isFull() || currentFlightTarget == null || !isValidFlightTarget(currentFlightTarget)) {
+					cancelFlight();
+				} else if (stealTargetItem != null && !canStealItem(stealTargetItem) || stealTargetPlayer != null && !canStealPlayer(stealTargetPlayer)) {
+					cancelFlight();
+				} else {
+					if (stealTargetItem != null) {
+						currentFlightTarget = getItemFlightTarget(stealTargetItem);
+					} else if (stealTargetPlayer != null) {
+						currentFlightTarget = getPlayerFlightTarget(stealTargetPlayer);
+					}
+					if (getDistanceSqToFlightTarget() < 1.0) {
+						ItemStack stolenItem = null;
+						if (stealTargetItem != null) {
+							ItemStack itemstack = stealTargetItem.getEntityItem();
+							ItemStack stealCopy = itemstack.copy();
+							stealCopy.stackSize = MathHelper.getRandomIntegerInRange(rand, 1, Math.min(stealCopy.stackSize, 4));
+							ItemStack safeCopy = stealCopy.copy();
+							if (birdInv.addItemToInventory(stealCopy)) {
+								itemstack.stackSize -= safeCopy.stackSize - stealCopy.stackSize;
+								if (itemstack.stackSize <= 0) {
+									stealTargetItem.setDead();
+								}
+								stolenItem = safeCopy;
+							}
+						} else if (stealTargetPlayer != null) {
+							List<Integer> slots = getStealablePlayerSlots(stealTargetPlayer);
+							int randSlot = slots.get(rand.nextInt(slots.size()));
+							ItemStack itemstack = stealTargetPlayer.inventory.getStackInSlot(randSlot);
+							ItemStack stealCopy = itemstack.copy();
+							stealCopy.stackSize = MathHelper.getRandomIntegerInRange(rand, 1, Math.min(stealCopy.stackSize, 4));
+							ItemStack safeCopy = stealCopy.copy();
+							if (birdInv.addItemToInventory(stealCopy)) {
+								itemstack.stackSize -= safeCopy.stackSize - stealCopy.stackSize;
+								if (itemstack.stackSize <= 0) {
+									itemstack = null;
+								}
+								stealTargetPlayer.inventory.setInventorySlotContents(randSlot, itemstack);
+								stolenItem = safeCopy;
+							}
+						}
+						if (stolenItem != null) {
+							stolenTime = 0;
+							setStolenItem(stolenItem);
+							playSound("random.pop", 0.5f, ((rand.nextFloat() - rand.nextFloat()) * 0.7f + 1.0f) * 2.0f);
+						}
+						cancelFlight();
+					}
+				}
+			} else if (stealingCrops) {
+				if (!LOTRMod.canGrief(worldObj)) {
+					stealingCrops = false;
+				} else if (currentFlightTarget == null || !isValidFlightTarget(currentFlightTarget)) {
+					cancelFlight();
+				} else {
+					int i = currentFlightTarget.posX;
+					int j = currentFlightTarget.posY;
+					int k = currentFlightTarget.posZ;
+					if (getDistanceSqToFlightTarget() < 1.0) {
+						if (canStealCrops(i, j, k)) {
+							eatCropBlock(i, j, k);
+							playSound("random.eat", 1.0f, (worldObj.rand.nextFloat() - worldObj.rand.nextFloat()) * 0.2f + 1.0f);
+						}
+						cancelFlight();
+					} else if (!canStealCrops(i, j, k) || flightTargetTime % 100 == 0 && LOTRScarecrows.anyScarecrowsNearby(worldObj, i, j, k)) {
+						cancelFlight();
+					}
+				}
+			} else {
+				int j;
+				if (LOTRMod.canGrief(worldObj) && !stealingCrops && rand.nextInt(100) == 0) {
+					int i = MathHelper.floor_double(posX);
+					j = MathHelper.floor_double(posY);
+					int k = MathHelper.floor_double(posZ);
+					int range = 16;
+					int yRange = 8;
+					int attempts = 32;
+					for (int l = 0; l < attempts; ++l) {
+						int k1;
+						int j1;
+						int i1 = i + MathHelper.getRandomIntegerInRange(rand, -range, range);
+						if (!canStealCrops(i1, j1 = j + MathHelper.getRandomIntegerInRange(rand, -yRange, yRange), k1 = k + MathHelper.getRandomIntegerInRange(rand, -range, range)) || LOTRScarecrows.anyScarecrowsNearby(worldObj, i1, j1, k1)) {
+							continue;
+						}
+						stealingCrops = true;
+						currentFlightTarget = new ChunkCoordinates(i1, j1, k1);
+						newFlight();
+						break;
+					}
+				}
+				if (!stealingCrops) {
+					if (currentFlightTarget != null && !isValidFlightTarget(currentFlightTarget)) {
+						cancelFlight();
+					}
+					if (currentFlightTarget == null || rand.nextInt(50) == 0 || getDistanceSqToFlightTarget() < 4.0) {
+						int i = MathHelper.floor_double(posX);
+						j = MathHelper.floor_double(posY);
+						int k = MathHelper.floor_double(posZ);
+						currentFlightTarget = new ChunkCoordinates(i += rand.nextInt(16) - rand.nextInt(16), j += MathHelper.getRandomIntegerInRange(rand, -2, 3), k += rand.nextInt(16) - rand.nextInt(16));
+						newFlight();
+					}
+				}
+			}
+			if (currentFlightTarget != null) {
+				double speed = getEntityAttribute(SharedMonsterAttributes.movementSpeed).getAttributeValue();
+				double d0 = currentFlightTarget.posX + 0.5 - posX;
+				double d1 = currentFlightTarget.posY + 0.5 - posY;
+				double d2 = currentFlightTarget.posZ + 0.5 - posZ;
+				motionX += (Math.signum(d0) * 0.5 - motionX) * speed;
+				motionY += (Math.signum(d1) * 0.8 - motionY) * speed;
+				motionZ += (Math.signum(d2) * 0.5 - motionZ) * speed;
+				float f = (float) (Math.atan2(motionZ, motionX) * 180.0 / 3.141592653589793) - 90.0f;
+				float f1 = MathHelper.wrapAngleTo180_float(f - rotationYaw);
+				moveForward = 0.5f;
+				rotationYaw += f1;
+				++flightTargetTime;
+				if (flightTargetTime >= 400) {
+					cancelFlight();
+				}
+			}
+			if (rand.nextInt(200) == 0 && canBirdSit()) {
+				setBirdStill(true);
+				cancelFlight();
+			}
+		}
+	}
 
-    public ItemStack getPickedResult(MovingObjectPosition target) {
-        return new ItemStack(LOTRMod.spawnEgg, 1, LOTREntities.getEntityID(this));
-    }
+	@Override
+	public void updateFallState(double d, boolean flag) {
+	}
 
-    public enum BirdType {
-        COMMON("common", true),
-        CROW("crow", true),
-        MAGPIE("magpie", true),
-        FAR_HARAD("farHarad", true);
+	@Override
+	public void updateInAnimalJar() {
+		setBirdStill(false);
+	}
 
-        public final String textureDir;
-        public final boolean canSteal;
+	@Override
+	public void writeEntityToNBT(NBTTagCompound nbt) {
+		super.writeEntityToNBT(nbt);
+		nbt.setInteger("BirdType", getBirdType().ordinal());
+		nbt.setBoolean("BirdStill", isBirdStill());
+		birdInv.readFromNBT(nbt);
+		stolenTime = nbt.getShort("StealTime");
+	}
 
-        BirdType(String s, boolean flag) {
-            this.textureDir = s;
-            this.canSteal = flag;
-        }
-    }
+	public enum BirdType {
+		COMMON("common", true), CROW("crow", true), MAGPIE("magpie", true), FAR_HARAD("farHarad", true);
+
+		public String textureDir;
+		public boolean canSteal;
+
+		BirdType(String s, boolean flag) {
+			textureDir = s;
+			canSteal = flag;
+		}
+	}
 
 }
-

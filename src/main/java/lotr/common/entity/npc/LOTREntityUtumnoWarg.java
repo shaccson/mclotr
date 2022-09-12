@@ -8,39 +8,39 @@ import net.minecraft.entity.ai.EntityAIBase;
 import net.minecraft.world.World;
 
 public class LOTREntityUtumnoWarg extends LOTREntityWarg {
-    public LOTREntityUtumnoWarg(World world) {
-        super(world);
-    }
+	public LOTREntityUtumnoWarg(World world) {
+		super(world);
+	}
 
-    @Override
-    public EntityAIBase getWargAttackAI() {
-        return new LOTREntityAIAttackOnCollide(this, 1.7, true);
-    }
+	@Override
+	public void applyEntityAttributes() {
+		super.applyEntityAttributes();
+		getEntityAttribute(SharedMonsterAttributes.maxHealth).setBaseValue(40.0);
+		getEntityAttribute(SharedMonsterAttributes.movementSpeed).setBaseValue(0.25);
+	}
 
-    @Override
-    protected void applyEntityAttributes() {
-        super.applyEntityAttributes();
-        this.getEntityAttribute(SharedMonsterAttributes.maxHealth).setBaseValue(40.0);
-        this.getEntityAttribute(SharedMonsterAttributes.movementSpeed).setBaseValue(0.25);
-    }
+	@Override
+	public boolean canWargBeRidden() {
+		return false;
+	}
 
-    @Override
-    public LOTREntityNPC createWargRider() {
-        return this.worldObj.rand.nextBoolean() ? new LOTREntityUtumnoOrcArcher(this.worldObj) : new LOTREntityUtumnoOrc(this.worldObj);
-    }
+	@Override
+	public LOTREntityNPC createWargRider() {
+		return worldObj.rand.nextBoolean() ? new LOTREntityUtumnoOrcArcher(worldObj) : new LOTREntityUtumnoOrc(worldObj);
+	}
 
-    @Override
-    public boolean canWargBeRidden() {
-        return false;
-    }
+	@Override
+	public LOTRFaction getFaction() {
+		return LOTRFaction.UTUMNO;
+	}
 
-    @Override
-    public LOTRFaction getFaction() {
-        return LOTRFaction.UTUMNO;
-    }
+	@Override
+	public LOTRAchievement getKillAchievement() {
+		return LOTRAchievement.killUtumnoWarg;
+	}
 
-    @Override
-    protected LOTRAchievement getKillAchievement() {
-        return LOTRAchievement.killUtumnoWarg;
-    }
+	@Override
+	public EntityAIBase getWargAttackAI() {
+		return new LOTREntityAIAttackOnCollide(this, 1.7, true);
+	}
 }

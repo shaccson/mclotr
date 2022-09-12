@@ -1,7 +1,7 @@
-Пекарня
-Торты
-Кондитерские изделия
-Столовая
-Печь
-Пирожные
-Угощения 
+Bakery
+Cakes
+Confections
+Kitchen
+Oven
+Pastries
+Treats

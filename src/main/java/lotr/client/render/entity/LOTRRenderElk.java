@@ -7,32 +7,32 @@ import net.minecraft.entity.*;
 import net.minecraft.util.ResourceLocation;
 
 public class LOTRRenderElk extends RenderLiving {
-    private static LOTRRandomSkins elkSkins;
-    private static ResourceLocation saddleTexture;
+	public static LOTRRandomSkins elkSkins;
+	public static ResourceLocation saddleTexture;
 
-    public LOTRRenderElk() {
-        super(new LOTRModelElk(), 0.5f);
-        this.setRenderPassModel(new LOTRModelElk(0.5f));
-        elkSkins = LOTRRandomSkins.loadSkinsList("lotr:mob/elk/elk");
-    }
+	static {
+		saddleTexture = new ResourceLocation("lotr:mob/elk/saddle.png");
+	}
 
-    @Override
-    public ResourceLocation getEntityTexture(Entity entity) {
-        LOTREntityElk elk = (LOTREntityElk) entity;
-        ResourceLocation elkSkin = elkSkins.getRandomSkin(elk);
-        return LOTRRenderHorse.getLayeredMountTexture(elk, elkSkin);
-    }
+	public LOTRRenderElk() {
+		super(new LOTRModelElk(), 0.5f);
+		setRenderPassModel(new LOTRModelElk(0.5f));
+		elkSkins = LOTRRandomSkins.loadSkinsList("lotr:mob/elk/elk");
+	}
 
-    @Override
-    protected int shouldRenderPass(EntityLivingBase entity, int pass, float f) {
-        if(pass == 0 && ((LOTREntityElk) entity).isMountSaddled()) {
-            this.bindTexture(saddleTexture);
-            return 1;
-        }
-        return super.shouldRenderPass(entity, pass, f);
-    }
+	@Override
+	public ResourceLocation getEntityTexture(Entity entity) {
+		LOTREntityElk elk = (LOTREntityElk) entity;
+		ResourceLocation elkSkin = elkSkins.getRandomSkin(elk);
+		return LOTRRenderHorse.getLayeredMountTexture(elk, elkSkin);
+	}
 
-    static {
-        saddleTexture = new ResourceLocation("lotr:mob/elk/saddle.png");
-    }
+	@Override
+	public int shouldRenderPass(EntityLivingBase entity, int pass, float f) {
+		if (pass == 0 && ((LOTREntityElk) entity).isMountSaddled()) {
+			bindTexture(saddleTexture);
+			return 1;
+		}
+		return super.shouldRenderPass(entity, pass, f);
+	}
 }

@@ -18,7 +18,7 @@ public class BotaniaPatcher extends ModPatcher {
 		});
 	}
 
-	private void patchKekimurus(ClassNode classNode) {
+	public void patchKekimurus(ClassNode classNode) {
 		MethodNode method = ASMUtils.findMethod(classNode, "onUpdate", "()V");
 		if (method == null) {
 			return;
@@ -28,7 +28,7 @@ public class BotaniaPatcher extends ModPatcher {
 				continue;
 			}
 			TypeInsnNode typeNode = (TypeInsnNode) node;
-			if (!typeNode.desc.equals("net/minecraft/block/BlockCake")) {
+			if (!"net/minecraft/block/BlockCake".equals(typeNode.desc)) {
 				continue;
 			}
 			typeNode.desc = "lotr/common/block/LOTRBlockPlaceableFood";

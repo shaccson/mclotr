@@ -1,17 +1,11 @@
-Я Вам ничего не продам, #.
-Извини, #. Я не торгую с хулиганами.
-Вам не рады на этом рынке, #!
-Если Вы хоть палцем коснётесь меня или моих товаров, я позову стражу.
-Ты самый глупый человек из всех, кого я знаю, #.
-Я не торгую с убийцами.
-В твоём присутствии нет никакой необходимости, #. Уходи отсюда.
-Я честный торговец, #, но Вы бесчестный человек.
-Признаюсь, я считаю себя честным торговцем. К сожалению, #, честные торговцы с такими, как ты, не торгуют.
-Неужто ты думал, что мы встретим тебя цветами и песнями, #? Пошёл прочь!
-Убирайся с наших земель!
-Я не хочу очернять свою репутацию, #. Я торгую только с честными людьми.
-Я не торгую с предателями людского рода!
-Я у тебя ничего не куплю!
-Ты чего тут забыл? Убирайся из Бри, покинь наши земли!
-Я бы не торговал с Вами, даже если бы за нами не наблюдали стражники.
-Я скорее умру, чем отдам Вам свои товары.
+We have no room for the likes of you in Bree!
+We've dealt with Ruffians like you before, #!
+I knew those Ruffians coming up the Greenway were up to no good!
+How did you slip past the gatekeeper?
+Call for the guards, we're under attack!
+Don't come bringing trouble to our peaceful village, why you.
+What is the matter with you, acting like that!
+There is no room for ill-folk such as you in Bree!
+Your first mistake was thinking I never fought Big Folk before!
+For Big Folk, you don't hit that hard.
+I've tossed with Dwarves before, this is nothing!

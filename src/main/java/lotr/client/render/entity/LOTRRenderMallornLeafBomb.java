@@ -6,12 +6,12 @@ import net.minecraft.entity.Entity;
 import net.minecraft.util.ResourceLocation;
 
 public class LOTRRenderMallornLeafBomb extends Render {
-    @Override
-    protected ResourceLocation getEntityTexture(Entity entity) {
-        return TextureMap.locationBlocksTexture;
-    }
+	@Override
+	public void doRender(Entity entity, double d, double d1, double d2, float f, float f1) {
+	}
 
-    @Override
-    public void doRender(Entity entity, double d, double d1, double d2, float f, float f1) {
-    }
+	@Override
+	public ResourceLocation getEntityTexture(Entity entity) {
+		return TextureMap.locationBlocksTexture;
+	}
 }

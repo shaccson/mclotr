@@ -10,63 +10,63 @@ import net.minecraft.item.ItemStack;
 import net.minecraft.world.World;
 
 public class LOTREntityNearHaradrim extends LOTREntityNearHaradrimBase {
-    public LOTREntityNearHaradrim(World world) {
-        super(world);
-        this.addTargetTasks(false);
-    }
+	public LOTREntityNearHaradrim(World world) {
+		super(world);
+		this.addTargetTasks(false);
+	}
 
-    @Override
-    protected LOTRFoods getHaradrimFoods() {
-        return LOTRFoods.SOUTHRON;
-    }
+	@Override
+	public LOTRMiniQuest createMiniQuest() {
+		return LOTRMiniQuestFactory.NEAR_HARAD.createQuest(this);
+	}
 
-    @Override
-    protected LOTRFoods getHaradrimDrinks() {
-        return LOTRFoods.SOUTHRON_DRINK;
-    }
+	@Override
+	public LOTRNPCMount createMountToRide() {
+		LOTREntityHorse horse = (LOTREntityHorse) super.createMountToRide();
+		horse.setMountArmor(new ItemStack(LOTRMod.horseArmorNearHarad));
+		return horse;
+	}
 
-    @Override
-    public void setupNPCName() {
-        this.familyInfo.setName(LOTRNames.getSouthronCoastName(this.rand, this.familyInfo.isMale()));
-    }
+	@Override
+	public void dropHaradrimItems(boolean flag, int i) {
+		if (rand.nextInt(5) == 0) {
+			dropChestContents(LOTRChestContents.NEAR_HARAD_HOUSE, 1, 2 + i);
+		}
+	}
 
-    @Override
-    public LOTRNPCMount createMountToRide() {
-        LOTREntityHorse horse = (LOTREntityHorse) super.createMountToRide();
-        horse.setMountArmor(new ItemStack(LOTRMod.horseArmorNearHarad));
-        return horse;
-    }
+	@Override
+	public LOTRMiniQuestFactory getBountyHelpSpeechDir() {
+		return LOTRMiniQuestFactory.NEAR_HARAD;
+	}
 
-    @Override
-    public IEntityLivingData onSpawnWithEgg(IEntityLivingData data) {
-        data = super.onSpawnWithEgg(data);
-        this.npcItemsInv.setMeleeWeapon(new ItemStack(LOTRMod.daggerNearHarad));
-        this.npcItemsInv.setIdleItem(null);
-        return data;
-    }
+	@Override
+	public LOTRFoods getHaradrimDrinks() {
+		return LOTRFoods.SOUTHRON_DRINK;
+	}
 
-    @Override
-    protected void dropHaradrimItems(boolean flag, int i) {
-        if(this.rand.nextInt(5) == 0) {
-            this.dropChestContents(LOTRChestContents.NEAR_HARAD_HOUSE, 1, 2 + i);
-        }
-    }
+	@Override
+	public LOTRFoods getHaradrimFoods() {
+		return LOTRFoods.SOUTHRON;
+	}
 
-    @Override
-    public String getSpeechBank(EntityPlayer entityplayer) {
-        if(this.isFriendly(entityplayer)) {
-            return "nearHarad/coast/haradrim/friendly";
-        }
-        return "nearHarad/coast/haradrim/hostile";
-    }
+	@Override
+	public String getSpeechBank(EntityPlayer entityplayer) {
+		if (isFriendly(entityplayer)) {
+			return "nearHarad/coast/haradrim/friendly";
+		}
+		return "nearHarad/coast/haradrim/hostile";
+	}
 
-    @Override
-    public LOTRMiniQuest createMiniQuest() {
-        return LOTRMiniQuestFactory.NEAR_HARAD.createQuest(this);
-    }
+	@Override
+	public IEntityLivingData onSpawnWithEgg(IEntityLivingData data) {
+		data = super.onSpawnWithEgg(data);
+		npcItemsInv.setMeleeWeapon(new ItemStack(LOTRMod.daggerNearHarad));
+		npcItemsInv.setIdleItem(null);
+		return data;
+	}
 
-    @Override
-    public LOTRMiniQuestFactory getBountyHelpSpeechDir() {
-        return LOTRMiniQuestFactory.NEAR_HARAD;
-    }
+	@Override
+	public void setupNPCName() {
+		familyInfo.setName(LOTRNames.getSouthronCoastName(rand, familyInfo.isMale()));
+	}
 }

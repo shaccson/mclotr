@@ -1,25 +1,27 @@
-#title:План на день
+#Written by Ring9Of9fPower
+#
+#title:A Hobbit's To-do List
 #author:{name:hobbit_male} {name:hobbit_surname}
 #types:shire
 #
-{choose:В субботу/В среду/В понедельник/Во вторник/В среду/В четверг/В пятницу} нужно сделать:
+{choose:Sterday/Sunday/Monday/Trewsday/Hevensday/Mersday/Highday} To-do List
 
-1. Ревизировать кладовой (выкинуть заплесневелую выпечку);
+1. Clean pantry (throw away mouldy pastries)
 
-2. Помыть стол, почистить скатерть;
+2. Wash table, clean table cloth
 
-3. Пойти на рынок и пополните запасы в винном погребе и кладовой: купите яйца, муку, сахар, какао, чай, ликёр и Эль;
+3. Go to the market and restock the wine cellar and pantry: buy eggs, flour, sugar, cocoa, tea, pipe-weed and ale
 
-4. Сходить в сад и полить цветы;
+4. Tend to the garden/flower beds: pull weeds, water flowers, water vegetables and prune roses
 
-5. Покричать на подростков-хоббитов, которые портят мой газон;
+5. Yell at the troublesome tweens who are messing up my lawn!
 
-6. Поставить пугало в саду;
+6. Put up a scarecrow in the garden
 
-7. Испечь пирог для гостей на завтра;
+7. Bake a cheesecake for the guests tomorrow 
 
-8. Помыть пол;
+8. Sweep the floor
 
-9. Вымести пыль и очистить мебель;
+9. Polish, dust, and clean the furniture
 
-10. Пойти в {name:hobbitTavern_prefix} {name:hobbitTavern_suffix}, выпить кружку эля и выкурить трубку с трубочным зельем.
+10. Go to {name:hobbitTavern_prefix} {name:hobbitTavern_suffix}, have a nice mug of ale, and smoke my pipe!

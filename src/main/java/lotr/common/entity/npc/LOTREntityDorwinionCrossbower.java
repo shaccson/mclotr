@@ -8,41 +8,40 @@ import net.minecraft.item.ItemStack;
 import net.minecraft.world.World;
 
 public class LOTREntityDorwinionCrossbower extends LOTREntityDorwinionGuard {
-    public LOTREntityDorwinionCrossbower(World world) {
-        super(world);
-    }
+	public LOTREntityDorwinionCrossbower(World world) {
+		super(world);
+	}
 
-    @Override
-    protected EntityAIBase createDorwinionAttackAI() {
-        return new LOTREntityAIRangedAttack(this, 1.25, 30, 50, 16.0f);
-    }
+	@Override
+	public void attackEntityWithRangedAttack(EntityLivingBase target, float f) {
+		npcCrossbowAttack(target, f);
+	}
 
-    @Override
-    public IEntityLivingData onSpawnWithEgg(IEntityLivingData data) {
-        data = super.onSpawnWithEgg(data);
-        this.npcItemsInv.setRangedWeapon(new ItemStack(LOTRMod.ironCrossbow));
-        this.npcItemsInv.setIdleItem(this.npcItemsInv.getRangedWeapon());
-        return data;
-    }
+	@Override
+	public EntityAIBase createDorwinionAttackAI() {
+		return new LOTREntityAIRangedAttack(this, 1.25, 30, 50, 16.0f);
+	}
 
-    @Override
-    protected void onAttackModeChange(LOTREntityNPC.AttackMode mode, boolean mounted) {
-        if(mode == LOTREntityNPC.AttackMode.IDLE) {
-            this.setCurrentItemOrArmor(0, this.npcItemsInv.getIdleItem());
-        }
-        else {
-            this.setCurrentItemOrArmor(0, this.npcItemsInv.getRangedWeapon());
-        }
-    }
+	@Override
+	public void dropFewItems(boolean flag, int i) {
+		super.dropFewItems(flag, i);
+		dropNPCCrossbowBolts(i);
+	}
 
-    @Override
-    public void attackEntityWithRangedAttack(EntityLivingBase target, float f) {
-        this.npcCrossbowAttack(target, f);
-    }
+	@Override
+	public void onAttackModeChange(LOTREntityNPC.AttackMode mode, boolean mounted) {
+		if (mode == LOTREntityNPC.AttackMode.IDLE) {
+			setCurrentItemOrArmor(0, npcItemsInv.getIdleItem());
+		} else {
+			setCurrentItemOrArmor(0, npcItemsInv.getRangedWeapon());
+		}
+	}
 
-    @Override
-    protected void dropFewItems(boolean flag, int i) {
-        super.dropFewItems(flag, i);
-        this.dropNPCCrossbowBolts(i);
-    }
+	@Override
+	public IEntityLivingData onSpawnWithEgg(IEntityLivingData data) {
+		data = super.onSpawnWithEgg(data);
+		npcItemsInv.setRangedWeapon(new ItemStack(LOTRMod.ironCrossbow));
+		npcItemsInv.setIdleItem(npcItemsInv.getRangedWeapon());
+		return data;
+	}
 }

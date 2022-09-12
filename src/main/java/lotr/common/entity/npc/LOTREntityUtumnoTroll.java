@@ -10,76 +10,75 @@ import net.minecraft.entity.player.EntityPlayer;
 import net.minecraft.world.World;
 
 public class LOTREntityUtumnoTroll extends LOTREntityTroll {
-    public LOTREntityUtumnoTroll(World world) {
-        super(world);
-    }
+	public LOTREntityUtumnoTroll(World world) {
+		super(world);
+	}
 
-    @Override
-    public float getTrollScale() {
-        return 1.5f;
-    }
+	@Override
+	public void applyEntityAttributes() {
+		super.applyEntityAttributes();
+		getEntityAttribute(SharedMonsterAttributes.followRange).setBaseValue(32.0);
+		getEntityAttribute(SharedMonsterAttributes.maxHealth).setBaseValue(60.0);
+		getEntityAttribute(npcAttackDamage).setBaseValue(7.0);
+	}
 
-    @Override
-    public EntityAIBase getTrollAttackAI() {
-        return new LOTREntityAIAttackOnCollide(this, 2.0, false);
-    }
+	@Override
+	public boolean canTrollBeTickled(EntityPlayer entityplayer) {
+		return false;
+	}
 
-    @Override
-    protected void applyEntityAttributes() {
-        super.applyEntityAttributes();
-        this.getEntityAttribute(SharedMonsterAttributes.followRange).setBaseValue(32.0);
-        this.getEntityAttribute(SharedMonsterAttributes.maxHealth).setBaseValue(60.0);
-        this.getEntityAttribute(npcAttackDamage).setBaseValue(7.0);
-    }
+	@Override
+	public int getExperiencePoints(EntityPlayer entityplayer) {
+		return 5 + rand.nextInt(6);
+	}
 
-    @Override
-    public LOTRFaction getFaction() {
-        return LOTRFaction.UTUMNO;
-    }
+	@Override
+	public LOTRFaction getFaction() {
+		return LOTRFaction.UTUMNO;
+	}
 
-    @Override
-    protected boolean hasTrollName() {
-        return false;
-    }
+	@Override
+	public LOTRAchievement getKillAchievement() {
+		return LOTRAchievement.killUtumnoTroll;
+	}
 
-    @Override
-    protected boolean canTrollBeTickled(EntityPlayer entityplayer) {
-        return false;
-    }
+	@Override
+	public String getSpeechBank(EntityPlayer entityplayer) {
+		return null;
+	}
 
-    @Override
-    public void onTrollDeathBySun() {
-        this.worldObj.playSoundAtEntity(this, "lotr:troll.transform", this.getSoundVolume(), this.getSoundPitch());
-        this.worldObj.setEntityState(this, (byte) 15);
-        this.setDead();
-    }
+	@Override
+	public EntityAIBase getTrollAttackAI() {
+		return new LOTREntityAIAttackOnCollide(this, 2.0, false);
+	}
 
-    @SideOnly(value = Side.CLIENT)
-    @Override
-    public void handleHealthUpdate(byte b) {
-        if(b == 15) {
-            super.handleHealthUpdate(b);
-            for(int l = 0; l < 64; ++l) {
-                LOTRMod.proxy.spawnParticle("largeStone", this.posX + this.rand.nextGaussian() * this.width * 0.5, this.posY + this.rand.nextDouble() * this.height, this.posZ + this.rand.nextGaussian() * this.width * 0.5, 0.0, 0.0, 0.0);
-            }
-        }
-        else {
-            super.handleHealthUpdate(b);
-        }
-    }
+	@Override
+	public float getTrollScale() {
+		return 1.5f;
+	}
 
-    @Override
-    protected LOTRAchievement getKillAchievement() {
-        return LOTRAchievement.killUtumnoTroll;
-    }
+	@SideOnly(value = Side.CLIENT)
+	@Override
+	public void handleHealthUpdate(byte b) {
+		if (b == 15) {
+			super.handleHealthUpdate(b);
+			for (int l = 0; l < 64; ++l) {
+				LOTRMod.proxy.spawnParticle("largeStone", posX + rand.nextGaussian() * width * 0.5, posY + rand.nextDouble() * height, posZ + rand.nextGaussian() * width * 0.5, 0.0, 0.0, 0.0);
+			}
+		} else {
+			super.handleHealthUpdate(b);
+		}
+	}
 
-    @Override
-    protected int getExperiencePoints(EntityPlayer entityplayer) {
-        return 5 + this.rand.nextInt(6);
-    }
+	@Override
+	public boolean hasTrollName() {
+		return false;
+	}
 
-    @Override
-    public String getSpeechBank(EntityPlayer entityplayer) {
-        return null;
-    }
+	@Override
+	public void onTrollDeathBySun() {
+		worldObj.playSoundAtEntity(this, "lotr:troll.transform", getSoundVolume(), getSoundPitch());
+		worldObj.setEntityState(this, (byte) 15);
+		setDead();
+	}
 }

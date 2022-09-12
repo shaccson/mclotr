@@ -7,131 +7,139 @@ import net.minecraft.block.Block;
 import net.minecraft.init.Blocks;
 
 public abstract class LOTRWorldGenDaleStructure extends LOTRWorldGenStructureBase2 {
-    protected Block brickBlock;
-    protected int brickMeta;
-    protected Block brickSlabBlock;
-    protected int brickSlabMeta;
-    protected Block brickStairBlock;
-    protected Block brickWallBlock;
-    protected int brickWallMeta;
-    protected Block pillarBlock;
-    protected int pillarMeta;
-    protected Block floorBlock;
-    protected int floorMeta;
-    protected Block plankBlock;
-    protected int plankMeta;
-    protected Block plankSlabBlock;
-    protected int plankSlabMeta;
-    protected Block plankStairBlock;
-    protected Block fenceBlock;
-    protected int fenceMeta;
-    protected Block fenceGateBlock;
-    protected Block woodBlock;
-    protected int woodMeta;
-    protected Block woodBeamBlock;
-    protected int woodBeamMeta;
-    protected Block doorBlock;
-    protected Block roofBlock;
-    protected int roofMeta;
-    protected Block roofSlabBlock;
-    protected int roofSlabMeta;
-    protected Block roofStairBlock;
-    protected Block barsBlock;
-    protected Block plateBlock;
+	public Block brickBlock;
+	public int brickMeta;
+	public Block brickSlabBlock;
+	public int brickSlabMeta;
+	public Block brickStairBlock;
+	public Block brickWallBlock;
+	public int brickWallMeta;
+	public Block pillarBlock;
+	public int pillarMeta;
+	public Block floorBlock;
+	public int floorMeta;
+	public Block plankBlock;
+	public int plankMeta;
+	public Block plankSlabBlock;
+	public int plankSlabMeta;
+	public Block plankStairBlock;
+	public Block fenceBlock;
+	public int fenceMeta;
+	public Block fenceGateBlock;
+	public Block woodBlock;
+	public int woodMeta;
+	public Block woodBeamBlock;
+	public int woodBeamMeta;
+	public Block doorBlock;
+	public Block roofBlock;
+	public int roofMeta;
+	public Block roofSlabBlock;
+	public int roofSlabMeta;
+	public Block roofStairBlock;
+	public Block barsBlock;
+	public Block plateBlock;
 
-    public LOTRWorldGenDaleStructure(boolean flag) {
-        super(flag);
-    }
+	public LOTRWorldGenDaleStructure(boolean flag) {
+		super(flag);
+	}
 
-    @Override
-    protected void setupRandomBlocks(Random random) {
-        this.brickBlock = LOTRMod.brick5;
-        this.brickMeta = 1;
-        this.brickSlabBlock = LOTRMod.slabSingle9;
-        this.brickSlabMeta = 6;
-        this.brickStairBlock = LOTRMod.stairsDaleBrick;
-        this.brickWallBlock = LOTRMod.wall3;
-        this.brickWallMeta = 9;
-        this.pillarBlock = LOTRMod.pillar2;
-        this.pillarMeta = 5;
-        this.floorBlock = Blocks.cobblestone;
-        this.floorMeta = 0;
-        int randomWood = random.nextInt(3);
-        if(randomWood == 0) {
-            this.plankBlock = Blocks.planks;
-            this.plankMeta = 1;
-            this.plankSlabBlock = Blocks.wooden_slab;
-            this.plankSlabMeta = 1;
-            this.plankStairBlock = Blocks.spruce_stairs;
-            this.fenceBlock = Blocks.fence;
-            this.fenceMeta = 0;
-            this.fenceGateBlock = Blocks.fence_gate;
-            this.woodBlock = Blocks.log;
-            this.woodMeta = 0;
-            this.woodBeamBlock = LOTRMod.woodBeamV1;
-            this.woodBeamMeta = 0;
-            this.doorBlock = LOTRMod.doorSpruce;
-        }
-        else if(randomWood == 1) {
-            this.plankBlock = LOTRMod.planks2;
-            this.plankMeta = 4;
-            this.plankSlabBlock = LOTRMod.woodSlabSingle3;
-            this.plankSlabMeta = 4;
-            this.plankStairBlock = LOTRMod.stairsPine;
-            this.fenceBlock = LOTRMod.fence2;
-            this.fenceMeta = 4;
-            this.fenceGateBlock = LOTRMod.fenceGatePine;
-            this.woodBlock = LOTRMod.wood5;
-            this.woodMeta = 0;
-            this.woodBeamBlock = LOTRMod.woodBeam5;
-            this.woodBeamMeta = 0;
-            this.doorBlock = LOTRMod.doorPine;
-        }
-        else if(randomWood == 2) {
-            this.plankBlock = LOTRMod.planks2;
-            this.plankMeta = 3;
-            this.plankSlabBlock = LOTRMod.woodSlabSingle3;
-            this.plankSlabMeta = 3;
-            this.plankStairBlock = LOTRMod.stairsFir;
-            this.fenceBlock = LOTRMod.fence2;
-            this.fenceMeta = 3;
-            this.fenceGateBlock = LOTRMod.fenceGateFir;
-            this.woodBlock = LOTRMod.wood4;
-            this.woodMeta = 3;
-            this.woodBeamBlock = LOTRMod.woodBeam4;
-            this.woodBeamMeta = 3;
-            this.doorBlock = LOTRMod.doorFir;
-        }
-        int randomClay = random.nextInt(4);
-        if(randomClay == 0) {
-            this.roofBlock = LOTRMod.clayTileDyed;
-            this.roofMeta = 1;
-            this.roofSlabBlock = LOTRMod.slabClayTileDyedSingle;
-            this.roofSlabMeta = 1;
-            this.roofStairBlock = LOTRMod.stairsClayTileDyedOrange;
-        }
-        else if(randomClay == 1) {
-            this.roofBlock = LOTRMod.clayTileDyed;
-            this.roofMeta = 14;
-            this.roofSlabBlock = LOTRMod.slabClayTileDyedSingle2;
-            this.roofSlabMeta = 6;
-            this.roofStairBlock = LOTRMod.stairsClayTileDyedRed;
-        }
-        else if(randomClay == 2) {
-            this.roofBlock = LOTRMod.clayTileDyed;
-            this.roofMeta = 12;
-            this.roofSlabBlock = LOTRMod.slabClayTileDyedSingle2;
-            this.roofSlabMeta = 4;
-            this.roofStairBlock = LOTRMod.stairsClayTileDyedBrown;
-        }
-        else if(randomClay == 3) {
-            this.roofBlock = LOTRMod.clayTileDyed;
-            this.roofMeta = 11;
-            this.roofSlabBlock = LOTRMod.slabClayTileDyedSingle2;
-            this.roofSlabMeta = 3;
-            this.roofStairBlock = LOTRMod.stairsClayTileDyedBlue;
-        }
-        this.barsBlock = random.nextInt(3) == 0 ? Blocks.iron_bars : LOTRMod.bronzeBars;
-        this.plateBlock = random.nextBoolean() ? (random.nextBoolean() ? LOTRMod.plateBlock : LOTRMod.ceramicPlateBlock) : LOTRMod.woodPlateBlock;
-    }
+	@Override
+	public void setupRandomBlocks(Random random) {
+		brickBlock = LOTRMod.brick5;
+		brickMeta = 1;
+		brickSlabBlock = LOTRMod.slabSingle9;
+		brickSlabMeta = 6;
+		brickStairBlock = LOTRMod.stairsDaleBrick;
+		brickWallBlock = LOTRMod.wall3;
+		brickWallMeta = 9;
+		pillarBlock = LOTRMod.pillar2;
+		pillarMeta = 5;
+		floorBlock = Blocks.cobblestone;
+		floorMeta = 0;
+		int randomWood = random.nextInt(3);
+		switch (randomWood) {
+		case 0:
+			plankBlock = Blocks.planks;
+			plankMeta = 1;
+			plankSlabBlock = Blocks.wooden_slab;
+			plankSlabMeta = 1;
+			plankStairBlock = Blocks.spruce_stairs;
+			fenceBlock = Blocks.fence;
+			fenceMeta = 0;
+			fenceGateBlock = Blocks.fence_gate;
+			woodBlock = Blocks.log;
+			woodMeta = 0;
+			woodBeamBlock = LOTRMod.woodBeamV1;
+			woodBeamMeta = 0;
+			doorBlock = LOTRMod.doorSpruce;
+			break;
+		case 1:
+			plankBlock = LOTRMod.planks2;
+			plankMeta = 4;
+			plankSlabBlock = LOTRMod.woodSlabSingle3;
+			plankSlabMeta = 4;
+			plankStairBlock = LOTRMod.stairsPine;
+			fenceBlock = LOTRMod.fence2;
+			fenceMeta = 4;
+			fenceGateBlock = LOTRMod.fenceGatePine;
+			woodBlock = LOTRMod.wood5;
+			woodMeta = 0;
+			woodBeamBlock = LOTRMod.woodBeam5;
+			woodBeamMeta = 0;
+			doorBlock = LOTRMod.doorPine;
+			break;
+		case 2:
+			plankBlock = LOTRMod.planks2;
+			plankMeta = 3;
+			plankSlabBlock = LOTRMod.woodSlabSingle3;
+			plankSlabMeta = 3;
+			plankStairBlock = LOTRMod.stairsFir;
+			fenceBlock = LOTRMod.fence2;
+			fenceMeta = 3;
+			fenceGateBlock = LOTRMod.fenceGateFir;
+			woodBlock = LOTRMod.wood4;
+			woodMeta = 3;
+			woodBeamBlock = LOTRMod.woodBeam4;
+			woodBeamMeta = 3;
+			doorBlock = LOTRMod.doorFir;
+			break;
+		default:
+			break;
+		}
+		int randomClay = random.nextInt(4);
+		switch (randomClay) {
+		case 0:
+			roofBlock = LOTRMod.clayTileDyed;
+			roofMeta = 1;
+			roofSlabBlock = LOTRMod.slabClayTileDyedSingle;
+			roofSlabMeta = 1;
+			roofStairBlock = LOTRMod.stairsClayTileDyedOrange;
+			break;
+		case 1:
+			roofBlock = LOTRMod.clayTileDyed;
+			roofMeta = 14;
+			roofSlabBlock = LOTRMod.slabClayTileDyedSingle2;
+			roofSlabMeta = 6;
+			roofStairBlock = LOTRMod.stairsClayTileDyedRed;
+			break;
+		case 2:
+			roofBlock = LOTRMod.clayTileDyed;
+			roofMeta = 12;
+			roofSlabBlock = LOTRMod.slabClayTileDyedSingle2;
+			roofSlabMeta = 4;
+			roofStairBlock = LOTRMod.stairsClayTileDyedBrown;
+			break;
+		case 3:
+			roofBlock = LOTRMod.clayTileDyed;
+			roofMeta = 11;
+			roofSlabBlock = LOTRMod.slabClayTileDyedSingle2;
+			roofSlabMeta = 3;
+			roofStairBlock = LOTRMod.stairsClayTileDyedBlue;
+			break;
+		default:
+			break;
+		}
+		barsBlock = random.nextInt(3) == 0 ? Blocks.iron_bars : LOTRMod.bronzeBars;
+		plateBlock = random.nextBoolean() ? random.nextBoolean() ? LOTRMod.plateBlock : LOTRMod.ceramicPlateBlock : LOTRMod.woodPlateBlock;
+	}
 }

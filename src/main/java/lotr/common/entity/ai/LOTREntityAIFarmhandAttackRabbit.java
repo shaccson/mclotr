@@ -4,23 +4,23 @@ import lotr.common.entity.animal.LOTREntityRabbit;
 import lotr.common.entity.npc.LOTREntityNPC;
 
 public class LOTREntityAIFarmhandAttackRabbit extends LOTREntityAINearestAttackableTargetBasic {
-    private LOTREntityNPC theNPC;
+	public LOTREntityNPC theNPC;
 
-    public LOTREntityAIFarmhandAttackRabbit(LOTREntityNPC npc) {
-        super(npc, LOTREntityRabbit.class, 0, false);
-        this.theNPC = npc;
-    }
+	public LOTREntityAIFarmhandAttackRabbit(LOTREntityNPC npc) {
+		super(npc, LOTREntityRabbit.class, 0, false);
+		theNPC = npc;
+	}
 
-    @Override
-    public boolean shouldExecute() {
-        if(this.theNPC.hiredNPCInfo.isActive && !this.theNPC.hiredNPCInfo.isGuardMode()) {
-            return false;
-        }
-        return super.shouldExecute();
-    }
+	@Override
+	public double getTargetDistance() {
+		return 8.0;
+	}
 
-    @Override
-    protected double getTargetDistance() {
-        return 8.0;
-    }
+	@Override
+	public boolean shouldExecute() {
+		if (theNPC.hiredNPCInfo.isActive && !theNPC.hiredNPCInfo.isGuardMode()) {
+			return false;
+		}
+		return super.shouldExecute();
+	}
 }

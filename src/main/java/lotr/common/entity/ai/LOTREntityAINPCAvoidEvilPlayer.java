@@ -11,74 +11,74 @@ import net.minecraft.pathfinding.*;
 import net.minecraft.util.Vec3;
 
 public class LOTREntityAINPCAvoidEvilPlayer extends EntityAIBase {
-    private LOTREntityNPC theNPC;
-    private double farSpeed;
-    private double nearSpeed;
-    private Entity closestLivingEntity;
-    private float distanceFromEntity;
-    private PathEntity entityPathEntity;
-    private PathNavigate entityPathNavigate;
+	public LOTREntityNPC theNPC;
+	public double farSpeed;
+	public double nearSpeed;
+	public Entity closestLivingEntity;
+	public float distanceFromEntity;
+	public PathEntity entityPathEntity;
+	public PathNavigate entityPathNavigate;
 
-    public LOTREntityAINPCAvoidEvilPlayer(LOTREntityNPC npc, float f, double d, double d1) {
-        this.theNPC = npc;
-        this.distanceFromEntity = f;
-        this.farSpeed = d;
-        this.nearSpeed = d1;
-        this.entityPathNavigate = npc.getNavigator();
-        this.setMutexBits(1);
-    }
+	public LOTREntityAINPCAvoidEvilPlayer(LOTREntityNPC npc, float f, double d, double d1) {
+		theNPC = npc;
+		distanceFromEntity = f;
+		farSpeed = d;
+		nearSpeed = d1;
+		entityPathNavigate = npc.getNavigator();
+		setMutexBits(1);
+	}
 
-    @Override
-    public boolean shouldExecute() {
-        ArrayList<EntityPlayer> validPlayers = new ArrayList<>();
-        List list = this.theNPC.worldObj.getEntitiesWithinAABB(EntityPlayer.class, this.theNPC.boundingBox.expand(this.distanceFromEntity, this.distanceFromEntity / 2.0, this.distanceFromEntity));
-        if(list.isEmpty()) {
-            return false;
-        }
-        for(Object element : list) {
-            EntityPlayer entityplayer = (EntityPlayer) element;
-            if(entityplayer.capabilities.isCreativeMode) continue;
-            float alignment = LOTRLevelData.getData(entityplayer).getAlignment(this.theNPC.getFaction());
-            if(((this.theNPC.familyInfo.getAge() >= 0) || (alignment >= 0.0f)) && (!(this.theNPC instanceof LOTREntityHobbit) || (alignment > -100.0f))) continue;
-            validPlayers.add(entityplayer);
-        }
-        if(validPlayers.isEmpty()) {
-            return false;
-        }
-        this.closestLivingEntity = validPlayers.get(0);
-        Vec3 fleePath = RandomPositionGenerator.findRandomTargetBlockAwayFrom(this.theNPC, 16, 7, Vec3.createVectorHelper(this.closestLivingEntity.posX, this.closestLivingEntity.posY, this.closestLivingEntity.posZ));
-        if(fleePath == null) {
-            return false;
-        }
-        if(this.closestLivingEntity.getDistanceSq(fleePath.xCoord, fleePath.yCoord, fleePath.zCoord) < this.closestLivingEntity.getDistanceSqToEntity(this.theNPC)) {
-            return false;
-        }
-        this.entityPathEntity = this.entityPathNavigate.getPathToXYZ(fleePath.xCoord, fleePath.yCoord, fleePath.zCoord);
-        return this.entityPathEntity == null ? false : this.entityPathEntity.isDestinationSame(fleePath);
-    }
+	@Override
+	public boolean continueExecuting() {
+		return !entityPathNavigate.noPath();
+	}
 
-    @Override
-    public boolean continueExecuting() {
-        return !this.entityPathNavigate.noPath();
-    }
+	@Override
+	public void resetTask() {
+		closestLivingEntity = null;
+	}
 
-    @Override
-    public void startExecuting() {
-        this.entityPathNavigate.setPath(this.entityPathEntity, this.farSpeed);
-    }
+	@Override
+	public boolean shouldExecute() {
+		ArrayList<EntityPlayer> validPlayers = new ArrayList<>();
+		List list = theNPC.worldObj.getEntitiesWithinAABB(EntityPlayer.class, theNPC.boundingBox.expand(distanceFromEntity, distanceFromEntity / 2.0, distanceFromEntity));
+		if (list.isEmpty()) {
+			return false;
+		}
+		for (Object element : list) {
+			EntityPlayer entityplayer = (EntityPlayer) element;
+			if (entityplayer.capabilities.isCreativeMode) {
+				continue;
+			}
+			float alignment = LOTRLevelData.getData(entityplayer).getAlignment(theNPC.getFaction());
+			if ((theNPC.familyInfo.getAge() >= 0 || alignment >= 0.0f) && (!(theNPC instanceof LOTREntityHobbit) || alignment > -100.0f)) {
+				continue;
+			}
+			validPlayers.add(entityplayer);
+		}
+		if (validPlayers.isEmpty()) {
+			return false;
+		}
+		closestLivingEntity = validPlayers.get(0);
+		Vec3 fleePath = RandomPositionGenerator.findRandomTargetBlockAwayFrom(theNPC, 16, 7, Vec3.createVectorHelper(closestLivingEntity.posX, closestLivingEntity.posY, closestLivingEntity.posZ));
+		if (fleePath == null || closestLivingEntity.getDistanceSq(fleePath.xCoord, fleePath.yCoord, fleePath.zCoord) < closestLivingEntity.getDistanceSqToEntity(theNPC)) {
+			return false;
+		}
+		entityPathEntity = entityPathNavigate.getPathToXYZ(fleePath.xCoord, fleePath.yCoord, fleePath.zCoord);
+		return entityPathEntity == null ? false : entityPathEntity.isDestinationSame(fleePath);
+	}
 
-    @Override
-    public void resetTask() {
-        this.closestLivingEntity = null;
-    }
+	@Override
+	public void startExecuting() {
+		entityPathNavigate.setPath(entityPathEntity, farSpeed);
+	}
 
-    @Override
-    public void updateTask() {
-        if(this.theNPC.getDistanceSqToEntity(this.closestLivingEntity) < 49.0) {
-            this.theNPC.getNavigator().setSpeed(this.nearSpeed);
-        }
-        else {
-            this.theNPC.getNavigator().setSpeed(this.farSpeed);
-        }
-    }
+	@Override
+	public void updateTask() {
+		if (theNPC.getDistanceSqToEntity(closestLivingEntity) < 49.0) {
+			theNPC.getNavigator().setSpeed(nearSpeed);
+		} else {
+			theNPC.getNavigator().setSpeed(farSpeed);
+		}
+	}
 }

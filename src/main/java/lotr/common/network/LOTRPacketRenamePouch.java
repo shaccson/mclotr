@@ -9,39 +9,39 @@ import net.minecraft.entity.player.EntityPlayerMP;
 import net.minecraft.inventory.Container;
 
 public class LOTRPacketRenamePouch implements IMessage {
-    private String name;
+	public String name;
 
-    public LOTRPacketRenamePouch() {
-    }
+	public LOTRPacketRenamePouch() {
+	}
 
-    public LOTRPacketRenamePouch(String s) {
-        this.name = s;
-    }
+	public LOTRPacketRenamePouch(String s) {
+		name = s;
+	}
 
-    @Override
-    public void toBytes(ByteBuf data) {
-        byte[] nameData = this.name.getBytes(Charsets.UTF_8);
-        data.writeShort(nameData.length);
-        data.writeBytes(nameData);
-    }
+	@Override
+	public void fromBytes(ByteBuf data) {
+		short length = data.readShort();
+		name = data.readBytes(length).toString(Charsets.UTF_8);
+	}
 
-    @Override
-    public void fromBytes(ByteBuf data) {
-        short length = data.readShort();
-        this.name = data.readBytes(length).toString(Charsets.UTF_8);
-    }
+	@Override
+	public void toBytes(ByteBuf data) {
+		byte[] nameData = name.getBytes(Charsets.UTF_8);
+		data.writeShort(nameData.length);
+		data.writeBytes(nameData);
+	}
 
-    public static class Handler implements IMessageHandler<LOTRPacketRenamePouch, IMessage> {
-        @Override
-        public IMessage onMessage(LOTRPacketRenamePouch packet, MessageContext context) {
-            EntityPlayerMP entityplayer = context.getServerHandler().playerEntity;
-            Container container = entityplayer.openContainer;
-            if(container instanceof LOTRContainerPouch) {
-                LOTRContainerPouch pouch = (LOTRContainerPouch) container;
-                pouch.renamePouch(packet.name);
-            }
-            return null;
-        }
-    }
+	public static class Handler implements IMessageHandler<LOTRPacketRenamePouch, IMessage> {
+		@Override
+		public IMessage onMessage(LOTRPacketRenamePouch packet, MessageContext context) {
+			EntityPlayerMP entityplayer = context.getServerHandler().playerEntity;
+			Container container = entityplayer.openContainer;
+			if (container instanceof LOTRContainerPouch) {
+				LOTRContainerPouch pouch = (LOTRContainerPouch) container;
+				pouch.renamePouch(packet.name);
+			}
+			return null;
+		}
+	}
 
 }

@@ -8,62 +8,62 @@ import net.minecraft.item.ItemStack;
 import net.minecraft.world.World;
 
 public class LOTREntityWoodElfCaptain extends LOTREntityWoodElfWarrior implements LOTRUnitTradeable {
-    public LOTREntityWoodElfCaptain(World world) {
-        super(world);
-        this.addTargetTasks(false);
-        this.npcCape = LOTRCapes.WOOD_ELF;
-    }
+	public LOTREntityWoodElfCaptain(World world) {
+		super(world);
+		this.addTargetTasks(false);
+		npcCape = LOTRCapes.WOOD_ELF;
+	}
 
-    @Override
-    public IEntityLivingData onSpawnWithEgg(IEntityLivingData data) {
-        data = super.onSpawnWithEgg(data);
-        this.npcItemsInv.setMeleeWeapon(new ItemStack(LOTRMod.swordWoodElven));
-        this.npcItemsInv.setIdleItem(this.npcItemsInv.getMeleeWeapon());
-        this.setCurrentItemOrArmor(1, new ItemStack(LOTRMod.bootsWoodElven));
-        this.setCurrentItemOrArmor(2, new ItemStack(LOTRMod.legsWoodElven));
-        this.setCurrentItemOrArmor(3, new ItemStack(LOTRMod.bodyWoodElven));
-        this.setCurrentItemOrArmor(4, null);
-        return data;
-    }
+	@Override
+	public boolean canTradeWith(EntityPlayer entityplayer) {
+		return LOTRLevelData.getData(entityplayer).getAlignment(getFaction()) >= 250.0f && isFriendly(entityplayer);
+	}
 
-    @Override
-    public float getAlignmentBonus() {
-        return 5.0f;
-    }
+	@Override
+	public float getAlignmentBonus() {
+		return 5.0f;
+	}
 
-    @Override
-    public LOTRUnitTradeEntries getUnits() {
-        return LOTRUnitTradeEntries.WOOD_ELF_CAPTAIN;
-    }
+	@Override
+	public String getSpeechBank(EntityPlayer entityplayer) {
+		if (isFriendly(entityplayer)) {
+			if (canTradeWith(entityplayer)) {
+				return "woodElf/captain/friendly";
+			}
+			return "woodElf/captain/neutral";
+		}
+		return "woodElf/warrior/hostile";
+	}
 
-    @Override
-    public LOTRInvasions getWarhorn() {
-        return LOTRInvasions.WOOD_ELF;
-    }
+	@Override
+	public LOTRUnitTradeEntries getUnits() {
+		return LOTRUnitTradeEntries.WOOD_ELF_CAPTAIN;
+	}
 
-    @Override
-    public boolean canTradeWith(EntityPlayer entityplayer) {
-        return LOTRLevelData.getData(entityplayer).getAlignment(this.getFaction()) >= 250.0f && this.isFriendly(entityplayer);
-    }
+	@Override
+	public LOTRInvasions getWarhorn() {
+		return LOTRInvasions.WOOD_ELF;
+	}
 
-    @Override
-    public void onUnitTrade(EntityPlayer entityplayer) {
-        LOTRLevelData.getData(entityplayer).addAchievement(LOTRAchievement.tradeWoodElfCaptain);
-    }
+	@Override
+	public IEntityLivingData onSpawnWithEgg(IEntityLivingData data) {
+		data = super.onSpawnWithEgg(data);
+		npcItemsInv.setMeleeWeapon(new ItemStack(LOTRMod.swordWoodElven));
+		npcItemsInv.setIdleItem(npcItemsInv.getMeleeWeapon());
+		setCurrentItemOrArmor(1, new ItemStack(LOTRMod.bootsWoodElven));
+		setCurrentItemOrArmor(2, new ItemStack(LOTRMod.legsWoodElven));
+		setCurrentItemOrArmor(3, new ItemStack(LOTRMod.bodyWoodElven));
+		setCurrentItemOrArmor(4, null);
+		return data;
+	}
 
-    @Override
-    public boolean shouldTraderRespawn() {
-        return true;
-    }
+	@Override
+	public void onUnitTrade(EntityPlayer entityplayer) {
+		LOTRLevelData.getData(entityplayer).addAchievement(LOTRAchievement.tradeWoodElfCaptain);
+	}
 
-    @Override
-    public String getSpeechBank(EntityPlayer entityplayer) {
-        if(this.isFriendly(entityplayer)) {
-            if(this.canTradeWith(entityplayer)) {
-                return "woodElf/captain/friendly";
-            }
-            return "woodElf/captain/neutral";
-        }
-        return "woodElf/warrior/hostile";
-    }
+	@Override
+	public boolean shouldTraderRespawn() {
+		return true;
+	}
 }

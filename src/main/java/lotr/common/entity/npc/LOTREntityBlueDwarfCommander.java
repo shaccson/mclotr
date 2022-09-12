@@ -10,72 +10,72 @@ import net.minecraft.item.ItemStack;
 import net.minecraft.world.World;
 
 public class LOTREntityBlueDwarfCommander extends LOTREntityBlueDwarfWarrior implements LOTRUnitTradeable {
-    public LOTREntityBlueDwarfCommander(World world) {
-        super(world);
-        this.addTargetTasks(false);
-    }
+	public LOTREntityBlueDwarfCommander(World world) {
+		super(world);
+		this.addTargetTasks(false);
+	}
 
-    @Override
-    public EntityAIBase getDwarfAttackAI() {
-        return new LOTREntityAIAttackOnCollide(this, 1.6, false);
-    }
+	@Override
+	public void applyEntityAttributes() {
+		super.applyEntityAttributes();
+		getEntityAttribute(SharedMonsterAttributes.maxHealth).setBaseValue(30.0);
+	}
 
-    @Override
-    protected void applyEntityAttributes() {
-        super.applyEntityAttributes();
-        this.getEntityAttribute(SharedMonsterAttributes.maxHealth).setBaseValue(30.0);
-    }
+	@Override
+	public boolean canTradeWith(EntityPlayer entityplayer) {
+		return LOTRLevelData.getData(entityplayer).getAlignment(getFaction()) >= 200.0f && isFriendly(entityplayer);
+	}
 
-    @Override
-    public IEntityLivingData onSpawnWithEgg(IEntityLivingData data) {
-        data = super.onSpawnWithEgg(data);
-        this.npcItemsInv.setMeleeWeapon(new ItemStack(LOTRMod.hammerBlueDwarven));
-        this.npcItemsInv.setIdleItem(this.npcItemsInv.getMeleeWeapon());
-        this.setCurrentItemOrArmor(1, new ItemStack(LOTRMod.bootsBlueDwarven));
-        this.setCurrentItemOrArmor(2, new ItemStack(LOTRMod.legsBlueDwarven));
-        this.setCurrentItemOrArmor(3, new ItemStack(LOTRMod.bodyBlueDwarven));
-        this.setCurrentItemOrArmor(4, null);
-        return data;
-    }
+	@Override
+	public float getAlignmentBonus() {
+		return 5.0f;
+	}
 
-    @Override
-    public float getAlignmentBonus() {
-        return 5.0f;
-    }
+	@Override
+	public EntityAIBase getDwarfAttackAI() {
+		return new LOTREntityAIAttackOnCollide(this, 1.6, false);
+	}
 
-    @Override
-    public LOTRUnitTradeEntries getUnits() {
-        return LOTRUnitTradeEntries.BLUE_DWARF_COMMANDER;
-    }
+	@Override
+	public String getSpeechBank(EntityPlayer entityplayer) {
+		if (isFriendly(entityplayer)) {
+			if (canTradeWith(entityplayer)) {
+				return "blueDwarf/commander/friendly";
+			}
+			return "blueDwarf/commander/neutral";
+		}
+		return "blueDwarf/dwarf/hostile";
+	}
 
-    @Override
-    public LOTRInvasions getWarhorn() {
-        return LOTRInvasions.BLUE_MOUNTAINS;
-    }
+	@Override
+	public LOTRUnitTradeEntries getUnits() {
+		return LOTRUnitTradeEntries.BLUE_DWARF_COMMANDER;
+	}
 
-    @Override
-    public boolean canTradeWith(EntityPlayer entityplayer) {
-        return LOTRLevelData.getData(entityplayer).getAlignment(this.getFaction()) >= 200.0f && this.isFriendly(entityplayer);
-    }
+	@Override
+	public LOTRInvasions getWarhorn() {
+		return LOTRInvasions.BLUE_MOUNTAINS;
+	}
 
-    @Override
-    public void onUnitTrade(EntityPlayer entityplayer) {
-        LOTRLevelData.getData(entityplayer).addAchievement(LOTRAchievement.tradeBlueDwarfCommander);
-    }
+	@Override
+	public IEntityLivingData onSpawnWithEgg(IEntityLivingData data) {
+		data = super.onSpawnWithEgg(data);
+		npcItemsInv.setMeleeWeapon(new ItemStack(LOTRMod.hammerBlueDwarven));
+		npcItemsInv.setIdleItem(npcItemsInv.getMeleeWeapon());
+		setCurrentItemOrArmor(1, new ItemStack(LOTRMod.bootsBlueDwarven));
+		setCurrentItemOrArmor(2, new ItemStack(LOTRMod.legsBlueDwarven));
+		setCurrentItemOrArmor(3, new ItemStack(LOTRMod.bodyBlueDwarven));
+		setCurrentItemOrArmor(4, null);
+		return data;
+	}
 
-    @Override
-    public boolean shouldTraderRespawn() {
-        return true;
-    }
+	@Override
+	public void onUnitTrade(EntityPlayer entityplayer) {
+		LOTRLevelData.getData(entityplayer).addAchievement(LOTRAchievement.tradeBlueDwarfCommander);
+	}
 
-    @Override
-    public String getSpeechBank(EntityPlayer entityplayer) {
-        if(this.isFriendly(entityplayer)) {
-            if(this.canTradeWith(entityplayer)) {
-                return "blueDwarf/commander/friendly";
-            }
-            return "blueDwarf/commander/neutral";
-        }
-        return "blueDwarf/dwarf/hostile";
-    }
+	@Override
+	public boolean shouldTraderRespawn() {
+		return true;
+	}
 }

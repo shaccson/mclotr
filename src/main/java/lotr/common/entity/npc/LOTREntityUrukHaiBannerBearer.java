@@ -4,12 +4,12 @@ import lotr.common.item.LOTRItemBanner;
 import net.minecraft.world.World;
 
 public class LOTREntityUrukHaiBannerBearer extends LOTREntityUrukHai implements LOTRBannerBearer {
-    public LOTREntityUrukHaiBannerBearer(World world) {
-        super(world);
-    }
+	public LOTREntityUrukHaiBannerBearer(World world) {
+		super(world);
+	}
 
-    @Override
-    public LOTRItemBanner.BannerType getBannerType() {
-        return LOTRItemBanner.BannerType.ISENGARD;
-    }
+	@Override
+	public LOTRItemBanner.BannerType getBannerType() {
+		return LOTRItemBanner.BannerType.ISENGARD;
+	}
 }

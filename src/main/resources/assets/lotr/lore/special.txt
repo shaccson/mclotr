@@ -1,12 +1,21 @@
-#title:Особеность
-#types:gondor
+#title:Special
+#types:
 #
-Эта книга очень особенна. Что же это?
+This book is very special.
 
-Эта книга сгенерирована из текстового файла. Полистай страницы. Эта функция была очень популярным запросом, и я думаю, что это придаст фантастическое ощущение погружения в мир.
+Why is that?
+#
+###
 
-Это была адская работа! Было очень сложно разработать код, который будет помещать текстовый файл в книгу майнкрафта, красиво разбивая его на страницы. При этом текст не вылезает за грани листа. Книга - как натуральная.
+#
+#comments do nothing
+#
+Because it wasn't written by me in-game. It was generated from a text file, converted into the book data format.
 
-Это означает, что теперь вы можете найти в мире множество книг. Они выпадают из мобов, находятся в сундуках... Книги пишет английское сообщество. Я, Hummel009, перевожу эти книги на русский язык, чтобы вы могли их прочитать без труда. Также я заменяю английские стихи на русские, чтобы сохранить рифму.
+This was a real challenge to code! It was very difficult to design an algorithm which can take any text file and put it into book form, splitting it nicely into pages, ensuring no page has too much text, and ensuring no page ends halfway through a word. It took a great deal of revising and changing to perfect this and fix unlikely bugs.
 
-Вот почему эта книга очень особенная.
+But this means we can now have books of lore generating in structures, using lore texts written by us or people of the community. We can have histories, poems, songs, journals of travellers, helpful in-game hints concerning rare features, scattered tales of terrible haunted ruins in the far North of the world...
+
+This feature has been a very popular request, and I think it will lend a fantastic feeling of immersion to the world.
+
+So that is why this book is very special.

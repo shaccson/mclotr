@@ -1,14 +1,16 @@
-#title:Земли Залива Копазул
-#author:Парвелдир из Гондора
+# Karseius
+#
+#title:The Lands of the Gulf
+#author:Parveldir of Gondor
 #types:gondor,rivendell
 #reward
 #
-Для нас земли Харада окутаны тайной. Дни четырех морских королей давно прошли, и вместе с ними прошла большая часть наших знаний о дальних южных землях. Остаются лишь фрагменты того, что великие ученые написали до меня.
+To us, the lands of Harad are shrouded in mystery. The days of the four Ship-kings have long since passed, and with them has passed most of our lore about the far southern lands. Only fragments remain of what the great scholars wrote before me.
 
-Порывшись в старых библиотеках в Пеларгире, я обнаружил древний свиток, в котором рассказывалось о самом дальнем из владений южан, известном на их языке как Копазул: Восточный залив Харада. Говорят, что люди этой земли самые жестокие и кровожадные из всех харадрим.
+While rummaging through the old libraries at Pelargir, I found an ancient scroll which told of the farthest of the Southron realms, known in their tongue as Khopazûl: the Eastern Gulf of Harad. The Men of that land are said to be the fiercest and cruelest of all the Haradrim. It is said that hard times grow hard Men, and nowhere are the times harder than in the Gulfen lands, for those Men are born for one purpose only: war.
 
-Свиток говорит о том, что этими землями правит не король, а множество враждующих вождей и князей, борющихся за власть. Некоторые из них командуют лишь несколькими деревнями, в то время как другие правят могучими городами. Если верить древнему свитку, величайший из их воинов едет на битву с чудовищными серыми зверями.
+The scroll tells that those lands are ruled not by a King, but by many quarrelling Chiefs and Princes, competing for power. Some of these command only a few villages, while others rule mighty cities. If the ancient scroll is to believed, the greatest of their warriors ride monstrous grey beasts larger than a house into battle, which they capture in the unknown lands of the uttermost South.
 
-В своей бесконечной мудрости наш великий король Хьярмендакиль Первый не соизволил завоевать земли Копазула. Хотя он покорил южан Харондора и Харнедора, он требовал только ежегодную дань от Людей Копазула. Великие пустыни Харада оказались их спасением, так как король Хьярмендакил знал, что пересечение горящих песков будет слишком дорогостоящим. Но с тех пор, как мы потеряли наши самые южные владения, дань прекратилась, и мы не услышали ни слова от таинственных земель Восточного залива.
+In his infinite wisdom, our great King Hyarmendacil the First did not deign to conquer the Gulfen lands. Though he subdued the Southrons of the Harnen and the Harfelais, he demanded only a yearly tribute from the Men of Khopazûl. The great deserts of Harad proved to be their salvation, as King Hyarmendacil knew that crossing the burning sands would be too costly. But ever since we lost our southernmost holdings, the tributes have ceased and we have heard no word from the mysterious lands of the Eastern Gulf.
 
-Эти древние города все еще стоят, их вожди и князья все еще ссорятся, а может быть, они были погребены в бесконечных песках юга? Возможно, мы никогда не узнаем. Но в последнее время южный ветер приносит страшные слухи. Люди говорят о великих войсках воинов Копазула, собирающихся за пределами пустыни и как будто готовящихся к походу на наши земли. Некоторые слухи говорят также о великих животных, идущих вместе с Людьми Тьмы. Если эти сказки правдивы, мы погибнем.
+Do those ancient cities still stand, with their Chiefs and Princes still quarrelling, or have they been buried by the endless sands of the South? We may never know. But of late the South Wind brings fearsome rumours. Men speak of great hosts of Southron warriors, massing beyond the Harnen, as if readying themselves to march upon our lands. Some rumours speak also of great beasts marching alongside the Men of Darkness. If these tales are true, we can only hope that these are not the Men of Khopazûl come out of the forgotten past upon their great beasts of war.

@@ -17,247 +17,240 @@ import net.minecraft.world.biome.BiomeGenBase;
 import net.minecraftforge.common.util.ForgeDirection;
 
 public class LOTREntityButterfly extends EntityLiving implements LOTRAmbientCreature, LOTRRandomSkinEntity {
-    private LOTRBlockTorch elfTorchBlock;
-    private ChunkCoordinates currentFlightTarget;
-    public int flapTime = 0;
+	public LOTRBlockTorch elfTorchBlock;
+	public ChunkCoordinates currentFlightTarget;
+	public int flapTime = 0;
 
-    public LOTREntityButterfly(World world) {
-        super(world);
-        this.setSize(0.5f, 0.5f);
-    }
+	public LOTREntityButterfly(World world) {
+		super(world);
+		setSize(0.5f, 0.5f);
+	}
 
-    @Override
-    public void entityInit() {
-        super.entityInit();
-        this.dataWatcher.addObject(16, (byte) 0);
-        this.dataWatcher.addObject(17, (byte) 0);
-    }
+	@Override
+	public boolean allowLeashing() {
+		return false;
+	}
 
-    public ButterflyType getButterflyType() {
-        byte i = this.dataWatcher.getWatchableObjectByte(16);
-        if(i < 0 || i >= ButterflyType.values().length) {
-            i = 0;
-        }
-        return ButterflyType.values()[i];
-    }
+	@Override
+	public void applyEntityAttributes() {
+		super.applyEntityAttributes();
+		getEntityAttribute(SharedMonsterAttributes.maxHealth).setBaseValue(2.0);
+		getEntityAttribute(SharedMonsterAttributes.movementSpeed).setBaseValue(MathHelper.getRandomDoubleInRange(rand, 0.08, 0.12));
+	}
 
-    public void setButterflyType(ButterflyType type) {
-        this.setButterflyType(type.ordinal());
-    }
+	@Override
+	public boolean attackEntityFrom(DamageSource damagesource, float f) {
+		boolean flag = super.attackEntityFrom(damagesource, f);
+		if (flag && !worldObj.isRemote && isButterflyStill()) {
+			setButterflyStill(false);
+		}
+		return flag;
+	}
 
-    public void setButterflyType(int i) {
-        this.dataWatcher.updateObject(16, (byte) i);
-    }
+	@Override
+	public boolean canBePushed() {
+		return false;
+	}
 
-    public boolean isButterflyStill() {
-        return this.dataWatcher.getWatchableObjectByte(17) == 1;
-    }
+	@Override
+	public boolean canDespawn() {
+		return true;
+	}
 
-    public void setButterflyStill(boolean flag) {
-        this.dataWatcher.updateObject(17, flag ? (byte) 1 : 0);
-    }
+	@Override
+	public boolean canTriggerWalking() {
+		return false;
+	}
 
-    @Override
-    protected void applyEntityAttributes() {
-        super.applyEntityAttributes();
-        this.getEntityAttribute(SharedMonsterAttributes.maxHealth).setBaseValue(2.0);
-        this.getEntityAttribute(SharedMonsterAttributes.movementSpeed).setBaseValue(MathHelper.getRandomDoubleInRange(this.rand, 0.08, 0.12));
-    }
+	@Override
+	public void collideWithEntity(Entity entity) {
+	}
 
-    @Override
-    public IEntityLivingData onSpawnWithEgg(IEntityLivingData data) {
-        data = super.onSpawnWithEgg(data);
-        int i = MathHelper.floor_double(this.posX);
-        MathHelper.floor_double(this.posY);
-        int k = MathHelper.floor_double(this.posZ);
-        BiomeGenBase biome = this.worldObj.getBiomeGenForCoords(i, k);
-        if(biome instanceof LOTRBiomeGenMirkwood || biome instanceof LOTRBiomeGenWoodlandRealm) {
-            this.setButterflyType(ButterflyType.MIRKWOOD);
-        }
-        else if(biome instanceof LOTRBiomeGenLothlorien) {
-            this.setButterflyType(ButterflyType.LORIEN);
-        }
-        else if(biome instanceof LOTRBiomeGenFarHaradJungle) {
-            this.setButterflyType(ButterflyType.JUNGLE);
-        }
-        else {
-            this.setButterflyType(ButterflyType.COMMON);
-        }
-        return data;
-    }
+	@Override
+	public void collideWithNearbyEntities() {
+	}
 
-    @Override
-    public void setUniqueID(UUID uuid) {
-        this.entityUniqueID = uuid;
-    }
+	@Override
+	public boolean doesEntityNotTriggerPressurePlate() {
+		return true;
+	}
 
-    @Override
-    public boolean canBePushed() {
-        return false;
-    }
+	@Override
+	public void entityInit() {
+		super.entityInit();
+		dataWatcher.addObject(16, (byte) 0);
+		dataWatcher.addObject(17, (byte) 0);
+	}
 
-    @Override
-    protected void collideWithEntity(Entity entity) {
-    }
+	@Override
+	public void fall(float f) {
+	}
 
-    @Override
-    protected void collideWithNearbyEntities() {
-    }
+	public ButterflyType getButterflyType() {
+		byte i = dataWatcher.getWatchableObjectByte(16);
+		if (i < 0 || i >= ButterflyType.values().length) {
+			i = 0;
+		}
+		return ButterflyType.values()[i];
+	}
 
-    @Override
-    protected boolean isAIEnabled() {
-        return true;
-    }
+	@Override
+	public boolean getCanSpawnHere() {
+		if (super.getCanSpawnHere()) {
+			return LOTRAmbientSpawnChecks.canSpawn(this, 8, 4, 32, 4, Material.plants, Material.vine);
+		}
+		return false;
+	}
 
-    @Override
-    public void onUpdate() {
-        super.onUpdate();
-        if(this.isButterflyStill()) {
-            this.motionZ = 0.0;
-            this.motionY = 0.0;
-            this.motionX = 0.0;
-            this.posY = MathHelper.floor_double(this.posY);
-            if(this.worldObj.isRemote) {
-                if(this.rand.nextInt(200) == 0) {
-                    this.flapTime = 40;
-                }
-                if(this.flapTime > 0) {
-                    --this.flapTime;
-                }
-            }
-        }
-        else {
-            this.motionY *= 0.6;
-            if(this.worldObj.isRemote) {
-                this.flapTime = 0;
-            }
-            if(this.getButterflyType() == ButterflyType.LORIEN) {
-                LOTRBlockTorch.TorchParticle particle;
-                double d = this.posX;
-                double d1 = this.posY;
-                double d2 = this.posZ;
-                if(this.elfTorchBlock == null) {
-                    Random torchRand = new Random();
-                    torchRand.setSeed(this.entityUniqueID.getLeastSignificantBits());
-                    this.elfTorchBlock = (LOTRBlockTorch) LOTRWorldGenElfHouse.getRandomTorch(torchRand);
-                }
-                if((particle = this.elfTorchBlock.createTorchParticle(this.rand)) != null) {
-                    particle.spawn(d, d1, d2);
-                }
-            }
-        }
-    }
+	@Override
+	public ItemStack getPickedResult(MovingObjectPosition target) {
+		return new ItemStack(LOTRMod.spawnEgg, 1, LOTREntities.getEntityID(this));
+	}
 
-    @Override
-    protected void updateAITasks() {
-        super.updateAITasks();
-        if(this.isButterflyStill()) {
-            int k;
-            int j;
-            int i = MathHelper.floor_double(this.posX);
-            if(!this.worldObj.getBlock(i, j = (int) this.posY - 1, k = MathHelper.floor_double(this.posZ)).isSideSolid(this.worldObj, i, j, k, ForgeDirection.UP)) {
-                this.setButterflyStill(false);
-            }
-            else if(this.rand.nextInt(400) == 0 || this.worldObj.getClosestPlayerToEntity(this, 3.0) != null) {
-                this.setButterflyStill(false);
-            }
-        }
-        else {
-            if(((this.currentFlightTarget != null) && (!this.worldObj.isAirBlock(this.currentFlightTarget.posX, this.currentFlightTarget.posY, this.currentFlightTarget.posZ) || (this.currentFlightTarget.posY < 1)))) {
-                this.currentFlightTarget = null;
-            }
-            if(this.currentFlightTarget == null || this.rand.nextInt(30) == 0 || this.currentFlightTarget.getDistanceSquared((int) this.posX, (int) this.posY, (int) this.posZ) < 4.0f) {
-                this.currentFlightTarget = new ChunkCoordinates((int) this.posX + this.rand.nextInt(7) - this.rand.nextInt(7), (int) this.posY + this.rand.nextInt(6) - 2, (int) this.posZ + this.rand.nextInt(7) - this.rand.nextInt(7));
-            }
-            double speed = this.getEntityAttribute(SharedMonsterAttributes.movementSpeed).getAttributeValue();
-            double d0 = this.currentFlightTarget.posX + 0.5 - this.posX;
-            double d1 = this.currentFlightTarget.posY + 0.5 - this.posY;
-            double d2 = this.currentFlightTarget.posZ + 0.5 - this.posZ;
-            this.motionX += (Math.signum(d0) * 0.5 - this.motionX) * speed;
-            this.motionY += (Math.signum(d1) * 0.7 - this.motionY) * speed;
-            this.motionZ += (Math.signum(d2) * 0.5 - this.motionZ) * speed;
-            float f = (float) (Math.atan2(this.motionZ, this.motionX) * 180.0 / 3.141592653589793) - 90.0f;
-            float f1 = MathHelper.wrapAngleTo180_float(f - this.rotationYaw);
-            this.moveForward = 0.5f;
-            this.rotationYaw += f1;
-            if(this.rand.nextInt(150) == 0 && this.worldObj.getBlock(MathHelper.floor_double(this.posX), (int) this.posY - 1, MathHelper.floor_double(this.posZ)).isNormalCube()) {
-                this.setButterflyStill(true);
-            }
-        }
-    }
+	@Override
+	public boolean isAIEnabled() {
+		return true;
+	}
 
-    @Override
-    protected boolean canTriggerWalking() {
-        return false;
-    }
+	public boolean isButterflyStill() {
+		return dataWatcher.getWatchableObjectByte(17) == 1;
+	}
 
-    @Override
-    protected void fall(float f) {
-    }
+	@Override
+	public IEntityLivingData onSpawnWithEgg(IEntityLivingData data) {
+		data = super.onSpawnWithEgg(data);
+		int i = MathHelper.floor_double(posX);
+		MathHelper.floor_double(posY);
+		int k = MathHelper.floor_double(posZ);
+		BiomeGenBase biome = worldObj.getBiomeGenForCoords(i, k);
+		if (biome instanceof LOTRBiomeGenMirkwood || biome instanceof LOTRBiomeGenWoodlandRealm) {
+			this.setButterflyType(ButterflyType.MIRKWOOD);
+		} else if (biome instanceof LOTRBiomeGenLothlorien) {
+			this.setButterflyType(ButterflyType.LORIEN);
+		} else if (biome instanceof LOTRBiomeGenFarHaradJungle) {
+			this.setButterflyType(ButterflyType.JUNGLE);
+		} else {
+			this.setButterflyType(ButterflyType.COMMON);
+		}
+		return data;
+	}
 
-    @Override
-    protected void updateFallState(double d, boolean flag) {
-    }
+	@Override
+	public void onUpdate() {
+		super.onUpdate();
+		if (isButterflyStill()) {
+			motionZ = 0.0;
+			motionY = 0.0;
+			motionX = 0.0;
+			posY = MathHelper.floor_double(posY);
+			if (worldObj.isRemote) {
+				if (rand.nextInt(200) == 0) {
+					flapTime = 40;
+				}
+				if (flapTime > 0) {
+					--flapTime;
+				}
+			}
+		} else {
+			motionY *= 0.6;
+			if (worldObj.isRemote) {
+				flapTime = 0;
+			}
+			if (getButterflyType() == ButterflyType.LORIEN) {
+				LOTRBlockTorch.TorchParticle particle;
+				double d = posX;
+				double d1 = posY;
+				double d2 = posZ;
+				if (elfTorchBlock == null) {
+					Random torchRand = new Random();
+					torchRand.setSeed(entityUniqueID.getLeastSignificantBits());
+					elfTorchBlock = (LOTRBlockTorch) LOTRWorldGenElfHouse.getRandomTorch(torchRand);
+				}
+				particle = elfTorchBlock.createTorchParticle(rand);
+				if (particle != null) {
+					particle.spawn(d, d1, d2);
+				}
+			}
+		}
+	}
 
-    @Override
-    public boolean doesEntityNotTriggerPressurePlate() {
-        return true;
-    }
+	@Override
+	public void readEntityFromNBT(NBTTagCompound nbt) {
+		super.readEntityFromNBT(nbt);
+		this.setButterflyType(nbt.getInteger("ButterflyType"));
+		setButterflyStill(nbt.getBoolean("ButterflyStill"));
+	}
 
-    @Override
-    public boolean attackEntityFrom(DamageSource damagesource, float f) {
-        boolean flag = super.attackEntityFrom(damagesource, f);
-        if(flag && !this.worldObj.isRemote && this.isButterflyStill()) {
-            this.setButterflyStill(false);
-        }
-        return flag;
-    }
+	public void setButterflyStill(boolean flag) {
+		dataWatcher.updateObject(17, flag ? (byte) 1 : 0);
+	}
 
-    @Override
-    public void readEntityFromNBT(NBTTagCompound nbt) {
-        super.readEntityFromNBT(nbt);
-        this.setButterflyType(nbt.getInteger("ButterflyType"));
-        this.setButterflyStill(nbt.getBoolean("ButterflyStill"));
-    }
+	public void setButterflyType(ButterflyType type) {
+		this.setButterflyType(type.ordinal());
+	}
 
-    @Override
-    public void writeEntityToNBT(NBTTagCompound nbt) {
-        super.writeEntityToNBT(nbt);
-        nbt.setInteger("ButterflyType", this.getButterflyType().ordinal());
-        nbt.setBoolean("ButterflyStill", this.isButterflyStill());
-    }
+	public void setButterflyType(int i) {
+		dataWatcher.updateObject(16, (byte) i);
+	}
 
-    @Override
-    protected boolean canDespawn() {
-        return true;
-    }
+	@Override
+	public void setUniqueID(UUID uuid) {
+		entityUniqueID = uuid;
+	}
 
-    @Override
-    public boolean getCanSpawnHere() {
-        if(super.getCanSpawnHere()) {
-            return LOTRAmbientSpawnChecks.canSpawn(this, 8, 4, 32, 4, Material.plants, Material.vine);
-        }
-        return false;
-    }
+	@Override
+	public void updateAITasks() {
+		super.updateAITasks();
+		if (isButterflyStill()) {
+			int k;
+			int j;
+			int i = MathHelper.floor_double(posX);
+			if (!worldObj.getBlock(i, j = (int) posY - 1, k = MathHelper.floor_double(posZ)).isSideSolid(worldObj, i, j, k, ForgeDirection.UP) || rand.nextInt(400) == 0 || worldObj.getClosestPlayerToEntity(this, 3.0) != null) {
+				setButterflyStill(false);
+			}
+		} else {
+			if (currentFlightTarget != null && (!worldObj.isAirBlock(currentFlightTarget.posX, currentFlightTarget.posY, currentFlightTarget.posZ) || currentFlightTarget.posY < 1)) {
+				currentFlightTarget = null;
+			}
+			if (currentFlightTarget == null || rand.nextInt(30) == 0 || currentFlightTarget.getDistanceSquared((int) posX, (int) posY, (int) posZ) < 4.0f) {
+				currentFlightTarget = new ChunkCoordinates((int) posX + rand.nextInt(7) - rand.nextInt(7), (int) posY + rand.nextInt(6) - 2, (int) posZ + rand.nextInt(7) - rand.nextInt(7));
+			}
+			double speed = getEntityAttribute(SharedMonsterAttributes.movementSpeed).getAttributeValue();
+			double d0 = currentFlightTarget.posX + 0.5 - posX;
+			double d1 = currentFlightTarget.posY + 0.5 - posY;
+			double d2 = currentFlightTarget.posZ + 0.5 - posZ;
+			motionX += (Math.signum(d0) * 0.5 - motionX) * speed;
+			motionY += (Math.signum(d1) * 0.7 - motionY) * speed;
+			motionZ += (Math.signum(d2) * 0.5 - motionZ) * speed;
+			float f = (float) (Math.atan2(motionZ, motionX) * 180.0 / 3.141592653589793) - 90.0f;
+			float f1 = MathHelper.wrapAngleTo180_float(f - rotationYaw);
+			moveForward = 0.5f;
+			rotationYaw += f1;
+			if (rand.nextInt(150) == 0 && worldObj.getBlock(MathHelper.floor_double(posX), (int) posY - 1, MathHelper.floor_double(posZ)).isNormalCube()) {
+				setButterflyStill(true);
+			}
+		}
+	}
 
-    @Override
-    public boolean allowLeashing() {
-        return false;
-    }
+	@Override
+	public void updateFallState(double d, boolean flag) {
+	}
 
-    @Override
-    public ItemStack getPickedResult(MovingObjectPosition target) {
-        return new ItemStack(LOTRMod.spawnEgg, 1, LOTREntities.getEntityID(this));
-    }
+	@Override
+	public void writeEntityToNBT(NBTTagCompound nbt) {
+		super.writeEntityToNBT(nbt);
+		nbt.setInteger("ButterflyType", getButterflyType().ordinal());
+		nbt.setBoolean("ButterflyStill", isButterflyStill());
+	}
 
-    public enum ButterflyType {
-        MIRKWOOD("mirkwood"), LORIEN("lorien"), COMMON("common"), JUNGLE("jungle");
+	public enum ButterflyType {
+		MIRKWOOD("mirkwood"), LORIEN("lorien"), COMMON("common"), JUNGLE("jungle");
 
-        public final String textureDir;
+		public String textureDir;
 
-        ButterflyType(String s) {
-            this.textureDir = s;
-        }
-    }
+		ButterflyType(String s) {
+			textureDir = s;
+		}
+	}
 
 }

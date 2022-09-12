@@ -4,7 +4,7 @@ import java.util.*;
 
 import cpw.mods.fml.relauncher.*;
 import lotr.common.*;
-import lotr.common.block.LOTRBlockChest;
+import lotr.common.block.*;
 import lotr.common.inventory.*;
 import net.minecraft.block.*;
 import net.minecraft.client.renderer.texture.IIconRegister;
@@ -17,225 +17,204 @@ import net.minecraft.tileentity.*;
 import net.minecraft.util.*;
 import net.minecraft.world.World;
 
-public class LOTRItemPouch
-extends Item {
-    private static int POUCH_COLOR = 10841676;
-    @SideOnly(value=Side.CLIENT)
-    private IIcon[] pouchIcons;
-    @SideOnly(value=Side.CLIENT)
-    private IIcon[] pouchIconsOpen;
-    @SideOnly(value=Side.CLIENT)
-    private IIcon[] overlayIcons;
-    @SideOnly(value=Side.CLIENT)
-    private IIcon[] overlayIconsOpen;
-    private static String[] pouchTypes = new String[]{"small", "medium", "large"};
+public class LOTRItemPouch extends Item {
+	public static String[] pouchTypes = { "small", "medium", "large" };
+	@SideOnly(value = Side.CLIENT)
+	public IIcon[] pouchIcons;
+	@SideOnly(value = Side.CLIENT)
+	public IIcon[] pouchIconsOpen;
+	@SideOnly(value = Side.CLIENT)
+	public IIcon[] overlayIcons;
+	@SideOnly(value = Side.CLIENT)
+	public IIcon[] overlayIconsOpen;
 
-    public LOTRItemPouch() {
-        this.setHasSubtypes(true);
-        this.setMaxDamage(0);
-        this.setMaxStackSize(1);
-        this.setCreativeTab(LOTRCreativeTabs.tabMisc);
-    }
+	public LOTRItemPouch() {
+		setHasSubtypes(true);
+		setMaxDamage(0);
+		setMaxStackSize(1);
+		setCreativeTab(LOTRCreativeTabs.tabMisc);
+	}
 
-    public ItemStack onItemRightClick(ItemStack itemstack, World world, EntityPlayer entityplayer) {
-        if (!world.isRemote) {
-            entityplayer.openGui(LOTRMod.instance, 15, world, entityplayer.inventory.currentItem, 0, 0);
-        }
-        return itemstack;
-    }
+	@Override
+	@SideOnly(value = Side.CLIENT)
+	public void addInformation(ItemStack itemstack, EntityPlayer entityplayer, List list, boolean flag) {
+		int slots = LOTRItemPouch.getCapacity(itemstack);
+		int slotsFull = 0;
+		LOTRInventoryPouch pouchInv = new LOTRInventoryPouch(itemstack);
+		for (int i = 0; i < pouchInv.getSizeInventory(); ++i) {
+			ItemStack slotItem = pouchInv.getStackInSlot(i);
+			if (slotItem == null) {
+				continue;
+			}
+			++slotsFull;
+		}
+		list.add(StatCollector.translateToLocalFormatted("item.lotr.pouch.slots", slotsFull, slots));
+		if (LOTRItemPouch.isPouchDyed(itemstack)) {
+			list.add(StatCollector.translateToLocal("item.lotr.pouch.dyed"));
+		}
+	}
 
-    public boolean onItemUseFirst(ItemStack itemstack, EntityPlayer entityplayer, World world, int i, int j, int k, int side, float hitX, float hitY, float hitZ) {
-        IInventory chest = LOTRItemPouch.getChestInvAt(entityplayer, world, i, j, k);
-        if (chest != null) {
-            LOTRMod.proxy.usePouchOnChest(entityplayer, world, i, j, k, side, itemstack, entityplayer.inventory.currentItem);
-            return true;
-        }
-        return false;
-    }
+	@Override
+	@SideOnly(value = Side.CLIENT)
+	public int getColorFromItemStack(ItemStack itemstack, int pass) {
+		if (pass == 0) {
+			return LOTRItemPouch.getPouchColor(itemstack);
+		}
+		return 16777215;
+	}
 
-    public static boolean isHoldingPouch(EntityPlayer entityplayer, int slot) {
-        return entityplayer.inventory.getStackInSlot(slot) != null && entityplayer.inventory.getStackInSlot(slot).getItem() instanceof LOTRItemPouch;
-    }
+	@Override
+	public IIcon getIcon(ItemStack itemstack, int pass) {
+		Container container;
+		int meta;
+		boolean open = false;
+		EntityPlayer entityplayer = LOTRMod.proxy.getClientPlayer();
+		if (entityplayer != null && ((container = entityplayer.openContainer) instanceof LOTRContainerPouch || container instanceof LOTRContainerChestWithPouch) && itemstack == entityplayer.getHeldItem()) {
+			open = true;
+		}
+		meta = itemstack.getItemDamage();
+		if (meta >= pouchIcons.length) {
+			meta = 0;
+		}
+		if (open) {
+			return pass > 0 ? overlayIconsOpen[meta] : pouchIconsOpen[meta];
+		}
+		return pass > 0 ? overlayIcons[meta] : pouchIcons[meta];
+	}
 
-    public static IInventory getChestInvAt(EntityPlayer entityplayer, World world, int i, int j, int k) {
-        InventoryEnderChest enderInv;
-        Block block = world.getBlock(i, j, k);
-        TileEntity te = world.getTileEntity(i, j, k);
-        if (block instanceof BlockChest) {
-            return ((BlockChest)block).func_149951_m(world, i, j, k);
-        }
-        if (block instanceof LOTRBlockChest) {
-            return ((LOTRBlockChest)block).getModChestAt(world, i, j, k);
-        }
-        if (block instanceof BlockEnderChest && !world.getBlock(i, j + 1, k).isNormalCube() && (enderInv = entityplayer.getInventoryEnderChest()) != null && te instanceof TileEntityEnderChest) {
-            TileEntityEnderChest enderChest = (TileEntityEnderChest)te;
-            if (!world.isRemote) {
-                enderInv.func_146031_a(enderChest);
-            }
-            return enderInv;
-        }
-        return null;
-    }
+	@Override
+	public int getRenderPasses(int meta) {
+		return 2;
+	}
 
-    public static int getCapacity(ItemStack itemstack) {
-        return LOTRItemPouch.getCapacityForMeta(itemstack.getItemDamage());
-    }
+	@Override
+	@SideOnly(value = Side.CLIENT)
+	public void getSubItems(Item item, CreativeTabs tab, List list) {
+		for (int i = 0; i < pouchTypes.length; ++i) {
+			list.add(new ItemStack(item, 1, i));
+		}
+	}
 
-    public static int getCapacityForMeta(int i) {
-        return (i + 1) * 9;
-    }
+	@Override
+	public String getUnlocalizedName(ItemStack itemstack) {
+		return super.getUnlocalizedName() + "." + itemstack.getItemDamage();
+	}
 
-    public static int getMaxPouchCapacity() {
-        return LOTRItemPouch.getCapacityForMeta(pouchTypes.length - 1);
-    }
+	@Override
+	public ItemStack onItemRightClick(ItemStack itemstack, World world, EntityPlayer entityplayer) {
+		if (!world.isRemote) {
+			entityplayer.openGui(LOTRMod.instance, 15, world, entityplayer.inventory.currentItem, 0, 0);
+		}
+		return itemstack;
+	}
 
-    public static int getRandomPouchSize(Random random) {
-        float f = random.nextFloat();
-        if (f < 0.6f) {
-            return 0;
-        }
-        if (f < 0.9f) {
-            return 1;
-        }
-        return 2;
-    }
+	@Override
+	public boolean onItemUseFirst(ItemStack itemstack, EntityPlayer entityplayer, World world, int i, int j, int k, int side, float hitX, float hitY, float hitZ) {
+		IInventory chest = LOTRItemPouch.getChestInvAt(entityplayer, world, i, j, k);
+		if (chest != null) {
+			LOTRMod.proxy.usePouchOnChest(entityplayer, world, i, j, k, side, itemstack, entityplayer.inventory.currentItem);
+			return true;
+		}
+		return false;
+	}
 
-    @SideOnly(value=Side.CLIENT)
-    public void registerIcons(IIconRegister iconregister) {
-        this.pouchIcons = new IIcon[pouchTypes.length];
-        this.pouchIconsOpen = new IIcon[pouchTypes.length];
-        this.overlayIcons = new IIcon[pouchTypes.length];
-        this.overlayIconsOpen = new IIcon[pouchTypes.length];
-        for (int i = 0; i < pouchTypes.length; ++i) {
-            this.pouchIcons[i] = iconregister.registerIcon(this.getIconString() + "_" + pouchTypes[i]);
-            this.pouchIconsOpen[i] = iconregister.registerIcon(this.getIconString() + "_" + pouchTypes[i] + "_open");
-            this.overlayIcons[i] = iconregister.registerIcon(this.getIconString() + "_" + pouchTypes[i] + "_overlay");
-            this.overlayIconsOpen[i] = iconregister.registerIcon(this.getIconString() + "_" + pouchTypes[i] + "_open_overlay");
-        }
-    }
+	@Override
+	@SideOnly(value = Side.CLIENT)
+	public void registerIcons(IIconRegister iconregister) {
+		pouchIcons = new IIcon[pouchTypes.length];
+		pouchIconsOpen = new IIcon[pouchTypes.length];
+		overlayIcons = new IIcon[pouchTypes.length];
+		overlayIconsOpen = new IIcon[pouchTypes.length];
+		for (int i = 0; i < pouchTypes.length; ++i) {
+			pouchIcons[i] = iconregister.registerIcon(getIconString() + "_" + pouchTypes[i]);
+			pouchIconsOpen[i] = iconregister.registerIcon(getIconString() + "_" + pouchTypes[i] + "_open");
+			overlayIcons[i] = iconregister.registerIcon(getIconString() + "_" + pouchTypes[i] + "_overlay");
+			overlayIconsOpen[i] = iconregister.registerIcon(getIconString() + "_" + pouchTypes[i] + "_open_overlay");
+		}
+	}
 
-    @SideOnly(value=Side.CLIENT)
-    public boolean requiresMultipleRenderPasses() {
-        return true;
-    }
+	@Override
+	@SideOnly(value = Side.CLIENT)
+	public boolean requiresMultipleRenderPasses() {
+		return true;
+	}
 
-    public int getRenderPasses(int meta) {
-        return 2;
-    }
+	public static int getCapacity(ItemStack itemstack) {
+		return LOTRItemPouch.getCapacityForMeta(itemstack.getItemDamage());
+	}
 
-    public IIcon getIcon(ItemStack itemstack, int pass) {
-        Container container;
-        int meta;
-        boolean open = false;
-        EntityPlayer entityplayer = LOTRMod.proxy.getClientPlayer();
-        if (entityplayer != null && ((container = entityplayer.openContainer) instanceof LOTRContainerPouch || container instanceof LOTRContainerChestWithPouch) && itemstack == entityplayer.getHeldItem()) {
-            open = true;
-        }
-        if ((meta = itemstack.getItemDamage()) >= this.pouchIcons.length) {
-            meta = 0;
-        }
-        if (open) {
-            return pass > 0 ? this.overlayIconsOpen[meta] : this.pouchIconsOpen[meta];
-        }
-        return pass > 0 ? this.overlayIcons[meta] : this.pouchIcons[meta];
-    }
+	public static int getCapacityForMeta(int i) {
+		return (i + 1) * 9;
+	}
 
-    @SideOnly(value=Side.CLIENT)
-    public int getColorFromItemStack(ItemStack itemstack, int pass) {
-        if (pass == 0) {
-            return LOTRItemPouch.getPouchColor(itemstack);
-        }
-        return 16777215;
-    }
+	public static IInventory getChestInvAt(EntityPlayer entityplayer, World world, int i, int j, int k) {
+		InventoryEnderChest enderInv;
+		Block block = world.getBlock(i, j, k);
+		if (block instanceof LOTRBlockSpawnerChest) {
+			return null;
+		}
+		TileEntity te = world.getTileEntity(i, j, k);
+		if (block instanceof BlockChest) {
+			return ((BlockChest) block).func_149951_m(world, i, j, k);
+		}
+		if (block instanceof LOTRBlockChest) {
+			return ((LOTRBlockChest) block).getModChestAt(world, i, j, k);
+		}
+		if (block instanceof BlockEnderChest && !world.getBlock(i, j + 1, k).isNormalCube() && (enderInv = entityplayer.getInventoryEnderChest()) != null && te instanceof TileEntityEnderChest) {
+			TileEntityEnderChest enderChest = (TileEntityEnderChest) te;
+			if (!world.isRemote) {
+				enderInv.func_146031_a(enderChest);
+			}
+			return enderInv;
+		}
+		return null;
+	}
 
-    public static int getPouchColor(ItemStack itemstack) {
-        int dye = LOTRItemPouch.getSavedDyeColor(itemstack);
-        if (dye != -1) {
-            return dye;
-        }
-        return POUCH_COLOR;
-    }
+	public static int getMaxPouchCapacity() {
+		return LOTRItemPouch.getCapacityForMeta(pouchTypes.length - 1);
+	}
 
-    private static int getSavedDyeColor(ItemStack itemstack) {
-        if (itemstack.getTagCompound() != null && itemstack.getTagCompound().hasKey("PouchColor")) {
-            return itemstack.getTagCompound().getInteger("PouchColor");
-        }
-        return -1;
-    }
+	public static int getPouchColor(ItemStack itemstack) {
+		int dye = LOTRItemPouch.getSavedDyeColor(itemstack);
+		if (dye != -1) {
+			return dye;
+		}
+		return 10841676;
+	}
 
-    public static boolean isPouchDyed(ItemStack itemstack) {
-        return LOTRItemPouch.getSavedDyeColor(itemstack) != -1;
-    }
+	public static int getRandomPouchSize(Random random) {
+		float f = random.nextFloat();
+		if (f < 0.6f) {
+			return 0;
+		}
+		if (f < 0.9f) {
+			return 1;
+		}
+		return 2;
+	}
 
-    public static void setPouchColor(ItemStack itemstack, int i) {
-        if (itemstack.getTagCompound() == null) {
-            itemstack.setTagCompound(new NBTTagCompound());
-        }
-        itemstack.getTagCompound().setInteger("PouchColor", i);
-    }
+	public static int getSavedDyeColor(ItemStack itemstack) {
+		if (itemstack.getTagCompound() != null && itemstack.getTagCompound().hasKey("PouchColor")) {
+			return itemstack.getTagCompound().getInteger("PouchColor");
+		}
+		return -1;
+	}
 
-    public static void removePouchDye(ItemStack itemstack) {
-        if (itemstack.getTagCompound() != null) {
-            itemstack.getTagCompound().removeTag("PouchColor");
-        }
-    }
+	public static boolean isHoldingPouch(EntityPlayer entityplayer, int slot) {
+		return entityplayer.inventory.getStackInSlot(slot) != null && entityplayer.inventory.getStackInSlot(slot).getItem() instanceof LOTRItemPouch;
+	}
 
-    public String getUnlocalizedName(ItemStack itemstack) {
-        return super.getUnlocalizedName() + "." + itemstack.getItemDamage();
-    }
+	public static boolean isPouchDyed(ItemStack itemstack) {
+		return LOTRItemPouch.getSavedDyeColor(itemstack) != -1;
+	}
 
-    @SideOnly(value=Side.CLIENT)
-    public void addInformation(ItemStack itemstack, EntityPlayer entityplayer, List list, boolean flag) {
-        int slots = LOTRItemPouch.getCapacity(itemstack);
-        int slotsFull = 0;
-        LOTRInventoryPouch pouchInv = new LOTRInventoryPouch(itemstack);
-        for (int i = 0; i < pouchInv.getSizeInventory(); ++i) {
-            ItemStack slotItem = pouchInv.getStackInSlot(i);
-            if (slotItem == null) continue;
-            ++slotsFull;
-        }
-        list.add(StatCollector.translateToLocalFormatted("item.lotr.pouch.slots", slotsFull, slots));
-        if (LOTRItemPouch.isPouchDyed(itemstack)) {
-            list.add(StatCollector.translateToLocal("item.lotr.pouch.dyed"));
-        }
-    }
+	public static void removePouchDye(ItemStack itemstack) {
+		if (itemstack.getTagCompound() != null) {
+			itemstack.getTagCompound().removeTag("PouchColor");
+		}
+	}
 
-    @SideOnly(value=Side.CLIENT)
-    public void getSubItems(Item item, CreativeTabs tab, List list) {
-        for (int i = 0; i < pouchTypes.length; ++i) {
-            list.add(new ItemStack(item, 1, i));
-        }
-    }
-
-    public static boolean tryAddItemToPouch(ItemStack pouch, ItemStack itemstack, boolean requireMatchInPouch) {
-        if (itemstack != null && itemstack.stackSize > 0) {
-            LOTRInventoryPouch pouchInv = new LOTRInventoryPouch(pouch);
-            for (int i = 0; i < pouchInv.getSizeInventory() && itemstack.stackSize > 0; ++i) {
-                int difference;
-                ItemStack itemInSlot = pouchInv.getStackInSlot(i);
-                if (itemInSlot != null ? itemInSlot.stackSize >= itemInSlot.getMaxStackSize() || itemInSlot.getItem() != itemstack.getItem() || !itemInSlot.isStackable() || itemInSlot.getHasSubtypes() && itemInSlot.getItemDamage() != itemstack.getItemDamage() || !ItemStack.areItemStackTagsEqual(itemInSlot, itemstack) : requireMatchInPouch) continue;
-                if (itemInSlot == null) {
-                    pouchInv.setInventorySlotContents(i, itemstack);
-                    return true;
-                }
-                int maxStackSize = itemInSlot.getMaxStackSize();
-                if (pouchInv.getInventoryStackLimit() < maxStackSize) {
-                    maxStackSize = pouchInv.getInventoryStackLimit();
-                }
-                if ((difference = maxStackSize - itemInSlot.stackSize) > itemstack.stackSize) {
-                    difference = itemstack.stackSize;
-                }
-                itemstack.stackSize -= difference;
-                itemInSlot.stackSize += difference;
-                pouchInv.setInventorySlotContents(i, itemInSlot);
-                if (itemstack.stackSize > 0) continue;
-                return true;
-            }
-        }
-        return false;
-    }
-
-    public static boolean restockPouches(EntityPlayer player) {
+	public static boolean restockPouches(EntityPlayer player) {
 		InventoryPlayer inv = player.inventory;
 		List<Integer> pouchSlots = new ArrayList<>();
 		List<Integer> itemSlots = new ArrayList<>();
@@ -268,5 +247,44 @@ extends Item {
 		}
 		return movedAny;
 	}
-}
 
+	public static void setPouchColor(ItemStack itemstack, int i) {
+		if (itemstack.getTagCompound() == null) {
+			itemstack.setTagCompound(new NBTTagCompound());
+		}
+		itemstack.getTagCompound().setInteger("PouchColor", i);
+	}
+
+	public static boolean tryAddItemToPouch(ItemStack pouch, ItemStack itemstack, boolean requireMatchInPouch) {
+		if (itemstack != null && itemstack.stackSize > 0) {
+			LOTRInventoryPouch pouchInv = new LOTRInventoryPouch(pouch);
+			for (int i = 0; i < pouchInv.getSizeInventory() && itemstack.stackSize > 0; ++i) {
+				int difference;
+				ItemStack itemInSlot = pouchInv.getStackInSlot(i);
+				if (itemInSlot != null ? itemInSlot.stackSize >= itemInSlot.getMaxStackSize() || itemInSlot.getItem() != itemstack.getItem() || !itemInSlot.isStackable() || itemInSlot.getHasSubtypes() && itemInSlot.getItemDamage() != itemstack.getItemDamage() || !ItemStack.areItemStackTagsEqual(itemInSlot, itemstack) : requireMatchInPouch) {
+					continue;
+				}
+				if (itemInSlot == null) {
+					pouchInv.setInventorySlotContents(i, itemstack);
+					return true;
+				}
+				int maxStackSize = itemInSlot.getMaxStackSize();
+				if (pouchInv.getInventoryStackLimit() < maxStackSize) {
+					maxStackSize = pouchInv.getInventoryStackLimit();
+				}
+				difference = maxStackSize - itemInSlot.stackSize;
+				if (difference > itemstack.stackSize) {
+					difference = itemstack.stackSize;
+				}
+				itemstack.stackSize -= difference;
+				itemInSlot.stackSize += difference;
+				pouchInv.setInventorySlotContents(i, itemInSlot);
+				if (itemstack.stackSize > 0) {
+					continue;
+				}
+				return true;
+			}
+		}
+		return false;
+	}
+}

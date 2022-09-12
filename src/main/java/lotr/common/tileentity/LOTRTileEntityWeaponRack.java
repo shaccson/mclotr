@@ -9,76 +9,67 @@ import net.minecraft.network.play.server.S35PacketUpdateTileEntity;
 import net.minecraft.tileentity.TileEntity;
 
 public class LOTRTileEntityWeaponRack extends TileEntity {
-    private ItemStack weaponItem;
-    private EntityLivingBase rackEntity;
+	public ItemStack weaponItem;
+	public EntityLivingBase rackEntity;
 
-    public boolean canAcceptItem(ItemStack itemstack) {
-        if(itemstack != null) {
-            Item item = itemstack.getItem();
-            if(LOTRWeaponStats.isMeleeWeapon(itemstack)) {
-                return true;
-            }
-            if(LOTRWeaponStats.isRangedWeapon(itemstack)) {
-                return true;
-            }
-            if(item instanceof ItemHoe) {
-                return true;
-            }
-            if(item instanceof ItemFishingRod) {
-                return true;
-            }
-        }
-        return false;
-    }
+	public boolean canAcceptItem(ItemStack itemstack) {
+		if (itemstack != null) {
+			Item item = itemstack.getItem();
+			if (LOTRWeaponStats.isMeleeWeapon(itemstack) || LOTRWeaponStats.isRangedWeapon(itemstack) || item instanceof ItemHoe || item instanceof ItemFishingRod) {
+				return true;
+			}
+		}
+		return false;
+	}
 
-    public ItemStack getWeaponItem() {
-        return this.weaponItem;
-    }
+	@Override
+	public Packet getDescriptionPacket() {
+		NBTTagCompound data = new NBTTagCompound();
+		writeToNBT(data);
+		return new S35PacketUpdateTileEntity(xCoord, yCoord, zCoord, 0, data);
+	}
 
-    public void setWeaponItem(ItemStack item) {
-        if(item != null && item.stackSize <= 0) {
-            item = null;
-        }
-        this.weaponItem = item;
-        this.worldObj.markBlockForUpdate(this.xCoord, this.yCoord, this.zCoord);
-        this.markDirty();
-    }
+	public EntityLivingBase getEntityForRender() {
+		if (rackEntity == null) {
+			rackEntity = new EntityLiving(worldObj) {
+			};
+		}
+		return rackEntity;
+	}
 
-    public EntityLivingBase getEntityForRender() {
-        if(this.rackEntity == null) {
-            this.rackEntity = new EntityLiving(this.worldObj) {
-            };
-        }
-        return this.rackEntity;
-    }
+	public ItemStack getWeaponItem() {
+		return weaponItem;
+	}
 
-    @Override
-    public void writeToNBT(NBTTagCompound nbt) {
-        super.writeToNBT(nbt);
-        nbt.setBoolean("HasWeapon", this.weaponItem != null);
-        if(this.weaponItem != null) {
-            nbt.setTag("WeaponItem", this.weaponItem.writeToNBT(new NBTTagCompound()));
-        }
-    }
+	@Override
+	public void onDataPacket(NetworkManager manager, S35PacketUpdateTileEntity packet) {
+		NBTTagCompound data = packet.func_148857_g();
+		readFromNBT(data);
+	}
 
-    @Override
-    public void readFromNBT(NBTTagCompound nbt) {
-        super.readFromNBT(nbt);
-        boolean hasWeapon = nbt.getBoolean("HasWeapon");
-        this.weaponItem = hasWeapon ? ItemStack.loadItemStackFromNBT(nbt.getCompoundTag("WeaponItem")) : null;
-    }
+	@Override
+	public void readFromNBT(NBTTagCompound nbt) {
+		super.readFromNBT(nbt);
+		boolean hasWeapon = nbt.getBoolean("HasWeapon");
+		weaponItem = hasWeapon ? ItemStack.loadItemStackFromNBT(nbt.getCompoundTag("WeaponItem")) : null;
+	}
 
-    @Override
-    public Packet getDescriptionPacket() {
-        NBTTagCompound data = new NBTTagCompound();
-        this.writeToNBT(data);
-        return new S35PacketUpdateTileEntity(this.xCoord, this.yCoord, this.zCoord, 0, data);
-    }
+	public void setWeaponItem(ItemStack item) {
+		if (item != null && item.stackSize <= 0) {
+			item = null;
+		}
+		weaponItem = item;
+		worldObj.markBlockForUpdate(xCoord, yCoord, zCoord);
+		markDirty();
+	}
 
-    @Override
-    public void onDataPacket(NetworkManager manager, S35PacketUpdateTileEntity packet) {
-        NBTTagCompound data = packet.func_148857_g();
-        this.readFromNBT(data);
-    }
+	@Override
+	public void writeToNBT(NBTTagCompound nbt) {
+		super.writeToNBT(nbt);
+		nbt.setBoolean("HasWeapon", weaponItem != null);
+		if (weaponItem != null) {
+			nbt.setTag("WeaponItem", weaponItem.writeToNBT(new NBTTagCompound()));
+		}
+	}
 
 }

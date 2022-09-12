@@ -1,16 +1,15 @@
-#title:Письмо от Элронда к Гиль-Галаду
-#author:Лорд Элронд, герольд Короля
+#title:A Letter from Elrond to Gil-galad
+#author:Lord Elrond, Herald of the King
 #types:lindon,rivendell
 #
-Элронд, сын Эарендиля, к Гиль-галаду, сыну Фингона.
+Elrond son of Eärendil to Gil-galad son of Fingon, may the Valar keep you and no shadow fall upon the Fair Realm. The news from Eregion is not good.
 
-Пусть Валар сторожат твое справедливое царство, да не падёт оно. Новости из Эригона плохи.
+Our fears have been realised, for the Shadow is led by a servant of Morgoth: his lieutenant Sauron the Abhorred, formerly known to us as Annatar Aulendil. He has swept into Eregion, and sacked the Gwaith-i-Mirdain. Celebrimbor was captured and put to death.
 
-Наши страхи сбылись, ибо сеет тень слуга Морготов: его имя - Саурон, ранее он был известен нам, как Аннатар Аулендил. Он захватил Эрегион и забрал кольца. Келебримбор был схвачен и предан смерти.
+We few who remain owe our escape to the valiant assault by the Dwarves of Hadhodrond and Celeborn-o-Lórien. I have led the rest of the host northward in retreat, and in hopes of finding a hidden refuge.
 
-Мы не смогли победить даже вместе с великими гномами из Кхазад-Дума. Я оставил часть войск в Мории, потому что лучшего убежища нам не найти.
+But Sauron has turned from us, sending but a small force to harry our movement. He now marches with haste across Eriador - towards the Last Fair Realm.
 
-Саурон не стал штурмовать врата Кхазад-Дума всеми армиями; нас сторожит малый отряд, а основные сила Врага идут к последнему прекрасному царству.
+I advise you to send word to Númenor and muster your strength, aran-nin.
 
-Советую послать весточку в Нуменор, чтобы нам помог Король.
-Да сбережёт вас Манвэ. 
+I Manwë berio le nu Eru. May Manwë keep you under the One.

@@ -9,61 +9,61 @@ import net.minecraft.item.ItemStack;
 import net.minecraft.world.World;
 
 public class LOTREntityGulfHaradrim extends LOTREntityNearHaradrimBase {
-    public LOTREntityGulfHaradrim(World world) {
-        super(world);
-        this.addTargetTasks(true);
-    }
+	public LOTREntityGulfHaradrim(World world) {
+		super(world);
+		this.addTargetTasks(true);
+	}
 
-    @Override
-    protected LOTRFoods getHaradrimFoods() {
-        return LOTRFoods.GULF_HARAD;
-    }
+	@Override
+	public LOTRMiniQuest createMiniQuest() {
+		return LOTRMiniQuestFactory.GULF_HARAD.createQuest(this);
+	}
 
-    @Override
-    protected LOTRFoods getHaradrimDrinks() {
-        return LOTRFoods.GULF_HARAD_DRINK;
-    }
+	@Override
+	public void dropHaradrimItems(boolean flag, int i) {
+		if (rand.nextInt(5) == 0) {
+			dropChestContents(LOTRChestContents.GULF_HOUSE, 1, 2 + i);
+		}
+	}
 
-    @Override
-    public void setupNPCName() {
-        this.familyInfo.setName(LOTRNames.getGulfHaradName(this.rand, this.familyInfo.isMale()));
-    }
+	@Override
+	public LOTRMiniQuestFactory getBountyHelpSpeechDir() {
+		return LOTRMiniQuestFactory.GULF_HARAD;
+	}
 
-    @Override
-    public IEntityLivingData onSpawnWithEgg(IEntityLivingData data) {
-        data = super.onSpawnWithEgg(data);
-        this.npcItemsInv.setMeleeWeapon(new ItemStack(LOTRMod.daggerHarad));
-        this.npcItemsInv.setIdleItem(null);
-        return data;
-    }
+	@Override
+	public LOTRFoods getHaradrimDrinks() {
+		return LOTRFoods.GULF_HARAD_DRINK;
+	}
 
-    @Override
-    protected void dropHaradrimItems(boolean flag, int i) {
-        if(this.rand.nextInt(5) == 0) {
-            this.dropChestContents(LOTRChestContents.GULF_HOUSE, 1, 2 + i);
-        }
-    }
+	@Override
+	public LOTRFoods getHaradrimFoods() {
+		return LOTRFoods.GULF_HARAD;
+	}
 
-    @Override
-    protected LOTRAchievement getKillAchievement() {
-        return LOTRAchievement.killNearHaradrim;
-    }
+	@Override
+	public LOTRAchievement getKillAchievement() {
+		return LOTRAchievement.killNearHaradrim;
+	}
 
-    @Override
-    public String getSpeechBank(EntityPlayer entityplayer) {
-        if(this.isFriendly(entityplayer)) {
-            return "nearHarad/gulf/haradrim/friendly";
-        }
-        return "nearHarad/gulf/haradrim/hostile";
-    }
+	@Override
+	public String getSpeechBank(EntityPlayer entityplayer) {
+		if (isFriendly(entityplayer)) {
+			return "nearHarad/gulf/haradrim/friendly";
+		}
+		return "nearHarad/gulf/haradrim/hostile";
+	}
 
-    @Override
-    public LOTRMiniQuest createMiniQuest() {
-        return LOTRMiniQuestFactory.GULF_HARAD.createQuest(this);
-    }
+	@Override
+	public IEntityLivingData onSpawnWithEgg(IEntityLivingData data) {
+		data = super.onSpawnWithEgg(data);
+		npcItemsInv.setMeleeWeapon(new ItemStack(LOTRMod.daggerHarad));
+		npcItemsInv.setIdleItem(null);
+		return data;
+	}
 
-    @Override
-    public LOTRMiniQuestFactory getBountyHelpSpeechDir() {
-        return LOTRMiniQuestFactory.GULF_HARAD;
-    }
+	@Override
+	public void setupNPCName() {
+		familyInfo.setName(LOTRNames.getGulfHaradName(rand, familyInfo.isMale()));
+	}
 }

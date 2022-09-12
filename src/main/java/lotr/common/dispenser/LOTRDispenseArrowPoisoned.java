@@ -6,10 +6,10 @@ import net.minecraft.entity.IProjectile;
 import net.minecraft.world.World;
 
 public class LOTRDispenseArrowPoisoned extends BehaviorProjectileDispense {
-    @Override
-    protected IProjectile getProjectileEntity(World world, IPosition iposition) {
-        LOTREntityArrowPoisoned arrow = new LOTREntityArrowPoisoned(world, iposition.getX(), iposition.getY(), iposition.getZ());
-        arrow.canBePickedUp = 1;
-        return arrow;
-    }
+	@Override
+	public IProjectile getProjectileEntity(World world, IPosition iposition) {
+		LOTREntityArrowPoisoned arrow = new LOTREntityArrowPoisoned(world, iposition.getX(), iposition.getY(), iposition.getZ());
+		arrow.canBePickedUp = 1;
+		return arrow;
+	}
 }

@@ -1,16 +1,16 @@
-Добро пожаловать в @.
-Добро пожаловать @, #!
-Вы не устали в дороге? На втором этаже есть комната.
-Голодный? Жаждущий? Чего Вы желаете, #?
-Добро пожаловать в лучшую таверну во всём Востоке!
-Ты выглядишь уставшим. Ну же, выпей.
-Чем мог услужить Вам сегодня, #?
-Ты похож на человека с Запада, #. И по сему я надеюсь, что ты не друг гондорцев!
-Добро пожаловать в @! Наши посетители составят тебе компанию, #; не пить же одному.
-Добро пожаловать в @, мой друг!
-Приветствую, мой друг. Чем могу тебе помочь?
-Думаю, Вы прибыли с далёких краёв, #. Видать, проголодались Вы. Я накормлю.
-Здравствуй, #! Вам нужна комната?
-Простокваша особенно хороша!
-Гранатовый сок особенно хорош!
-Добро пожаловать в @! Чем могу услужить Вам, мой друг?
+Welcome to @.
+Welcome to @, #!
+Are you weary from travelling? We have lodgings upstairs.
+Hungry? Thirsty? What'll it be, #?
+Welcome to the finest tavern in all of the East!
+You look like a weary traveller. Go on, #, buy a drink.
+How can I serve you today, #?
+You look like a Man of the West, #. I hope you are no friend to Gondor!
+Welcome to @! You will find good company here.
+Welcome to @, my friend!
+Welcome, my friend. What can I get for you?
+You look to have travelled far, #. I guess you will be wanting something to eat.
+Hello, #! Do you need a place to stay tonight?
+The soured milk is particularly good.
+The pomegranate juice is particularly good.
+Welcome to @! How can I serve you, my friend?

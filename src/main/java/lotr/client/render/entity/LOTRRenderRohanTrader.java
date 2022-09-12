@@ -5,20 +5,20 @@ import net.minecraft.entity.EntityLiving;
 import net.minecraft.util.ResourceLocation;
 
 public class LOTRRenderRohanTrader extends LOTRRenderRohirrim {
-    private ResourceLocation traderOutfit;
+	public ResourceLocation traderOutfit;
 
-    public LOTRRenderRohanTrader(String s) {
-        this.traderOutfit = new ResourceLocation("lotr:mob/rohan/" + s + ".png");
-    }
+	public LOTRRenderRohanTrader(String s) {
+		traderOutfit = new ResourceLocation("lotr:mob/rohan/" + s + ".png");
+	}
 
-    @Override
-    public int shouldRenderPass(EntityLiving entity, int pass, float f) {
-        LOTREntityRohanMan rohirrim = (LOTREntityRohanMan) entity;
-        if(pass == 1 && rohirrim.getEquipmentInSlot(3) == null) {
-            this.setRenderPassModel(this.outfitModel);
-            this.bindTexture(this.traderOutfit);
-            return 1;
-        }
-        return super.shouldRenderPass(rohirrim, pass, f);
-    }
+	@Override
+	public int shouldRenderPass(EntityLiving entity, int pass, float f) {
+		LOTREntityRohanMan rohirrim = (LOTREntityRohanMan) entity;
+		if (pass == 1 && rohirrim.getEquipmentInSlot(3) == null) {
+			setRenderPassModel(outfitModel);
+			bindTexture(traderOutfit);
+			return 1;
+		}
+		return super.shouldRenderPass(rohirrim, pass, f);
+	}
 }

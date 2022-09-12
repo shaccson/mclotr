@@ -1,32 +1,44 @@
-#title:Руководство Следопыта, Том II
-#author:Эрадан Палантир
-#types:eriador, lindon, rivendell, eregion
+#title:A Ranger's Guide, Volume II
+#author:Eradan Palantir
+#types:eriador,lindon,rivendell,eregion
 #reward
 #
-Руководство Следопыта, Том II: холодное оружие.
-Добро пожаловать во второй том руководства Следопыта. Если Вы читаете это, вы продолжили свое обучение после первого тома.
+A Ranger's Guide, Volume II: Weapons of War - Fighting up Close
 
-Речь пойдёт про мечи, топоры, алебарды и дубины. Для простоты они будут коллективно называться "оружием ближнего боя", поскольку они будут использоваться только в ближнем бою.
+Welcome to the second volume of A Ranger's Guide. If you are reading this, you have continued your training beyond the basics of the first volume.
 
-Первое оружие, которое должно быть отмечено - это, конечно же, меч. Вы скорее всего уже умеете владеть мечом. Есть много типов меча, но только некоторые из них помогут вам.
-Вы чаще всего увидите мечи Гондора или Мордора. Вы не должны использовать меч орка, потому, что они, как и их пользователи, наполнены злом и злыми делами. Но если меча у вас нет, выбирать не приходится.
+This book shall introduce you to the next weapons you must learn about. These are the kinds of weapons that should only be used when you are far too close to your enemies. Such weapons are often our last resort. Therefore, you must be flawless in your mastery of them.
 
-Если вам очень повезет, вы можете найти гномий меч. Эти мечи острее, чем все, что мы когда-либо делали, так как кузнечное ремесло гномов намного превосходит наше собственное мастерство. Если вы пришли с таким мечом, относитесь к нему так, как будто это благословение от самого Валара!
-Эльфы не умеют ковать так, как гномы; зато их мечи наполнены светом и оповещают вас о том, что враги близко.
-Мечи наших врагов часто похожи на наши, но они обычно короче и темнее. Но если по какой-то большой беде вы окажетесь перед берсерком Изенгарда, вы должны бороться изо всех сил, потому что они могут разрубить человека махом при помощи гигантского острого меча.
+These are the swords, axes, polearms, and blunt weapons. For simplicity, they will collectively be named 'melee weapons', for they will only be used in a melee, which is to say, close hand-to-hand combat.
 
-Столкнувшись с врагом, владеющим мечом, возьмите свой собственный меч. Если у вас есть щит, у вас есть преимущество. Большинство орков сражаются в рубящем стиле и зависят от собственной силы. Вы, однако, не можете позволить себе тратить свои силы на то же самое. Вместо этого, отклоните меч противника, когда это возможно. Поверните удары орка на землю или воздух, подальше от себя. Когда он устанет, подойдите поближе и ударьте. Хороший толчок может прикончить врага одним ударом, но будьте осторожны: самые большие орки намного живучее, чем большинство.
+The first weapon that must be covered is, of course, the sword. You will likely use a sword, for most of the rest of your Dúnedain brethren also wield the sword, and there are thus plenty of masters to learn from. There are many types of sword, but only a few are common in this age.
 
-Никогда не бейте мечом о другой меч! Нет более простого способа разрушить лезвие клинка, чем разбить его о чей-то другой! И помните: мастерство-это ключ. Вы должны практиковаться, практиковаться и практиковаться до упаду! Боль не имеет значения. Усталость - это каждый день вашей жизни. Вы добьетесь успеха там, где даже орки терпят неудачу, потому что вы можете продолжать идти, потому что вы не можете остановиться ради обеда.
+First, you must understand your own options. You will likely have ready access to swords of Gondorian fashion, or Orcish origin. You should not readily use an Orc's sword, for they, like their users, are filled with evil and evil deeds. A Gondorian sword, however, is a true weapon: strong and reliable, with a keen blade. Be careful, however. Your weapon cannot be repeatedly used to hack through Orcish helms without suffering some damage, and you do not want to find yourself trapped in a skirmish with a broken sword!
 
-Хотя вы, вероятно, никогда не будете владеть им, но вы можете с ним столкнуться. Этим оружием является кинжал, короткий нож. Используйте его только тогда, когда нет меча.
-Топоры, особенно двуглавые топоры, опасны в умелых руках. Они сделаны для того, чтобы рубить быстро и сильно. Если вы можете избежать удара топором, сделайте это. В противном случае вы можете отклонить его щитом. При использовании топора, имейте в виду, что это действительно не более чем жестокое орудия налета. Бейте врагов раз за разом, никогда не уступая, и они вскоре упадут на землю. Мы стараемся оставить такую дикость оркам, но сильный топор лучше, чем ничего.
-Еще одно распространенное оружие - длинное оружие. Есть много видов, но большинство из них можно причислить либо к колющим копьям, либо к рубящим алебардам. Копья популярны в Рохане, а алебарды - в Хараде. При их помощи южане могут быстро убить вас и вашего коня, а потом порубить ваши трупы на куски.
+If you are very lucky, though, you may find yourself with access to a Dwarvish or Elvish sword. These swords are sharper than any we have ever wrought, as the smithcraft of the Eldar and the Naugrim far surpasses our own skill. Should you come to bear such a sword, treat it as though it were a blessing from the Valar themselves!
 
-Достойны упоминания здесь и пики, которые длиннее копья и более неповоротливы. Тем не менее пика отлично подходит для удержания врага в страхе.
+The swords of our enemies are often similar to ours, though the Orcs are known to fashion their blades with a wicked curve. But if by some great misfortune you find yourself facing a great Uruk, you must fight for your life, for they are fiercely strong with brutal swords to match.
 
-Молоты и булавы довольно похожи, хотя и редки в этих частях мира. Такое оружие тяжелое, и для того, чтобы хорошо владеть им, нужен могучий человек или орк. Для борьбы с молотом нужны крепки руки. Ударять врага по голове - верный способ оглушить или убить его.
+When faced with a sword-wielding enemy, keep your own sword up. If you have a shield, you have an advantage. Most Orcs fight in an unrefined slashing style, and depend on their own brute strength to snatch the victory. You, however, cannot afford to waste your strength doing the same. Instead, deflect the enemy's sword whenever possible. Turn the Orc's strikes to the ground or the air, away from your own skin. When he tires, lunge - do not slash, lunge - straight for the chest. A good thrust can finish off your enemy in one blow, but be wary: the largest Orcs are far tougher than most.
 
-На этом мое руководство заканчивается. Есть некоторые виды оружия, которые я не рассматривал, поскольку у меня мало опыта работы с трезубцами и протазанами.
+If you must stop a sword with your own sword, rather than deflect it - for the sake of the Valar, do not ever block the sword edge-on-edge! There is no easier way to ruin your blade's edge than by smashing it into someone else's! And remember: mastery is the key. You must practise, practise until you physically cannot lift the sword again, and then lift it anyway. You are a Ranger. Your body is a secondary concern. Pain is unimportant. Weariness is every day of your life. You will succeed where even Orcs fail because you can keep going: because you will not, cannot, stop for sake of exhaustion.
 
-Оттачивай свое мастерство. Изучай эту книгу и тренируйся со всем оружием, подробно описанным здесь. Может наступить день, когда твоя жизнь будет зависеть от этого.
+Though you will likely never wield them, there are other weapons you might face. The most common is the dagger, a short knife smaller than the full sword. A dagger is fast to swing, but cannot bite as deep as a heavier, longer sword. Stay out of the reach of a dagger-carrying foe. Use your sword's longer reach to keep them at bay. If you are the one wielding a dagger, however, and you have no other choice, the most important thing is to be fast, unpredictable, and get in close - very close.
+
+Axes, especially the double-headed battleaxes, are dangerous in the right hands. They are made to deal damage through a combination of blunt force and a sharp edge. If you can avoid an axe stroke by any means, do so. Otherwise, you can deflect it with a shield. When using an axe, bear in mind that it is really no more than a brutal hacking weapon. Hit your enemies over and over again, never yielding, and they will soon fall to the ground. We do try to leave such savagery to the Orcs, but a strong axe is better than nothing - so if you must use one, you had better be good at quick strikes to the neck or head.
+
+Polearms are another common sight. There are many kinds, but most can be counted among either the long-reaching piercing spear-type weapons, or the chopping halberds and other nasty Orcish constructions.
+
+Spears are favourites of the Elves and of the Rohirrim: a spear affords a further reach, keeping the wielder out of range of their enemy. You might use a spear from horseback, but besides that they will be of little use; a spearman must have other spearmen to keep other enemies away and as a Ranger you will fight alone more often than not. You can also throw a spear to strike your foes from afar, although I do not advise that unless you have another trusty weapon to rely on.
+
+Worthy of mention here are pikes, which are even longer than spears and more unwieldy. However, more so than any other weapon, a skilfully-held pike proves excellent for keeping a charging foe at bay.
+
+Halberds are axes on long poles with spearheads at the end. Stay away from a halberdier, especially if you are on horseback. The halberd can put a quick stop to your horse's charge, pull you off its back, and then chop you to pieces after the fall.
+
+Lances are exclusively used from horseback, and thus rarely appear in the hands of Orcs. A lance is somewhat like a longer and stronger spear, for they are meant to survive after striking a fully armoured enemy at full gallop. You might wield one should you ever ride with the Rohirrim, but we Dúnedain do not use them often, for mounted combat is dangerous when alone. But the best way to fight with a lance is to charge at your enemy and drive the strike home - then quickly retreat, using your horse's speed to your advantage.
+
+Warhammers and maces are rather similar, though rare in these parts of the world. Such weapons are heavy and hard-hitting, and it takes a mighty Man or Orc to wield one well. To fight with a hammer, aim first for your foe's side, then for the head. Hitting an enemy in the head is a sure way to stun them, while a hit to the side will leave them breathless - an easy target. If you should come up against an enemy wielding a hammer, be aware that your armour is almost useless against it. The force from a hammer-strike will pass right through even the toughest mail and rattle you to the heart of your bones.
+
+Thus concludes my guide. There are some kinds of weapons which I have not covered, but as I have little experience with tridents and battlestaves, you will have to ask a soldier of the Pelargir or an Elf of Imladris for information on those. This book, however, is all that you will need to master the use of the common weapons.
+
+Hone your skills. Study this book, and practise with all the weapons detailed herein. You will fight most often with your one trusted weapon, but you are expected to have at least a familiarity with all other kinds of blade. There may come a day when your life depends upon it.

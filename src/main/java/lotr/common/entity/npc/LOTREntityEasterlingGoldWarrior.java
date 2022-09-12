@@ -7,31 +7,31 @@ import net.minecraft.item.ItemStack;
 import net.minecraft.world.World;
 
 public class LOTREntityEasterlingGoldWarrior extends LOTREntityEasterlingWarrior {
-    public LOTREntityEasterlingGoldWarrior(World world) {
-        super(world);
-        this.npcShield = LOTRShields.ALIGNMENT_RHUN;
-    }
+	public LOTREntityEasterlingGoldWarrior(World world) {
+		super(world);
+		npcShield = LOTRShields.ALIGNMENT_RHUN;
+	}
 
-    @Override
-    public LOTRNPCMount createMountToRide() {
-        LOTREntityHorse horse = (LOTREntityHorse) super.createMountToRide();
-        horse.setMountArmor(new ItemStack(LOTRMod.horseArmorRhunGold));
-        return horse;
-    }
+	@Override
+	public void applyEntityAttributes() {
+		super.applyEntityAttributes();
+		getEntityAttribute(SharedMonsterAttributes.maxHealth).setBaseValue(25.0);
+	}
 
-    @Override
-    protected void applyEntityAttributes() {
-        super.applyEntityAttributes();
-        this.getEntityAttribute(SharedMonsterAttributes.maxHealth).setBaseValue(25.0);
-    }
+	@Override
+	public LOTRNPCMount createMountToRide() {
+		LOTREntityHorse horse = (LOTREntityHorse) super.createMountToRide();
+		horse.setMountArmor(new ItemStack(LOTRMod.horseArmorRhunGold));
+		return horse;
+	}
 
-    @Override
-    public IEntityLivingData onSpawnWithEgg(IEntityLivingData data) {
-        data = super.onSpawnWithEgg(data);
-        this.setCurrentItemOrArmor(1, new ItemStack(LOTRMod.bootsRhunGold));
-        this.setCurrentItemOrArmor(2, new ItemStack(LOTRMod.legsRhunGold));
-        this.setCurrentItemOrArmor(3, new ItemStack(LOTRMod.bodyRhunGold));
-        this.setCurrentItemOrArmor(4, new ItemStack(LOTRMod.helmetRhunGold));
-        return data;
-    }
+	@Override
+	public IEntityLivingData onSpawnWithEgg(IEntityLivingData data) {
+		data = super.onSpawnWithEgg(data);
+		setCurrentItemOrArmor(1, new ItemStack(LOTRMod.bootsRhunGold));
+		setCurrentItemOrArmor(2, new ItemStack(LOTRMod.legsRhunGold));
+		setCurrentItemOrArmor(3, new ItemStack(LOTRMod.bodyRhunGold));
+		setCurrentItemOrArmor(4, new ItemStack(LOTRMod.helmetRhunGold));
+		return data;
+	}
 }

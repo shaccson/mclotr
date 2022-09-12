@@ -1,15 +1,16 @@
-Время эльфов истекает, но наша сила ещё не иссякла.
-Я защищаю эти земли.
-Приветствую, #.
-Мы защищаем свободные народы Средиземья.
-Кажется, ты друг эльфов, #.
-Пусть благодать Валар защитит Вас.
-Сколько орков ты убил сегодня, #?
-Мир меняется, #... Я чувствую это в своём сердце.
-Если Вы боретесь за свободу, то я с Вами.
-Давным давно, союз эльфов и людей разбил силы врага. Хотите ли Вы отдать дань этому союзу?
-Враг тянет свои лапы к нашему краю. Близится великая битва.
-Добро пожаловать, #, в свободные и светлые земли эльфов!
-Сила эльфов убывает в этом мире, но время ещё есть! Мы будем сражаться до последнего!
-Наша земля одарит вас чистотой ума и духа, спокойствием и силой. 
-Злу не проникнуть сюда, не осквернить священные места.
+The time of the Elves is fading, but our strength is not yet gone.
+I defend the Elves of Lindon.
+Greetings, #.
+We defend the free peoples of Middle-earth.
+It seems you are a friend of the Elves, #.
+May the grace of the Valar protect you.
+How many Orcs have you slain today, #?
+The world is changing, #... I feel it in my heart.
+If you fight for freedom, then I am with you.
+Long ago, an alliance existed between my people and yours. Will you honour that alliance?
+Ever stronger grows the sway of the Enemy over our lands.
+Welcome, #, to the land of Círdan the Shipwright!
+You shall find no evil in Lindon, #! Our land is safe and fair.
+I have public these shores for many a year.
+I protect the High Elves of Lindon. No evil shall escape my wrath.
+The power of the Elves is waning in this world, but our strength is not yet gone!

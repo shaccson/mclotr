@@ -8,101 +8,96 @@ import net.minecraft.nbt.NBTTagCompound;
 import net.minecraft.world.World;
 
 public class LOTREntityOrcBomb extends EntityTNTPrimed {
-    public int orcBombFuse;
-    public boolean droppedByPlayer;
-    public boolean droppedByHiredUnit;
-    public boolean droppedTargetingPlayer;
+	public int orcBombFuse;
+	public boolean droppedByPlayer;
+	public boolean droppedByHiredUnit;
+	public boolean droppedTargetingPlayer;
 
-    public LOTREntityOrcBomb(World world) {
-        super(world);
-    }
+	public LOTREntityOrcBomb(World world) {
+		super(world);
+	}
 
-    public LOTREntityOrcBomb(World world, double d, double d1, double d2, EntityLivingBase entity) {
-        super(world, d, d1, d2, entity);
-    }
+	public LOTREntityOrcBomb(World world, double d, double d1, double d2, EntityLivingBase entity) {
+		super(world, d, d1, d2, entity);
+	}
 
-    @Override
-    protected void entityInit() {
-        super.entityInit();
-        this.dataWatcher.addObject(16, (byte) 0);
-    }
+	@Override
+	public void entityInit() {
+		super.entityInit();
+		dataWatcher.addObject(16, (byte) 0);
+	}
 
-    public int getBombStrengthLevel() {
-        return this.dataWatcher.getWatchableObjectByte(16);
-    }
+	public void explodeOrcBomb() {
+		boolean doTerrainDamage = false;
+		if (droppedByPlayer) {
+			doTerrainDamage = true;
+		} else if (droppedByHiredUnit || droppedTargetingPlayer) {
+			doTerrainDamage = LOTRMod.canGrief(worldObj);
+		}
+		int meta = getBombStrengthLevel();
+		int strength = LOTRBlockOrcBomb.getBombStrengthLevel(meta);
+		boolean fire = LOTRBlockOrcBomb.isFireBomb(meta);
+		worldObj.newExplosion(this, posX, posY, posZ, (strength + 1) * 4.0f, fire, doTerrainDamage);
+	}
 
-    public void setBombStrengthLevel(int i) {
-        this.dataWatcher.updateObject(16, (byte) i);
-        this.orcBombFuse = 40 + LOTRBlockOrcBomb.getBombStrengthLevel(i) * 20;
-    }
+	public int getBombStrengthLevel() {
+		return dataWatcher.getWatchableObjectByte(16);
+	}
 
-    public void setFuseFromExplosion() {
-        this.orcBombFuse = this.worldObj.rand.nextInt(this.orcBombFuse / 4) + this.orcBombFuse / 8;
-    }
+	@Override
+	public void onUpdate() {
+		prevPosX = posX;
+		prevPosY = posY;
+		prevPosZ = posZ;
+		motionY -= 0.04;
+		moveEntity(motionX, motionY, motionZ);
+		motionX *= 0.98;
+		motionY *= 0.98;
+		motionZ *= 0.98;
+		if (onGround) {
+			motionX *= 0.7;
+			motionZ *= 0.7;
+			motionY *= -0.5;
+		}
+		--orcBombFuse;
+		if (orcBombFuse <= 0 && !worldObj.isRemote) {
+			setDead();
+			explodeOrcBomb();
+		} else {
+			worldObj.spawnParticle("smoke", posX, posY + 0.7, posZ, 0.0, 0.0, 0.0);
+		}
+	}
 
-    public void setFuseFromHiredUnit() {
-        LOTRBlockOrcBomb.getBombStrengthLevel(this.getBombStrengthLevel());
-    }
+	@Override
+	public void readEntityFromNBT(NBTTagCompound nbt) {
+		super.readEntityFromNBT(nbt);
+		droppedByPlayer = nbt.getBoolean("DroppedByPlayer");
+		droppedByHiredUnit = nbt.getBoolean("DroppedByHiredUnit");
+		droppedTargetingPlayer = nbt.getBoolean("DroppedTargetingPlayer");
+		setBombStrengthLevel(nbt.getInteger("BombStrengthLevel"));
+		orcBombFuse = nbt.getInteger("OrcBombFuse");
+	}
 
-    @Override
-    public void onUpdate() {
-        this.prevPosX = this.posX;
-        this.prevPosY = this.posY;
-        this.prevPosZ = this.posZ;
-        this.motionY -= 0.04;
-        this.moveEntity(this.motionX, this.motionY, this.motionZ);
-        this.motionX *= 0.98;
-        this.motionY *= 0.98;
-        this.motionZ *= 0.98;
-        if(this.onGround) {
-            this.motionX *= 0.7;
-            this.motionZ *= 0.7;
-            this.motionY *= -0.5;
-        }
-        --this.orcBombFuse;
-        if(this.orcBombFuse <= 0 && !this.worldObj.isRemote) {
-            this.setDead();
-            this.explodeOrcBomb();
-        }
-        else {
-            this.worldObj.spawnParticle("smoke", this.posX, this.posY + 0.7, this.posZ, 0.0, 0.0, 0.0);
-        }
-    }
+	public void setBombStrengthLevel(int i) {
+		dataWatcher.updateObject(16, (byte) i);
+		orcBombFuse = 40 + LOTRBlockOrcBomb.getBombStrengthLevel(i) * 20;
+	}
 
-    @Override
-    public void writeEntityToNBT(NBTTagCompound nbt) {
-        super.writeEntityToNBT(nbt);
-        nbt.setBoolean("DroppedByPlayer", this.droppedByPlayer);
-        nbt.setBoolean("DroppedByHiredUnit", this.droppedByHiredUnit);
-        nbt.setBoolean("DroppedTargetingPlayer", this.droppedTargetingPlayer);
-        nbt.setInteger("BombStrengthLevel", this.getBombStrengthLevel());
-        nbt.setInteger("OrcBombFuse", this.orcBombFuse);
-    }
+	public void setFuseFromExplosion() {
+		orcBombFuse = worldObj.rand.nextInt(orcBombFuse / 4) + orcBombFuse / 8;
+	}
 
-    @Override
-    public void readEntityFromNBT(NBTTagCompound nbt) {
-        super.readEntityFromNBT(nbt);
-        this.droppedByPlayer = nbt.getBoolean("DroppedByPlayer");
-        this.droppedByHiredUnit = nbt.getBoolean("DroppedByHiredUnit");
-        this.droppedTargetingPlayer = nbt.getBoolean("DroppedTargetingPlayer");
-        this.setBombStrengthLevel(nbt.getInteger("BombStrengthLevel"));
-        this.orcBombFuse = nbt.getInteger("OrcBombFuse");
-    }
+	public void setFuseFromHiredUnit() {
+		LOTRBlockOrcBomb.getBombStrengthLevel(getBombStrengthLevel());
+	}
 
-    private void explodeOrcBomb() {
-        boolean doTerrainDamage = false;
-        if(this.droppedByPlayer) {
-            doTerrainDamage = true;
-        }
-        else if(this.droppedByHiredUnit) {
-            doTerrainDamage = LOTRMod.canGrief(this.worldObj);
-        }
-        else if(this.droppedTargetingPlayer) {
-            doTerrainDamage = LOTRMod.canGrief(this.worldObj);
-        }
-        int meta = this.getBombStrengthLevel();
-        int strength = LOTRBlockOrcBomb.getBombStrengthLevel(meta);
-        boolean fire = LOTRBlockOrcBomb.isFireBomb(meta);
-        this.worldObj.newExplosion(this, this.posX, this.posY, this.posZ, (strength + 1) * 4.0f, fire, doTerrainDamage);
-    }
+	@Override
+	public void writeEntityToNBT(NBTTagCompound nbt) {
+		super.writeEntityToNBT(nbt);
+		nbt.setBoolean("DroppedByPlayer", droppedByPlayer);
+		nbt.setBoolean("DroppedByHiredUnit", droppedByHiredUnit);
+		nbt.setBoolean("DroppedTargetingPlayer", droppedTargetingPlayer);
+		nbt.setInteger("BombStrengthLevel", getBombStrengthLevel());
+		nbt.setInteger("OrcBombFuse", orcBombFuse);
+	}
 }

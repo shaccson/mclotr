@@ -6,54 +6,58 @@ import lotr.common.*;
 import net.minecraft.entity.player.EntityPlayer;
 
 public class LOTRPacketOptions implements IMessage {
-    private int option;
-    private boolean enable;
+	public int option;
+	public boolean enable;
 
-    public LOTRPacketOptions() {
-    }
+	public LOTRPacketOptions() {
+	}
 
-    public LOTRPacketOptions(int i, boolean flag) {
-        this.option = i;
-        this.enable = flag;
-    }
+	public LOTRPacketOptions(int i, boolean flag) {
+		option = i;
+		enable = flag;
+	}
 
-    @Override
-    public void toBytes(ByteBuf data) {
-        data.writeByte(this.option);
-        data.writeBoolean(this.enable);
-    }
+	@Override
+	public void fromBytes(ByteBuf data) {
+		option = data.readByte();
+		enable = data.readBoolean();
+	}
 
-    @Override
-    public void fromBytes(ByteBuf data) {
-        this.option = data.readByte();
-        this.enable = data.readBoolean();
-    }
+	@Override
+	public void toBytes(ByteBuf data) {
+		data.writeByte(option);
+		data.writeBoolean(enable);
+	}
 
-    public static class Handler implements IMessageHandler<LOTRPacketOptions, IMessage> {
-        @Override
-        public IMessage onMessage(LOTRPacketOptions packet, MessageContext context) {
-            if(!LOTRMod.proxy.isSingleplayer()) {
-                EntityPlayer entityplayer = LOTRMod.proxy.getClientPlayer();
-                int option = packet.option;
-                boolean enable = packet.enable;
-                if(option == 0) {
-                    LOTRLevelData.getData(entityplayer).setFriendlyFire(enable);
-                }
-                else if(option == 1) {
-                    LOTRLevelData.getData(entityplayer).setEnableHiredDeathMessages(enable);
-                }
-                else if(option == 3) {
-                    LOTRLevelData.getData(entityplayer).setHideMapLocation(enable);
-                }
-                else if(option == 4) {
-                    LOTRLevelData.getData(entityplayer).setFemRankOverride(enable);
-                }
-                else if(option == 5) {
-                    LOTRLevelData.getData(entityplayer).setEnableConquestKills(enable);
-                }
-            }
-            return null;
-        }
-    }
+	public static class Handler implements IMessageHandler<LOTRPacketOptions, IMessage> {
+		@Override
+		public IMessage onMessage(LOTRPacketOptions packet, MessageContext context) {
+			if (!LOTRMod.proxy.isSingleplayer()) {
+				EntityPlayer entityplayer = LOTRMod.proxy.getClientPlayer();
+				int option = packet.option;
+				boolean enable = packet.enable;
+				switch (option) {
+				case 0:
+					LOTRLevelData.getData(entityplayer).setFriendlyFire(enable);
+					break;
+				case 1:
+					LOTRLevelData.getData(entityplayer).setEnableHiredDeathMessages(enable);
+					break;
+				case 3:
+					LOTRLevelData.getData(entityplayer).setHideMapLocation(enable);
+					break;
+				case 4:
+					LOTRLevelData.getData(entityplayer).setFemRankOverride(enable);
+					break;
+				case 5:
+					LOTRLevelData.getData(entityplayer).setEnableConquestKills(enable);
+					break;
+				default:
+					break;
+				}
+			}
+			return null;
+		}
+	}
 
 }

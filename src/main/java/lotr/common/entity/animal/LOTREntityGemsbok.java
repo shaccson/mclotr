@@ -12,79 +12,79 @@ import net.minecraft.util.MovingObjectPosition;
 import net.minecraft.world.World;
 
 public class LOTREntityGemsbok extends EntityAnimal {
-    public LOTREntityGemsbok(World world) {
-        super(world);
-        this.setSize(0.9f, 1.4f);
-        this.getNavigator().setAvoidsWater(true);
-        this.tasks.addTask(0, new EntityAISwimming(this));
-        this.tasks.addTask(1, new EntityAIPanic(this, 1.3));
-        this.tasks.addTask(2, new EntityAIMate(this, 1.0));
-        this.tasks.addTask(3, new EntityAITempt(this, 1.2, Items.wheat, false));
-        this.tasks.addTask(4, new EntityAIFollowParent(this, 1.1));
-        this.tasks.addTask(5, new EntityAIWander(this, 1.0));
-        this.tasks.addTask(6, new EntityAIWatchClosest(this, EntityPlayer.class, 6.0f));
-        this.tasks.addTask(7, new EntityAILookIdle(this));
-    }
+	public LOTREntityGemsbok(World world) {
+		super(world);
+		setSize(0.9f, 1.4f);
+		getNavigator().setAvoidsWater(true);
+		tasks.addTask(0, new EntityAISwimming(this));
+		tasks.addTask(1, new EntityAIPanic(this, 1.3));
+		tasks.addTask(2, new EntityAIMate(this, 1.0));
+		tasks.addTask(3, new EntityAITempt(this, 1.2, Items.wheat, false));
+		tasks.addTask(4, new EntityAIFollowParent(this, 1.1));
+		tasks.addTask(5, new EntityAIWander(this, 1.0));
+		tasks.addTask(6, new EntityAIWatchClosest(this, EntityPlayer.class, 6.0f));
+		tasks.addTask(7, new EntityAILookIdle(this));
+	}
 
-    @Override
-    protected void applyEntityAttributes() {
-        super.applyEntityAttributes();
-        this.getEntityAttribute(SharedMonsterAttributes.maxHealth).setBaseValue(22.0);
-        this.getEntityAttribute(SharedMonsterAttributes.movementSpeed).setBaseValue(0.25);
-    }
+	@Override
+	public void applyEntityAttributes() {
+		super.applyEntityAttributes();
+		getEntityAttribute(SharedMonsterAttributes.maxHealth).setBaseValue(22.0);
+		getEntityAttribute(SharedMonsterAttributes.movementSpeed).setBaseValue(0.25);
+	}
 
-    @Override
-    public boolean isAIEnabled() {
-        return true;
-    }
+	@Override
+	public EntityAgeable createChild(EntityAgeable entity) {
+		return new LOTREntityGemsbok(worldObj);
+	}
 
-    @Override
-    public boolean isBreedingItem(ItemStack itemstack) {
-        return itemstack.getItem() == Items.wheat;
-    }
+	@Override
+	public void dropFewItems(boolean flag, int i) {
+		int j = 1 + rand.nextInt(4) + rand.nextInt(1 + i);
+		for (int k = 0; k < j; ++k) {
+			dropItem(LOTRMod.gemsbokHide, 1);
+		}
+		if (rand.nextBoolean()) {
+			dropItem(LOTRMod.gemsbokHorn, 1);
+		}
+	}
 
-    @Override
-    protected void dropFewItems(boolean flag, int i) {
-        int j = 1 + this.rand.nextInt(4) + this.rand.nextInt(1 + i);
-        for(int k = 0; k < j; ++k) {
-            this.dropItem(LOTRMod.gemsbokHide, 1);
-        }
-        if(this.rand.nextBoolean()) {
-            this.dropItem(LOTRMod.gemsbokHorn, 1);
-        }
-    }
+	@Override
+	public String getDeathSound() {
+		return "lotr:deer.death";
+	}
 
-    @Override
-    public EntityAgeable createChild(EntityAgeable entity) {
-        return new LOTREntityGemsbok(this.worldObj);
-    }
+	public float getGemsbokSoundPitch() {
+		return 0.8f;
+	}
 
-    @Override
-    protected String getLivingSound() {
-        return "lotr:deer.say";
-    }
+	@Override
+	public String getHurtSound() {
+		return "lotr:deer.hurt";
+	}
 
-    @Override
-    protected String getHurtSound() {
-        return "lotr:deer.hurt";
-    }
+	@Override
+	public String getLivingSound() {
+		return "lotr:deer.say";
+	}
 
-    @Override
-    protected String getDeathSound() {
-        return "lotr:deer.death";
-    }
+	@Override
+	public ItemStack getPickedResult(MovingObjectPosition target) {
+		return new ItemStack(LOTRMod.spawnEgg, 1, LOTREntities.getEntityID(this));
+	}
 
-    @Override
-    protected float getSoundPitch() {
-        return super.getSoundPitch() * this.getGemsbokSoundPitch();
-    }
+	@Override
+	public float getSoundPitch() {
+		return super.getSoundPitch() * getGemsbokSoundPitch();
+	}
 
-    protected float getGemsbokSoundPitch() {
-        return 0.8f;
-    }
+	@Override
+	public boolean isAIEnabled() {
+		return true;
+	}
 
-    @Override
-    public ItemStack getPickedResult(MovingObjectPosition target) {
-        return new ItemStack(LOTRMod.spawnEgg, 1, LOTREntities.getEntityID(this));
-    }
+	@Override
+	public boolean isBreedingItem(ItemStack itemstack) {
+		return itemstack.getItem() == Items.wheat;
+	}
 }

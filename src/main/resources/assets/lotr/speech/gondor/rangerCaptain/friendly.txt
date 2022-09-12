@@ -1,8 +1,6 @@
-Вы хотите командовать нашими войсками, друг?
-Эти следопыты будут следовать вашим указаниям за небольшую плату, #.
-Принесите несколько серебряных монет, и Вы сможете взять несколько следопытов под свои знамёна.
-Вам нужна помощь следопытов Итилиена?
-Я могу предоставить вам лучших воинов Итилиена взамен на серебряные монеты.
-Следопыты Итилиэна теперь достаточно уважают Вас, чтобы следовать Вашим указаниям, #.
-Следопыты Итилена с легкостью скрываются от вражеских глаз. Вместе с ними перестрелять орков Вам труда не составит.
-Мои Следопыты - лучшие стрелки в Гондоре. Они могут атаковать врага, оставаясь незамеченными.
+Do you seek to command the Dúnedain of the South, friend #?
+These Rangers will follow your leadership for a small price, #.
+Bring some silver coins and you can have some Rangers under your command.
+Are you here with the intention of hiring Rangers of Ithilien?
+I can grant you the leadership of some excellent Rangers in return for silver coins.
+The Rangers of Ithilien now respect you enough to follow your command, #.

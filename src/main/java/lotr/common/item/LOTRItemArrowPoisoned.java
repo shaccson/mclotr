@@ -6,8 +6,8 @@ import net.minecraft.block.BlockDispenser;
 import net.minecraft.item.Item;
 
 public class LOTRItemArrowPoisoned extends Item {
-    public LOTRItemArrowPoisoned() {
-        this.setCreativeTab(LOTRCreativeTabs.tabCombat);
-        BlockDispenser.dispenseBehaviorRegistry.putObject(this, new LOTRDispenseArrowPoisoned());
-    }
+	public LOTRItemArrowPoisoned() {
+		setCreativeTab(LOTRCreativeTabs.tabCombat);
+		BlockDispenser.dispenseBehaviorRegistry.putObject(this, new LOTRDispenseArrowPoisoned());
+	}
 }

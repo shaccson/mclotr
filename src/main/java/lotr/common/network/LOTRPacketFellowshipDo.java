@@ -7,27 +7,31 @@ import io.netty.buffer.ByteBuf;
 import lotr.common.fellowship.*;
 
 public abstract class LOTRPacketFellowshipDo implements IMessage {
-    private UUID fellowshipID;
+	public UUID fellowshipID;
 
-    public LOTRPacketFellowshipDo() {
-    }
+	public LOTRPacketFellowshipDo() {
+	}
 
-    public LOTRPacketFellowshipDo(LOTRFellowshipClient fsClient) {
-        this.fellowshipID = fsClient.getFellowshipID();
-    }
+	public LOTRPacketFellowshipDo(LOTRFellowshipClient fsClient) {
+		fellowshipID = fsClient.getFellowshipID();
+	}
 
-    @Override
-    public void toBytes(ByteBuf data) {
-        data.writeLong(this.fellowshipID.getMostSignificantBits());
-        data.writeLong(this.fellowshipID.getLeastSignificantBits());
-    }
+	@Override
+	public void fromBytes(ByteBuf data) {
+		fellowshipID = new UUID(data.readLong(), data.readLong());
+	}
 
-    @Override
-    public void fromBytes(ByteBuf data) {
-        this.fellowshipID = new UUID(data.readLong(), data.readLong());
-    }
+	public LOTRFellowship getActiveFellowship() {
+		return LOTRFellowshipData.getActiveFellowship(fellowshipID);
+	}
 
-    protected LOTRFellowship getFellowship() {
-        return LOTRFellowshipData.getFellowship(this.fellowshipID);
-    }
+	public LOTRFellowship getActiveOrDisbandedFellowship() {
+		return LOTRFellowshipData.getFellowship(fellowshipID);
+	}
+
+	@Override
+	public void toBytes(ByteBuf data) {
+		data.writeLong(fellowshipID.getMostSignificantBits());
+		data.writeLong(fellowshipID.getLeastSignificantBits());
+	}
 }

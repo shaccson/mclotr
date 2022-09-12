@@ -22,282 +22,275 @@ import net.minecraft.world.World;
 import net.minecraft.world.biome.BiomeGenBase;
 
 public abstract class LOTREntityOrc extends LOTREntityNPC {
-    public boolean isWeakOrc = true;
-    private int orcSkirmishTick;
-    public EntityLivingBase currentRevengeTarget;
+	public boolean isWeakOrc = true;
+	public int orcSkirmishTick;
+	public EntityLivingBase currentRevengeTarget;
 
-    public LOTREntityOrc(World world) {
-        super(world);
-        this.setSize(0.5f, 1.55f);
-        this.getNavigator().setAvoidsWater(true);
-        this.getNavigator().setBreakDoors(true);
-        this.tasks.addTask(0, new EntityAISwimming(this));
-        this.tasks.addTask(1, new LOTREntityAIHiredRemainStill(this));
-        this.tasks.addTask(2, new EntityAIAvoidEntity(this, LOTREntityOrcBomb.class, 12.0f, 1.5, 2.0));
-        this.tasks.addTask(3, new LOTREntityAIOrcAvoidGoodPlayer(this, 8.0f, 1.5));
-        this.tasks.addTask(4, this.createOrcAttackAI());
-        this.tasks.addTask(5, new LOTREntityAIFollowHiringPlayer(this));
-        this.tasks.addTask(6, new EntityAIOpenDoor(this, true));
-        this.tasks.addTask(7, new EntityAIWander(this, 1.0));
-        this.tasks.addTask(8, new LOTREntityAIEat(this, LOTRFoods.ORC, 6000));
-        this.tasks.addTask(8, new LOTREntityAIDrink(this, LOTRFoods.ORC_DRINK, 6000));
-        this.tasks.addTask(9, new EntityAIWatchClosest2(this, EntityPlayer.class, 8.0f, 0.05f));
-        this.tasks.addTask(9, new EntityAIWatchClosest2(this, LOTREntityNPC.class, 5.0f, 0.05f));
-        this.tasks.addTask(10, new EntityAIWatchClosest(this, EntityLiving.class, 8.0f, 0.02f));
-        this.tasks.addTask(11, new EntityAILookIdle(this));
-        int target = this.addTargetTasks(true, LOTREntityAINearestAttackableTargetOrc.class);
-        this.targetTasks.addTask(target + 1, new LOTREntityAIOrcSkirmish(this, true));
-        if(!this.isOrcBombardier()) {
-            this.targetTasks.addTask(target + 2, new LOTREntityAINearestAttackableTargetOrc(this, LOTREntityRabbit.class, 2000, false));
-        }
-        this.spawnsInDarkness = true;
-    }
+	public LOTREntityOrc(World world) {
+		super(world);
+		setSize(0.5f, 1.55f);
+		getNavigator().setAvoidsWater(true);
+		getNavigator().setBreakDoors(true);
+		tasks.addTask(0, new EntityAISwimming(this));
+		tasks.addTask(1, new LOTREntityAIHiredRemainStill(this));
+		tasks.addTask(2, new EntityAIAvoidEntity(this, LOTREntityOrcBomb.class, 12.0f, 1.5, 2.0));
+		tasks.addTask(3, new LOTREntityAIOrcAvoidGoodPlayer(this, 8.0f, 1.5));
+		tasks.addTask(4, createOrcAttackAI());
+		tasks.addTask(5, new LOTREntityAIFollowHiringPlayer(this));
+		tasks.addTask(6, new EntityAIOpenDoor(this, true));
+		tasks.addTask(7, new EntityAIWander(this, 1.0));
+		tasks.addTask(8, new LOTREntityAIEat(this, LOTRFoods.ORC, 6000));
+		tasks.addTask(8, new LOTREntityAIDrink(this, LOTRFoods.ORC_DRINK, 6000));
+		tasks.addTask(9, new EntityAIWatchClosest2(this, EntityPlayer.class, 8.0f, 0.05f));
+		tasks.addTask(9, new EntityAIWatchClosest2(this, LOTREntityNPC.class, 5.0f, 0.05f));
+		tasks.addTask(10, new EntityAIWatchClosest(this, EntityLiving.class, 8.0f, 0.02f));
+		tasks.addTask(11, new EntityAILookIdle(this));
+		int target = this.addTargetTasks(true, LOTREntityAINearestAttackableTargetOrc.class);
+		targetTasks.addTask(target + 1, new LOTREntityAIOrcSkirmish(this, true));
+		if (!isOrcBombardier()) {
+			targetTasks.addTask(target + 2, new LOTREntityAINearestAttackableTargetOrc(this, LOTREntityRabbit.class, 2000, false));
+		}
+		spawnsInDarkness = true;
+	}
 
-    public abstract EntityAIBase createOrcAttackAI();
+	@Override
+	public void applyEntityAttributes() {
+		super.applyEntityAttributes();
+		getEntityAttribute(SharedMonsterAttributes.maxHealth).setBaseValue(18.0);
+		getEntityAttribute(SharedMonsterAttributes.movementSpeed).setBaseValue(0.2);
+	}
 
-    @Override
-    protected void entityInit() {
-        super.entityInit();
-        this.dataWatcher.addObject(17, (byte) -1);
-    }
+	public boolean canOrcSkirmish() {
+		return !questInfo.anyActiveQuestPlayers();
+	}
 
-    public boolean isOrcBombardier() {
-        return false;
-    }
+	public abstract EntityAIBase createOrcAttackAI();
 
-    @Override
-    public void setupNPCName() {
-        this.familyInfo.setName(LOTRNames.getOrcName(this.rand));
-    }
+	@Override
+	public void dropFewItems(boolean flag, int i) {
+		super.dropFewItems(flag, i);
+		int flesh = rand.nextInt(3) + rand.nextInt(i + 1);
+		for (int l = 0; l < flesh; ++l) {
+			dropItem(Items.rotten_flesh, 1);
+		}
+		int bones = rand.nextInt(2) + rand.nextInt(i + 1);
+		for (int l = 0; l < bones; ++l) {
+			dropItem(LOTRMod.orcBone, 1);
+		}
+		if (rand.nextInt(10) == 0) {
+			int breads = 1 + rand.nextInt(2) + rand.nextInt(i + 1);
+			for (int l = 0; l < breads; ++l) {
+				dropItem(LOTRMod.maggotyBread, 1);
+			}
+		}
+		if (flag) {
+			int rareDropChance = 20 - i * 4;
+			if (rand.nextInt(rareDropChance = Math.max(rareDropChance, 1)) == 0) {
+				int dropType = rand.nextInt(2);
+				if (dropType == 0) {
+					ItemStack orcDrink = new ItemStack(LOTRMod.mugOrcDraught);
+					orcDrink.setItemDamage(1 + rand.nextInt(3));
+					LOTRItemMug.setVessel(orcDrink, LOTRFoods.ORC_DRINK.getRandomVessel(rand), true);
+					entityDropItem(orcDrink, 0.0f);
+				} else if (dropType == 1) {
+					int ingots = 1 + rand.nextInt(2) + rand.nextInt(i + 1);
+					for (int l = 0; l < ingots; ++l) {
+						if (this instanceof LOTREntityUrukHai || this instanceof LOTREntityGundabadUruk) {
+							dropItem(LOTRMod.urukSteel, 1);
+							continue;
+						}
+						if (this instanceof LOTREntityBlackUruk) {
+							dropItem(LOTRMod.blackUrukSteel, 1);
+							continue;
+						}
+						dropItem(LOTRMod.orcSteel, 1);
+					}
+				}
+			}
+		}
+		dropOrcItems(flag, i);
+	}
 
-    @Override
-    protected void applyEntityAttributes() {
-        super.applyEntityAttributes();
-        this.getEntityAttribute(SharedMonsterAttributes.maxHealth).setBaseValue(18.0);
-        this.getEntityAttribute(SharedMonsterAttributes.movementSpeed).setBaseValue(0.2);
-    }
+	public void dropOrcItems(boolean flag, int i) {
+	}
 
-    @Override
-    public IEntityLivingData onSpawnWithEgg(IEntityLivingData data) {
-        data = super.onSpawnWithEgg(data);
-        return data;
-    }
+	@Override
+	public void entityInit() {
+		super.entityInit();
+		dataWatcher.addObject(17, (byte) -1);
+	}
 
-    @Override
-    protected void onAttackModeChange(LOTREntityNPC.AttackMode mode, boolean mounted) {
-        if(this.npcItemsInv.getBomb() != null) {
-            this.setCurrentItemOrArmor(0, this.npcItemsInv.getBombingItem());
-        }
-        else if(mode == LOTREntityNPC.AttackMode.IDLE) {
-            this.setCurrentItemOrArmor(0, this.npcItemsInv.getIdleItem());
-        }
-        else {
-            this.setCurrentItemOrArmor(0, this.npcItemsInv.getMeleeWeapon());
-        }
-    }
+	@Override
+	public boolean getCanSpawnHere() {
+		if (super.getCanSpawnHere()) {
+			if (liftSpawnRestrictions) {
+				return true;
+			}
+			int i = MathHelper.floor_double(posX);
+			int j = MathHelper.floor_double(boundingBox.minY);
+			int k = MathHelper.floor_double(posZ);
+			BiomeGenBase biome = worldObj.getBiomeGenForCoords(i, k);
+			if (biome instanceof LOTRBiome && ((LOTRBiome) biome).isDwarvenBiome(worldObj)) {
+				return worldObj.getBlock(i, j - 1, k) == biome.topBlock;
+			}
+			return true;
+		}
+		return false;
+	}
 
-    @Override
-    public int getTotalArmorValue() {
-        if(this.isWeakOrc) {
-            return MathHelper.floor_double(super.getTotalArmorValue() * 0.75);
-        }
-        return super.getTotalArmorValue();
-    }
+	@Override
+	public String getDeathSound() {
+		return "lotr:orc.death";
+	}
 
-    @Override
-    public String getNPCName() {
-        return this.familyInfo.getName();
-    }
+	@Override
+	public ItemStack getHeldItemLeft() {
+		if (isOrcBombardier() && npcItemsInv.getBomb() != null) {
+			return npcItemsInv.getBomb();
+		}
+		return super.getHeldItemLeft();
+	}
 
-    @Override
-    public void setRevengeTarget(EntityLivingBase entity) {
-        super.setRevengeTarget(entity);
-        if(entity != null) {
-            this.currentRevengeTarget = entity;
-        }
-    }
+	@Override
+	public String getHurtSound() {
+		return "lotr:orc.hurt";
+	}
 
-    @Override
-    public void onLivingUpdate() {
-        super.onLivingUpdate();
-        if(!this.worldObj.isRemote && this.getAttackTarget() == null) {
-            this.currentRevengeTarget = null;
-        }
-        if(!this.worldObj.isRemote && this.isWeakOrc) {
-            boolean flag;
-            int i = MathHelper.floor_double(this.posX);
-            int j = MathHelper.floor_double(this.boundingBox.minY);
-            int k = MathHelper.floor_double(this.posZ);
-            BiomeGenBase biome = this.worldObj.getBiomeGenForCoords(i, k);
-            flag = this.worldObj.isDaytime() && this.worldObj.canBlockSeeTheSky(i, j, k);
-            if(biome instanceof LOTRBiome && ((LOTRBiome) biome).canSpawnHostilesInDay()) {
-                flag = false;
-            }
-            if(flag && this.ticksExisted % 20 == 0) {
-                this.addPotionEffect(new PotionEffect(Potion.resistance.id, 200, -1));
-                this.addPotionEffect(new PotionEffect(Potion.moveSlowdown.id, 200));
-            }
-        }
-        if(!this.worldObj.isRemote && this.isOrcSkirmishing()) {
-            if(!LOTRConfig.enableOrcSkirmish) {
-                this.orcSkirmishTick = 0;
-            }
-            else if(!(this.getAttackTarget() instanceof LOTREntityOrc)) {
-                --this.orcSkirmishTick;
-            }
-        }
-        if(this.isOrcBombardier()) {
-            if(!this.worldObj.isRemote) {
-                ItemStack bomb = this.npcItemsInv.getBomb();
-                int meta = -1;
-                if(bomb != null && Block.getBlockFromItem(bomb.getItem()) instanceof LOTRBlockOrcBomb) {
-                    meta = bomb.getItemDamage();
-                }
-                this.dataWatcher.updateObject(17, (byte) meta);
-            }
-            else {
-                byte meta = this.dataWatcher.getWatchableObjectByte(17);
-                if(meta == -1) {
-                    this.npcItemsInv.setBomb(null);
-                }
-                else {
-                    this.npcItemsInv.setBomb(new ItemStack(LOTRMod.orcBomb, 1, meta));
-                }
-            }
-        }
-    }
+	@Override
+	public String getLivingSound() {
+		return "lotr:orc.say";
+	}
 
-    public boolean canOrcSkirmish() {
-        return !this.questInfo.anyActiveQuestPlayers();
-    }
+	@Override
+	public String getNPCName() {
+		return familyInfo.getName();
+	}
 
-    public boolean isOrcSkirmishing() {
-        return this.orcSkirmishTick > 0;
-    }
+	public String getOrcSkirmishSpeech() {
+		return "";
+	}
 
-    public void setOrcSkirmishing() {
-        int prevSkirmishTick = this.orcSkirmishTick;
-        this.orcSkirmishTick = 160;
-        if(!this.worldObj.isRemote && prevSkirmishTick == 0) {
-            List nearbyPlayers = this.worldObj.getEntitiesWithinAABB(EntityPlayer.class, this.boundingBox.expand(24.0, 24.0, 24.0));
-            for(Object nearbyPlayer : nearbyPlayers) {
-                EntityPlayer entityplayer = (EntityPlayer) nearbyPlayer;
-                LOTRSpeech.sendSpeech(entityplayer, this, LOTRSpeech.getRandomSpeechForPlayer(this, this.getOrcSkirmishSpeech(), entityplayer));
-            }
-        }
-    }
+	@Override
+	public float getPoisonedArrowChance() {
+		return 0.06666667f;
+	}
 
-    protected String getOrcSkirmishSpeech() {
-        return "";
-    }
+	@Override
+	public int getTotalArmorValue() {
+		if (isWeakOrc) {
+			return MathHelper.floor_double(super.getTotalArmorValue() * 0.75);
+		}
+		return super.getTotalArmorValue();
+	}
 
-    @Override
-    public void writeEntityToNBT(NBTTagCompound nbt) {
-        super.writeEntityToNBT(nbt);
-        nbt.setInteger("OrcSkirmish", this.orcSkirmishTick);
-    }
+	public boolean isOrcBombardier() {
+		return false;
+	}
 
-    @Override
-    public void readEntityFromNBT(NBTTagCompound nbt) {
-        super.readEntityFromNBT(nbt);
-        if(nbt.hasKey("OrcName")) {
-            this.familyInfo.setName(nbt.getString("OrcName"));
-        }
-        this.orcSkirmishTick = nbt.getInteger("OrcSkirmish");
-    }
+	public boolean isOrcSkirmishing() {
+		return orcSkirmishTick > 0;
+	}
 
-    @Override
-    protected float getPoisonedArrowChance() {
-        return 0.06666667f;
-    }
+	@Override
+	public void onAttackModeChange(LOTREntityNPC.AttackMode mode, boolean mounted) {
+		if (npcItemsInv.getBomb() != null) {
+			setCurrentItemOrArmor(0, npcItemsInv.getBombingItem());
+		} else if (mode == LOTREntityNPC.AttackMode.IDLE) {
+			setCurrentItemOrArmor(0, npcItemsInv.getIdleItem());
+		} else {
+			setCurrentItemOrArmor(0, npcItemsInv.getMeleeWeapon());
+		}
+	}
 
-    @Override
-    protected void dropFewItems(boolean flag, int i) {
-        super.dropFewItems(flag, i);
-        int flesh = this.rand.nextInt(3) + this.rand.nextInt(i + 1);
-        for(int l = 0; l < flesh; ++l) {
-            this.dropItem(Items.rotten_flesh, 1);
-        }
-        int bones = this.rand.nextInt(2) + this.rand.nextInt(i + 1);
-        for(int l = 0; l < bones; ++l) {
-            this.dropItem(LOTRMod.orcBone, 1);
-        }
-        if(this.rand.nextInt(10) == 0) {
-            int breads = 1 + this.rand.nextInt(2) + this.rand.nextInt(i + 1);
-            for(int l = 0; l < breads; ++l) {
-                this.dropItem(LOTRMod.maggotyBread, 1);
-            }
-        }
-        if(flag) {
-            int rareDropChance = 20 - i * 4;
-            if(this.rand.nextInt(rareDropChance = Math.max(rareDropChance, 1)) == 0) {
-                int dropType = this.rand.nextInt(2);
-                if(dropType == 0) {
-                    ItemStack orcDrink = new ItemStack(LOTRMod.mugOrcDraught);
-                    orcDrink.setItemDamage(1 + this.rand.nextInt(3));
-                    LOTRItemMug.setVessel(orcDrink, LOTRFoods.ORC_DRINK.getRandomVessel(this.rand), true);
-                    this.entityDropItem(orcDrink, 0.0f);
-                }
-                else if(dropType == 1) {
-                    int ingots = 1 + this.rand.nextInt(2) + this.rand.nextInt(i + 1);
-                    for(int l = 0; l < ingots; ++l) {
-                        if(this instanceof LOTREntityUrukHai || this instanceof LOTREntityGundabadUruk) {
-                            this.dropItem(LOTRMod.urukSteel, 1);
-                            continue;
-                        }
-                        if(this instanceof LOTREntityBlackUruk) {
-                            this.dropItem(LOTRMod.blackUrukSteel, 1);
-                            continue;
-                        }
-                        this.dropItem(LOTRMod.orcSteel, 1);
-                    }
-                }
-            }
-        }
-        this.dropOrcItems(flag, i);
-    }
+	@Override
+	public void onLivingUpdate() {
+		super.onLivingUpdate();
+		if (!worldObj.isRemote && getAttackTarget() == null) {
+			currentRevengeTarget = null;
+		}
+		if (!worldObj.isRemote && isWeakOrc) {
+			boolean flag;
+			int i = MathHelper.floor_double(posX);
+			int j = MathHelper.floor_double(boundingBox.minY);
+			int k = MathHelper.floor_double(posZ);
+			BiomeGenBase biome = worldObj.getBiomeGenForCoords(i, k);
+			flag = worldObj.isDaytime() && worldObj.canBlockSeeTheSky(i, j, k);
+			if (biome instanceof LOTRBiome && ((LOTRBiome) biome).canSpawnHostilesInDay()) {
+				flag = false;
+			}
+			if (flag && ticksExisted % 20 == 0) {
+				addPotionEffect(new PotionEffect(Potion.resistance.id, 200, -1));
+				addPotionEffect(new PotionEffect(Potion.moveSlowdown.id, 200));
+			}
+		}
+		if (!worldObj.isRemote && isOrcSkirmishing()) {
+			if (!LOTRConfig.enableOrcSkirmish) {
+				orcSkirmishTick = 0;
+			} else if (!(getAttackTarget() instanceof LOTREntityOrc)) {
+				--orcSkirmishTick;
+			}
+		}
+		if (isOrcBombardier()) {
+			if (!worldObj.isRemote) {
+				ItemStack bomb = npcItemsInv.getBomb();
+				int meta = -1;
+				if (bomb != null && Block.getBlockFromItem(bomb.getItem()) instanceof LOTRBlockOrcBomb) {
+					meta = bomb.getItemDamage();
+				}
+				dataWatcher.updateObject(17, (byte) meta);
+			} else {
+				byte meta = dataWatcher.getWatchableObjectByte(17);
+				if (meta == -1) {
+					npcItemsInv.setBomb(null);
+				} else {
+					npcItemsInv.setBomb(new ItemStack(LOTRMod.orcBomb, 1, meta));
+				}
+			}
+		}
+	}
 
-    protected void dropOrcItems(boolean flag, int i) {
-    }
+	@Override
+	public IEntityLivingData onSpawnWithEgg(IEntityLivingData data) {
+		return super.onSpawnWithEgg(data);
+	}
 
-    @Override
-    public boolean getCanSpawnHere() {
-        if(super.getCanSpawnHere()) {
-            if(this.liftSpawnRestrictions) {
-                return true;
-            }
-            int i = MathHelper.floor_double(this.posX);
-            int j = MathHelper.floor_double(this.boundingBox.minY);
-            int k = MathHelper.floor_double(this.posZ);
-            BiomeGenBase biome = this.worldObj.getBiomeGenForCoords(i, k);
-            if(biome instanceof LOTRBiome && ((LOTRBiome) biome).isDwarvenBiome(this.worldObj)) {
-                return this.worldObj.getBlock(i, j - 1, k) == biome.topBlock;
-            }
-            return true;
-        }
-        return false;
-    }
+	@Override
+	public void readEntityFromNBT(NBTTagCompound nbt) {
+		super.readEntityFromNBT(nbt);
+		if (nbt.hasKey("OrcName")) {
+			familyInfo.setName(nbt.getString("OrcName"));
+		}
+		orcSkirmishTick = nbt.getInteger("OrcSkirmish");
+	}
 
-    @Override
-    protected String getLivingSound() {
-        return "lotr:orc.say";
-    }
+	public void setOrcSkirmishing() {
+		int prevSkirmishTick = orcSkirmishTick;
+		orcSkirmishTick = 160;
+		if (!worldObj.isRemote && prevSkirmishTick == 0) {
+			List nearbyPlayers = worldObj.getEntitiesWithinAABB(EntityPlayer.class, boundingBox.expand(24.0, 24.0, 24.0));
+			for (Object nearbyPlayer : nearbyPlayers) {
+				EntityPlayer entityplayer = (EntityPlayer) nearbyPlayer;
+				LOTRSpeech.sendSpeech(entityplayer, this, LOTRSpeech.getRandomSpeechForPlayer(this, getOrcSkirmishSpeech(), entityplayer));
+			}
+		}
+	}
 
-    @Override
-    protected String getHurtSound() {
-        return "lotr:orc.hurt";
-    }
+	@Override
+	public void setRevengeTarget(EntityLivingBase entity) {
+		super.setRevengeTarget(entity);
+		if (entity != null) {
+			currentRevengeTarget = entity;
+		}
+	}
 
-    @Override
-    protected String getDeathSound() {
-        return "lotr:orc.death";
-    }
+	@Override
+	public void setupNPCName() {
+		familyInfo.setName(LOTRNames.getOrcName(rand));
+	}
 
-    @Override
-    public ItemStack getHeldItemLeft() {
-        if(this.isOrcBombardier() && this.npcItemsInv.getBomb() != null) {
-            return this.npcItemsInv.getBomb();
-        }
-        return super.getHeldItemLeft();
-    }
+	@Override
+	public void writeEntityToNBT(NBTTagCompound nbt) {
+		super.writeEntityToNBT(nbt);
+		nbt.setInteger("OrcSkirmish", orcSkirmishTick);
+	}
 }

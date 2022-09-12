@@ -1,13 +1,10 @@
-Вор! Злодей! Разбойник!
-Ты враг Дейла.
-Убирайся, #!
-Уходи, злодей!
-Я вколочу твою голову в землю!
-Уходи, иначе ты больше никогда отсюда не выйдешь!
-Тебе здесь не рады, #!
-Ты урод!
-Я тебе ничего не выкую, хоть убей!
-Ты совершил ошибку, придя сюда, #!
-Думаешь, этим молотом можно только по железкам стукать? Я сейчас и по твоей бошке настучу!
-Ну я тебе морду-то набью!
-Я мечи не только ковать умею, я могу и по назначению их использовать! Так что убирайся-ка ты подобру-поздорову.
+Thief! Villain! Rogue!
+You are no friend of the Dalish.
+Get out, #!
+Leave now, you villain!
+I'll bash your head in!
+Run off! Else I'll beat you with this!
+You aren't welcome here, #!
+You're scum! Scum!
+I shan't be forging anything for you!
+You've made a mistake coming in here, #!

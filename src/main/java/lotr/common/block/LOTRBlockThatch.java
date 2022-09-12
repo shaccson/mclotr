@@ -12,45 +12,45 @@ import net.minecraft.item.*;
 import net.minecraft.util.IIcon;
 
 public class LOTRBlockThatch extends Block {
-    @SideOnly(value = Side.CLIENT)
-    private IIcon[] thatchIcons;
-    private static String[] thatchNames = new String[] {"thatch", "reed"};
+	public static String[] thatchNames = { "thatch", "reed" };
+	@SideOnly(value = Side.CLIENT)
+	public IIcon[] thatchIcons;
 
-    public LOTRBlockThatch() {
-        super(Material.grass);
-        this.setHardness(0.5f);
-        this.setStepSound(Block.soundTypeGrass);
-        this.setCreativeTab(LOTRCreativeTabs.tabBlock);
-    }
+	public LOTRBlockThatch() {
+		super(Material.grass);
+		setHardness(0.5f);
+		setStepSound(Block.soundTypeGrass);
+		setCreativeTab(LOTRCreativeTabs.tabBlock);
+	}
 
-    @SideOnly(value = Side.CLIENT)
-    @Override
-    public IIcon getIcon(int i, int j) {
-        if(j >= thatchNames.length) {
-            j = 0;
-        }
-        return this.thatchIcons[j];
-    }
+	@Override
+	public int damageDropped(int i) {
+		return i;
+	}
 
-    @SideOnly(value = Side.CLIENT)
-    @Override
-    public void registerBlockIcons(IIconRegister iconregister) {
-        this.thatchIcons = new IIcon[thatchNames.length];
-        for(int i = 0; i < thatchNames.length; ++i) {
-            this.thatchIcons[i] = iconregister.registerIcon(this.getTextureName() + "_" + thatchNames[i]);
-        }
-    }
+	@SideOnly(value = Side.CLIENT)
+	@Override
+	public IIcon getIcon(int i, int j) {
+		if (j >= thatchNames.length) {
+			j = 0;
+		}
+		return thatchIcons[j];
+	}
 
-    @Override
-    public int damageDropped(int i) {
-        return i;
-    }
+	@SideOnly(value = Side.CLIENT)
+	@Override
+	public void getSubBlocks(Item item, CreativeTabs tab, List list) {
+		for (int i = 0; i < thatchNames.length; ++i) {
+			list.add(new ItemStack(item, 1, i));
+		}
+	}
 
-    @SideOnly(value = Side.CLIENT)
-    @Override
-    public void getSubBlocks(Item item, CreativeTabs tab, List list) {
-        for(int i = 0; i < thatchNames.length; ++i) {
-            list.add(new ItemStack(item, 1, i));
-        }
-    }
+	@SideOnly(value = Side.CLIENT)
+	@Override
+	public void registerBlockIcons(IIconRegister iconregister) {
+		thatchIcons = new IIcon[thatchNames.length];
+		for (int i = 0; i < thatchNames.length; ++i) {
+			thatchIcons[i] = iconregister.registerIcon(getTextureName() + "_" + thatchNames[i]);
+		}
+	}
 }

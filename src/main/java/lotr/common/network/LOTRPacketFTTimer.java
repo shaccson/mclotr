@@ -5,33 +5,33 @@ import io.netty.buffer.ByteBuf;
 import lotr.common.*;
 import net.minecraft.entity.player.EntityPlayer;
 
-public class LOTRPacketFTTimer
-implements IMessage {
-    private int timer;
+public class LOTRPacketFTTimer implements IMessage {
+	public int timer;
 
-    public LOTRPacketFTTimer() {
-    }
+	public LOTRPacketFTTimer() {
+	}
 
-    public LOTRPacketFTTimer(int i) {
-        this.timer = i;
-    }
+	public LOTRPacketFTTimer(int i) {
+		timer = i;
+	}
 
-    public void toBytes(ByteBuf data) {
-        data.writeInt(this.timer);
-    }
+	@Override
+	public void fromBytes(ByteBuf data) {
+		timer = data.readInt();
+	}
 
-    public void fromBytes(ByteBuf data) {
-        this.timer = data.readInt();
-    }
+	@Override
+	public void toBytes(ByteBuf data) {
+		data.writeInt(timer);
+	}
 
-    public static class Handler
-    implements IMessageHandler<LOTRPacketFTTimer, IMessage> {
-        public IMessage onMessage(LOTRPacketFTTimer packet, MessageContext context) {
-            EntityPlayer entityplayer = LOTRMod.proxy.getClientPlayer();
-            LOTRLevelData.getData(entityplayer).setTimeSinceFT(packet.timer);
-            return null;
-        }
-    }
+	public static class Handler implements IMessageHandler<LOTRPacketFTTimer, IMessage> {
+		@Override
+		public IMessage onMessage(LOTRPacketFTTimer packet, MessageContext context) {
+			EntityPlayer entityplayer = LOTRMod.proxy.getClientPlayer();
+			LOTRLevelData.getData(entityplayer).setTimeSinceFT(packet.timer);
+			return null;
+		}
+	}
 
 }
-

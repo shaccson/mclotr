@@ -11,35 +11,36 @@ import net.minecraft.item.*;
 import net.minecraft.util.*;
 import net.minecraft.world.World;
 
-public class LOTRItemRedBook
-extends Item {
-    @SideOnly(value=Side.CLIENT)
-    public static IIcon questOfferIcon;
+public class LOTRItemRedBook extends Item {
+	@SideOnly(value = Side.CLIENT)
+	public static IIcon questOfferIcon;
 
-    public LOTRItemRedBook() {
-        this.setMaxStackSize(1);
-        this.setCreativeTab(LOTRCreativeTabs.tabMisc);
-    }
+	public LOTRItemRedBook() {
+		setMaxStackSize(1);
+		setCreativeTab(LOTRCreativeTabs.tabMisc);
+	}
 
-    public ItemStack onItemRightClick(ItemStack itemstack, World world, EntityPlayer entityplayer) {
-        entityplayer.openGui(LOTRMod.instance, 32, world, 0, 0, 0);
-        if (!world.isRemote) {
-            LOTRLevelData.getData(entityplayer).distributeMQEvent(new LOTRMiniQuestEvent.OpenRedBook());
-        }
-        return itemstack;
-    }
+	@Override
+	@SideOnly(value = Side.CLIENT)
+	public void addInformation(ItemStack itemstack, EntityPlayer entityplayer, List list, boolean flag) {
+		LOTRPlayerData playerData = LOTRLevelData.getData(entityplayer);
+		int activeQuests = playerData.getActiveMiniQuests().size();
+		list.add(StatCollector.translateToLocalFormatted("item.lotr.redBook.activeQuests", activeQuests));
+	}
 
-    @SideOnly(value=Side.CLIENT)
-    public void addInformation(ItemStack itemstack, EntityPlayer entityplayer, List list, boolean flag) {
-        LOTRPlayerData playerData = LOTRLevelData.getData(entityplayer);
-        int activeQuests = playerData.getActiveMiniQuests().size();
-        list.add(StatCollector.translateToLocalFormatted("item.lotr.redBook.activeQuests", activeQuests));
-    }
+	@Override
+	public ItemStack onItemRightClick(ItemStack itemstack, World world, EntityPlayer entityplayer) {
+		entityplayer.openGui(LOTRMod.instance, 32, world, 0, 0, 0);
+		if (!world.isRemote) {
+			LOTRLevelData.getData(entityplayer).distributeMQEvent(new LOTRMiniQuestEvent.OpenRedBook());
+		}
+		return itemstack;
+	}
 
-    @SideOnly(value=Side.CLIENT)
-    public void registerIcons(IIconRegister iconregister) {
-        super.registerIcons(iconregister);
-        questOfferIcon = iconregister.registerIcon("lotr:questOffer");
-    }
+	@Override
+	@SideOnly(value = Side.CLIENT)
+	public void registerIcons(IIconRegister iconregister) {
+		super.registerIcons(iconregister);
+		questOfferIcon = iconregister.registerIcon("lotr:questOffer");
+	}
 }
-

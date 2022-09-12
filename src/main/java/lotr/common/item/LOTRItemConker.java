@@ -9,21 +9,21 @@ import net.minecraft.item.*;
 import net.minecraft.world.World;
 
 public class LOTRItemConker extends Item {
-    public LOTRItemConker() {
-        this.setMaxStackSize(16);
-        this.setCreativeTab(LOTRCreativeTabs.tabMisc);
-        BlockDispenser.dispenseBehaviorRegistry.putObject(this, new LOTRDispenseConker());
-    }
+	public LOTRItemConker() {
+		setMaxStackSize(16);
+		setCreativeTab(LOTRCreativeTabs.tabMisc);
+		BlockDispenser.dispenseBehaviorRegistry.putObject(this, new LOTRDispenseConker());
+	}
 
-    @Override
-    public ItemStack onItemRightClick(ItemStack itemstack, World world, EntityPlayer entityplayer) {
-        if(!world.isRemote) {
-            world.spawnEntityInWorld(new LOTREntityConker(world, entityplayer));
-            world.playSoundAtEntity(entityplayer, "random.bow", 0.5f, 0.4f / (itemRand.nextFloat() * 0.4f + 0.8f));
-            if(!entityplayer.capabilities.isCreativeMode) {
-                --itemstack.stackSize;
-            }
-        }
-        return itemstack;
-    }
+	@Override
+	public ItemStack onItemRightClick(ItemStack itemstack, World world, EntityPlayer entityplayer) {
+		if (!world.isRemote) {
+			world.spawnEntityInWorld(new LOTREntityConker(world, entityplayer));
+			world.playSoundAtEntity(entityplayer, "random.bow", 0.5f, 0.4f / (itemRand.nextFloat() * 0.4f + 0.8f));
+			if (!entityplayer.capabilities.isCreativeMode) {
+				--itemstack.stackSize;
+			}
+		}
+		return itemstack;
+	}
 }

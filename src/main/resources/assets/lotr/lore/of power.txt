@@ -1,15 +1,15 @@
-#title:О Силе
+#title:Of Power
 #types:mordor,angmar
 #reward
 #
-Вы когда-нибудь слышали рассказ о трагедии Моргота могучего?
+Did you ever hear the tragedy of Morgoth the Mighty?
 
-Я думаю, что нет. Это не та история, которую эльфы тебе расскажут. Это мрачная легенда.
+I thought not. It's not a story the Elves would tell you. It's a Dark legend.
 
-Моргот был Властелином Тьмы, настолько могущественным и мудрым, что мог использовать свою магию, чтобы влиять на эльфов и создавать орков... у него было такое знание Тьмы, что он мог даже сделать тех, кто мог рушить целые города. Тьма - путь ко многим способностям, которые считают неестественными.
+Morgoth was a Lord of the Darkness, so powerful and so wise, he could use his magic to influence the Elves to create Orcs... he had such a knowledge of the Darkness that he could even make the ones that served him stronger. The Darkness is a pathway to many abilities some consider to be unnatural.
 
-Он стал таким могущественным... единственное, чего он боялся, так это потерять свою силу, что, конечно, он и сделал. К сожалению, он научил своего ученика всему, что знал... тогда войско Валинора победило его и вышвырнуло за двери ночи. Ирония судьбы! Он мог вершить судьбы других, но не свою собственную.
+He became so powerful... the only thing he was afraid of was losing his power - which eventually, of course, he did. Unfortunately, he taught his apprentice everything he knew... then the hosts of Valinor defeated him and cast him out through the Doors of Night. Ironic! He could master the fates of others, but not his own.
 
-Можно ли получить эту силу?
+Is it possible to learn this power?
 
-Только не от Эльфа...
+Not from an Elf...

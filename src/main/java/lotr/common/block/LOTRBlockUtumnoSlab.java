@@ -6,36 +6,36 @@ import net.minecraft.client.renderer.texture.IIconRegister;
 import net.minecraft.util.IIcon;
 
 public class LOTRBlockUtumnoSlab extends LOTRBlockUtumnoSlabBase {
-    public LOTRBlockUtumnoSlab(boolean flag) {
-        super(flag, 6);
-    }
+	public LOTRBlockUtumnoSlab(boolean flag) {
+		super(flag, 6);
+	}
 
-    @SideOnly(value = Side.CLIENT)
-    @Override
-    public IIcon getIcon(int i, int j) {
-        if((j &= 7) == 0) {
-            return LOTRMod.utumnoBrick.getIcon(i, 0);
-        }
-        if(j == 1) {
-            return LOTRMod.utumnoBrick.getIcon(i, 2);
-        }
-        if(j == 2) {
-            return LOTRMod.utumnoBrick.getIcon(i, 4);
-        }
-        if(j == 3) {
-            return LOTRMod.utumnoPillar.getIcon(i, 0);
-        }
-        if(j == 4) {
-            return LOTRMod.utumnoPillar.getIcon(i, 1);
-        }
-        if(j == 5) {
-            return LOTRMod.utumnoPillar.getIcon(i, 2);
-        }
-        return super.getIcon(i, j);
-    }
+	@SideOnly(value = Side.CLIENT)
+	@Override
+	public IIcon getIcon(int i, int j) {
+		j &= 7;
+		if (j == 0) {
+			return LOTRMod.utumnoBrick.getIcon(i, 0);
+		}
+		switch (j) {
+		case 1:
+			return LOTRMod.utumnoBrick.getIcon(i, 2);
+		case 2:
+			return LOTRMod.utumnoBrick.getIcon(i, 4);
+		case 3:
+			return LOTRMod.utumnoPillar.getIcon(i, 0);
+		case 4:
+			return LOTRMod.utumnoPillar.getIcon(i, 1);
+		case 5:
+			return LOTRMod.utumnoPillar.getIcon(i, 2);
+		default:
+			break;
+		}
+		return super.getIcon(i, j);
+	}
 
-    @SideOnly(value = Side.CLIENT)
-    @Override
-    public void registerBlockIcons(IIconRegister iconregister) {
-    }
+	@SideOnly(value = Side.CLIENT)
+	@Override
+	public void registerBlockIcons(IIconRegister iconregister) {
+	}
 }

@@ -7,29 +7,28 @@ import net.minecraft.item.ItemStack;
 import net.minecraft.world.World;
 
 public class LOTREntityRohanOrcharder extends LOTREntityRohanMarketTrader {
-    public LOTREntityRohanOrcharder(World world) {
-        super(world);
-    }
+	public LOTREntityRohanOrcharder(World world) {
+		super(world);
+	}
 
-    @Override
-    public LOTRTradeEntries getBuyPool() {
-        return LOTRTradeEntries.ROHAN_ORCHARDER_BUY;
-    }
+	@Override
+	public LOTRTradeEntries getBuyPool() {
+		return LOTRTradeEntries.ROHAN_ORCHARDER_BUY;
+	}
 
-    @Override
-    public LOTRTradeEntries getSellPool() {
-        return LOTRTradeEntries.ROHAN_ORCHARDER_SELL;
-    }
+	@Override
+	public LOTRTradeEntries getSellPool() {
+		return LOTRTradeEntries.ROHAN_ORCHARDER_SELL;
+	}
 
-    @Override
-    public IEntityLivingData onSpawnWithEgg(IEntityLivingData data) {
-        data = super.onSpawnWithEgg(data);
-        if(this.rand.nextBoolean()) {
-            this.npcItemsInv.setIdleItem(new ItemStack(Items.apple));
-        }
-        else {
-            this.npcItemsInv.setIdleItem(new ItemStack(LOTRMod.appleGreen));
-        }
-        return data;
-    }
+	@Override
+	public IEntityLivingData onSpawnWithEgg(IEntityLivingData data) {
+		data = super.onSpawnWithEgg(data);
+		if (rand.nextBoolean()) {
+			npcItemsInv.setIdleItem(new ItemStack(Items.apple));
+		} else {
+			npcItemsInv.setIdleItem(new ItemStack(LOTRMod.appleGreen));
+		}
+		return data;
+	}
 }

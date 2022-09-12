@@ -8,64 +8,62 @@ import io.netty.channel.ChannelHandlerContext;
 import lotr.common.util.LOTRLog;
 
 public class LOTRPacketSpawnMob implements IMessage {
-    private ByteBuf spawnData;
+	public ByteBuf spawnData;
 
-    public LOTRPacketSpawnMob() {
-    }
+	public LOTRPacketSpawnMob() {
+	}
 
-    public LOTRPacketSpawnMob(ByteBuf data) {
-        this.spawnData = data.copy();
-    }
+	public LOTRPacketSpawnMob(ByteBuf data) {
+		spawnData = data.copy();
+	}
 
-    @Override
-    public void toBytes(ByteBuf data) {
-        data.writeInt(this.spawnData.readableBytes());
-        data.writeBytes(this.spawnData);
-    }
+	@Override
+	public void fromBytes(ByteBuf data) {
+		int len = data.readInt();
+		spawnData = data.readBytes(len);
+	}
 
-    @Override
-    public void fromBytes(ByteBuf data) {
-        int len = data.readInt();
-        this.spawnData = data.readBytes(len);
-    }
+	@Override
+	public void toBytes(ByteBuf data) {
+		data.writeInt(spawnData.readableBytes());
+		data.writeBytes(spawnData);
+	}
 
-    private static class AdhocEntitySpawnHandler extends EntitySpawnHandler {
-        private AdhocEntitySpawnHandler() {
-        }
+	public static class AdhocEntitySpawnHandler extends EntitySpawnHandler {
+		public AdhocEntitySpawnHandler() {
+		}
 
-        @Override
-        public void channelRead0(ChannelHandlerContext ctx, FMLMessage.EntityMessage msg) throws Exception {
-            super.channelRead0(ctx, msg);
-        }
-    }
+		@Override
+		public void channelRead0(ChannelHandlerContext ctx, FMLMessage.EntityMessage msg) throws Exception {
+			super.channelRead0(ctx, msg);
+		}
+	}
 
-    public static class Handler implements IMessageHandler<LOTRPacketSpawnMob, IMessage> {
-        @Override
-        public IMessage onMessage(LOTRPacketSpawnMob packet, MessageContext context) {
-            FMLMessage.EntitySpawnMessage msg = new FMLMessage.EntitySpawnMessage();
-            new FMLRuntimeCodec().decodeInto(null, packet.spawnData, msg);
-            int modEntityID = 999999999;
-            double x = 999.0;
-            double y = 999.0;
-            double z = 999.0;
-            try {
-                modEntityID = (Integer) ObfuscationReflectionHelper.getPrivateValue(FMLMessage.EntitySpawnMessage.class, msg, "modEntityTypeId");
-                x = (Double) ObfuscationReflectionHelper.getPrivateValue(FMLMessage.EntitySpawnMessage.class, msg, "scaledX");
-                y = (Double) ObfuscationReflectionHelper.getPrivateValue(FMLMessage.EntitySpawnMessage.class, msg, "scaledY");
-                z = (Double) ObfuscationReflectionHelper.getPrivateValue(FMLMessage.EntitySpawnMessage.class, msg, "scaledZ");
-            }
-            catch(Exception exception) {
-            }
-            LOTRLog.logger.info("LOTR: Received mob spawn packet: " + modEntityID + "[" + x + ", " + y + ", " + z + "]");
-            try {
-                new AdhocEntitySpawnHandler().channelRead0(null, msg);
-            }
-            catch(Exception e) {
-                LOTRLog.logger.error("LOTR: FATAL ERROR spawning entity!!!");
-                e.printStackTrace();
-            }
-            return null;
-        }
-    }
+	public static class Handler implements IMessageHandler<LOTRPacketSpawnMob, IMessage> {
+		@Override
+		public IMessage onMessage(LOTRPacketSpawnMob packet, MessageContext context) {
+			FMLMessage.EntitySpawnMessage msg = new FMLMessage.EntitySpawnMessage();
+			new FMLRuntimeCodec().decodeInto(null, packet.spawnData, msg);
+			int modEntityID = 999999999;
+			double x = 999.0;
+			double y = 999.0;
+			double z = 999.0;
+			try {
+				modEntityID = (Integer) ObfuscationReflectionHelper.getPrivateValue(FMLMessage.EntitySpawnMessage.class, msg, "modEntityTypeId");
+				x = (Double) ObfuscationReflectionHelper.getPrivateValue(FMLMessage.EntitySpawnMessage.class, msg, "scaledX");
+				y = (Double) ObfuscationReflectionHelper.getPrivateValue(FMLMessage.EntitySpawnMessage.class, msg, "scaledY");
+				z = (Double) ObfuscationReflectionHelper.getPrivateValue(FMLMessage.EntitySpawnMessage.class, msg, "scaledZ");
+			} catch (Exception exception) {
+			}
+			LOTRLog.logger.info("LOTR: Received mob spawn packet: " + modEntityID + "[" + x + ", " + y + ", " + z + "]");
+			try {
+				new AdhocEntitySpawnHandler().channelRead0(null, msg);
+			} catch (Exception e) {
+				LOTRLog.logger.error("LOTR: FATAL ERROR spawning entity!!!");
+				e.printStackTrace();
+			}
+			return null;
+		}
+	}
 
 }

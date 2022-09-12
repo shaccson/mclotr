@@ -1,2 +1,1 @@
-Ну что, как продвигается заказ?
-#, ну как, убил $?
+You have to defeat $, #! Before they come for us!

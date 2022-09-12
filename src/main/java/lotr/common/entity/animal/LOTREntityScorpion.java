@@ -18,207 +18,206 @@ import net.minecraft.util.MovingObjectPosition;
 import net.minecraft.world.World;
 
 public abstract class LOTREntityScorpion extends EntityMob implements LOTRMobSpawnerCondition {
-    private float scorpionWidth = -1.0f;
-    private float scorpionHeight;
-    protected boolean spawningFromSpawner = false;
-    private static IEntitySelector noWraiths = new IEntitySelector() {
+	public static IEntitySelector noWraiths = new IEntitySelector() {
 
-        @Override
-        public boolean isEntityApplicable(Entity entity) {
-            return !(entity instanceof LOTREntityHaradPyramidWraith);
-        }
-    };
+		@Override
+		public boolean isEntityApplicable(Entity entity) {
+			return !(entity instanceof LOTREntityHaradPyramidWraith);
+		}
+	};
+	public float scorpionWidth = -1.0f;
+	public float scorpionHeight;
+	public boolean spawningFromSpawner = false;
 
-    public LOTREntityScorpion(World world) {
-        super(world);
-        this.setSize(1.2f, 0.9f);
-        this.getNavigator().setAvoidsWater(true);
-        this.tasks.addTask(0, new EntityAISwimming(this));
-        this.tasks.addTask(1, new LOTREntityAIAttackOnCollide(this, 1.2, false));
-        this.tasks.addTask(2, new EntityAIWander(this, 1.0));
-        this.tasks.addTask(3, new EntityAIWatchClosest(this, EntityPlayer.class, 8.0f, 0.05f));
-        this.tasks.addTask(4, new EntityAILookIdle(this));
-        this.targetTasks.addTask(1, new EntityAIHurtByTarget(this, false));
-        this.targetTasks.addTask(2, new EntityAINearestAttackableTarget(this, EntityPlayer.class, 0, true));
-        this.targetTasks.addTask(2, new EntityAINearestAttackableTarget(this, LOTREntityNPC.class, 0, true, false, noWraiths));
-    }
+	public LOTREntityScorpion(World world) {
+		super(world);
+		setSize(1.2f, 0.9f);
+		getNavigator().setAvoidsWater(true);
+		tasks.addTask(0, new EntityAISwimming(this));
+		tasks.addTask(1, new LOTREntityAIAttackOnCollide(this, 1.2, false));
+		tasks.addTask(2, new EntityAIWander(this, 1.0));
+		tasks.addTask(3, new EntityAIWatchClosest(this, EntityPlayer.class, 8.0f, 0.05f));
+		tasks.addTask(4, new EntityAILookIdle(this));
+		targetTasks.addTask(1, new EntityAIHurtByTarget(this, false));
+		targetTasks.addTask(2, new EntityAINearestAttackableTarget(this, EntityPlayer.class, 0, true));
+		targetTasks.addTask(2, new EntityAINearestAttackableTarget(this, LOTREntityNPC.class, 0, true, false, noWraiths));
+	}
 
-    @Override
-    public void setSpawningFromMobSpawner(boolean flag) {
-        this.spawningFromSpawner = flag;
-    }
+	@Override
+	public void applyEntityAttributes() {
+		super.applyEntityAttributes();
+		getEntityAttribute(SharedMonsterAttributes.maxHealth).setBaseValue(12.0 + getScorpionScale() * 6.0);
+		getEntityAttribute(SharedMonsterAttributes.movementSpeed).setBaseValue(0.35 - getScorpionScale() * 0.05);
+		getEntityAttribute(SharedMonsterAttributes.attackDamage).setBaseValue(2.0 + getScorpionScale());
+	}
 
-    protected int getRandomScorpionScale() {
-        return this.rand.nextInt(3);
-    }
+	@Override
+	public boolean attackEntityAsMob(Entity entity) {
+		if (super.attackEntityAsMob(entity)) {
+			int difficulty;
+			int duration;
+			if (!worldObj.isRemote) {
+				setStrikeTime(20);
+			}
+			if (entity instanceof EntityLivingBase && (duration = (difficulty = worldObj.difficultySetting.getDifficultyId()) * (difficulty + 5) / 2) > 0) {
+				((EntityLivingBase) entity).addPotionEffect(new PotionEffect(Potion.poison.id, duration * 20, 0));
+			}
+			return true;
+		}
+		return false;
+	}
 
-    @Override
-    protected void entityInit() {
-        super.entityInit();
-        this.dataWatcher.addObject(18, (byte) this.getRandomScorpionScale());
-        this.dataWatcher.addObject(19, 0);
-    }
+	@Override
+	public void dropFewItems(boolean flag, int i) {
+		int k = 1 + rand.nextInt(3) + rand.nextInt(i + 1);
+		for (int j = 0; j < k; ++j) {
+			dropItem(Items.rotten_flesh, 1);
+		}
+	}
 
-    public int getScorpionScale() {
-        return this.dataWatcher.getWatchableObjectByte(18);
-    }
+	@Override
+	public void entityInit() {
+		super.entityInit();
+		dataWatcher.addObject(18, (byte) getRandomScorpionScale());
+		dataWatcher.addObject(19, 0);
+	}
 
-    public void setScorpionScale(int i) {
-        this.dataWatcher.updateObject(18, (byte) i);
-    }
+	@Override
+	public void func_145780_a(int i, int j, int k, Block block) {
+		playSound("mob.spider.step", 0.15f, 1.0f);
+	}
 
-    public float getScorpionScaleAmount() {
-        return 0.5f + this.getScorpionScale() / 2.0f;
-    }
+	@Override
+	public float getBlockPathWeight(int i, int j, int k) {
+		if (spawningFromSpawner) {
+			return 0.0f;
+		}
+		return super.getBlockPathWeight(i, j, k);
+	}
 
-    public int getStrikeTime() {
-        return this.dataWatcher.getWatchableObjectInt(19);
-    }
+	@Override
+	public EnumCreatureAttribute getCreatureAttribute() {
+		return EnumCreatureAttribute.ARTHROPOD;
+	}
 
-    public void setStrikeTime(int i) {
-        this.dataWatcher.updateObject(19, i);
-    }
+	@Override
+	public String getDeathSound() {
+		return "mob.spider.death";
+	}
 
-    @Override
-    protected void applyEntityAttributes() {
-        super.applyEntityAttributes();
-        this.getEntityAttribute(SharedMonsterAttributes.maxHealth).setBaseValue(12.0 + this.getScorpionScale() * 6.0);
-        this.getEntityAttribute(SharedMonsterAttributes.movementSpeed).setBaseValue(0.35 - this.getScorpionScale() * 0.05);
-        this.getEntityAttribute(SharedMonsterAttributes.attackDamage).setBaseValue(2.0 + this.getScorpionScale());
-    }
+	@Override
+	public int getExperiencePoints(EntityPlayer entityplayer) {
+		int i = getScorpionScale();
+		return 2 + i + rand.nextInt(i + 2);
+	}
 
-    @Override
-    public boolean isAIEnabled() {
-        return true;
-    }
+	@Override
+	public String getHurtSound() {
+		return "mob.spider.say";
+	}
 
-    @Override
-    public void writeEntityToNBT(NBTTagCompound nbt) {
-        super.writeEntityToNBT(nbt);
-        nbt.setByte("ScorpionScale", (byte) this.getScorpionScale());
-    }
+	@Override
+	public String getLivingSound() {
+		return "mob.spider.say";
+	}
 
-    @Override
-    public void readEntityFromNBT(NBTTagCompound nbt) {
-        super.readEntityFromNBT(nbt);
-        this.setScorpionScale(nbt.getByte("ScorpionScale"));
-        this.getEntityAttribute(SharedMonsterAttributes.attackDamage).setBaseValue(2.0 + this.getScorpionScale());
-    }
+	@Override
+	public ItemStack getPickedResult(MovingObjectPosition target) {
+		return new ItemStack(LOTRMod.spawnEgg, 1, LOTREntities.getEntityID(this));
+	}
 
-    @Override
-    public float getBlockPathWeight(int i, int j, int k) {
-        if(this.spawningFromSpawner) {
-            return 0.0f;
-        }
-        return super.getBlockPathWeight(i, j, k);
-    }
+	public int getRandomScorpionScale() {
+		return rand.nextInt(3);
+	}
 
-    @Override
-    public void onLivingUpdate() {
-        int i;
-        super.onLivingUpdate();
-        this.rescaleScorpion(this.getScorpionScaleAmount());
-        if(!this.worldObj.isRemote && (i = this.getStrikeTime()) > 0) {
-            this.setStrikeTime(i - 1);
-        }
-    }
+	public int getScorpionScale() {
+		return dataWatcher.getWatchableObjectByte(18);
+	}
 
-    @Override
-    protected void setSize(float f, float f1) {
-        boolean flag = this.scorpionWidth > 0.0f;
-        this.scorpionWidth = f;
-        this.scorpionHeight = f1;
-        if(!flag) {
-            this.rescaleScorpion(1.0f);
-        }
-    }
+	public float getScorpionScaleAmount() {
+		return 0.5f + getScorpionScale() / 2.0f;
+	}
 
-    private void rescaleScorpion(float f) {
-        super.setSize(this.scorpionWidth * f, this.scorpionHeight * f);
-    }
+	public int getStrikeTime() {
+		return dataWatcher.getWatchableObjectInt(19);
+	}
 
-    @Override
-    public boolean interact(EntityPlayer entityplayer) {
-        ItemStack itemstack = entityplayer.inventory.getCurrentItem();
-        if(itemstack != null && itemstack.getItem() == Items.glass_bottle) {
-            --itemstack.stackSize;
-            if(itemstack.stackSize <= 0) {
-                entityplayer.inventory.setInventorySlotContents(entityplayer.inventory.currentItem, new ItemStack(LOTRMod.bottlePoison));
-            }
-            else if(!entityplayer.inventory.addItemStackToInventory(new ItemStack(LOTRMod.bottlePoison)) && !entityplayer.capabilities.isCreativeMode) {
-                entityplayer.dropPlayerItemWithRandomChoice(new ItemStack(LOTRMod.bottlePoison), false);
-            }
-            return true;
-        }
-        return super.interact(entityplayer);
-    }
+	@Override
+	public boolean interact(EntityPlayer entityplayer) {
+		ItemStack itemstack = entityplayer.inventory.getCurrentItem();
+		if (itemstack != null && itemstack.getItem() == Items.glass_bottle) {
+			--itemstack.stackSize;
+			if (itemstack.stackSize <= 0) {
+				entityplayer.inventory.setInventorySlotContents(entityplayer.inventory.currentItem, new ItemStack(LOTRMod.bottlePoison));
+			} else if (!entityplayer.inventory.addItemStackToInventory(new ItemStack(LOTRMod.bottlePoison)) && !entityplayer.capabilities.isCreativeMode) {
+				entityplayer.dropPlayerItemWithRandomChoice(new ItemStack(LOTRMod.bottlePoison), false);
+			}
+			return true;
+		}
+		return super.interact(entityplayer);
+	}
 
-    @Override
-    public boolean attackEntityAsMob(Entity entity) {
-        if(super.attackEntityAsMob(entity)) {
-            int difficulty;
-            int duration;
-            if(!this.worldObj.isRemote) {
-                this.setStrikeTime(20);
-            }
-            if(entity instanceof EntityLivingBase && (duration = (difficulty = this.worldObj.difficultySetting.getDifficultyId()) * (difficulty + 5) / 2) > 0) {
-                ((EntityLivingBase) entity).addPotionEffect(new PotionEffect(Potion.poison.id, duration * 20, 0));
-            }
-            return true;
-        }
-        return false;
-    }
+	@Override
+	public boolean isAIEnabled() {
+		return true;
+	}
 
-    @Override
-    protected String getLivingSound() {
-        return "mob.spider.say";
-    }
+	@Override
+	public boolean isPotionApplicable(PotionEffect effect) {
+		if (effect.getPotionID() == Potion.poison.id) {
+			return false;
+		}
+		return super.isPotionApplicable(effect);
+	}
 
-    @Override
-    protected String getHurtSound() {
-        return "mob.spider.say";
-    }
+	@Override
+	public void onLivingUpdate() {
+		int i;
+		super.onLivingUpdate();
+		rescaleScorpion(getScorpionScaleAmount());
+		if (!worldObj.isRemote && (i = getStrikeTime()) > 0) {
+			setStrikeTime(i - 1);
+		}
+	}
 
-    @Override
-    protected String getDeathSound() {
-        return "mob.spider.death";
-    }
+	@Override
+	public void readEntityFromNBT(NBTTagCompound nbt) {
+		super.readEntityFromNBT(nbt);
+		setScorpionScale(nbt.getByte("ScorpionScale"));
+		getEntityAttribute(SharedMonsterAttributes.attackDamage).setBaseValue(2.0 + getScorpionScale());
+	}
 
-    @Override
-    protected void func_145780_a(int i, int j, int k, Block block) {
-        this.playSound("mob.spider.step", 0.15f, 1.0f);
-    }
+	public void rescaleScorpion(float f) {
+		super.setSize(scorpionWidth * f, scorpionHeight * f);
+	}
 
-    @Override
-    protected void dropFewItems(boolean flag, int i) {
-        int k = 1 + this.rand.nextInt(3) + this.rand.nextInt(i + 1);
-        for(int j = 0; j < k; ++j) {
-            this.dropItem(Items.rotten_flesh, 1);
-        }
-    }
+	public void setScorpionScale(int i) {
+		dataWatcher.updateObject(18, (byte) i);
+	}
 
-    @Override
-    protected int getExperiencePoints(EntityPlayer entityplayer) {
-        int i = this.getScorpionScale();
-        return 2 + i + this.rand.nextInt(i + 2);
-    }
+	@Override
+	public void setSize(float f, float f1) {
+		boolean flag = scorpionWidth > 0.0f;
+		scorpionWidth = f;
+		scorpionHeight = f1;
+		if (!flag) {
+			rescaleScorpion(1.0f);
+		}
+	}
 
-    @Override
-    public EnumCreatureAttribute getCreatureAttribute() {
-        return EnumCreatureAttribute.ARTHROPOD;
-    }
+	@Override
+	public void setSpawningFromMobSpawner(boolean flag) {
+		spawningFromSpawner = flag;
+	}
 
-    @Override
-    public boolean isPotionApplicable(PotionEffect effect) {
-        if(effect.getPotionID() == Potion.poison.id) {
-            return false;
-        }
-        return super.isPotionApplicable(effect);
-    }
+	public void setStrikeTime(int i) {
+		dataWatcher.updateObject(19, i);
+	}
 
-    @Override
-    public ItemStack getPickedResult(MovingObjectPosition target) {
-        return new ItemStack(LOTRMod.spawnEgg, 1, LOTREntities.getEntityID(this));
-    }
+	@Override
+	public void writeEntityToNBT(NBTTagCompound nbt) {
+		super.writeEntityToNBT(nbt);
+		nbt.setByte("ScorpionScale", (byte) getScorpionScale());
+	}
 
 }

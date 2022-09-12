@@ -5,11 +5,11 @@ import net.minecraft.block.Block;
 import net.minecraft.block.material.Material;
 
 public class LOTRBlockScorchedStone extends Block {
-    public LOTRBlockScorchedStone() {
-        super(Material.rock);
-        this.setHardness(2.0f);
-        this.setResistance(10.0f);
-        this.setStepSound(Block.soundTypeStone);
-        this.setCreativeTab(LOTRCreativeTabs.tabBlock);
-    }
+	public LOTRBlockScorchedStone() {
+		super(Material.rock);
+		setHardness(2.0f);
+		setResistance(10.0f);
+		setStepSound(Block.soundTypeStone);
+		setCreativeTab(LOTRCreativeTabs.tabBlock);
+	}
 }

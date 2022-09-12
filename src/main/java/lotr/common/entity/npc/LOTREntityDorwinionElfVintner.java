@@ -7,64 +7,64 @@ import net.minecraft.item.ItemStack;
 import net.minecraft.world.World;
 
 public class LOTREntityDorwinionElfVintner extends LOTREntityDorwinionElf implements LOTRTradeable {
-    public LOTREntityDorwinionElfVintner(World world) {
-        super(world);
-        this.addTargetTasks(false);
-    }
+	public LOTREntityDorwinionElfVintner(World world) {
+		super(world);
+		this.addTargetTasks(false);
+	}
 
-    @Override
-    public LOTRTradeEntries getBuyPool() {
-        return LOTRTradeEntries.DORWINION_VINTNER_BUY;
-    }
+	@Override
+	public boolean canTradeWith(EntityPlayer entityplayer) {
+		return LOTRLevelData.getData(entityplayer).getAlignment(getFaction()) >= 50.0f && isFriendly(entityplayer);
+	}
 
-    @Override
-    public LOTRTradeEntries getSellPool() {
-        return LOTRTradeEntries.DORWINION_VINTNER_SELL;
-    }
+	@Override
+	public float getAlignmentBonus() {
+		return 2.0f;
+	}
 
-    @Override
-    public IEntityLivingData onSpawnWithEgg(IEntityLivingData data) {
-        data = super.onSpawnWithEgg(data);
-        ItemStack drink = this.getBuyPool().getRandomTrades(this.rand)[0].createTradeItem();
-        this.npcItemsInv.setIdleItem(drink);
-        return data;
-    }
+	@Override
+	public LOTRTradeEntries getBuyPool() {
+		return LOTRTradeEntries.DORWINION_VINTNER_BUY;
+	}
 
-    @Override
-    public float getAlignmentBonus() {
-        return 2.0f;
-    }
+	@Override
+	public LOTRTradeEntries getSellPool() {
+		return LOTRTradeEntries.DORWINION_VINTNER_SELL;
+	}
 
-    @Override
-    public boolean canTradeWith(EntityPlayer entityplayer) {
-        return LOTRLevelData.getData(entityplayer).getAlignment(this.getFaction()) >= 50.0f && this.isFriendly(entityplayer);
-    }
+	@Override
+	public String getSpeechBank(EntityPlayer entityplayer) {
+		if (isFriendly(entityplayer)) {
+			if (canTradeWith(entityplayer)) {
+				return "dorwinion/elfVintner/friendly";
+			}
+			return "dorwinion/elfVintner/neutral";
+		}
+		return "dorwinion/elf/hostile";
+	}
 
-    @Override
-    public void onPlayerTrade(EntityPlayer entityplayer, LOTRTradeEntries.TradeType type, ItemStack itemstack) {
-        if(type == LOTRTradeEntries.TradeType.BUY) {
-            LOTRLevelData.getData(entityplayer).addAchievement(LOTRAchievement.buyWineVintner);
-        }
-    }
+	@Override
+	public void onPlayerTrade(EntityPlayer entityplayer, LOTRTradeEntries.TradeType type, ItemStack itemstack) {
+		if (type == LOTRTradeEntries.TradeType.BUY) {
+			LOTRLevelData.getData(entityplayer).addAchievement(LOTRAchievement.buyWineVintner);
+		}
+	}
 
-    @Override
-    public boolean shouldTraderRespawn() {
-        return true;
-    }
+	@Override
+	public IEntityLivingData onSpawnWithEgg(IEntityLivingData data) {
+		data = super.onSpawnWithEgg(data);
+		ItemStack drink = getBuyPool().getRandomTrades(rand)[0].createTradeItem();
+		npcItemsInv.setIdleItem(drink);
+		return data;
+	}
 
-    @Override
-    public boolean shouldRenderNPCHair() {
-        return false;
-    }
+	@Override
+	public boolean shouldRenderNPCHair() {
+		return false;
+	}
 
-    @Override
-    public String getSpeechBank(EntityPlayer entityplayer) {
-        if(this.isFriendly(entityplayer)) {
-            if(this.canTradeWith(entityplayer)) {
-                return "dorwinion/elfVintner/friendly";
-            }
-            return "dorwinion/elfVintner/neutral";
-        }
-        return "dorwinion/elf/hostile";
-    }
+	@Override
+	public boolean shouldTraderRespawn() {
+		return true;
+	}
 }

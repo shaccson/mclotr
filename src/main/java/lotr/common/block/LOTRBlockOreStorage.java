@@ -10,99 +10,101 @@ import net.minecraft.util.IIcon;
 import net.minecraft.world.*;
 import net.minecraftforge.common.util.ForgeDirection;
 
-public class LOTRBlockOreStorage
-extends LOTRBlockOreStorageBase
-implements LOTRConnectedBlock {
-    @SideOnly(value=Side.CLIENT)
-    private IIcon orcSteelSideIcon;
-    @SideOnly(value=Side.CLIENT)
-    private IIcon urukSteelSideIcon;
-    @SideOnly(value=Side.CLIENT)
-    private IIcon morgulSteelSideIcon;
+public class LOTRBlockOreStorage extends LOTRBlockOreStorageBase implements LOTRConnectedBlock {
+	@SideOnly(value = Side.CLIENT)
+	public IIcon orcSteelSideIcon;
+	@SideOnly(value = Side.CLIENT)
+	public IIcon urukSteelSideIcon;
+	@SideOnly(value = Side.CLIENT)
+	public IIcon morgulSteelSideIcon;
 
-    public LOTRBlockOreStorage() {
-        this.setOreStorageNames("copper", "tin", "bronze", "silver", "mithril", "orcSteel", "quendite", "dwarfSteel", "galvorn", "urukSteel", "naurite", "gulduril", "morgulSteel", "sulfur", "saltpeter", "blueDwarfSteel");
-    }
+	public LOTRBlockOreStorage() {
+		setOreStorageNames("copper", "tin", "bronze", "silver", "mithril", "orcSteel", "quendite", "dwarfSteel", "galvorn", "urukSteel", "naurite", "gulduril", "morgulSteel", "sulfur", "saltpeter", "blueDwarfSteel");
+	}
 
-    @SideOnly(value=Side.CLIENT)
-    @Override
-    public void registerBlockIcons(IIconRegister iconregister) {
-        this.oreStorageIcons = new IIcon[this.oreStorageNames.length];
-        for (int i = 0; i < this.oreStorageNames.length; ++i) {
-            if (i == 4) {
-                LOTRConnectedTextures.registerConnectedIcons(iconregister, this, i, false);
-                continue;
-            }
-            this.oreStorageIcons[i] = iconregister.registerIcon(this.getTextureName() + "_" + this.oreStorageNames[i]);
-        }
-        this.orcSteelSideIcon = iconregister.registerIcon(this.getTextureName() + "_orcSteel_side");
-        this.urukSteelSideIcon = iconregister.registerIcon(this.getTextureName() + "_urukSteel_side");
-        this.morgulSteelSideIcon = iconregister.registerIcon(this.getTextureName() + "_morgulSteel_side");
-    }
+	@Override
+	public boolean areBlocksConnected(IBlockAccess world, int i, int j, int k, int i1, int j1, int k1) {
+		return LOTRConnectedBlock.Checks.matchBlockAndMeta(this, world, i, j, k, i1, j1, k1);
+	}
 
-    @SideOnly(value=Side.CLIENT)
-    public IIcon getIcon(IBlockAccess world, int i, int j, int k, int side) {
-        int meta = world.getBlockMetadata(i, j, k);
-        if (meta == 4) {
-            return LOTRConnectedTextures.getConnectedIconBlock(this, world, i, j, k, side, false);
-        }
-        return super.getIcon(world, i, j, k, side);
-    }
+	@Override
+	public TileEntity createTileEntity(World world, int metadata) {
+		if (this.hasTileEntity(metadata)) {
+			return new LOTRTileEntityGulduril();
+		}
+		return null;
+	}
 
-    @SideOnly(value=Side.CLIENT)
-    @Override
-    public IIcon getIcon(int side, int meta) {
-        if (meta == 4) {
-            return LOTRConnectedTextures.getConnectedIconItem(this, meta);
-        }
-        if (meta == 5 && side > 1) {
-            return this.orcSteelSideIcon;
-        }
-        if (meta == 9 && side > 1) {
-            return this.urukSteelSideIcon;
-        }
-        if (meta == 12 && side > 1) {
-            return this.morgulSteelSideIcon;
-        }
-        return super.getIcon(side, meta);
-    }
+	@Override
+	public String getConnectedName(int meta) {
+		return textureName + "_" + oreStorageNames[meta];
+	}
 
-    @Override
-    public String getConnectedName(int meta) {
-        return this.textureName + "_" + this.oreStorageNames[meta];
-    }
+	@Override
+	@SideOnly(value = Side.CLIENT)
+	public IIcon getIcon(IBlockAccess world, int i, int j, int k, int side) {
+		int meta = world.getBlockMetadata(i, j, k);
+		if (meta == 4) {
+			return LOTRConnectedTextures.getConnectedIconBlock(this, world, i, j, k, side, false);
+		}
+		return super.getIcon(world, i, j, k, side);
+	}
 
-    @Override
-    public boolean areBlocksConnected(IBlockAccess world, int i, int j, int k, int i1, int j1, int k1) {
-        return LOTRConnectedBlock.Checks.matchBlockAndMeta(this, world, i, j, k, i1, j1, k1);
-    }
+	@SideOnly(value = Side.CLIENT)
+	@Override
+	public IIcon getIcon(int side, int meta) {
+		if (meta == 4) {
+			return LOTRConnectedTextures.getConnectedIconItem(this, meta);
+		}
+		if (meta == 5 && side > 1) {
+			return orcSteelSideIcon;
+		}
+		if (meta == 9 && side > 1) {
+			return urukSteelSideIcon;
+		}
+		if (meta == 12 && side > 1) {
+			return morgulSteelSideIcon;
+		}
+		return super.getIcon(side, meta);
+	}
 
-    public boolean isFireSource(World world, int i, int j, int k, ForgeDirection side) {
-        return world.getBlockMetadata(i, j, k) == 13 && side == ForgeDirection.UP;
-    }
+	@Override
+	public int getLightValue(IBlockAccess world, int i, int j, int k) {
+		if (world.getBlockMetadata(i, j, k) == 6) {
+			return LOTRMod.oreQuendite.getLightValue();
+		}
+		if (world.getBlockMetadata(i, j, k) == 10) {
+			return LOTRMod.oreNaurite.getLightValue();
+		}
+		if (world.getBlockMetadata(i, j, k) == 11) {
+			return LOTRMod.oreGulduril.getLightValue();
+		}
+		return 0;
+	}
 
-    public int getLightValue(IBlockAccess world, int i, int j, int k) {
-        if (world.getBlockMetadata(i, j, k) == 6) {
-            return LOTRMod.oreQuendite.getLightValue();
-        }
-        if (world.getBlockMetadata(i, j, k) == 10) {
-            return LOTRMod.oreNaurite.getLightValue();
-        }
-        if (world.getBlockMetadata(i, j, k) == 11) {
-            return LOTRMod.oreGulduril.getLightValue();
-        }
-        return 0;
-    }
+	@Override
+	public boolean hasTileEntity(int metadata) {
+		return metadata == 11;
+	}
 
-    public boolean hasTileEntity(int metadata) {
-        return metadata == 11;
-    }
+	@Override
+	public boolean isFireSource(World world, int i, int j, int k, ForgeDirection side) {
+		return world.getBlockMetadata(i, j, k) == 13 && side == ForgeDirection.UP;
+	}
 
-    public TileEntity createTileEntity(World world, int metadata) {
-        if (this.hasTileEntity(metadata)) {
-            return new LOTRTileEntityGulduril();
-        }
-        return null;
-    }
+	@SideOnly(value = Side.CLIENT)
+	@Override
+	public void registerBlockIcons(IIconRegister iconregister) {
+		oreStorageIcons = new IIcon[oreStorageNames.length];
+		for (int i = 0; i < oreStorageNames.length; ++i) {
+			if (i == 4) {
+				LOTRConnectedTextures.registerConnectedIcons(iconregister, this, i, false);
+				continue;
+			}
+			oreStorageIcons[i] = iconregister.registerIcon(getTextureName() + "_" + oreStorageNames[i]);
+		}
+		orcSteelSideIcon = iconregister.registerIcon(getTextureName() + "_orcSteel_side");
+		urukSteelSideIcon = iconregister.registerIcon(getTextureName() + "_urukSteel_side");
+		morgulSteelSideIcon = iconregister.registerIcon(getTextureName() + "_morgulSteel_side");
+	}
 }
-

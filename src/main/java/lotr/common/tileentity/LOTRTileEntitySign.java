@@ -10,81 +10,83 @@ import net.minecraft.network.play.server.S35PacketUpdateTileEntity;
 import net.minecraft.tileentity.TileEntity;
 
 public abstract class LOTRTileEntitySign extends TileEntity {
-    public String[] signText = new String[this.getNumLines()];
-    public static final int MAX_LINE_LENGTH = 15;
-    public int lineBeingEdited = -1;
-    private boolean editable = true;
-    private EntityPlayer editingPlayer;
-    public boolean isFakeGuiSign = false;
+	public static int MAX_LINE_LENGTH = 15;
+	public String[] signText = new String[getNumLines()];
+	public int lineBeingEdited = -1;
+	public boolean editable = true;
+	public EntityPlayer editingPlayer;
+	public boolean isFakeGuiSign = false;
 
-    public LOTRTileEntitySign() {
-        Arrays.fill(this.signText, "");
-    }
+	public LOTRTileEntitySign() {
+		Arrays.fill(signText, "");
+	}
 
-    public abstract int getNumLines();
+	@Override
+	public Packet getDescriptionPacket() {
+		NBTTagCompound data = new NBTTagCompound();
+		writeSignText(data);
+		return new S35PacketUpdateTileEntity(xCoord, yCoord, zCoord, 0, data);
+	}
 
-    @Override
-    public void writeToNBT(NBTTagCompound nbt) {
-        super.writeToNBT(nbt);
-        this.writeSignText(nbt);
-    }
+	public EntityPlayer getEditingPlayer() {
+		return editingPlayer;
+	}
 
-    private void writeSignText(NBTTagCompound nbt) {
-        for(int i = 0; i < this.signText.length; ++i) {
-            nbt.setString("Text" + (i + 1), this.signText[i]);
-        }
-    }
+	public abstract int getNumLines();
 
-    @Override
-    public void readFromNBT(NBTTagCompound nbt) {
-        this.editable = false;
-        super.readFromNBT(nbt);
-        this.readSignText(nbt);
-    }
+	public boolean isEditable() {
+		return editable;
+	}
 
-    private void readSignText(NBTTagCompound nbt) {
-        for(int i = 0; i < this.signText.length; ++i) {
-            this.signText[i] = nbt.getString("Text" + (i + 1));
-            if(this.signText[i].length() <= 15) continue;
-            this.signText[i] = this.signText[i].substring(0, 15);
-        }
-    }
+	@Override
+	public void onDataPacket(NetworkManager manager, S35PacketUpdateTileEntity packet) {
+		NBTTagCompound data = packet.func_148857_g();
+		readSignText(data);
+	}
 
-    @Override
-    public Packet getDescriptionPacket() {
-        NBTTagCompound data = new NBTTagCompound();
-        this.writeSignText(data);
-        return new S35PacketUpdateTileEntity(this.xCoord, this.yCoord, this.zCoord, 0, data);
-    }
+	public void openEditGUI(EntityPlayerMP entityplayer) {
+		setEditingPlayer(entityplayer);
+		LOTRPacketOpenSignEditor packet = new LOTRPacketOpenSignEditor(this);
+		LOTRPacketHandler.networkWrapper.sendTo(packet, entityplayer);
+	}
 
-    @Override
-    public void onDataPacket(NetworkManager manager, S35PacketUpdateTileEntity packet) {
-        NBTTagCompound data = packet.func_148857_g();
-        this.readSignText(data);
-    }
+	@Override
+	public void readFromNBT(NBTTagCompound nbt) {
+		editable = false;
+		super.readFromNBT(nbt);
+		readSignText(nbt);
+	}
 
-    public boolean isEditable() {
-        return this.editable;
-    }
+	public void readSignText(NBTTagCompound nbt) {
+		for (int i = 0; i < signText.length; ++i) {
+			signText[i] = nbt.getString("Text" + (i + 1));
+			if (signText[i].length() <= 15) {
+				continue;
+			}
+			signText[i] = signText[i].substring(0, 15);
+		}
+	}
 
-    public void setEditable(boolean flag) {
-        this.editable = flag;
-        if(!flag) {
-            this.editingPlayer = null;
-        }
-    }
+	public void setEditable(boolean flag) {
+		editable = flag;
+		if (!flag) {
+			editingPlayer = null;
+		}
+	}
 
-    public void setEditingPlayer(EntityPlayer entityplayer) {
-        this.editingPlayer = entityplayer;
-    }
+	public void setEditingPlayer(EntityPlayer entityplayer) {
+		editingPlayer = entityplayer;
+	}
 
-    public EntityPlayer getEditingPlayer() {
-        return this.editingPlayer;
-    }
+	public void writeSignText(NBTTagCompound nbt) {
+		for (int i = 0; i < signText.length; ++i) {
+			nbt.setString("Text" + (i + 1), signText[i]);
+		}
+	}
 
-    public void openEditGUI(EntityPlayerMP entityplayer) {
-        this.setEditingPlayer(entityplayer);
-        LOTRPacketOpenSignEditor packet = new LOTRPacketOpenSignEditor(this);
-        LOTRPacketHandler.networkWrapper.sendTo(packet, entityplayer);
-    }
+	@Override
+	public void writeToNBT(NBTTagCompound nbt) {
+		super.writeToNBT(nbt);
+		writeSignText(nbt);
+	}
 }

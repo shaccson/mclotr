@@ -7,42 +7,40 @@ import net.minecraft.client.renderer.texture.IIconRegister;
 import net.minecraft.util.IIcon;
 
 public class LOTRBlockSlab9 extends LOTRBlockSlabBase {
-    public LOTRBlockSlab9(boolean flag) {
-        super(flag, Material.rock, 8);
-    }
+	public LOTRBlockSlab9(boolean flag) {
+		super(flag, Material.rock, 8);
+	}
 
-    @SideOnly(value = Side.CLIENT)
-    @Override
-    public IIcon getIcon(int i, int j) {
-        if((j &= 7) == 0) {
-            return LOTRMod.brick4.getIcon(i, 15);
-        }
-        if(j == 1) {
-            return LOTRMod.pillar2.getIcon(i, 1);
-        }
-        if(j == 2) {
-            return LOTRMod.pillar2.getIcon(i, 2);
-        }
-        if(j == 3) {
-            return LOTRMod.pillar2.getIcon(i, 3);
-        }
-        if(j == 4) {
-            return LOTRMod.pillar2.getIcon(i, 4);
-        }
-        if(j == 5) {
-            return LOTRMod.brick5.getIcon(i, 0);
-        }
-        if(j == 6) {
-            return LOTRMod.brick5.getIcon(i, 1);
-        }
-        if(j == 7) {
-            return LOTRMod.brick5.getIcon(i, 2);
-        }
-        return super.getIcon(i, j);
-    }
+	@SideOnly(value = Side.CLIENT)
+	@Override
+	public IIcon getIcon(int i, int j) {
+		j &= 7;
+		if (j == 0) {
+			return LOTRMod.brick4.getIcon(i, 15);
+		}
+		switch (j) {
+		case 1:
+			return LOTRMod.pillar2.getIcon(i, 1);
+		case 2:
+			return LOTRMod.pillar2.getIcon(i, 2);
+		case 3:
+			return LOTRMod.pillar2.getIcon(i, 3);
+		case 4:
+			return LOTRMod.pillar2.getIcon(i, 4);
+		case 5:
+			return LOTRMod.brick5.getIcon(i, 0);
+		case 6:
+			return LOTRMod.brick5.getIcon(i, 1);
+		case 7:
+			return LOTRMod.brick5.getIcon(i, 2);
+		default:
+			break;
+		}
+		return super.getIcon(i, j);
+	}
 
-    @SideOnly(value = Side.CLIENT)
-    @Override
-    public void registerBlockIcons(IIconRegister iconregister) {
-    }
+	@SideOnly(value = Side.CLIENT)
+	@Override
+	public void registerBlockIcons(IIconRegister iconregister) {
+	}
 }

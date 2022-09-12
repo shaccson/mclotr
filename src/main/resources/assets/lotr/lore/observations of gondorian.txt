@@ -1,13 +1,15 @@
-#title:Наблюдения
-#author:{name:gondor_male} из Гондора
+# Karseius
+#
+#title:Observations
+#author:{name:gondor_male} of Gondor
 #types:southron,umbar,gondor
 #reward
 #
-Хен-на-Харад:
-В этот день, девятого четвертого месяца, 1078 года Третьей Эпохи:
+Hen-na-Charad:
+This day, the ninth of the fourth month, year 1078 of the Third Age:
 
-Прошло уже почти тридцать лет с тех пор, как наш любимый король Хьярмендакиль победил князей Юга и присоеденил их земли к Гондору. До сих пор его милостивое правление было благосклонно к Харадрим, позволяя им сохранять свои обычаи, верования и мирские владения.
+It has been almost thirty years now since our beloved King Hyarmendacil defeated the Southron Princes and brought their lands into our realm. His gracious rule has been benevolent to the Haradrim so far, allowing many of their kind to keep their customs, beliefs, and worldly possessions.
 
-Но, несмотря на его величайшие усилия, южане остаются в значительной степени равнодушными или даже враждебными по отношению к нам. Члены племени Харнен оказались особенно неуправляемыми, но мы покорим их ещЭ раз. От моих верных слуг я узнал, что среди харадрим распространился новый обычай. Приветствие, которым они ругают наше Царство: «Пусть Змей душит деревоИ, - шепчут они, но только в одиночестве.
+But despite his greatest efforts, the Southrons remain largely indifferent or even outright hostile to us. The tribesmen of the Harnen have proven especially unruly, but we shall subdue them in time. From my loyal Southron servants I have learned that a new custom has spread amongst the Haradrim. A greeting, to sully our Kingdom in secret: "May the Serpent strangle the tree" they whisper, yet only when alone.
 
-Глупые харадримы! Я посоветую Его Высочеству провозгласить, что каждый язык, произносящий эти слова, будет вырван! Его Милость дала этим дикарям достаточно времени, чтобы приспособиться. Они не заслуживают его щедрости, но заслуживают его меч!
+Silly Southrons! I will advise His Highness to proclaim that every tongue uttering those words shall be torn out! His Grace has given those savages enough time to adapt. They do not deserve his generosity, but his sword!

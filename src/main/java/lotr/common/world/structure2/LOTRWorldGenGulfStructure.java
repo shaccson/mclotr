@@ -8,153 +8,155 @@ import net.minecraft.init.Blocks;
 import net.minecraft.item.ItemStack;
 
 public abstract class LOTRWorldGenGulfStructure extends LOTRWorldGenStructureBase2 {
-    protected Block brickBlock;
-    protected int brickMeta;
-    protected Block brickSlabBlock;
-    protected int brickSlabMeta;
-    protected Block brickStairBlock;
-    protected Block brickWallBlock;
-    protected int brickWallMeta;
-    protected Block brick2Block;
-    protected int brick2Meta;
-    protected Block woodBlock;
-    protected int woodMeta;
-    protected Block plankBlock;
-    protected int plankMeta;
-    protected Block plankSlabBlock;
-    protected int plankSlabMeta;
-    protected Block plankStairBlock;
-    protected Block fenceBlock;
-    protected int fenceMeta;
-    protected Block fenceGateBlock;
-    protected Block doorBlock;
-    protected Block beamBlock;
-    protected int beamMeta;
-    protected Block plank2Block;
-    protected int plank2Meta;
-    protected Block plank2SlabBlock;
-    protected int plank2SlabMeta;
-    protected Block plank2StairBlock;
-    protected Block beam2Block;
-    protected int beam2Meta;
-    protected Block roofBlock;
-    protected int roofMeta;
-    protected Block roofSlabBlock;
-    protected int roofSlabMeta;
-    protected Block roofStairBlock;
-    protected Block flagBlock;
-    protected int flagMeta;
-    protected Block boneBlock;
-    protected int boneMeta;
-    protected Block boneWallBlock;
-    protected int boneWallMeta;
-    protected Block bedBlock;
+	public Block brickBlock;
+	public int brickMeta;
+	public Block brickSlabBlock;
+	public int brickSlabMeta;
+	public Block brickStairBlock;
+	public Block brickWallBlock;
+	public int brickWallMeta;
+	public Block brick2Block;
+	public int brick2Meta;
+	public Block woodBlock;
+	public int woodMeta;
+	public Block plankBlock;
+	public int plankMeta;
+	public Block plankSlabBlock;
+	public int plankSlabMeta;
+	public Block plankStairBlock;
+	public Block fenceBlock;
+	public int fenceMeta;
+	public Block fenceGateBlock;
+	public Block doorBlock;
+	public Block beamBlock;
+	public int beamMeta;
+	public Block plank2Block;
+	public int plank2Meta;
+	public Block plank2SlabBlock;
+	public int plank2SlabMeta;
+	public Block plank2StairBlock;
+	public Block beam2Block;
+	public int beam2Meta;
+	public Block roofBlock;
+	public int roofMeta;
+	public Block roofSlabBlock;
+	public int roofSlabMeta;
+	public Block roofStairBlock;
+	public Block flagBlock;
+	public int flagMeta;
+	public Block boneBlock;
+	public int boneMeta;
+	public Block boneWallBlock;
+	public int boneWallMeta;
+	public Block bedBlock;
 
-    public LOTRWorldGenGulfStructure(boolean flag) {
-        super(flag);
-    }
+	public LOTRWorldGenGulfStructure(boolean flag) {
+		super(flag);
+	}
 
-    protected boolean canUseRedBrick() {
-        return true;
-    }
+	public boolean canUseRedBrick() {
+		return true;
+	}
 
-    @Override
-    protected void setupRandomBlocks(Random random) {
-        super.setupRandomBlocks(random);
-        if(this.canUseRedBrick() && random.nextInt(3) == 0) {
-            this.brickBlock = LOTRMod.brick3;
-            this.brickMeta = 13;
-            this.brickSlabBlock = LOTRMod.slabSingle7;
-            this.brickSlabMeta = 2;
-            this.brickStairBlock = LOTRMod.stairsNearHaradBrickRed;
-            this.brickWallBlock = LOTRMod.wall3;
-            this.brickWallMeta = 4;
-        }
-        else {
-            this.brickBlock = LOTRMod.brick;
-            this.brickMeta = 15;
-            this.brickSlabBlock = LOTRMod.slabSingle4;
-            this.brickSlabMeta = 0;
-            this.brickStairBlock = LOTRMod.stairsNearHaradBrick;
-            this.brickWallBlock = LOTRMod.wall;
-            this.brickWallMeta = 15;
-        }
-        this.brick2Block = LOTRMod.brick3;
-        this.brick2Meta = 13;
-        if(random.nextInt(5) == 0) {
-            this.woodBlock = LOTRMod.wood9;
-            this.woodMeta = 0;
-            this.plankBlock = LOTRMod.planks3;
-            this.plankMeta = 4;
-            this.plankSlabBlock = LOTRMod.woodSlabSingle5;
-            this.plankSlabMeta = 4;
-            this.plankStairBlock = LOTRMod.stairsDragon;
-            this.fenceBlock = LOTRMod.fence3;
-            this.fenceMeta = 4;
-            this.fenceGateBlock = LOTRMod.fenceGateDragon;
-            this.doorBlock = LOTRMod.doorDragon;
-            this.beamBlock = LOTRMod.woodBeam9;
-            this.beamMeta = 0;
-        }
-        else {
-            this.woodBlock = LOTRMod.wood8;
-            this.woodMeta = 3;
-            this.plankBlock = LOTRMod.planks3;
-            this.plankMeta = 3;
-            this.plankSlabBlock = LOTRMod.woodSlabSingle5;
-            this.plankSlabMeta = 3;
-            this.plankStairBlock = LOTRMod.stairsPalm;
-            this.fenceBlock = LOTRMod.fence3;
-            this.fenceMeta = 3;
-            this.fenceGateBlock = LOTRMod.fenceGatePalm;
-            this.doorBlock = LOTRMod.doorPalm;
-            this.beamBlock = LOTRMod.woodBeam8;
-            this.beamMeta = 3;
-        }
-        int randomWood2 = random.nextInt(3);
-        if(randomWood2 == 0) {
-            this.plank2Block = Blocks.planks;
-            this.plank2Meta = 4;
-            this.plank2SlabBlock = Blocks.wooden_slab;
-            this.plank2SlabMeta = 4;
-            this.plank2StairBlock = Blocks.acacia_stairs;
-            this.beam2Block = LOTRMod.woodBeamV2;
-            this.beam2Meta = 0;
-        }
-        else if(randomWood2 == 1) {
-            this.plank2Block = LOTRMod.planks;
-            this.plank2Meta = 14;
-            this.plank2SlabBlock = LOTRMod.woodSlabSingle2;
-            this.plank2SlabMeta = 6;
-            this.plank2StairBlock = LOTRMod.stairsDatePalm;
-            this.beam2Block = LOTRMod.woodBeam4;
-            this.beam2Meta = 2;
-        }
-        else if(randomWood2 == 2) {
-            this.plank2Block = LOTRMod.planks3;
-            this.plank2Meta = 4;
-            this.plank2SlabBlock = LOTRMod.woodSlabSingle5;
-            this.plank2SlabMeta = 4;
-            this.plank2StairBlock = LOTRMod.stairsDragon;
-            this.beam2Block = LOTRMod.woodBeam9;
-            this.beam2Meta = 0;
-        }
-        this.roofBlock = LOTRMod.thatch;
-        this.roofMeta = 1;
-        this.roofSlabBlock = LOTRMod.slabSingleThatch;
-        this.roofSlabMeta = 1;
-        this.roofStairBlock = LOTRMod.stairsReed;
-        this.flagBlock = Blocks.wool;
-        this.flagMeta = 14;
-        this.boneBlock = LOTRMod.boneBlock;
-        this.boneMeta = 0;
-        this.boneWallBlock = LOTRMod.wallBone;
-        this.boneWallMeta = 0;
-        this.bedBlock = LOTRMod.strawBed;
-    }
+	public ItemStack getRandomGulfWeapon(Random random) {
+		ItemStack[] items = { new ItemStack(LOTRMod.swordGulfHarad), new ItemStack(LOTRMod.swordGulfHarad), new ItemStack(LOTRMod.daggerHarad), new ItemStack(LOTRMod.spearHarad), new ItemStack(LOTRMod.pikeHarad) };
+		return items[random.nextInt(items.length)].copy();
+	}
 
-    protected ItemStack getRandomGulfWeapon(Random random) {
-        ItemStack[] items = new ItemStack[] {new ItemStack(LOTRMod.swordGulfHarad), new ItemStack(LOTRMod.swordGulfHarad), new ItemStack(LOTRMod.daggerHarad), new ItemStack(LOTRMod.spearHarad), new ItemStack(LOTRMod.pikeHarad)};
-        return items[random.nextInt(items.length)].copy();
-    }
+	@Override
+	public void setupRandomBlocks(Random random) {
+		super.setupRandomBlocks(random);
+		if (canUseRedBrick() && random.nextInt(3) == 0) {
+			brickBlock = LOTRMod.brick3;
+			brickMeta = 13;
+			brickSlabBlock = LOTRMod.slabSingle7;
+			brickSlabMeta = 2;
+			brickStairBlock = LOTRMod.stairsNearHaradBrickRed;
+			brickWallBlock = LOTRMod.wall3;
+			brickWallMeta = 4;
+		} else {
+			brickBlock = LOTRMod.brick;
+			brickMeta = 15;
+			brickSlabBlock = LOTRMod.slabSingle4;
+			brickSlabMeta = 0;
+			brickStairBlock = LOTRMod.stairsNearHaradBrick;
+			brickWallBlock = LOTRMod.wall;
+			brickWallMeta = 15;
+		}
+		brick2Block = LOTRMod.brick3;
+		brick2Meta = 13;
+		if (random.nextInt(5) == 0) {
+			woodBlock = LOTRMod.wood9;
+			woodMeta = 0;
+			plankBlock = LOTRMod.planks3;
+			plankMeta = 4;
+			plankSlabBlock = LOTRMod.woodSlabSingle5;
+			plankSlabMeta = 4;
+			plankStairBlock = LOTRMod.stairsDragon;
+			fenceBlock = LOTRMod.fence3;
+			fenceMeta = 4;
+			fenceGateBlock = LOTRMod.fenceGateDragon;
+			doorBlock = LOTRMod.doorDragon;
+			beamBlock = LOTRMod.woodBeam9;
+			beamMeta = 0;
+		} else {
+			woodBlock = LOTRMod.wood8;
+			woodMeta = 3;
+			plankBlock = LOTRMod.planks3;
+			plankMeta = 3;
+			plankSlabBlock = LOTRMod.woodSlabSingle5;
+			plankSlabMeta = 3;
+			plankStairBlock = LOTRMod.stairsPalm;
+			fenceBlock = LOTRMod.fence3;
+			fenceMeta = 3;
+			fenceGateBlock = LOTRMod.fenceGatePalm;
+			doorBlock = LOTRMod.doorPalm;
+			beamBlock = LOTRMod.woodBeam8;
+			beamMeta = 3;
+		}
+		int randomWood2 = random.nextInt(3);
+		switch (randomWood2) {
+		case 0:
+			plank2Block = Blocks.planks;
+			plank2Meta = 4;
+			plank2SlabBlock = Blocks.wooden_slab;
+			plank2SlabMeta = 4;
+			plank2StairBlock = Blocks.acacia_stairs;
+			beam2Block = LOTRMod.woodBeamV2;
+			beam2Meta = 0;
+			break;
+		case 1:
+			plank2Block = LOTRMod.planks;
+			plank2Meta = 14;
+			plank2SlabBlock = LOTRMod.woodSlabSingle2;
+			plank2SlabMeta = 6;
+			plank2StairBlock = LOTRMod.stairsDatePalm;
+			beam2Block = LOTRMod.woodBeam4;
+			beam2Meta = 2;
+			break;
+		case 2:
+			plank2Block = LOTRMod.planks3;
+			plank2Meta = 4;
+			plank2SlabBlock = LOTRMod.woodSlabSingle5;
+			plank2SlabMeta = 4;
+			plank2StairBlock = LOTRMod.stairsDragon;
+			beam2Block = LOTRMod.woodBeam9;
+			beam2Meta = 0;
+			break;
+		default:
+			break;
+		}
+		roofBlock = LOTRMod.thatch;
+		roofMeta = 1;
+		roofSlabBlock = LOTRMod.slabSingleThatch;
+		roofSlabMeta = 1;
+		roofStairBlock = LOTRMod.stairsReed;
+		flagBlock = Blocks.wool;
+		flagMeta = 14;
+		boneBlock = LOTRMod.boneBlock;
+		boneMeta = 0;
+		boneWallBlock = LOTRMod.wallBone;
+		boneWallMeta = 0;
+		bedBlock = LOTRMod.strawBed;
+	}
 }

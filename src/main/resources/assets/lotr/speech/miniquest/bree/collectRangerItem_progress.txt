@@ -1,2 +1,2 @@
-Как дела? Как дела? Есть ли вещи у тебя?
-#, ну как, у тебя есть $?
+You're back, did you manage to get your hands on $?
+How's it going with acquiring the goods? You know, $?

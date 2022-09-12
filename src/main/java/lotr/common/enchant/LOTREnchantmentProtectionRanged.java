@@ -5,31 +5,31 @@ import net.minecraft.item.*;
 import net.minecraft.util.*;
 
 public class LOTREnchantmentProtectionRanged extends LOTREnchantmentProtectionSpecial {
-    public LOTREnchantmentProtectionRanged(String s, int level) {
-        super(s, level);
-    }
+	public LOTREnchantmentProtectionRanged(String s, int level) {
+		super(s, level);
+	}
 
-    @Override
-    public String getDescription(ItemStack itemstack) {
-        return StatCollector.translateToLocalFormatted("lotr.enchant.protectRanged.desc", this.formatAdditiveInt(this.calcIntProtection()));
-    }
+	@Override
+	public int calcIntProtection() {
+		return protectLevel;
+	}
 
-    @Override
-    public boolean canApply(ItemStack itemstack, boolean considering) {
-        if(super.canApply(itemstack, considering)) {
-            Item item = itemstack.getItem();
-            return !(item instanceof ItemArmor) || ((ItemArmor) item).getArmorMaterial() != LOTRMaterial.GALVORN.toArmorMaterial();
-        }
-        return false;
-    }
+	@Override
+	public boolean canApply(ItemStack itemstack, boolean considering) {
+		if (super.canApply(itemstack, considering)) {
+			Item item = itemstack.getItem();
+			return !(item instanceof ItemArmor) || ((ItemArmor) item).getArmorMaterial() != LOTRMaterial.GALVORN.toArmorMaterial();
+		}
+		return false;
+	}
 
-    @Override
-    protected boolean protectsAgainst(DamageSource source) {
-        return source.isProjectile();
-    }
+	@Override
+	public String getDescription(ItemStack itemstack) {
+		return StatCollector.translateToLocalFormatted("lotr.enchant.protectRanged.desc", formatAdditiveInt(calcIntProtection()));
+	}
 
-    @Override
-    protected int calcIntProtection() {
-        return this.protectLevel;
-    }
+	@Override
+	public boolean protectsAgainst(DamageSource source) {
+		return source.isProjectile();
+	}
 }

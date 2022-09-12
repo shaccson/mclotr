@@ -6,13 +6,13 @@ import net.minecraft.entity.Entity;
 import net.minecraft.util.ResourceLocation;
 
 public class LOTRRenderWargskinRug extends LOTRRenderRugBase {
-    public LOTRRenderWargskinRug() {
-        super(new LOTRModelWargskinRug());
-    }
+	public LOTRRenderWargskinRug() {
+		super(new LOTRModelWargskinRug());
+	}
 
-    @Override
-    protected ResourceLocation getEntityTexture(Entity entity) {
-        LOTREntityWargskinRug rug = (LOTREntityWargskinRug) entity;
-        return LOTRRenderWarg.getWargSkin(rug.getRugType());
-    }
+	@Override
+	public ResourceLocation getEntityTexture(Entity entity) {
+		LOTREntityWargskinRug rug = (LOTREntityWargskinRug) entity;
+		return LOTRRenderWarg.getWargSkin(rug.getRugType());
+	}
 }

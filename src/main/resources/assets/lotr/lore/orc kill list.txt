@@ -1,11 +1,16 @@
-#title:Список смерти
+#written by TheSquidychicken
+#
+#title:My Kill-list
 #author:{name:orc_prefix}{name:orc_suffix}
 #types:mordor,gundabad,dol_guldur,angmar
 #reward
 #
-Выпотрошить кишки у:
-1. {name:orc_prefix}{name:orc_suffix}
-2. {name:orc_prefix}{name:orc_suffix}
-3. {name:orc_prefix}{name:orc_suffix}
-4. {name:orc_prefix}{name:orc_suffix}
-5. {name:orc_prefix}{name:orc_suffix}
+These maggots deserve to die! They will feel the sting of my {choose:blade/axe/spear/arrow} in their guts!
+
+{name:orc_prefix}{name:orc_suffix} (no. {num:1,99999})
+{name:orc_prefix}{name:orc_suffix} (no. {num:1,99999})
+{name:orc_prefix}{name:orc_suffix} (no. {num:1,99999})
+{name:orc_prefix}{name:orc_suffix} (no. {num:1,99999})
+{name:orc_prefix}{name:orc_suffix} (no. {num:1,99999})
+
+I've managed to find another {num:4,10} lads who have offered to help me kill the scum. Once we're done, we'll loot their bodies, and say they fell from the cliffs. The Bosses won't know a thing about it.

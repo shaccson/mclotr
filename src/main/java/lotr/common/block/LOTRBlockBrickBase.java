@@ -12,50 +12,50 @@ import net.minecraft.item.*;
 import net.minecraft.util.IIcon;
 
 public abstract class LOTRBlockBrickBase extends Block {
-    @SideOnly(value = Side.CLIENT)
-    protected IIcon[] brickIcons;
-    protected String[] brickNames;
+	@SideOnly(value = Side.CLIENT)
+	public IIcon[] brickIcons;
+	public String[] brickNames;
 
-    public LOTRBlockBrickBase() {
-        super(Material.rock);
-        this.setCreativeTab(LOTRCreativeTabs.tabBlock);
-        this.setHardness(1.5f);
-        this.setResistance(10.0f);
-        this.setStepSound(Block.soundTypeStone);
-    }
+	public LOTRBlockBrickBase() {
+		super(Material.rock);
+		setCreativeTab(LOTRCreativeTabs.tabBlock);
+		setHardness(1.5f);
+		setResistance(10.0f);
+		setStepSound(Block.soundTypeStone);
+	}
 
-    protected void setBrickNames(String... names) {
-        this.brickNames = names;
-    }
+	@Override
+	public int damageDropped(int i) {
+		return i;
+	}
 
-    @SideOnly(value = Side.CLIENT)
-    @Override
-    public IIcon getIcon(int i, int j) {
-        if(j >= this.brickNames.length) {
-            j = 0;
-        }
-        return this.brickIcons[j];
-    }
+	@SideOnly(value = Side.CLIENT)
+	@Override
+	public IIcon getIcon(int i, int j) {
+		if (j >= brickNames.length) {
+			j = 0;
+		}
+		return brickIcons[j];
+	}
 
-    @SideOnly(value = Side.CLIENT)
-    @Override
-    public void registerBlockIcons(IIconRegister iconregister) {
-        this.brickIcons = new IIcon[this.brickNames.length];
-        for(int i = 0; i < this.brickNames.length; ++i) {
-            this.brickIcons[i] = iconregister.registerIcon(this.getTextureName() + "_" + this.brickNames[i]);
-        }
-    }
+	@SideOnly(value = Side.CLIENT)
+	@Override
+	public void getSubBlocks(Item item, CreativeTabs tab, List list) {
+		for (int i = 0; i < brickNames.length; ++i) {
+			list.add(new ItemStack(item, 1, i));
+		}
+	}
 
-    @Override
-    public int damageDropped(int i) {
-        return i;
-    }
+	@SideOnly(value = Side.CLIENT)
+	@Override
+	public void registerBlockIcons(IIconRegister iconregister) {
+		brickIcons = new IIcon[brickNames.length];
+		for (int i = 0; i < brickNames.length; ++i) {
+			brickIcons[i] = iconregister.registerIcon(getTextureName() + "_" + brickNames[i]);
+		}
+	}
 
-    @SideOnly(value = Side.CLIENT)
-    @Override
-    public void getSubBlocks(Item item, CreativeTabs tab, List list) {
-        for(int i = 0; i < this.brickNames.length; ++i) {
-            list.add(new ItemStack(item, 1, i));
-        }
-    }
+	public void setBrickNames(String... names) {
+		brickNames = names;
+	}
 }

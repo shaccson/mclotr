@@ -13,139 +13,139 @@ import net.minecraft.util.MathHelper;
 import net.minecraft.world.World;
 
 public abstract class LOTREntityNPCRideable extends LOTREntityNPC implements LOTRNPCMount {
-    private UUID tamingPlayer;
-    private int npcTemper;
+	public UUID tamingPlayer;
+	public int npcTemper;
 
-    public LOTREntityNPCRideable(World world) {
-        super(world);
-    }
+	public LOTREntityNPCRideable(World world) {
+		super(world);
+	}
 
-    @Override
-    protected void entityInit() {
-        super.entityInit();
-        this.dataWatcher.addObject(17, (byte) 0);
-    }
+	public void angerNPC() {
+		playSound(getHurtSound(), getSoundVolume(), getSoundPitch() * 1.5f);
+	}
 
-    public boolean isNPCTamed() {
-        return this.dataWatcher.getWatchableObjectByte(17) == 1;
-    }
+	@Override
+	public boolean canDespawn() {
+		return super.canDespawn() && !isNPCTamed();
+	}
 
-    public void setNPCTamed(boolean flag) {
-        this.dataWatcher.updateObject(17, (byte) (flag ? 1 : 0));
-    }
+	@Override
+	public boolean canRenameNPC() {
+		return isNPCTamed() ? true : super.canRenameNPC();
+	}
 
-    @Override
-    public boolean isMountArmorValid(ItemStack itemstack) {
-        if(itemstack != null && itemstack.getItem() instanceof LOTRItemMountArmor) {
-            LOTRItemMountArmor armor = (LOTRItemMountArmor) itemstack.getItem();
-            return armor.isValid(this);
-        }
-        return false;
-    }
+	@Override
+	public void entityInit() {
+		super.entityInit();
+		dataWatcher.addObject(17, (byte) 0);
+	}
 
-    public IInventory getMountInventory() {
-        return null;
-    }
+	public double getBaseMountedYOffset() {
+		return height * 0.5;
+	}
 
-    public void openGUI(EntityPlayer entityplayer) {
-        IInventory inv = this.getMountInventory();
-        if(inv != null && !this.worldObj.isRemote && (this.riddenByEntity == null || this.riddenByEntity == entityplayer) && this.isNPCTamed()) {
-            entityplayer.openGui(LOTRMod.instance, 29, this.worldObj, this.getEntityId(), inv.getSizeInventory(), 0);
-        }
-    }
+	public int getMaxNPCTemper() {
+		return 100;
+	}
 
-    public void tameNPC(EntityPlayer entityplayer) {
-        this.setNPCTamed(true);
-        this.tamingPlayer = entityplayer.getUniqueID();
-    }
+	@Override
+	public double getMountedYOffset() {
+		double d = getBaseMountedYOffset();
+		if (riddenByEntity != null) {
+			d += riddenByEntity.yOffset - riddenByEntity.getYOffset();
+		}
+		return d;
+	}
 
-    public EntityPlayer getTamingPlayer() {
-        return this.worldObj.func_152378_a(this.tamingPlayer);
-    }
+	public IInventory getMountInventory() {
+		return null;
+	}
 
-    @Override
-    public boolean canDespawn() {
-        return super.canDespawn() && !this.isNPCTamed();
-    }
+	public int getNPCTemper() {
+		return npcTemper;
+	}
 
-    @Override
-    public boolean canRenameNPC() {
-        return this.isNPCTamed() ? true : super.canRenameNPC();
-    }
+	@Override
+	public float getStepHeightWhileRiddenByPlayer() {
+		return 1.0f;
+	}
 
-    @Override
-    public void onLivingUpdate() {
-        super.onLivingUpdate();
-        LOTRMountFunctions.update(this);
-    }
+	public EntityPlayer getTamingPlayer() {
+		return worldObj.func_152378_a(tamingPlayer);
+	}
 
-    @Override
-    public void moveEntityWithHeading(float strafe, float forward) {
-        LOTRMountFunctions.move(this, strafe, forward);
-    }
+	public int increaseNPCTemper(int i) {
+		int temper = MathHelper.clamp_int(getNPCTemper() + i, 0, getMaxNPCTemper());
+		setNPCTemper(temper);
+		return getNPCTemper();
+	}
 
-    @Override
-    public void super_moveEntityWithHeading(float strafe, float forward) {
-        super.moveEntityWithHeading(strafe, forward);
-    }
+	@Override
+	public boolean isMountArmorValid(ItemStack itemstack) {
+		if (itemstack != null && itemstack.getItem() instanceof LOTRItemMountArmor) {
+			LOTRItemMountArmor armor = (LOTRItemMountArmor) itemstack.getItem();
+			return armor.isValid(this);
+		}
+		return false;
+	}
 
-    @Override
-    public float getStepHeightWhileRiddenByPlayer() {
-        return 1.0f;
-    }
+	public boolean isNPCTamed() {
+		return dataWatcher.getWatchableObjectByte(17) == 1;
+	}
 
-    @Override
-    public final double getMountedYOffset() {
-        double d = this.getBaseMountedYOffset();
-        if(this.riddenByEntity != null) {
-            d += this.riddenByEntity.yOffset - this.riddenByEntity.getYOffset();
-        }
-        return d;
-    }
+	@Override
+	public void moveEntityWithHeading(float strafe, float forward) {
+		LOTRMountFunctions.move(this, strafe, forward);
+	}
 
-    protected double getBaseMountedYOffset() {
-        return this.height * 0.5;
-    }
+	@Override
+	public void onLivingUpdate() {
+		super.onLivingUpdate();
+		LOTRMountFunctions.update(this);
+	}
 
-    @Override
-    public void writeEntityToNBT(NBTTagCompound nbt) {
-        super.writeEntityToNBT(nbt);
-        nbt.setBoolean("NPCTamed", this.isNPCTamed());
-        if(this.tamingPlayer != null) {
-            nbt.setString("NPCTamer", this.tamingPlayer.toString());
-        }
-        nbt.setInteger("NPCTemper", this.npcTemper);
-    }
+	public void openGUI(EntityPlayer entityplayer) {
+		IInventory inv = getMountInventory();
+		if (inv != null && !worldObj.isRemote && (riddenByEntity == null || riddenByEntity == entityplayer) && isNPCTamed()) {
+			entityplayer.openGui(LOTRMod.instance, 29, worldObj, getEntityId(), inv.getSizeInventory(), 0);
+		}
+	}
 
-    @Override
-    public void readEntityFromNBT(NBTTagCompound nbt) {
-        super.readEntityFromNBT(nbt);
-        this.setNPCTamed(nbt.getBoolean("NPCTamed"));
-        if(nbt.hasKey("NPCTamer")) {
-            this.tamingPlayer = UUID.fromString(nbt.getString("NPCTamer"));
-        }
-        this.npcTemper = nbt.getInteger("NPCTemper");
-    }
+	@Override
+	public void readEntityFromNBT(NBTTagCompound nbt) {
+		super.readEntityFromNBT(nbt);
+		setNPCTamed(nbt.getBoolean("NPCTamed"));
+		if (nbt.hasKey("NPCTamer")) {
+			tamingPlayer = UUID.fromString(nbt.getString("NPCTamer"));
+		}
+		npcTemper = nbt.getInteger("NPCTemper");
+	}
 
-    public int getMaxNPCTemper() {
-        return 100;
-    }
+	public void setNPCTamed(boolean flag) {
+		dataWatcher.updateObject(17, (byte) (flag ? 1 : 0));
+	}
 
-    public int getNPCTemper() {
-        return this.npcTemper;
-    }
+	public void setNPCTemper(int i) {
+		npcTemper = i;
+	}
 
-    public void setNPCTemper(int i) {
-        this.npcTemper = i;
-    }
+	@Override
+	public void super_moveEntityWithHeading(float strafe, float forward) {
+		super.moveEntityWithHeading(strafe, forward);
+	}
 
-    public int increaseNPCTemper(int i) {
-        int temper = MathHelper.clamp_int(this.getNPCTemper() + i, 0, this.getMaxNPCTemper());
-        this.setNPCTemper(temper);
-        return this.getNPCTemper();
-    }
+	public void tameNPC(EntityPlayer entityplayer) {
+		setNPCTamed(true);
+		tamingPlayer = entityplayer.getUniqueID();
+	}
 
-    public void angerNPC() {
-        this.playSound(this.getHurtSound(), this.getSoundVolume(), this.getSoundPitch() * 1.5f);
-    }
+	@Override
+	public void writeEntityToNBT(NBTTagCompound nbt) {
+		super.writeEntityToNBT(nbt);
+		nbt.setBoolean("NPCTamed", isNPCTamed());
+		if (tamingPlayer != null) {
+			nbt.setString("NPCTamer", tamingPlayer.toString());
+		}
+		nbt.setInteger("NPCTemper", npcTemper);
+	}
 }

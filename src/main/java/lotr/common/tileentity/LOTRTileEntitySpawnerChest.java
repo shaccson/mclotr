@@ -6,25 +6,25 @@ import net.minecraft.nbt.NBTTagCompound;
 import net.minecraft.tileentity.TileEntityChest;
 
 public class LOTRTileEntitySpawnerChest extends TileEntityChest {
-    private String entityClassName = "";
+	public String entityClassName = "";
 
-    public void setMobID(Class entityClass) {
-        this.entityClassName = LOTREntities.getStringFromClass(entityClass);
-    }
+	public Entity createMob() {
+		return EntityList.createEntityByName(entityClassName, worldObj);
+	}
 
-    public Entity createMob() {
-        return EntityList.createEntityByName(this.entityClassName, this.worldObj);
-    }
+	@Override
+	public void readFromNBT(NBTTagCompound nbt) {
+		super.readFromNBT(nbt);
+		entityClassName = nbt.getString("MobID");
+	}
 
-    @Override
-    public void readFromNBT(NBTTagCompound nbt) {
-        super.readFromNBT(nbt);
-        this.entityClassName = nbt.getString("MobID");
-    }
+	public void setMobID(Class entityClass) {
+		entityClassName = LOTREntities.getStringFromClass(entityClass);
+	}
 
-    @Override
-    public void writeToNBT(NBTTagCompound nbt) {
-        super.writeToNBT(nbt);
-        nbt.setString("MobID", this.entityClassName);
-    }
+	@Override
+	public void writeToNBT(NBTTagCompound nbt) {
+		super.writeToNBT(nbt);
+		nbt.setString("MobID", entityClassName);
+	}
 }

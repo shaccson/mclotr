@@ -1,13 +1,13 @@
 package lotr.common.fac;
 
 public class LOTRMapRegion {
-    public final int mapX;
-    public final int mapY;
-    public final int radius;
+	public int mapX;
+	public int mapY;
+	public int radius;
 
-    public LOTRMapRegion(int x, int y, int r) {
-        this.mapX = x;
-        this.mapY = y;
-        this.radius = r;
-    }
+	public LOTRMapRegion(int x, int y, int r) {
+		mapX = x;
+		mapY = y;
+		radius = r;
+	}
 }

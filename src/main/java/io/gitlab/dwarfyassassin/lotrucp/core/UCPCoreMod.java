@@ -9,7 +9,17 @@ import io.gitlab.dwarfyassassin.lotrucp.core.patches.base.Patcher;
 public class UCPCoreMod {
 	public static Logger log;
 	public static List<Patcher> activePatches;
-	private static List<Patcher> modPatches;
+	public static List<Patcher> modPatches;
+
+	static {
+		activePatches = new ArrayList<>();
+		modPatches = new ArrayList<>();
+		System.out.println("LOTR-UCP: Found core mod.");
+	}
+
+	public String getAccessTransformerClass() {
+		return null;
+	}
 
 	public String[] getASMTransformerClass() {
 		return new String[] { UCPClassTransformer.class.getName() };
@@ -26,18 +36,6 @@ public class UCPCoreMod {
 	public void injectData(Map<String, Object> data) {
 	}
 
-	public String getAccessTransformerClass() {
-		return null;
-	}
-
-	public static void registerPatcher(Patcher patcher) {
-		if (patcher.getLoadPhase() == Patcher.LoadingPhase.CORE_MOD_LOADING && patcher.shouldInit()) {
-			activePatches.add(patcher);
-		} else if (patcher.getLoadPhase() == Patcher.LoadingPhase.FORGE_MOD_LOADING) {
-			modPatches.add(patcher);
-		}
-	}
-
 	public static void loadModPatches() {
 		int i = 0;
 		for (Patcher patcher : modPatches) {
@@ -51,9 +49,11 @@ public class UCPCoreMod {
 		modPatches.clear();
 	}
 
-	static {
-		activePatches = new ArrayList<>();
-		modPatches = new ArrayList<>();
-		System.out.println("LOTR-UCP: Found core mod.");
+	public static void registerPatcher(Patcher patcher) {
+		if (patcher.getLoadPhase() == Patcher.LoadingPhase.CORE_MOD_LOADING && patcher.shouldInit()) {
+			activePatches.add(patcher);
+		} else if (patcher.getLoadPhase() == Patcher.LoadingPhase.FORGE_MOD_LOADING) {
+			modPatches.add(patcher);
+		}
 	}
 }

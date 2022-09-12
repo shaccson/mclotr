@@ -10,93 +10,88 @@ import net.minecraft.item.ItemStack;
 import net.minecraft.world.World;
 
 public class LOTREntitySwanKnight extends LOTREntityDolAmrothSoldier {
-    public LOTREntitySwanKnight(World world) {
-        super(world);
-        this.addTargetTasks(true);
-        this.spawnRidingHorse = this.rand.nextInt(4) == 0;
-        this.npcShield = LOTRShields.ALIGNMENT_DOL_AMROTH;
-    }
+	public LOTREntitySwanKnight(World world) {
+		super(world);
+		this.addTargetTasks(true);
+		spawnRidingHorse = rand.nextInt(4) == 0;
+		npcShield = LOTRShields.ALIGNMENT_DOL_AMROTH;
+	}
 
-    @Override
-    public EntityAIBase createGondorAttackAI() {
-        return new LOTREntityAIAttackOnCollide(this, 1.5, false);
-    }
+	@Override
+	public void applyEntityAttributes() {
+		super.applyEntityAttributes();
+		getEntityAttribute(SharedMonsterAttributes.maxHealth).setBaseValue(30.0);
+		getEntityAttribute(horseAttackSpeed).setBaseValue(2.0);
+		getEntityAttribute(npcRangedAccuracy).setBaseValue(0.75);
+	}
 
-    @Override
-    public LOTRNPCMount createMountToRide() {
-        LOTREntityHorse horse = (LOTREntityHorse) super.createMountToRide();
-        horse.setMountArmor(new ItemStack(LOTRMod.horseArmorDolAmroth));
-        return horse;
-    }
+	@Override
+	public EntityAIBase createGondorAttackAI() {
+		return new LOTREntityAIAttackOnCollide(this, 1.5, false);
+	}
 
-    @Override
-    protected void applyEntityAttributes() {
-        super.applyEntityAttributes();
-        this.getEntityAttribute(SharedMonsterAttributes.maxHealth).setBaseValue(30.0);
-        this.getEntityAttribute(horseAttackSpeed).setBaseValue(2.0);
-        this.getEntityAttribute(npcRangedAccuracy).setBaseValue(0.75);
-    }
+	@Override
+	public LOTRNPCMount createMountToRide() {
+		LOTREntityHorse horse = (LOTREntityHorse) super.createMountToRide();
+		horse.setMountArmor(new ItemStack(LOTRMod.horseArmorDolAmroth));
+		return horse;
+	}
 
-    @Override
-    public IEntityLivingData onSpawnWithEgg(IEntityLivingData data) {
-        data = super.onSpawnWithEgg(data);
-        if(this.rand.nextInt(4) == 0) {
-            this.npcItemsInv.setMeleeWeapon(new ItemStack(LOTRMod.longspearDolAmroth));
-        }
-        else {
-            this.npcItemsInv.setMeleeWeapon(new ItemStack(LOTRMod.swordDolAmroth));
-        }
-        if(this.rand.nextInt(3) == 0) {
-            this.npcItemsInv.setMeleeWeaponMounted(new ItemStack(LOTRMod.lanceDolAmroth));
-        }
-        else {
-            this.npcItemsInv.setMeleeWeaponMounted(this.npcItemsInv.getMeleeWeapon());
-        }
-        this.npcItemsInv.setIdleItem(this.npcItemsInv.getMeleeWeapon());
-        this.npcItemsInv.setIdleItemMounted(this.npcItemsInv.getMeleeWeaponMounted());
-        this.setCurrentItemOrArmor(1, new ItemStack(LOTRMod.bootsDolAmroth));
-        this.setCurrentItemOrArmor(2, new ItemStack(LOTRMod.legsDolAmroth));
-        this.setCurrentItemOrArmor(3, new ItemStack(LOTRMod.bodyDolAmroth));
-        this.setCurrentItemOrArmor(4, new ItemStack(LOTRMod.helmetDolAmroth));
-        return data;
-    }
+	@Override
+	public float getAlignmentBonus() {
+		return 2.0f;
+	}
 
-    @Override
-    protected void onAttackModeChange(LOTREntityNPC.AttackMode mode, boolean mounted) {
-        if(mode == LOTREntityNPC.AttackMode.IDLE) {
-            if(mounted) {
-                this.setCurrentItemOrArmor(0, this.npcItemsInv.getIdleItemMounted());
-            }
-            else {
-                this.setCurrentItemOrArmor(0, this.npcItemsInv.getIdleItem());
-            }
-        }
-        else if(mounted) {
-            this.setCurrentItemOrArmor(0, this.npcItemsInv.getMeleeWeaponMounted());
-        }
-        else {
-            this.setCurrentItemOrArmor(0, this.npcItemsInv.getMeleeWeapon());
-        }
-    }
+	@Override
+	public LOTRAchievement getKillAchievement() {
+		return LOTRAchievement.killSwanKnight;
+	}
 
-    @Override
-    protected LOTRAchievement getKillAchievement() {
-        return LOTRAchievement.killSwanKnight;
-    }
+	@Override
+	public String getSpeechBank(EntityPlayer entityplayer) {
+		if (isFriendly(entityplayer)) {
+			if (hiredNPCInfo.getHiringPlayer() == entityplayer) {
+				return "gondor/swanKnight/hired";
+			}
+			return "gondor/swanKnight/friendly";
+		}
+		return "gondor/swanKnight/hostile";
+	}
 
-    @Override
-    public float getAlignmentBonus() {
-        return 2.0f;
-    }
+	@Override
+	public void onAttackModeChange(LOTREntityNPC.AttackMode mode, boolean mounted) {
+		if (mode == LOTREntityNPC.AttackMode.IDLE) {
+			if (mounted) {
+				setCurrentItemOrArmor(0, npcItemsInv.getIdleItemMounted());
+			} else {
+				setCurrentItemOrArmor(0, npcItemsInv.getIdleItem());
+			}
+		} else if (mounted) {
+			setCurrentItemOrArmor(0, npcItemsInv.getMeleeWeaponMounted());
+		} else {
+			setCurrentItemOrArmor(0, npcItemsInv.getMeleeWeapon());
+		}
+	}
 
-    @Override
-    public String getSpeechBank(EntityPlayer entityplayer) {
-        if(this.isFriendly(entityplayer)) {
-            if(this.hiredNPCInfo.getHiringPlayer() == entityplayer) {
-                return "gondor/swanKnight/hired";
-            }
-            return "gondor/swanKnight/friendly";
-        }
-        return "gondor/swanKnight/hostile";
-    }
+	@Override
+	public IEntityLivingData onSpawnWithEgg(IEntityLivingData data) {
+		data = super.onSpawnWithEgg(data);
+		if (rand.nextInt(4) == 0) {
+			npcItemsInv.setMeleeWeapon(new ItemStack(LOTRMod.longspearDolAmroth));
+		} else {
+			npcItemsInv.setMeleeWeapon(new ItemStack(LOTRMod.swordDolAmroth));
+		}
+		if (rand.nextInt(3) == 0) {
+			npcItemsInv.setMeleeWeaponMounted(new ItemStack(LOTRMod.lanceDolAmroth));
+		} else {
+			npcItemsInv.setMeleeWeaponMounted(npcItemsInv.getMeleeWeapon());
+		}
+		npcItemsInv.setIdleItem(npcItemsInv.getMeleeWeapon());
+		npcItemsInv.setIdleItemMounted(npcItemsInv.getMeleeWeaponMounted());
+		setCurrentItemOrArmor(1, new ItemStack(LOTRMod.bootsDolAmroth));
+		setCurrentItemOrArmor(2, new ItemStack(LOTRMod.legsDolAmroth));
+		setCurrentItemOrArmor(3, new ItemStack(LOTRMod.bodyDolAmroth));
+		setCurrentItemOrArmor(4, new ItemStack(LOTRMod.helmetDolAmroth));
+		return data;
+	}
 }

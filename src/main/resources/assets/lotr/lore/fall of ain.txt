@@ -1,19 +1,21 @@
-#title:Мой дорогой брат
-#author: Ашур, командир Змеиной стражи
-#types:harnedor,southron,umbar
+# Karseius
+#
+#title:My Dear Brother
+#author:Ashur of the Serpent Guard
+#types:harnennor,southron,umbar
 #reward
 #
-Аин-ан-Ахар:
-В день двадцать четвертого числа, шестого месяца, 1050 года Третьей Эпохи:
+Ain an-Ahâr:
+This day, the twenty-fourth of the sixth month, year 1050 of the Third Age:
 
-Мой дорогой брат, я спешно пишу срочными новостями.
+My dear brother, I write in haste with urgent news.
 
-Кирьяхер - прокляни его имя! - раздавил наши силы у вод Астразира. Я отступил с тем, что осталось от войск моего хозяина, до Аин-ан-Ахара.
+Ciryaher - curse his name! - has crushed our forces by the waters of the Athrassir. I retreated with what is left of my host to Ain an-Ahâr.
 
-Ситуация ужасная. Принц отказался подчиниться захватчикам и покончил с собой. Половина моих людей покинула меня, услышав эту новость! Теперь остаются только отчаявшиеся и обреченные, охраняющие наши стены. Боги оставили нас.
+The situation is dire. The Prince refused to submit to the invaders, and has taken his own life. Half of my men deserted me after hearing the news! Only the desperate and doomed now remain, guarding our walls. The gods have forsaken us.
 
-Боюсь, скоро Кирьяхер и его мерзавцы захватят город. Отведите своих воинов на восток, чтобы встретиться с союзными племенами и собрать больше сил.
+It will not be long until Ciryaher and his invaders take the city, I fear. Take your warriors east to meet with the allied tribes, and gather more strength.
 
-Прошу вас, пока не вступайте в бой с собаками Гондора. Вы нужны живими. Мое же время на этой земле подошло к концу; я найду честь в смерти.
+I beseech you, do not yet engage the dogs of Gondor. Live to fight another day. My time on this earth has come to an end; I shall find honour in death.
 
-Твой брат Ашур, начальник Змеиной стражи.
+Your brother Ashur, chief of the Serpent Guard

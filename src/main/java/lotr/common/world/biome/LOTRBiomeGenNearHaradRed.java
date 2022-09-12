@@ -3,14 +3,14 @@ package lotr.common.world.biome;
 import net.minecraft.init.Blocks;
 
 public class LOTRBiomeGenNearHaradRed extends LOTRBiomeGenNearHarad {
-    public LOTRBiomeGenNearHaradRed(int i, boolean major) {
-        super(i, major);
-        this.setDisableRain();
-        this.topBlock = Blocks.sand;
-        this.topBlockMeta = 1;
-        this.fillerBlock = Blocks.sand;
-        this.fillerBlockMeta = 1;
-        this.decorator.clearRandomStructures();
-        this.decorator.clearVillages();
-    }
+	public LOTRBiomeGenNearHaradRed(int i, boolean major) {
+		super(i, major);
+		setDisableRain();
+		topBlock = Blocks.sand;
+		topBlockMeta = 1;
+		fillerBlock = Blocks.sand;
+		fillerBlockMeta = 1;
+		decorator.clearRandomStructures();
+		decorator.clearVillages();
+	}
 }

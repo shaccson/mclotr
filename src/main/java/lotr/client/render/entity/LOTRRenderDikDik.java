@@ -7,16 +7,16 @@ import net.minecraft.entity.Entity;
 import net.minecraft.util.ResourceLocation;
 
 public class LOTRRenderDikDik extends RenderLiving {
-    private static LOTRRandomSkins skins;
+	public static LOTRRandomSkins skins;
 
-    public LOTRRenderDikDik() {
-        super(new LOTRModelDikDik(), 0.8f);
-        skins = LOTRRandomSkins.loadSkinsList("lotr:mob/dikdik");
-    }
+	public LOTRRenderDikDik() {
+		super(new LOTRModelDikDik(), 0.8f);
+		skins = LOTRRandomSkins.loadSkinsList("lotr:mob/dikdik");
+	}
 
-    @Override
-    protected ResourceLocation getEntityTexture(Entity entity) {
-        LOTREntityDikDik dikdik = (LOTREntityDikDik) entity;
-        return skins.getRandomSkin(dikdik);
-    }
+	@Override
+	public ResourceLocation getEntityTexture(Entity entity) {
+		LOTREntityDikDik dikdik = (LOTREntityDikDik) entity;
+		return skins.getRandomSkin(dikdik);
+	}
 }

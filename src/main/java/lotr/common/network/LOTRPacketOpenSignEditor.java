@@ -9,50 +9,50 @@ import net.minecraft.entity.player.EntityPlayer;
 import net.minecraft.world.World;
 
 public class LOTRPacketOpenSignEditor implements IMessage {
-    private int posX;
-    private int posY;
-    private int posZ;
-    private Block blockType;
-    private int blockMeta;
+	public int posX;
+	public int posY;
+	public int posZ;
+	public Block blockType;
+	public int blockMeta;
 
-    public LOTRPacketOpenSignEditor() {
-    }
+	public LOTRPacketOpenSignEditor() {
+	}
 
-    public LOTRPacketOpenSignEditor(LOTRTileEntitySign sign) {
-        this.posX = sign.xCoord;
-        this.posY = sign.yCoord;
-        this.posZ = sign.zCoord;
-        this.blockType = sign.getBlockType();
-        this.blockMeta = sign.getBlockMetadata();
-    }
+	public LOTRPacketOpenSignEditor(LOTRTileEntitySign sign) {
+		posX = sign.xCoord;
+		posY = sign.yCoord;
+		posZ = sign.zCoord;
+		blockType = sign.getBlockType();
+		blockMeta = sign.getBlockMetadata();
+	}
 
-    @Override
-    public void toBytes(ByteBuf data) {
-        data.writeInt(this.posX);
-        data.writeInt(this.posY);
-        data.writeInt(this.posZ);
-        data.writeShort(Block.getIdFromBlock(this.blockType));
-        data.writeByte(this.blockMeta);
-    }
+	@Override
+	public void fromBytes(ByteBuf data) {
+		posX = data.readInt();
+		posY = data.readInt();
+		posZ = data.readInt();
+		blockType = Block.getBlockById(data.readShort());
+		blockMeta = data.readByte();
+	}
 
-    @Override
-    public void fromBytes(ByteBuf data) {
-        this.posX = data.readInt();
-        this.posY = data.readInt();
-        this.posZ = data.readInt();
-        this.blockType = Block.getBlockById(data.readShort());
-        this.blockMeta = data.readByte();
-    }
+	@Override
+	public void toBytes(ByteBuf data) {
+		data.writeInt(posX);
+		data.writeInt(posY);
+		data.writeInt(posZ);
+		data.writeShort(Block.getIdFromBlock(blockType));
+		data.writeByte(blockMeta);
+	}
 
-    public static class Handler implements IMessageHandler<LOTRPacketOpenSignEditor, IMessage> {
-        @Override
-        public IMessage onMessage(LOTRPacketOpenSignEditor packet, MessageContext context) {
-            EntityPlayer entityplayer = LOTRMod.proxy.getClientPlayer();
-            World world = LOTRMod.proxy.getClientWorld();
-            world.setBlock(packet.posX, packet.posY, packet.posZ, packet.blockType, packet.blockMeta, 3);
-            entityplayer.openGui(LOTRMod.instance, 47, world, packet.posX, packet.posY, packet.posZ);
-            return null;
-        }
-    }
+	public static class Handler implements IMessageHandler<LOTRPacketOpenSignEditor, IMessage> {
+		@Override
+		public IMessage onMessage(LOTRPacketOpenSignEditor packet, MessageContext context) {
+			EntityPlayer entityplayer = LOTRMod.proxy.getClientPlayer();
+			World world = LOTRMod.proxy.getClientWorld();
+			world.setBlock(packet.posX, packet.posY, packet.posZ, packet.blockType, packet.blockMeta, 3);
+			entityplayer.openGui(LOTRMod.instance, 47, world, packet.posX, packet.posY, packet.posZ);
+			return null;
+		}
+	}
 
 }

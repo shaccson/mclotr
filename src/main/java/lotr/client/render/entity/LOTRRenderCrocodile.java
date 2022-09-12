@@ -7,23 +7,23 @@ import net.minecraft.entity.*;
 import net.minecraft.util.ResourceLocation;
 
 public class LOTRRenderCrocodile extends RenderLiving {
-    private static ResourceLocation texture = new ResourceLocation("lotr:mob/crocodile.png");
+	public static ResourceLocation texture = new ResourceLocation("lotr:mob/crocodile.png");
 
-    public LOTRRenderCrocodile() {
-        super(new LOTRModelCrocodile(), 0.75f);
-    }
+	public LOTRRenderCrocodile() {
+		super(new LOTRModelCrocodile(), 0.75f);
+	}
 
-    @Override
-    public ResourceLocation getEntityTexture(Entity entity) {
-        return texture;
-    }
+	@Override
+	public ResourceLocation getEntityTexture(Entity entity) {
+		return texture;
+	}
 
-    @Override
-    public float handleRotationFloat(EntityLivingBase entity, float f) {
-        float snapTime = ((LOTREntityCrocodile) entity).getSnapTime();
-        if(snapTime > 0.0f) {
-            snapTime -= f;
-        }
-        return snapTime / 20.0f;
-    }
+	@Override
+	public float handleRotationFloat(EntityLivingBase entity, float f) {
+		float snapTime = ((LOTREntityCrocodile) entity).getSnapTime();
+		if (snapTime > 0.0f) {
+			snapTime -= f;
+		}
+		return snapTime / 20.0f;
+	}
 }

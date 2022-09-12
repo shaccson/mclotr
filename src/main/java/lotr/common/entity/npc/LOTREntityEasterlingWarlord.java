@@ -10,72 +10,72 @@ import net.minecraft.item.ItemStack;
 import net.minecraft.world.World;
 
 public class LOTREntityEasterlingWarlord extends LOTREntityEasterlingGoldWarrior implements LOTRUnitTradeable {
-    public LOTREntityEasterlingWarlord(World world) {
-        super(world);
-        this.addTargetTasks(false);
-    }
+	public LOTREntityEasterlingWarlord(World world) {
+		super(world);
+		this.addTargetTasks(false);
+	}
 
-    @Override
-    protected EntityAIBase createEasterlingAttackAI() {
-        return new LOTREntityAIAttackOnCollide(this, 1.6, true);
-    }
+	@Override
+	public void applyEntityAttributes() {
+		super.applyEntityAttributes();
+		getEntityAttribute(SharedMonsterAttributes.maxHealth).setBaseValue(25.0);
+	}
 
-    @Override
-    protected void applyEntityAttributes() {
-        super.applyEntityAttributes();
-        this.getEntityAttribute(SharedMonsterAttributes.maxHealth).setBaseValue(25.0);
-    }
+	@Override
+	public boolean canTradeWith(EntityPlayer entityplayer) {
+		return LOTRLevelData.getData(entityplayer).getAlignment(getFaction()) >= 150.0f && isFriendly(entityplayer);
+	}
 
-    @Override
-    public IEntityLivingData onSpawnWithEgg(IEntityLivingData data) {
-        data = super.onSpawnWithEgg(data);
-        this.npcItemsInv.setMeleeWeapon(new ItemStack(LOTRMod.battleaxeRhun));
-        this.npcItemsInv.setIdleItem(this.npcItemsInv.getMeleeWeapon());
-        this.setCurrentItemOrArmor(1, new ItemStack(LOTRMod.bootsRhunGold));
-        this.setCurrentItemOrArmor(2, new ItemStack(LOTRMod.legsRhunGold));
-        this.setCurrentItemOrArmor(3, new ItemStack(LOTRMod.bodyRhunGold));
-        this.setCurrentItemOrArmor(4, new ItemStack(LOTRMod.helmetRhunWarlord));
-        return data;
-    }
+	@Override
+	public EntityAIBase createEasterlingAttackAI() {
+		return new LOTREntityAIAttackOnCollide(this, 1.6, true);
+	}
 
-    @Override
-    public float getAlignmentBonus() {
-        return 5.0f;
-    }
+	@Override
+	public float getAlignmentBonus() {
+		return 5.0f;
+	}
 
-    @Override
-    public LOTRUnitTradeEntries getUnits() {
-        return LOTRUnitTradeEntries.EASTERLING_WARLORD;
-    }
+	@Override
+	public String getSpeechBank(EntityPlayer entityplayer) {
+		if (isFriendly(entityplayer)) {
+			if (canTradeWith(entityplayer)) {
+				return "rhun/warlord/friendly";
+			}
+			return "rhun/warlord/neutral";
+		}
+		return "rhun/warrior/hostile";
+	}
 
-    @Override
-    public LOTRInvasions getWarhorn() {
-        return LOTRInvasions.RHUN;
-    }
+	@Override
+	public LOTRUnitTradeEntries getUnits() {
+		return LOTRUnitTradeEntries.EASTERLING_WARLORD;
+	}
 
-    @Override
-    public boolean canTradeWith(EntityPlayer entityplayer) {
-        return LOTRLevelData.getData(entityplayer).getAlignment(this.getFaction()) >= 150.0f && this.isFriendly(entityplayer);
-    }
+	@Override
+	public LOTRInvasions getWarhorn() {
+		return LOTRInvasions.RHUN;
+	}
 
-    @Override
-    public void onUnitTrade(EntityPlayer entityplayer) {
-        LOTRLevelData.getData(entityplayer).addAchievement(LOTRAchievement.tradeRhunCaptain);
-    }
+	@Override
+	public IEntityLivingData onSpawnWithEgg(IEntityLivingData data) {
+		data = super.onSpawnWithEgg(data);
+		npcItemsInv.setMeleeWeapon(new ItemStack(LOTRMod.battleaxeRhun));
+		npcItemsInv.setIdleItem(npcItemsInv.getMeleeWeapon());
+		setCurrentItemOrArmor(1, new ItemStack(LOTRMod.bootsRhunGold));
+		setCurrentItemOrArmor(2, new ItemStack(LOTRMod.legsRhunGold));
+		setCurrentItemOrArmor(3, new ItemStack(LOTRMod.bodyRhunGold));
+		setCurrentItemOrArmor(4, new ItemStack(LOTRMod.helmetRhunWarlord));
+		return data;
+	}
 
-    @Override
-    public boolean shouldTraderRespawn() {
-        return true;
-    }
+	@Override
+	public void onUnitTrade(EntityPlayer entityplayer) {
+		LOTRLevelData.getData(entityplayer).addAchievement(LOTRAchievement.tradeRhunCaptain);
+	}
 
-    @Override
-    public String getSpeechBank(EntityPlayer entityplayer) {
-        if(this.isFriendly(entityplayer)) {
-            if(this.canTradeWith(entityplayer)) {
-                return "rhun/warlord/friendly";
-            }
-            return "rhun/warlord/neutral";
-        }
-        return "rhun/warrior/hostile";
-    }
+	@Override
+	public boolean shouldTraderRespawn() {
+		return true;
+	}
 }

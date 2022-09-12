@@ -19,19 +19,111 @@ import net.minecraft.nbt.*;
 import net.minecraft.util.MathHelper;
 
 public class LOTRLore {
-	private static final String newline = "\n";
-	private static final String codeMetadata = "#";
-	private static final String codeTitle = "title:";
-	private static final String codeAuthor = "author:";
-	private static final String codeCategory = "types:";
-	private static final String codeCategorySeparator = ",";
-	private static final String codeReward = "reward";
-	public final String loreName;
-	public final String loreTitle;
-	public final String loreAuthor;
-	public final String loreText;
-	public final List<LoreCategory> loreCategories;
-	public final boolean isRewardable;
+	public static String newline = "\n";
+	public static String codeMetadata = "#";
+	public static String codeTitle = "title:";
+	public static String codeAuthor = "author:";
+	public static String codeCategory = "types:";
+	public static String codeCategorySeparator = ",";
+	public static String codeReward = "reward";
+	public String loreName;
+	public String loreTitle;
+	public String loreAuthor;
+	public String loreText;
+	public List<LoreCategory> loreCategories;
+	public boolean isRewardable;
+
+	public LOTRLore(String name, String title, String auth, String text, List<LoreCategory> categories, boolean reward) {
+		loreName = name;
+		loreTitle = title;
+		loreAuthor = auth;
+		loreText = text;
+		loreCategories = categories;
+		isRewardable = reward;
+	}
+
+	public ItemStack createLoreBook(Random random) {
+		ItemStack itemstack = new ItemStack(Items.written_book);
+		NBTTagCompound data = new NBTTagCompound();
+		itemstack.setTagCompound(data);
+		String title = formatRandom(loreTitle, random);
+		String author = formatRandom(loreAuthor, random);
+		String text = formatRandom(loreText, random);
+		List<String> textPages = LOTRLore.organisePages(text);
+		data.setString("title", title);
+		data.setString("author", author);
+		NBTTagList pages = new NBTTagList();
+		for (String pageText : textPages) {
+			pages.appendTag(new NBTTagString(pageText));
+		}
+		data.setTag("pages", pages);
+		return itemstack;
+	}
+
+	public String formatRandom(String text, Random random) {
+		int lastIndexStart = -1;
+		do {
+			String formatted;
+			String unformatted;
+			block16: {
+				String s1;
+				int indexStart = text.indexOf("{", lastIndexStart + 1);
+				int indexEnd = text.indexOf("}");
+				lastIndexStart = indexStart;
+				if (indexStart < 0 || indexEnd <= indexStart) {
+					break;
+				}
+				unformatted = text.substring(indexStart, indexEnd + 1);
+				formatted = unformatted.substring(1, unformatted.length() - 1);
+				if (formatted.startsWith("num:")) {
+					try {
+						s1 = formatted.substring("num:".length());
+						int i1 = s1.indexOf(codeCategorySeparator);
+						String s2 = s1.substring(0, i1);
+						String s3 = s1.substring(i1 + codeCategorySeparator.length());
+						int min = Integer.parseInt(s2);
+						int max = Integer.parseInt(s3);
+						int number = MathHelper.getRandomIntegerInRange(random, min, max);
+						formatted = String.valueOf(number);
+					} catch (Exception e) {
+						e.printStackTrace();
+					}
+				} else if (formatted.startsWith("name:")) {
+					try {
+						String namebank = s1 = formatted.substring("name:".length());
+						if (!LOTRNames.nameBankExists(namebank)) {
+							break block16;
+						}
+						formatted = LOTRNames.getRandomName(namebank, random);
+					} catch (Exception e) {
+						e.printStackTrace();
+					}
+				} else if (formatted.startsWith("choose:")) {
+					try {
+						String remaining = formatted.substring("choose:".length());
+						ArrayList<String> words = new ArrayList<>();
+						while (remaining.length() > 0) {
+							String word;
+							int indexOf = remaining.indexOf("/");
+							if (indexOf >= 0) {
+								word = remaining.substring(0, indexOf);
+								remaining = remaining.substring(indexOf + "/".length());
+							} else {
+								word = remaining;
+								remaining = "";
+							}
+							words.add(word);
+						}
+						formatted = words.get(random.nextInt(words.size()));
+					} catch (Exception e) {
+						e.printStackTrace();
+					}
+				}
+			}
+			text = Pattern.compile(unformatted, 16).matcher(text).replaceFirst(Matcher.quoteReplacement(formatted));
+		} while (true);
+		return text;
+	}
 
 	public static LOTRLore getMultiRandomLore(List<LoreCategory> categories, Random random, boolean rewardsOnly) {
 		ArrayList<LOTRLore> allLore = new ArrayList<>();
@@ -107,7 +199,7 @@ public class LOTRLore {
 				String title = "";
 				String author = "";
 				ArrayList<LoreCategory> categories = new ArrayList<>();
-				String text = "";
+				StringBuilder text = new StringBuilder();
 				boolean reward = false;
 				while ((line = reader.readLine()) != null) {
 					if (line.startsWith(codeMetadata)) {
@@ -135,7 +227,7 @@ public class LOTRLore {
 								if (categoryName == null) {
 									continue;
 								}
-								if (((String) categoryName).equals("all")) {
+								if ("all".equals(categoryName)) {
 									for (LoreCategory category : LoreCategory.values()) {
 										if (categories.contains(category)) {
 											continue;
@@ -161,11 +253,11 @@ public class LOTRLore {
 						reward = true;
 						continue;
 					}
-					text = text + line;
-					text = text + newline;
+					text.append(line);
+					text.append(newline);
 				}
 				reader.close();
-				LOTRLore lore = new LOTRLore(loreName, title, author, text, categories, reward);
+				LOTRLore lore = new LOTRLore(loreName, title, author, text.toString(), categories, reward);
 				Iterator<LoreCategory> categoryString1 = categories.iterator();
 				while (categoryString1.hasNext()) {
 					LoreCategory category = categoryString1.next();
@@ -193,16 +285,7 @@ public class LOTRLore {
 		}
 	}
 
-	public LOTRLore(String name, String title, String auth, String text, List<LoreCategory> categories, boolean reward) {
-		loreName = name;
-		loreTitle = title;
-		loreAuthor = auth;
-		loreText = text;
-		loreCategories = categories;
-		isRewardable = reward;
-	}
-
-	private static List<String> organisePages(String loreText) {
+	public static List<String> organisePages(String loreText) {
 		ArrayList<String> loreTextPages = new ArrayList<>();
 		String remainingText = loreText;
 		ArrayList<String> splitTxtWords = new ArrayList<>();
@@ -219,9 +302,7 @@ public class LOTRLore {
 			part = "";
 			int indexOf = remainingText.indexOf(newline);
 			part = indexOf >= 0 ? remainingText.substring(0, indexOf) : remainingText;
-			for (String word : StringUtils.split(part, " ")) {
-				splitTxtWords.add(word);
-			}
+			Collections.addAll(splitTxtWords, StringUtils.split(part, " "));
 			remainingText = remainingText.substring(part.length());
 		}
 		while (!splitTxtWords.isEmpty()) {
@@ -235,11 +316,12 @@ public class LOTRLore {
 				if (pageText.length() + word.length() > 256) {
 					break;
 				}
-				if (word.equals(newline)) {
+				if (newline.equals(word)) {
 					if (currentLine.length() > 0) {
 						pageText = pageText + currentLine;
 						currentLine = "";
-						if (++numLines >= 13) {
+						numLines++;
+						if (numLines >= 13) {
 							break;
 						}
 					}
@@ -248,7 +330,8 @@ public class LOTRLore {
 						continue;
 					}
 					pageText = pageText + word;
-					if (++numLines < 13) {
+					numLines++;
+					if (numLines < 13) {
 						continue;
 					}
 					break;
@@ -263,7 +346,8 @@ public class LOTRLore {
 				}
 				pageText = pageText + currentLine;
 				currentLine = "";
-				if (++numLines >= 13) {
+				numLines++;
+				if (numLines >= 13) {
 					break;
 				}
 			}
@@ -280,101 +364,18 @@ public class LOTRLore {
 		return loreTextPages;
 	}
 
-	private String formatRandom(String text, Random random) {
-		int lastIndexStart = -1;
-		do {
-			String formatted;
-			String unformatted;
-			block16: {
-				String s1;
-				int indexStart = text.indexOf("{", lastIndexStart + 1);
-				int indexEnd = text.indexOf("}");
-				lastIndexStart = indexStart;
-				if (indexStart < 0 || indexEnd <= indexStart) {
-					break;
-				}
-				unformatted = text.substring(indexStart, indexEnd + 1);
-				formatted = unformatted.substring(1, unformatted.length() - 1);
-				if (formatted.startsWith("num:")) {
-					try {
-						s1 = formatted.substring("num:".length());
-						int i1 = s1.indexOf(codeCategorySeparator);
-						String s2 = s1.substring(0, i1);
-						String s3 = s1.substring(i1 + codeCategorySeparator.length());
-						int min = Integer.parseInt(s2);
-						int max = Integer.parseInt(s3);
-						int number = MathHelper.getRandomIntegerInRange(random, min, max);
-						formatted = String.valueOf(number);
-					} catch (Exception e) {
-						e.printStackTrace();
-					}
-				} else if (formatted.startsWith("name:")) {
-					try {
-						String namebank = s1 = formatted.substring("name:".length());
-						if (!LOTRNames.nameBankExists(namebank)) {
-							break block16;
-						}
-						formatted = LOTRNames.getRandomName(namebank, random);
-					} catch (Exception e) {
-						e.printStackTrace();
-					}
-				} else if (formatted.startsWith("choose:")) {
-					try {
-						String remaining = formatted.substring("choose:".length());
-						ArrayList<String> words = new ArrayList<>();
-						while (remaining.length() > 0) {
-							String word;
-							int indexOf = remaining.indexOf("/");
-							if (indexOf >= 0) {
-								word = remaining.substring(0, indexOf);
-								remaining = remaining.substring(indexOf + "/".length());
-							} else {
-								word = remaining;
-								remaining = "";
-							}
-							words.add(word);
-						}
-						formatted = words.get(random.nextInt(words.size()));
-					} catch (Exception e) {
-						e.printStackTrace();
-					}
-				}
-			}
-			text = Pattern.compile(unformatted, 16).matcher(text).replaceFirst(Matcher.quoteReplacement(formatted));
-		} while (true);
-		return text;
-	}
-
-	public ItemStack createLoreBook(Random random) {
-		ItemStack itemstack = new ItemStack(Items.written_book);
-		NBTTagCompound data = new NBTTagCompound();
-		itemstack.setTagCompound(data);
-		String title = formatRandom(loreTitle, random);
-		String author = formatRandom(loreAuthor, random);
-		String text = formatRandom(loreText, random);
-		List<String> textPages = LOTRLore.organisePages(text);
-		data.setString("title", title);
-		data.setString("author", author);
-		NBTTagList pages = new NBTTagList();
-		for (String pageText : textPages) {
-			pages.appendTag(new NBTTagString(pageText));
-		}
-		data.setTag("pages", pages);
-		return itemstack;
-	}
-
 	public enum LoreCategory {
 		RUINS("ruins"), SHIRE("shire"), BREE("bree"), BLUE_MOUNTAINS("blue_mountains"), LINDON("lindon"), ERIADOR("eriador"), RIVENDELL("rivendell"), EREGION("eregion"), DUNLAND("dunland"), GUNDABAD("gundabad"), ANGMAR("angmar"), WOODLAND_REALM("woodland_realm"), DOL_GULDUR("dol_guldur"), DALE("dale"), DURIN("durins_folk"), LOTHLORIEN("lothlorien"), ROHAN("rohan"), ISENGARD("isengard"), GONDOR("gondor"), MORDOR("mordor"), DORWINION("dorwinion"), RHUN("rhun"), HARNENNOR("harnennor"), SOUTHRON("southron"), UMBAR("umbar"), NOMAD("nomad"), GULF("gulf"), FAR_HARAD("far_harad"), FAR_HARAD_JUNGLE("far_harad_jungle"), HALF_TROLL("half_troll");
 
-		public static final String allCode = "all";
-		public final String categoryName;
-		private List<LOTRLore> loreList = new ArrayList<>();
+		public static String allCode = "all";
+		public String categoryName;
+		public List<LOTRLore> loreList = new ArrayList<>();
 
 		LoreCategory(String s) {
 			categoryName = s;
 		}
 
-		private void addLore(LOTRLore lore) {
+		public void addLore(LOTRLore lore) {
 			loreList.add(lore);
 		}
 

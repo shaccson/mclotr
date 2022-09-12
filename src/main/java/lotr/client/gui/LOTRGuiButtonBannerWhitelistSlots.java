@@ -6,23 +6,22 @@ import net.minecraft.client.Minecraft;
 import net.minecraft.client.gui.GuiButton;
 import net.minecraft.util.ResourceLocation;
 
-public class LOTRGuiButtonBannerWhitelistSlots
-extends GuiButton {
-    private static ResourceLocation guiTexture = new ResourceLocation("lotr:gui/banner_edit.png");
+public class LOTRGuiButtonBannerWhitelistSlots extends GuiButton {
+	public static ResourceLocation guiTexture = new ResourceLocation("lotr:gui/banner_edit.png");
 
-    public LOTRGuiButtonBannerWhitelistSlots(int i, int j, int k) {
-        super(i, j, k, 7, 7, "");
-    }
+	public LOTRGuiButtonBannerWhitelistSlots(int i, int j, int k) {
+		super(i, j, k, 7, 7, "");
+	}
 
-    public void drawButton(Minecraft mc, int i, int j) {
-        if (this.visible) {
-            mc.getTextureManager().bindTexture(guiTexture);
-            GL11.glColor4f(1.0f, 1.0f, 1.0f, 1.0f);
-            boolean over = i >= this.xPosition && j >= this.yPosition && i < this.xPosition + this.width && j < this.yPosition + this.height;
-            int k = 226 + this.id * this.width;
-            int l = this.getHoverState(over) * this.width;
-            this.drawTexturedModalRect(this.xPosition, this.yPosition, k, l, this.width, this.height);
-        }
-    }
+	@Override
+	public void drawButton(Minecraft mc, int i, int j) {
+		if (visible) {
+			mc.getTextureManager().bindTexture(guiTexture);
+			GL11.glColor4f(1.0f, 1.0f, 1.0f, 1.0f);
+			boolean over = i >= xPosition && j >= yPosition && i < xPosition + width && j < yPosition + height;
+			int k = 226 + id * width;
+			int l = getHoverState(over) * width;
+			drawTexturedModalRect(xPosition, yPosition, k, l, width, height);
+		}
+	}
 }
-

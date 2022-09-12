@@ -5,12 +5,12 @@ import net.minecraft.inventory.*;
 import net.minecraft.item.ItemStack;
 
 public class LOTRSlotSaddle extends Slot {
-    public LOTRSlotSaddle(IInventory inv, int i, int j, int k) {
-        super(inv, i, j, k);
-    }
+	public LOTRSlotSaddle(IInventory inv, int i, int j, int k) {
+		super(inv, i, j, k);
+	}
 
-    @Override
-    public boolean isItemValid(ItemStack itemstack) {
-        return super.isItemValid(itemstack) && itemstack.getItem() == Items.saddle && !this.getHasStack();
-    }
+	@Override
+	public boolean isItemValid(ItemStack itemstack) {
+		return super.isItemValid(itemstack) && itemstack.getItem() == Items.saddle && !getHasStack();
+	}
 }

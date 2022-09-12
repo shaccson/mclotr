@@ -8,74 +8,74 @@ import net.minecraft.item.ItemStack;
 import net.minecraft.world.World;
 
 public class LOTREntityBlueDwarfMiner extends LOTREntityBlueDwarf implements LOTRTradeable {
-    public LOTREntityBlueDwarfMiner(World world) {
-        super(world);
-    }
+	public LOTREntityBlueDwarfMiner(World world) {
+		super(world);
+	}
 
-    @Override
-    public LOTRTradeEntries getBuyPool() {
-        return LOTRTradeEntries.BLUE_DWARF_MINER_BUY;
-    }
+	@Override
+	public boolean canDwarfSpawnAboveGround() {
+		return false;
+	}
 
-    @Override
-    public LOTRTradeEntries getSellPool() {
-        return LOTRTradeEntries.BLUE_DWARF_MINER_SELL;
-    }
+	@Override
+	public boolean canTradeWith(EntityPlayer entityplayer) {
+		return LOTRLevelData.getData(entityplayer).getAlignment(getFaction()) >= 100.0f && isFriendly(entityplayer);
+	}
 
-    @Override
-    public IEntityLivingData onSpawnWithEgg(IEntityLivingData data) {
-        data = super.onSpawnWithEgg(data);
-        this.npcItemsInv.setMeleeWeapon(new ItemStack(LOTRMod.pickaxeBlueDwarven));
-        this.npcItemsInv.setIdleItem(this.npcItemsInv.getMeleeWeapon());
-        return data;
-    }
+	@Override
+	public void dropFewItems(boolean flag, int i) {
+		super.dropFewItems(flag, i);
+		if (flag) {
+			if (rand.nextInt(4) == 0) {
+				dropChestContents(LOTRChestContents.DWARVEN_MINE_CORRIDOR, 1, 2 + i);
+			}
+			if (rand.nextInt(15) == 0) {
+				entityDropItem(new ItemStack(LOTRMod.mithrilNugget), 0.0f);
+			}
+		}
+	}
 
-    @Override
-    protected boolean canDwarfSpawnAboveGround() {
-        return false;
-    }
+	@Override
+	public float getAlignmentBonus() {
+		return 2.0f;
+	}
 
-    @Override
-    public float getAlignmentBonus() {
-        return 2.0f;
-    }
+	@Override
+	public LOTRTradeEntries getBuyPool() {
+		return LOTRTradeEntries.BLUE_DWARF_MINER_BUY;
+	}
 
-    @Override
-    public boolean canTradeWith(EntityPlayer entityplayer) {
-        return LOTRLevelData.getData(entityplayer).getAlignment(this.getFaction()) >= 100.0f && this.isFriendly(entityplayer);
-    }
+	@Override
+	public LOTRTradeEntries getSellPool() {
+		return LOTRTradeEntries.BLUE_DWARF_MINER_SELL;
+	}
 
-    @Override
-    public void onPlayerTrade(EntityPlayer entityplayer, LOTRTradeEntries.TradeType type, ItemStack itemstack) {
-        LOTRLevelData.getData(entityplayer).addAchievement(LOTRAchievement.tradeBlueDwarfMiner);
-    }
+	@Override
+	public String getSpeechBank(EntityPlayer entityplayer) {
+		if (isFriendly(entityplayer)) {
+			if (canTradeWith(entityplayer)) {
+				return "blueDwarf/miner/friendly";
+			}
+			return "blueDwarf/miner/neutral";
+		}
+		return "blueDwarf/dwarf/hostile";
+	}
 
-    @Override
-    public boolean shouldTraderRespawn() {
-        return false;
-    }
+	@Override
+	public void onPlayerTrade(EntityPlayer entityplayer, LOTRTradeEntries.TradeType type, ItemStack itemstack) {
+		LOTRLevelData.getData(entityplayer).addAchievement(LOTRAchievement.tradeBlueDwarfMiner);
+	}
 
-    @Override
-    protected void dropFewItems(boolean flag, int i) {
-        super.dropFewItems(flag, i);
-        if(flag) {
-            if(this.rand.nextInt(4) == 0) {
-                this.dropChestContents(LOTRChestContents.DWARVEN_MINE_CORRIDOR, 1, 2 + i);
-            }
-            if(this.rand.nextInt(15) == 0) {
-                this.entityDropItem(new ItemStack(LOTRMod.mithrilNugget), 0.0f);
-            }
-        }
-    }
+	@Override
+	public IEntityLivingData onSpawnWithEgg(IEntityLivingData data) {
+		data = super.onSpawnWithEgg(data);
+		npcItemsInv.setMeleeWeapon(new ItemStack(LOTRMod.pickaxeBlueDwarven));
+		npcItemsInv.setIdleItem(npcItemsInv.getMeleeWeapon());
+		return data;
+	}
 
-    @Override
-    public String getSpeechBank(EntityPlayer entityplayer) {
-        if(this.isFriendly(entityplayer)) {
-            if(this.canTradeWith(entityplayer)) {
-                return "blueDwarf/miner/friendly";
-            }
-            return "blueDwarf/miner/neutral";
-        }
-        return "blueDwarf/dwarf/hostile";
-    }
+	@Override
+	public boolean shouldTraderRespawn() {
+		return false;
+	}
 }

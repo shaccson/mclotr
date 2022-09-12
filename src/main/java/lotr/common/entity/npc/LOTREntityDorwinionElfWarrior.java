@@ -9,61 +9,60 @@ import net.minecraft.item.ItemStack;
 import net.minecraft.world.World;
 
 public class LOTREntityDorwinionElfWarrior extends LOTREntityDorwinionElf {
-    public LOTREntityDorwinionElfWarrior(World world) {
-        super(world);
-        this.tasks.addTask(2, this.meleeAttackAI);
-        this.npcShield = LOTRShields.ALIGNMENT_DORWINION_ELF;
-    }
+	public LOTREntityDorwinionElfWarrior(World world) {
+		super(world);
+		tasks.addTask(2, meleeAttackAI);
+		npcShield = LOTRShields.ALIGNMENT_DORWINION_ELF;
+	}
 
-    @Override
-    protected EntityAIBase createElfMeleeAttackAI() {
-        return new LOTREntityAIAttackOnCollide(this, 1.5, false);
-    }
+	@Override
+	public void applyEntityAttributes() {
+		super.applyEntityAttributes();
+		getEntityAttribute(SharedMonsterAttributes.followRange).setBaseValue(24.0);
+	}
 
-    @Override
-    protected void applyEntityAttributes() {
-        super.applyEntityAttributes();
-        this.getEntityAttribute(SharedMonsterAttributes.followRange).setBaseValue(24.0);
-    }
+	@Override
+	public EntityAIBase createElfMeleeAttackAI() {
+		return new LOTREntityAIAttackOnCollide(this, 1.5, false);
+	}
 
-    @Override
-    public IEntityLivingData onSpawnWithEgg(IEntityLivingData data) {
-        data = super.onSpawnWithEgg(data);
-        int i = this.rand.nextInt(2);
-        if(i == 0) {
-            this.npcItemsInv.setMeleeWeapon(new ItemStack(LOTRMod.swordDorwinionElf));
-            if(this.rand.nextInt(5) == 0) {
-                this.npcItemsInv.setSpearBackup(this.npcItemsInv.getMeleeWeapon());
-                this.npcItemsInv.setMeleeWeapon(new ItemStack(LOTRMod.spearBladorthin));
-            }
-        }
-        else if(i == 1) {
-            this.npcItemsInv.setMeleeWeapon(new ItemStack(LOTRMod.spearBladorthin));
-            this.npcItemsInv.setSpearBackup(null);
-        }
-        this.npcItemsInv.setIdleItem(this.npcItemsInv.getMeleeWeapon());
-        this.setCurrentItemOrArmor(1, new ItemStack(LOTRMod.bootsDorwinionElf));
-        this.setCurrentItemOrArmor(2, new ItemStack(LOTRMod.legsDorwinionElf));
-        this.setCurrentItemOrArmor(3, new ItemStack(LOTRMod.bodyDorwinionElf));
-        if(this.rand.nextInt(10) != 0) {
-            this.setCurrentItemOrArmor(4, new ItemStack(LOTRMod.helmetDorwinionElf));
-        }
-        return data;
-    }
+	@Override
+	public float getAlignmentBonus() {
+		return 3.0f;
+	}
 
-    @Override
-    public float getAlignmentBonus() {
-        return 3.0f;
-    }
+	@Override
+	public String getSpeechBank(EntityPlayer entityplayer) {
+		if (isFriendly(entityplayer)) {
+			if (hiredNPCInfo.getHiringPlayer() == entityplayer) {
+				return "dorwinion/elfWarrior/hired";
+			}
+			return "dorwinion/elfWarrior/friendly";
+		}
+		return "dorwinion/elfWarrior/hostile";
+	}
 
-    @Override
-    public String getSpeechBank(EntityPlayer entityplayer) {
-        if(this.isFriendly(entityplayer)) {
-            if(this.hiredNPCInfo.getHiringPlayer() == entityplayer) {
-                return "dorwinion/elfWarrior/hired";
-            }
-            return "dorwinion/elfWarrior/friendly";
-        }
-        return "dorwinion/elfWarrior/hostile";
-    }
+	@Override
+	public IEntityLivingData onSpawnWithEgg(IEntityLivingData data) {
+		data = super.onSpawnWithEgg(data);
+		int i = rand.nextInt(2);
+		if (i == 0) {
+			npcItemsInv.setMeleeWeapon(new ItemStack(LOTRMod.swordDorwinionElf));
+			if (rand.nextInt(5) == 0) {
+				npcItemsInv.setSpearBackup(npcItemsInv.getMeleeWeapon());
+				npcItemsInv.setMeleeWeapon(new ItemStack(LOTRMod.spearBladorthin));
+			}
+		} else if (i == 1) {
+			npcItemsInv.setMeleeWeapon(new ItemStack(LOTRMod.spearBladorthin));
+			npcItemsInv.setSpearBackup(null);
+		}
+		npcItemsInv.setIdleItem(npcItemsInv.getMeleeWeapon());
+		setCurrentItemOrArmor(1, new ItemStack(LOTRMod.bootsDorwinionElf));
+		setCurrentItemOrArmor(2, new ItemStack(LOTRMod.legsDorwinionElf));
+		setCurrentItemOrArmor(3, new ItemStack(LOTRMod.bodyDorwinionElf));
+		if (rand.nextInt(10) != 0) {
+			setCurrentItemOrArmor(4, new ItemStack(LOTRMod.helmetDorwinionElf));
+		}
+		return data;
+	}
 }

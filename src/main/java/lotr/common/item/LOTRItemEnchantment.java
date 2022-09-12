@@ -5,10 +5,10 @@ import lotr.common.enchant.LOTREnchantment;
 import net.minecraft.item.Item;
 
 public class LOTRItemEnchantment extends Item {
-    public final LOTREnchantment theEnchant;
+	public LOTREnchantment theEnchant;
 
-    public LOTRItemEnchantment(LOTREnchantment ench) {
-        this.setCreativeTab(LOTRCreativeTabs.tabMaterials);
-        this.theEnchant = ench;
-    }
+	public LOTRItemEnchantment(LOTREnchantment ench) {
+		setCreativeTab(LOTRCreativeTabs.tabMaterials);
+		theEnchant = ench;
+	}
 }

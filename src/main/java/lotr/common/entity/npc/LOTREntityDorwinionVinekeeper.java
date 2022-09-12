@@ -11,78 +11,77 @@ import net.minecraft.item.ItemStack;
 import net.minecraft.world.World;
 
 public class LOTREntityDorwinionVinekeeper extends LOTREntityDorwinionMan implements LOTRTradeable, LOTRUnitTradeable {
-    public LOTREntityDorwinionVinekeeper(World world) {
-        super(world);
-        this.addTargetTasks(false);
-    }
+	public LOTREntityDorwinionVinekeeper(World world) {
+		super(world);
+		this.addTargetTasks(false);
+	}
 
-    @Override
-    public LOTRTradeEntries getBuyPool() {
-        return LOTRTradeEntries.DORWINION_VINEKEEPER_BUY;
-    }
+	@Override
+	public boolean canTradeWith(EntityPlayer entityplayer) {
+		return LOTRLevelData.getData(entityplayer).getAlignment(getFaction()) >= 0.0f && isFriendly(entityplayer);
+	}
 
-    @Override
-    public LOTRTradeEntries getSellPool() {
-        return LOTRTradeEntries.DORWINION_VINEKEEPER_SELL;
-    }
+	@Override
+	public EntityAIBase createDorwinionAttackAI() {
+		return new LOTREntityAIAttackOnCollide(this, 1.4, true);
+	}
 
-    @Override
-    protected EntityAIBase createDorwinionAttackAI() {
-        return new LOTREntityAIAttackOnCollide(this, 1.4, true);
-    }
+	@Override
+	public float getAlignmentBonus() {
+		return 2.0f;
+	}
 
-    @Override
-    public IEntityLivingData onSpawnWithEgg(IEntityLivingData data) {
-        data = super.onSpawnWithEgg(data);
-        this.npcItemsInv.setMeleeWeapon(new ItemStack(Items.iron_hoe));
-        if(this.rand.nextBoolean()) {
-            this.npcItemsInv.setIdleItem(new ItemStack(LOTRMod.grapeRed));
-        }
-        else {
-            this.npcItemsInv.setIdleItem(new ItemStack(LOTRMod.grapeWhite));
-        }
-        return data;
-    }
+	@Override
+	public LOTRTradeEntries getBuyPool() {
+		return LOTRTradeEntries.DORWINION_VINEKEEPER_BUY;
+	}
 
-    @Override
-    public float getAlignmentBonus() {
-        return 2.0f;
-    }
+	@Override
+	public LOTRTradeEntries getSellPool() {
+		return LOTRTradeEntries.DORWINION_VINEKEEPER_SELL;
+	}
 
-    @Override
-    public LOTRInvasions getWarhorn() {
-        return null;
-    }
+	@Override
+	public String getSpeechBank(EntityPlayer entityplayer) {
+		if (isFriendly(entityplayer)) {
+			return "dorwinion/vinekeeper/friendly";
+		}
+		return "dorwinion/vinekeeper/hostile";
+	}
 
-    @Override
-    public boolean canTradeWith(EntityPlayer entityplayer) {
-        return LOTRLevelData.getData(entityplayer).getAlignment(this.getFaction()) >= 0.0f && this.isFriendly(entityplayer);
-    }
+	@Override
+	public LOTRUnitTradeEntries getUnits() {
+		return LOTRUnitTradeEntries.DORWINION_VINEKEEPER;
+	}
 
-    @Override
-    public void onPlayerTrade(EntityPlayer entityplayer, LOTRTradeEntries.TradeType type, ItemStack itemstack) {
-    }
+	@Override
+	public LOTRInvasions getWarhorn() {
+		return null;
+	}
 
-    @Override
-    public LOTRUnitTradeEntries getUnits() {
-        return LOTRUnitTradeEntries.DORWINION_VINEKEEPER;
-    }
+	@Override
+	public void onPlayerTrade(EntityPlayer entityplayer, LOTRTradeEntries.TradeType type, ItemStack itemstack) {
+	}
 
-    @Override
-    public void onUnitTrade(EntityPlayer entityplayer) {
-        LOTRLevelData.getData(entityplayer).addAchievement(LOTRAchievement.hireDorwinionVinekeeper);
-    }
+	@Override
+	public IEntityLivingData onSpawnWithEgg(IEntityLivingData data) {
+		data = super.onSpawnWithEgg(data);
+		npcItemsInv.setMeleeWeapon(new ItemStack(Items.iron_hoe));
+		if (rand.nextBoolean()) {
+			npcItemsInv.setIdleItem(new ItemStack(LOTRMod.grapeRed));
+		} else {
+			npcItemsInv.setIdleItem(new ItemStack(LOTRMod.grapeWhite));
+		}
+		return data;
+	}
 
-    @Override
-    public boolean shouldTraderRespawn() {
-        return false;
-    }
+	@Override
+	public void onUnitTrade(EntityPlayer entityplayer) {
+		LOTRLevelData.getData(entityplayer).addAchievement(LOTRAchievement.hireDorwinionVinekeeper);
+	}
 
-    @Override
-    public String getSpeechBank(EntityPlayer entityplayer) {
-        if(this.isFriendly(entityplayer)) {
-            return "dorwinion/vinekeeper/friendly";
-        }
-        return "dorwinion/vinekeeper/hostile";
-    }
+	@Override
+	public boolean shouldTraderRespawn() {
+		return false;
+	}
 }

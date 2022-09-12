@@ -7,12 +7,12 @@ import net.minecraft.block.Block;
 import net.minecraft.world.World;
 
 public class LOTRBiomeGenMistyMountainsFoothills extends LOTRBiomeGenMistyMountains {
-    public LOTRBiomeGenMistyMountainsFoothills(int i, boolean major) {
-        super(i, major);
-        this.decorator.biomeGemFactor = 0.75f;
-    }
+	public LOTRBiomeGenMistyMountainsFoothills(int i, boolean major) {
+		super(i, major);
+		decorator.biomeGemFactor = 0.75f;
+	}
 
-    @Override
-    protected void generateMountainTerrain(World world, Random random, Block[] blocks, byte[] meta, int i, int k, int xzIndex, int ySize, int height, int rockDepth, LOTRBiomeVariant variant) {
-    }
+	@Override
+	public void generateMountainTerrain(World world, Random random, Block[] blocks, byte[] meta, int i, int k, int xzIndex, int ySize, int height, int rockDepth, LOTRBiomeVariant variant) {
+	}
 }

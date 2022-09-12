@@ -15,200 +15,213 @@ import net.minecraft.world.EnumSkyBlock;
 import net.minecraft.world.chunk.Chunk;
 
 public class LOTRTileEntityBeacon extends TileEntity {
-    private int ticksExisted;
-    private boolean isLit;
-    private int litCounter;
-    private int unlitCounter;
-    private long stateChangeTime = -1L;
-    private String beaconName;
-    private UUID beaconFellowshipID;
-    private List<EntityPlayer> editingPlayers = new ArrayList<>();
+	public int ticksExisted;
+	public boolean isLit;
+	public int litCounter;
+	public int unlitCounter;
+	public long stateChangeTime = -1L;
+	public String beaconName;
+	public UUID beaconFellowshipID;
+	public List<EntityPlayer> editingPlayers = new ArrayList<>();
 
-    public void setLit(boolean flag) {
-        boolean wasLit = this.isLit;
-        this.isLit = flag;
-        if(!this.isLit) {
-            this.litCounter = 0;
-        }
-        else {
-            this.unlitCounter = 0;
-        }
-        this.updateLight();
-        this.stateChangeTime = this.worldObj.getTotalWorldTime();
-        if(wasLit && !this.isLit) {
-            this.sendFellowshipMessage(false);
-        }
-    }
+	public void addEditingPlayer(EntityPlayer entityplayer) {
+		if (!editingPlayers.contains(entityplayer)) {
+			editingPlayers.add(entityplayer);
+		}
+	}
 
-    private void updateLight() {
-        this.worldObj.updateLightByType(EnumSkyBlock.Block, this.xCoord, this.yCoord, this.zCoord);
-        this.worldObj.markBlockForUpdate(this.xCoord, this.yCoord, this.zCoord);
-        this.markDirty();
-    }
+	public String getBeaconName() {
+		return beaconName;
+	}
 
-    public boolean isLit() {
-        return this.isLit;
-    }
+	@Override
+	public Packet getDescriptionPacket() {
+		NBTTagCompound data = new NBTTagCompound();
+		writeToNBT(data);
+		return new S35PacketUpdateTileEntity(xCoord, yCoord, zCoord, 0, data);
+	}
 
-    public boolean isFullyLit() {
-        return this.isLit() && this.litCounter == 100;
-    }
+	public UUID getFellowshipID() {
+		return beaconFellowshipID;
+	}
 
-    @Override
-    public void updateEntity() {
-        ++this.ticksExisted;
-        if(!this.worldObj.isRemote) {
-            if(this.isLit && this.litCounter < 100) {
-                ++this.litCounter;
-                if(this.litCounter == 100) {
-                    this.updateLight();
-                    this.sendFellowshipMessage(true);
-                }
-            }
-            if(!this.isLit && this.unlitCounter < 100) {
-                ++this.unlitCounter;
-                if(this.unlitCounter == 100) {
-                    this.updateLight();
-                }
-            }
-            if(this.ticksExisted % 10 == 0) {
-                boolean spreadUnlit;
-                boolean spreadLit = this.isLit && this.litCounter >= 100;
-                spreadUnlit = !this.isLit && this.unlitCounter >= 100;
-                if(spreadLit || spreadUnlit) {
-                    ArrayList<LOTRTileEntityBeacon> nearbyTiles = new ArrayList<>();
-                    int range = 88;
-                    int chunkRange = range >> 4;
-                    int chunkX = this.xCoord >> 4;
-                    int chunkZ = this.zCoord >> 4;
-                    ChunkCoordinates coordsThis = new ChunkCoordinates(this.xCoord, this.yCoord, this.zCoord);
-                    for(int i1 = -chunkRange; i1 <= chunkRange; ++i1) {
-                        for(int k1 = -chunkRange; k1 <= chunkRange; ++k1) {
-                            Chunk chunk;
-                            int i2 = chunkX + i1;
-                            int k2 = chunkZ + k1;
-                            if(!this.worldObj.getChunkProvider().chunkExists(i2, k2) || (chunk = this.worldObj.getChunkFromChunkCoords(i2, k2)) == null) continue;
-                            for(Object obj : chunk.chunkTileEntityMap.values()) {
-                                TileEntity te = (TileEntity) obj;
-                                if(te.isInvalid() || !(te instanceof LOTRTileEntityBeacon)) continue;
-                                LOTRTileEntityBeacon beacon = (LOTRTileEntityBeacon) te;
-                                if((coordsThis.getDistanceSquared(beacon.xCoord, beacon.yCoord, beacon.zCoord) > 6400.0f)) continue;
-                                nearbyTiles.add(beacon);
-                            }
-                        }
-                    }
-                    if(spreadLit) {
-                        for(LOTRTileEntityBeacon other : nearbyTiles) {
-                            if(other.isLit || this.stateChangeTime <= other.stateChangeTime) continue;
-                            other.setLit(true);
-                        }
-                    }
-                    if(spreadUnlit) {
-                        for(LOTRTileEntityBeacon other : nearbyTiles) {
-                            if(!other.isLit || this.stateChangeTime <= other.stateChangeTime) continue;
-                            other.setLit(false);
-                        }
-                    }
-                }
-            }
-        }
-        HashSet<EntityPlayer> removePlayers = new HashSet<>();
-        for(EntityPlayer entityplayer : this.editingPlayers) {
-            if(!entityplayer.isDead) continue;
-            removePlayers.add(entityplayer);
-        }
-        this.editingPlayers.removeAll(removePlayers);
-    }
+	public boolean isFullyLit() {
+		return isLit() && litCounter == 100;
+	}
 
-    public boolean isPlayerEditing(EntityPlayer entityplayer) {
-        return this.editingPlayers.contains(entityplayer);
-    }
+	public boolean isLit() {
+		return isLit;
+	}
 
-    public void addEditingPlayer(EntityPlayer entityplayer) {
-        if(!this.editingPlayers.contains(entityplayer)) {
-            this.editingPlayers.add(entityplayer);
-        }
-    }
+	public boolean isPlayerEditing(EntityPlayer entityplayer) {
+		return editingPlayers.contains(entityplayer);
+	}
 
-    public void releaseEditingPlayer(EntityPlayer entityplayer) {
-        this.editingPlayers.remove(entityplayer);
-    }
+	@Override
+	public void onDataPacket(NetworkManager manager, S35PacketUpdateTileEntity packet) {
+		NBTTagCompound data = packet.func_148857_g();
+		readFromNBT(data);
+		updateLight();
+	}
 
-    public UUID getFellowshipID() {
-        return this.beaconFellowshipID;
-    }
+	@Override
+	public void readFromNBT(NBTTagCompound nbt) {
+		super.readFromNBT(nbt);
+		isLit = nbt.getBoolean("IsLit");
+		litCounter = nbt.getByte("LitCounter");
+		unlitCounter = nbt.getByte("UnlitCounter");
+		stateChangeTime = nbt.getLong("StateChangeTime");
+		beaconName = nbt.hasKey("BeaconName") ? nbt.getString("BeaconName") : null;
+		beaconFellowshipID = nbt.hasKey("BeaconFellowship") ? UUID.fromString(nbt.getString("BeaconFellowship")) : null;
+	}
 
-    public String getBeaconName() {
-        return this.beaconName;
-    }
+	public void releaseEditingPlayer(EntityPlayer entityplayer) {
+		editingPlayers.remove(entityplayer);
+	}
 
-    public void setFellowship(LOTRFellowship fs) {
-        this.beaconFellowshipID = fs != null ? fs.getFellowshipID() : null;
-        this.beaconFellowshipID = fs == null ? null : fs.getFellowshipID();
-        this.worldObj.markBlockForUpdate(this.xCoord, this.yCoord, this.zCoord);
-        this.markDirty();
-    }
+	public void sendFellowshipMessage(boolean lit) {
+		LOTRFellowship fs;
+		if (beaconFellowshipID != null && (fs = LOTRFellowshipData.getActiveFellowship(beaconFellowshipID)) != null) {
+			String beaconMessageName = beaconName;
+			if (StringUtils.isBlank(beaconMessageName)) {
+				beaconMessageName = fs.getName();
+			}
+			ChatComponentTranslation message = new ChatComponentTranslation(lit ? "container.lotr.beacon.lit" : "container.lotr.beacon.unlit", beaconMessageName);
+			message.getChatStyle().setColor(EnumChatFormatting.YELLOW);
+			for (UUID player : fs.getAllPlayerUUIDs()) {
+				EntityPlayer entityplayer = worldObj.func_152378_a(player);
+				if (entityplayer == null) {
+					continue;
+				}
+				entityplayer.addChatMessage(message);
+			}
+		}
+	}
 
-    public void setBeaconName(String name) {
-        this.beaconName = name;
-        this.worldObj.markBlockForUpdate(this.xCoord, this.yCoord, this.zCoord);
-        this.markDirty();
-    }
+	public void setBeaconName(String name) {
+		beaconName = name;
+		worldObj.markBlockForUpdate(xCoord, yCoord, zCoord);
+		markDirty();
+	}
 
-    private void sendFellowshipMessage(boolean lit) {
-        LOTRFellowship fs;
-        if(this.beaconFellowshipID != null && (fs = LOTRFellowshipData.getFellowship(this.beaconFellowshipID)) != null && !fs.isDisbanded()) {
-            String beaconMessageName = this.beaconName;
-            if(StringUtils.isBlank(beaconMessageName)) {
-                beaconMessageName = fs.getName();
-            }
-            ChatComponentTranslation message = new ChatComponentTranslation(lit ? "container.lotr.beacon.lit" : "container.lotr.beacon.unlit", beaconMessageName);
-            message.getChatStyle().setColor(EnumChatFormatting.YELLOW);
-            for(UUID player : fs.getAllPlayerUUIDs()) {
-                EntityPlayer entityplayer = this.worldObj.func_152378_a(player);
-                if(entityplayer == null) continue;
-                entityplayer.addChatMessage(message);
-            }
-        }
-    }
+	public void setFellowship(LOTRFellowship fs) {
+		beaconFellowshipID = fs != null ? fs.getFellowshipID() : null;
+		beaconFellowshipID = fs == null ? null : fs.getFellowshipID();
+		worldObj.markBlockForUpdate(xCoord, yCoord, zCoord);
+		markDirty();
+	}
 
-    @Override
-    public void writeToNBT(NBTTagCompound nbt) {
-        super.writeToNBT(nbt);
-        nbt.setBoolean("IsLit", this.isLit);
-        nbt.setByte("LitCounter", (byte) this.litCounter);
-        nbt.setByte("UnlitCounter", (byte) this.unlitCounter);
-        nbt.setLong("StateChangeTime", this.stateChangeTime);
-        if(this.beaconName != null) {
-            nbt.setString("BeaconName", this.beaconName);
-        }
-        if(this.beaconFellowshipID != null) {
-            nbt.setString("BeaconFellowship", this.beaconFellowshipID.toString());
-        }
-    }
+	public void setLit(boolean flag) {
+		boolean wasLit = isLit;
+		isLit = flag;
+		if (!isLit) {
+			litCounter = 0;
+		} else {
+			unlitCounter = 0;
+		}
+		updateLight();
+		stateChangeTime = worldObj.getTotalWorldTime();
+		if (wasLit && !isLit) {
+			sendFellowshipMessage(false);
+		}
+	}
 
-    @Override
-    public void readFromNBT(NBTTagCompound nbt) {
-        super.readFromNBT(nbt);
-        this.isLit = nbt.getBoolean("IsLit");
-        this.litCounter = nbt.getByte("LitCounter");
-        this.unlitCounter = nbt.getByte("UnlitCounter");
-        this.stateChangeTime = nbt.getLong("StateChangeTime");
-        this.beaconName = nbt.hasKey("BeaconName") ? nbt.getString("BeaconName") : null;
-        this.beaconFellowshipID = nbt.hasKey("BeaconFellowship") ? UUID.fromString(nbt.getString("BeaconFellowship")) : null;
-    }
+	@Override
+	public void updateEntity() {
+		++ticksExisted;
+		if (!worldObj.isRemote) {
+			if (isLit && litCounter < 100) {
+				++litCounter;
+				if (litCounter == 100) {
+					updateLight();
+					sendFellowshipMessage(true);
+				}
+			}
+			if (!isLit && unlitCounter < 100) {
+				++unlitCounter;
+				if (unlitCounter == 100) {
+					updateLight();
+				}
+			}
+			if (ticksExisted % 10 == 0) {
+				boolean spreadUnlit;
+				boolean spreadLit = isLit && litCounter >= 100;
+				spreadUnlit = !isLit && unlitCounter >= 100;
+				if (spreadLit || spreadUnlit) {
+					ArrayList<LOTRTileEntityBeacon> nearbyTiles = new ArrayList<>();
+					int range = 88;
+					int chunkRange = range >> 4;
+					int chunkX = xCoord >> 4;
+					int chunkZ = zCoord >> 4;
+					ChunkCoordinates coordsThis = new ChunkCoordinates(xCoord, yCoord, zCoord);
+					for (int i1 = -chunkRange; i1 <= chunkRange; ++i1) {
+						for (int k1 = -chunkRange; k1 <= chunkRange; ++k1) {
+							Chunk chunk;
+							int i2 = chunkX + i1;
+							int k2 = chunkZ + k1;
+							if (!worldObj.getChunkProvider().chunkExists(i2, k2) || (chunk = worldObj.getChunkFromChunkCoords(i2, k2)) == null) {
+								continue;
+							}
+							for (Object obj : chunk.chunkTileEntityMap.values()) {
+								TileEntity te = (TileEntity) obj;
+								if (te.isInvalid() || !(te instanceof LOTRTileEntityBeacon)) {
+									continue;
+								}
+								LOTRTileEntityBeacon beacon = (LOTRTileEntityBeacon) te;
+								if (coordsThis.getDistanceSquared(beacon.xCoord, beacon.yCoord, beacon.zCoord) > 6400.0f) {
+									continue;
+								}
+								nearbyTiles.add(beacon);
+							}
+						}
+					}
+					if (spreadLit) {
+						for (LOTRTileEntityBeacon other : nearbyTiles) {
+							if (other.isLit || stateChangeTime <= other.stateChangeTime) {
+								continue;
+							}
+							other.setLit(true);
+						}
+					}
+					if (spreadUnlit) {
+						for (LOTRTileEntityBeacon other : nearbyTiles) {
+							if (!other.isLit || stateChangeTime <= other.stateChangeTime) {
+								continue;
+							}
+							other.setLit(false);
+						}
+					}
+				}
+			}
+		}
+		HashSet<EntityPlayer> removePlayers = new HashSet<>();
+		for (EntityPlayer entityplayer : editingPlayers) {
+			if (!entityplayer.isDead) {
+				continue;
+			}
+			removePlayers.add(entityplayer);
+		}
+		editingPlayers.removeAll(removePlayers);
+	}
 
-    @Override
-    public Packet getDescriptionPacket() {
-        NBTTagCompound data = new NBTTagCompound();
-        this.writeToNBT(data);
-        return new S35PacketUpdateTileEntity(this.xCoord, this.yCoord, this.zCoord, 0, data);
-    }
+	public void updateLight() {
+		worldObj.updateLightByType(EnumSkyBlock.Block, xCoord, yCoord, zCoord);
+		worldObj.markBlockForUpdate(xCoord, yCoord, zCoord);
+		markDirty();
+	}
 
-    @Override
-    public void onDataPacket(NetworkManager manager, S35PacketUpdateTileEntity packet) {
-        NBTTagCompound data = packet.func_148857_g();
-        this.readFromNBT(data);
-        this.updateLight();
-    }
+	@Override
+	public void writeToNBT(NBTTagCompound nbt) {
+		super.writeToNBT(nbt);
+		nbt.setBoolean("IsLit", isLit);
+		nbt.setByte("LitCounter", (byte) litCounter);
+		nbt.setByte("UnlitCounter", (byte) unlitCounter);
+		nbt.setLong("StateChangeTime", stateChangeTime);
+		if (beaconName != null) {
+			nbt.setString("BeaconName", beaconName);
+		}
+		if (beaconFellowshipID != null) {
+			nbt.setString("BeaconFellowship", beaconFellowshipID.toString());
+		}
+	}
 }

@@ -6,25 +6,25 @@ import net.minecraft.item.ItemStack;
 import net.minecraft.world.World;
 
 public class LOTREntitySouthronBaker extends LOTREntitySouthronTrader {
-    public LOTREntitySouthronBaker(World world) {
-        super(world);
-    }
+	public LOTREntitySouthronBaker(World world) {
+		super(world);
+	}
 
-    @Override
-    public LOTRTradeEntries getBuyPool() {
-        return LOTRTradeEntries.HARAD_BAKER_BUY;
-    }
+	@Override
+	public LOTRTradeEntries getBuyPool() {
+		return LOTRTradeEntries.HARAD_BAKER_BUY;
+	}
 
-    @Override
-    public LOTRTradeEntries getSellPool() {
-        return LOTRTradeEntries.HARAD_BAKER_SELL;
-    }
+	@Override
+	public LOTRTradeEntries getSellPool() {
+		return LOTRTradeEntries.HARAD_BAKER_SELL;
+	}
 
-    @Override
-    public IEntityLivingData onSpawnWithEgg(IEntityLivingData data) {
-        data = super.onSpawnWithEgg(data);
-        this.npcItemsInv.setMeleeWeapon(new ItemStack(LOTRMod.rollingPin));
-        this.npcItemsInv.setIdleItem(new ItemStack(LOTRMod.oliveBread));
-        return data;
-    }
+	@Override
+	public IEntityLivingData onSpawnWithEgg(IEntityLivingData data) {
+		data = super.onSpawnWithEgg(data);
+		npcItemsInv.setMeleeWeapon(new ItemStack(LOTRMod.rollingPin));
+		npcItemsInv.setIdleItem(new ItemStack(LOTRMod.oliveBread));
+		return data;
+	}
 }

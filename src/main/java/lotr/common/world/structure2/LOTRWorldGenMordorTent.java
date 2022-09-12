@@ -7,30 +7,34 @@ import lotr.common.world.structure.LOTRChestContents;
 import net.minecraft.init.Blocks;
 
 public class LOTRWorldGenMordorTent extends LOTRWorldGenTentBase {
-    public LOTRWorldGenMordorTent(boolean flag) {
-        super(flag);
-    }
+	public LOTRWorldGenMordorTent(boolean flag) {
+		super(flag);
+	}
 
-    @Override
-    protected void setupRandomBlocks(Random random) {
-        super.setupRandomBlocks(random);
-        int randomWool = random.nextInt(3);
-        if(randomWool == 0) {
-            this.tentBlock = Blocks.wool;
-            this.tentMeta = 15;
-        }
-        else if(randomWool == 1) {
-            this.tentBlock = Blocks.wool;
-            this.tentMeta = 12;
-        }
-        else if(randomWool == 2) {
-            this.tentBlock = Blocks.wool;
-            this.tentMeta = 7;
-        }
-        this.fenceBlock = LOTRMod.fence;
-        this.fenceMeta = 3;
-        this.tableBlock = LOTRMod.morgulTable;
-        this.chestContents = LOTRChestContents.ORC_TENT;
-        this.hasOrcTorches = true;
-    }
+	@Override
+	public void setupRandomBlocks(Random random) {
+		super.setupRandomBlocks(random);
+		int randomWool = random.nextInt(3);
+		switch (randomWool) {
+		case 0:
+			tentBlock = Blocks.wool;
+			tentMeta = 15;
+			break;
+		case 1:
+			tentBlock = Blocks.wool;
+			tentMeta = 12;
+			break;
+		case 2:
+			tentBlock = Blocks.wool;
+			tentMeta = 7;
+			break;
+		default:
+			break;
+		}
+		fenceBlock = LOTRMod.fence;
+		fenceMeta = 3;
+		tableBlock = LOTRMod.morgulTable;
+		chestContents = LOTRChestContents.ORC_TENT;
+		hasOrcTorches = true;
+	}
 }

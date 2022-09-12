@@ -1,43 +1,38 @@
-Манящий
-Вяленый
-Миленький
-Хорошенький
-Танцующий
-Темный
-Мертвый
-Грязный
-Пьяный
-Умирающий
-Кошмарный
-Ужасный
-Страшный
-Безумный
-Огненный
-Пламенный
-Грязный
-Отрёкшийся
-Забытый
-Жадный 
-Скупой
-Стонущий
-Пустоголовый
-Голодный
-Голодающий
-Одинокий
-Скорбный
-Старый
-Довольный
-Бешеный
-Скачущий
-Ревущий
-Проклятый
-Поющий
-Сильный
-Каменный
-Гадкий
-Странствующий
-Теплый
-Усталый
-Гостеприимный
-Дикий
-Молодой
+The Beckoning
+The Bloated
+The Comely
+The Dancing
+The Dark
+The Dead
+The Dirty
+The Drunken
+The Dying
+The Fearsome
+The Fierce
+The Fiery
+The Filthy
+The Forsaken
+The Greedy
+The Greedy
+The Groaning
+The Headless
+The Hungry
+The Hungry
+The Lonely
+The Mournful
+The Old
+The Pretty
+The Raging
+The Riding
+The Roaring
+The Ruddy
+The Singing
+The Strong
+The Stumbling
+The Ugly
+The Wandering
+The Warm
+The Weary
+The Welcoming
+The Wild
+The Young

@@ -6,14 +6,14 @@ import net.minecraft.entity.Entity;
 import net.minecraft.util.ResourceLocation;
 
 public class LOTRRenderGemsbok extends RenderLiving {
-    private static ResourceLocation texture = new ResourceLocation("lotr:mob/gemsbok.png");
+	public static ResourceLocation texture = new ResourceLocation("lotr:mob/gemsbok.png");
 
-    public LOTRRenderGemsbok() {
-        super(new LOTRModelGemsbok(), 0.5f);
-    }
+	public LOTRRenderGemsbok() {
+		super(new LOTRModelGemsbok(), 0.5f);
+	}
 
-    @Override
-    protected ResourceLocation getEntityTexture(Entity entity) {
-        return texture;
-    }
+	@Override
+	public ResourceLocation getEntityTexture(Entity entity) {
+		return texture;
+	}
 }

@@ -9,35 +9,35 @@ import net.minecraft.inventory.IInventory;
 import net.minecraft.util.*;
 
 public class LOTRGuiBookshelf extends GuiContainer {
-    private static final ResourceLocation chestTexture = new ResourceLocation("textures/gui/container/generic_54.png");
-    private IInventory playerInv;
-    private IInventory shelfInv;
-    private int inventoryRows;
+	public static ResourceLocation chestTexture = new ResourceLocation("textures/gui/container/generic_54.png");
+	public IInventory playerInv;
+	public IInventory shelfInv;
+	public int inventoryRows;
 
-    public LOTRGuiBookshelf(IInventory player, LOTRTileEntityBookshelf shelf) {
-        super(new LOTRContainerBookshelf(player, shelf));
-        this.playerInv = player;
-        this.shelfInv = shelf;
-        this.allowUserInput = false;
-        int i = 222;
-        int j = i - 108;
-        this.inventoryRows = shelf.getSizeInventory() / 9;
-        this.ySize = j + this.inventoryRows * 18;
-    }
+	public LOTRGuiBookshelf(IInventory player, LOTRTileEntityBookshelf shelf) {
+		super(new LOTRContainerBookshelf(player, shelf));
+		playerInv = player;
+		shelfInv = shelf;
+		allowUserInput = false;
+		int i = 222;
+		int j = i - 108;
+		inventoryRows = shelf.getSizeInventory() / 9;
+		ySize = j + inventoryRows * 18;
+	}
 
-    @Override
-    protected void drawGuiContainerForegroundLayer(int i, int j) {
-        this.fontRendererObj.drawString(this.shelfInv.hasCustomInventoryName() ? this.shelfInv.getInventoryName() : StatCollector.translateToLocal(this.shelfInv.getInventoryName()), 8, 6, 4210752);
-        this.fontRendererObj.drawString(this.playerInv.hasCustomInventoryName() ? this.playerInv.getInventoryName() : StatCollector.translateToLocal(this.playerInv.getInventoryName()), 8, this.ySize - 96 + 2, 4210752);
-    }
+	@Override
+	public void drawGuiContainerBackgroundLayer(float f, int i, int j) {
+		GL11.glColor4f(1.0f, 1.0f, 1.0f, 1.0f);
+		mc.getTextureManager().bindTexture(chestTexture);
+		int k = (width - xSize) / 2;
+		int l = (height - ySize) / 2;
+		drawTexturedModalRect(k, l, 0, 0, xSize, inventoryRows * 18 + 17);
+		drawTexturedModalRect(k, l + inventoryRows * 18 + 17, 0, 126, xSize, 96);
+	}
 
-    @Override
-    protected void drawGuiContainerBackgroundLayer(float f, int i, int j) {
-        GL11.glColor4f(1.0f, 1.0f, 1.0f, 1.0f);
-        this.mc.getTextureManager().bindTexture(chestTexture);
-        int k = (this.width - this.xSize) / 2;
-        int l = (this.height - this.ySize) / 2;
-        this.drawTexturedModalRect(k, l, 0, 0, this.xSize, this.inventoryRows * 18 + 17);
-        this.drawTexturedModalRect(k, l + this.inventoryRows * 18 + 17, 0, 126, this.xSize, 96);
-    }
+	@Override
+	public void drawGuiContainerForegroundLayer(int i, int j) {
+		fontRendererObj.drawString(shelfInv.hasCustomInventoryName() ? shelfInv.getInventoryName() : StatCollector.translateToLocal(shelfInv.getInventoryName()), 8, 6, 4210752);
+		fontRendererObj.drawString(playerInv.hasCustomInventoryName() ? playerInv.getInventoryName() : StatCollector.translateToLocal(playerInv.getInventoryName()), 8, ySize - 96 + 2, 4210752);
+	}
 }

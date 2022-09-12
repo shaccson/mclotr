@@ -16,130 +16,138 @@ import net.minecraft.util.DamageSource;
 import net.minecraft.world.World;
 
 public class LOTREntityUrukHai extends LOTREntityOrc {
-    public LOTREntityUrukHai(World world) {
-        super(world);
-        this.setSize(0.6f, 1.8f);
-        this.isWeakOrc = false;
-        this.npcShield = LOTRShields.ALIGNMENT_URUK_HAI;
-    }
+	public LOTREntityUrukHai(World world) {
+		super(world);
+		setSize(0.6f, 1.8f);
+		isWeakOrc = false;
+		npcShield = LOTRShields.ALIGNMENT_URUK_HAI;
+	}
 
-    @Override
-    public EntityAIBase createOrcAttackAI() {
-        return new LOTREntityAIAttackOnCollide(this, 1.4, false);
-    }
+	@Override
+	public void applyEntityAttributes() {
+		super.applyEntityAttributes();
+		getEntityAttribute(SharedMonsterAttributes.maxHealth).setBaseValue(26.0);
+		getEntityAttribute(SharedMonsterAttributes.movementSpeed).setBaseValue(0.22);
+	}
 
-    @Override
-    protected void applyEntityAttributes() {
-        super.applyEntityAttributes();
-        this.getEntityAttribute(SharedMonsterAttributes.maxHealth).setBaseValue(26.0);
-        this.getEntityAttribute(SharedMonsterAttributes.movementSpeed).setBaseValue(0.22);
-    }
+	@Override
+	public boolean canOrcSkirmish() {
+		return false;
+	}
 
-    @Override
-    public IEntityLivingData onSpawnWithEgg(IEntityLivingData data) {
-        data = super.onSpawnWithEgg(data);
-        int i = this.rand.nextInt(8);
-        if(i == 0 || i == 1) {
-            this.npcItemsInv.setMeleeWeapon(new ItemStack(LOTRMod.scimitarUruk));
-        }
-        else if(i == 2 || i == 3) {
-            this.npcItemsInv.setMeleeWeapon(new ItemStack(LOTRMod.pikeUruk));
-        }
-        else if(i == 4) {
-            this.npcItemsInv.setMeleeWeapon(new ItemStack(LOTRMod.battleaxeUruk));
-        }
-        else if(i == 5) {
-            this.npcItemsInv.setMeleeWeapon(new ItemStack(LOTRMod.daggerUruk));
-        }
-        else if(i == 6) {
-            this.npcItemsInv.setMeleeWeapon(new ItemStack(LOTRMod.daggerUrukPoisoned));
-        }
-        else if(i == 7) {
-            this.npcItemsInv.setMeleeWeapon(new ItemStack(LOTRMod.hammerUruk));
-        }
-        if(this.rand.nextInt(6) == 0) {
-            this.npcItemsInv.setSpearBackup(this.npcItemsInv.getMeleeWeapon());
-            this.npcItemsInv.setMeleeWeapon(new ItemStack(LOTRMod.spearUruk));
-        }
-        this.npcItemsInv.setIdleItem(this.npcItemsInv.getMeleeWeapon());
-        this.setCurrentItemOrArmor(1, new ItemStack(LOTRMod.bootsUruk));
-        this.setCurrentItemOrArmor(2, new ItemStack(LOTRMod.legsUruk));
-        this.setCurrentItemOrArmor(3, new ItemStack(LOTRMod.bodyUruk));
-        if(this.rand.nextInt(10) != 0) {
-            this.setCurrentItemOrArmor(4, new ItemStack(LOTRMod.helmetUruk));
-        }
-        return data;
-    }
+	@Override
+	public LOTRMiniQuest createMiniQuest() {
+		return LOTRMiniQuestFactory.ISENGARD.createQuest(this);
+	}
 
-    @Override
-    protected void dropOrcItems(boolean flag, int i) {
-        if(this.rand.nextInt(6) == 0) {
-            this.dropChestContents(LOTRChestContents.URUK_TENT, 1, 2 + i);
-        }
-    }
+	@Override
+	public EntityAIBase createOrcAttackAI() {
+		return new LOTREntityAIAttackOnCollide(this, 1.4, false);
+	}
 
-    @Override
-    public void onDeath(DamageSource damagesource) {
-        super.onDeath(damagesource);
-        if(!this.worldObj.isRemote && damagesource.getEntity() instanceof EntityPlayer) {
-            EntityPlayer entityplayer = (EntityPlayer) damagesource.getEntity();
-            double range = 12.0;
-            List nearbySpawners = this.worldObj.getEntitiesWithinAABB(LOTREntityNPCRespawner.class, this.boundingBox.expand(range, range, range));
-            for(Object obj : nearbySpawners) {
-                LOTREntityNPCRespawner spawner = (LOTREntityNPCRespawner) obj;
-                if(spawner.spawnClass1 == null || !LOTREntityUrukHai.class.isAssignableFrom(spawner.spawnClass1)) continue;
-                LOTRLevelData.getData(entityplayer).addAchievement(LOTRAchievement.raidUrukCamp);
-                break;
-            }
-        }
-    }
+	@Override
+	public void dropOrcItems(boolean flag, int i) {
+		if (rand.nextInt(6) == 0) {
+			dropChestContents(LOTRChestContents.URUK_TENT, 1, 2 + i);
+		}
+	}
 
-    @Override
-    public LOTRFaction getFaction() {
-        return LOTRFaction.ISENGARD;
-    }
+	@Override
+	public float getAlignmentBonus() {
+		return 2.0f;
+	}
 
-    @Override
-    public float getAlignmentBonus() {
-        return 2.0f;
-    }
+	@Override
+	public LOTRMiniQuestFactory getBountyHelpSpeechDir() {
+		return LOTRMiniQuestFactory.ISENGARD;
+	}
 
-    @Override
-    protected LOTRAchievement getKillAchievement() {
-        return LOTRAchievement.killUrukHai;
-    }
+	@Override
+	public LOTRFaction getFaction() {
+		return LOTRFaction.ISENGARD;
+	}
 
-    @Override
-    protected float getSoundPitch() {
-        return super.getSoundPitch() * 0.75f;
-    }
+	@Override
+	public LOTRAchievement getKillAchievement() {
+		return LOTRAchievement.killUrukHai;
+	}
 
-    @Override
-    public boolean canOrcSkirmish() {
-        return false;
-    }
+	@Override
+	public float getSoundPitch() {
+		return super.getSoundPitch() * 0.75f;
+	}
 
-    @Override
-    public String getSpeechBank(EntityPlayer entityplayer) {
-        if(this.isFriendly(entityplayer)) {
-            if(this.hiredNPCInfo.getHiringPlayer() == entityplayer) {
-                return "isengard/orc/hired";
-            }
-            if(LOTRLevelData.getData(entityplayer).getAlignment(this.getFaction()) >= 100.0f) {
-                return "isengard/orc/friendly";
-            }
-            return "isengard/orc/neutral";
-        }
-        return "isengard/orc/hostile";
-    }
+	@Override
+	public String getSpeechBank(EntityPlayer entityplayer) {
+		if (isFriendly(entityplayer)) {
+			if (hiredNPCInfo.getHiringPlayer() == entityplayer) {
+				return "isengard/orc/hired";
+			}
+			if (LOTRLevelData.getData(entityplayer).getAlignment(getFaction()) >= 100.0f) {
+				return "isengard/orc/friendly";
+			}
+			return "isengard/orc/neutral";
+		}
+		return "isengard/orc/hostile";
+	}
 
-    @Override
-    public LOTRMiniQuest createMiniQuest() {
-        return LOTRMiniQuestFactory.ISENGARD.createQuest(this);
-    }
+	@Override
+	public void onDeath(DamageSource damagesource) {
+		super.onDeath(damagesource);
+		if (!worldObj.isRemote && damagesource.getEntity() instanceof EntityPlayer) {
+			EntityPlayer entityplayer = (EntityPlayer) damagesource.getEntity();
+			double range = 12.0;
+			List nearbySpawners = worldObj.getEntitiesWithinAABB(LOTREntityNPCRespawner.class, boundingBox.expand(range, range, range));
+			for (Object obj : nearbySpawners) {
+				LOTREntityNPCRespawner spawner = (LOTREntityNPCRespawner) obj;
+				if (spawner.spawnClass1 == null || !LOTREntityUrukHai.class.isAssignableFrom(spawner.spawnClass1)) {
+					continue;
+				}
+				LOTRLevelData.getData(entityplayer).addAchievement(LOTRAchievement.raidUrukCamp);
+				break;
+			}
+		}
+	}
 
-    @Override
-    public LOTRMiniQuestFactory getBountyHelpSpeechDir() {
-        return LOTRMiniQuestFactory.ISENGARD;
-    }
+	@Override
+	public IEntityLivingData onSpawnWithEgg(IEntityLivingData data) {
+		data = super.onSpawnWithEgg(data);
+		int i = rand.nextInt(8);
+		switch (i) {
+		case 0:
+		case 1:
+			npcItemsInv.setMeleeWeapon(new ItemStack(LOTRMod.scimitarUruk));
+			break;
+		case 2:
+		case 3:
+			npcItemsInv.setMeleeWeapon(new ItemStack(LOTRMod.pikeUruk));
+			break;
+		case 4:
+			npcItemsInv.setMeleeWeapon(new ItemStack(LOTRMod.battleaxeUruk));
+			break;
+		case 5:
+			npcItemsInv.setMeleeWeapon(new ItemStack(LOTRMod.daggerUruk));
+			break;
+		case 6:
+			npcItemsInv.setMeleeWeapon(new ItemStack(LOTRMod.daggerUrukPoisoned));
+			break;
+		case 7:
+			npcItemsInv.setMeleeWeapon(new ItemStack(LOTRMod.hammerUruk));
+			break;
+		default:
+			break;
+		}
+		if (rand.nextInt(6) == 0) {
+			npcItemsInv.setSpearBackup(npcItemsInv.getMeleeWeapon());
+			npcItemsInv.setMeleeWeapon(new ItemStack(LOTRMod.spearUruk));
+		}
+		npcItemsInv.setIdleItem(npcItemsInv.getMeleeWeapon());
+		setCurrentItemOrArmor(1, new ItemStack(LOTRMod.bootsUruk));
+		setCurrentItemOrArmor(2, new ItemStack(LOTRMod.legsUruk));
+		setCurrentItemOrArmor(3, new ItemStack(LOTRMod.bodyUruk));
+		if (rand.nextInt(10) != 0) {
+			setCurrentItemOrArmor(4, new ItemStack(LOTRMod.helmetUruk));
+		}
+		return data;
+	}
 }

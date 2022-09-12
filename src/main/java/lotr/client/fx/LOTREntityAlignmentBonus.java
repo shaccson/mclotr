@@ -5,77 +5,84 @@ import net.minecraft.entity.Entity;
 import net.minecraft.nbt.NBTTagCompound;
 import net.minecraft.world.World;
 
-public class LOTREntityAlignmentBonus
-extends Entity {
-    public int particleAge;
-    public int particleMaxAge;
-    public String name;
-    public LOTRFaction mainFaction;
-    public float prevMainAlignment;
-    public LOTRAlignmentBonusMap factionBonusMap;
-    public boolean isKill;
-    public boolean isHiredKill;
-    public float conquestBonus;
+public class LOTREntityAlignmentBonus extends Entity {
+	public int particleAge;
+	public int particleMaxAge;
+	public String name;
+	public LOTRFaction mainFaction;
+	public float prevMainAlignment;
+	public LOTRAlignmentBonusMap factionBonusMap;
+	public boolean isKill;
+	public boolean isHiredKill;
+	public float conquestBonus;
 
-    public LOTREntityAlignmentBonus(World world, double d, double d1, double d2, String s, LOTRFaction f, float pre, LOTRAlignmentBonusMap fMap, boolean kill, boolean hiredKill, float conqBonus) {
-        super(world);
-        this.setSize(0.5f, 0.5f);
-        this.yOffset = this.height / 2.0f;
-        this.setPosition(d, d1, d2);
-        this.particleAge = 0;
-        this.name = s;
-        this.mainFaction = f;
-        this.prevMainAlignment = pre;
-        this.factionBonusMap = fMap;
-        this.isKill = kill;
-        this.isHiredKill = hiredKill;
-        this.conquestBonus = conqBonus;
-        this.calcMaxAge();
-    }
+	public LOTREntityAlignmentBonus(World world, double d, double d1, double d2, String s, LOTRFaction f, float pre, LOTRAlignmentBonusMap fMap, boolean kill, boolean hiredKill, float conqBonus) {
+		super(world);
+		setSize(0.5f, 0.5f);
+		yOffset = height / 2.0f;
+		setPosition(d, d1, d2);
+		particleAge = 0;
+		name = s;
+		mainFaction = f;
+		prevMainAlignment = pre;
+		factionBonusMap = fMap;
+		isKill = kill;
+		isHiredKill = hiredKill;
+		conquestBonus = conqBonus;
+		calcMaxAge();
+	}
 
-    private void calcMaxAge() {
-        float highestBonus = 0.0f;
-        for (LOTRFaction fac : this.factionBonusMap.getChangedFactions()) {
-            float bonus = Math.abs(this.factionBonusMap.get(fac));
-            if ((bonus <= highestBonus)) continue;
-            highestBonus = bonus;
-        }
-        float conq = Math.abs(this.conquestBonus);
-        if (conq > highestBonus) {
-            highestBonus = conq;
-        }
-        this.particleMaxAge = 80;
-        int extra = (int)(Math.min(1.0f, highestBonus / 50.0f) * 220.0f);
-        this.particleMaxAge += extra;
-    }
+	public void calcMaxAge() {
+		float highestBonus = 0.0f;
+		for (LOTRFaction fac : factionBonusMap.getChangedFactions()) {
+			float bonus = Math.abs(factionBonusMap.get(fac));
+			if (bonus <= highestBonus) {
+				continue;
+			}
+			highestBonus = bonus;
+		}
+		float conq = Math.abs(conquestBonus);
+		if (conq > highestBonus) {
+			highestBonus = conq;
+		}
+		particleMaxAge = 80;
+		int extra = (int) (Math.min(1.0f, highestBonus / 50.0f) * 220.0f);
+		particleMaxAge += extra;
+	}
 
-    protected void entityInit() {
-    }
+	@Override
+	public boolean canBePushed() {
+		return false;
+	}
 
-    public void writeEntityToNBT(NBTTagCompound nbt) {
-    }
+	@Override
+	public boolean canTriggerWalking() {
+		return false;
+	}
 
-    public void readEntityFromNBT(NBTTagCompound nbt) {
-    }
+	@Override
+	public void entityInit() {
+	}
 
-    public void onUpdate() {
-        super.onUpdate();
-        ++this.particleAge;
-        if (this.particleAge >= this.particleMaxAge) {
-            this.setDead();
-        }
-    }
+	@Override
+	public boolean isEntityInvulnerable() {
+		return true;
+	}
 
-    protected boolean canTriggerWalking() {
-        return false;
-    }
+	@Override
+	public void onUpdate() {
+		super.onUpdate();
+		++particleAge;
+		if (particleAge >= particleMaxAge) {
+			setDead();
+		}
+	}
 
-    public boolean isEntityInvulnerable() {
-        return true;
-    }
+	@Override
+	public void readEntityFromNBT(NBTTagCompound nbt) {
+	}
 
-    public boolean canBePushed() {
-        return false;
-    }
+	@Override
+	public void writeEntityToNBT(NBTTagCompound nbt) {
+	}
 }
-

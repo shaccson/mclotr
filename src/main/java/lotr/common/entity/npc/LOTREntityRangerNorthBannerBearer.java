@@ -4,12 +4,12 @@ import lotr.common.item.LOTRItemBanner;
 import net.minecraft.world.World;
 
 public class LOTREntityRangerNorthBannerBearer extends LOTREntityRangerNorth implements LOTRBannerBearer {
-    public LOTREntityRangerNorthBannerBearer(World world) {
-        super(world);
-    }
+	public LOTREntityRangerNorthBannerBearer(World world) {
+		super(world);
+	}
 
-    @Override
-    public LOTRItemBanner.BannerType getBannerType() {
-        return LOTRItemBanner.BannerType.RANGER_NORTH;
-    }
+	@Override
+	public LOTRItemBanner.BannerType getBannerType() {
+		return LOTRItemBanner.BannerType.RANGER_NORTH;
+	}
 }

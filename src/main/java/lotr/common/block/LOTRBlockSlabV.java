@@ -9,37 +9,37 @@ import net.minecraft.init.Blocks;
 import net.minecraft.util.IIcon;
 
 public class LOTRBlockSlabV extends LOTRBlockSlabBase {
-    public LOTRBlockSlabV(boolean flag) {
-        super(flag, Material.rock, 6);
-        this.setCreativeTab(CreativeTabs.tabBlock);
-    }
+	public LOTRBlockSlabV(boolean flag) {
+		super(flag, Material.rock, 6);
+		setCreativeTab(CreativeTabs.tabBlock);
+	}
 
-    @SideOnly(value = Side.CLIENT)
-    @Override
-    public IIcon getIcon(int i, int j) {
-        if((j &= 7) == 0) {
-            return Blocks.stonebrick.getIcon(i, 1);
-        }
-        if(j == 1) {
-            return Blocks.stonebrick.getIcon(i, 2);
-        }
-        if(j == 2) {
-            return LOTRMod.redBrick.getIcon(i, 0);
-        }
-        if(j == 3) {
-            return LOTRMod.redBrick.getIcon(i, 1);
-        }
-        if(j == 4) {
-            return Blocks.mossy_cobblestone.getIcon(i, 0);
-        }
-        if(j == 5) {
-            return Blocks.stone.getIcon(i, 0);
-        }
-        return super.getIcon(i, j);
-    }
+	@SideOnly(value = Side.CLIENT)
+	@Override
+	public IIcon getIcon(int i, int j) {
+		j &= 7;
+		if (j == 0) {
+			return Blocks.stonebrick.getIcon(i, 1);
+		}
+		switch (j) {
+		case 1:
+			return Blocks.stonebrick.getIcon(i, 2);
+		case 2:
+			return LOTRMod.redBrick.getIcon(i, 0);
+		case 3:
+			return LOTRMod.redBrick.getIcon(i, 1);
+		case 4:
+			return Blocks.mossy_cobblestone.getIcon(i, 0);
+		case 5:
+			return Blocks.stone.getIcon(i, 0);
+		default:
+			break;
+		}
+		return super.getIcon(i, j);
+	}
 
-    @SideOnly(value = Side.CLIENT)
-    @Override
-    public void registerBlockIcons(IIconRegister iconregister) {
-    }
+	@SideOnly(value = Side.CLIENT)
+	@Override
+	public void registerBlockIcons(IIconRegister iconregister) {
+	}
 }

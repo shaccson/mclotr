@@ -15,146 +15,145 @@ import net.minecraft.world.World;
 import net.minecraftforge.common.util.ForgeDirection;
 
 public class LOTREntityBossTrophy extends Entity implements LOTRBannerProtectable {
-    public LOTREntityBossTrophy(World world) {
-        super(world);
-        this.setSize(1.0f, 1.0f);
-    }
+	public LOTREntityBossTrophy(World world) {
+		super(world);
+		setSize(1.0f, 1.0f);
+	}
 
-    @Override
-    protected void entityInit() {
-        this.dataWatcher.addObject(18, (byte) 0);
-        this.dataWatcher.addObject(19, (byte) 0);
-        this.dataWatcher.addObject(20, (byte) 0);
-    }
+	@Override
+	public boolean attackEntityFrom(DamageSource damagesource, float f) {
+		if (!worldObj.isRemote && !isDead && damagesource.getSourceOfDamage() instanceof EntityPlayer) {
+			EntityPlayer entityplayer = (EntityPlayer) damagesource.getSourceOfDamage();
+			dropAsItem(!entityplayer.capabilities.isCreativeMode);
+			return true;
+		}
+		return false;
+	}
 
-    private int getTrophyTypeID() {
-        return this.dataWatcher.getWatchableObjectByte(18);
-    }
+	@Override
+	public boolean canBeCollidedWith() {
+		return true;
+	}
 
-    private void setTrophyTypeID(int i) {
-        this.dataWatcher.updateObject(18, (byte) i);
-    }
+	public void dropAsItem(boolean dropItem) {
+		worldObj.playSoundAtEntity(this, Blocks.stone.stepSound.getBreakSound(), (Blocks.stone.stepSound.getVolume() + 1.0f) / 2.0f, Blocks.stone.stepSound.getPitch() * 0.8f);
+		if (dropItem) {
+			entityDropItem(new ItemStack(LOTRMod.bossTrophy, 1, getTrophyType().trophyID), 0.0f);
+		}
+		setDead();
+	}
 
-    public void setTrophyType(LOTRItemBossTrophy.TrophyType type) {
-        this.setTrophyTypeID(type.trophyID);
-    }
+	@Override
+	public void entityInit() {
+		dataWatcher.addObject(18, (byte) 0);
+		dataWatcher.addObject(19, (byte) 0);
+		dataWatcher.addObject(20, (byte) 0);
+	}
 
-    public LOTRItemBossTrophy.TrophyType getTrophyType() {
-        return LOTRItemBossTrophy.TrophyType.forID(this.getTrophyTypeID());
-    }
+	@Override
+	public AxisAlignedBB getBoundingBox() {
+		return boundingBox;
+	}
 
-    public boolean isTrophyHanging() {
-        return this.dataWatcher.getWatchableObjectByte(19) == 1;
-    }
+	@Override
+	public ItemStack getPickedResult(MovingObjectPosition target) {
+		return new ItemStack(LOTRMod.bossTrophy, 1, getTrophyType().trophyID);
+	}
 
-    public void setTrophyHanging(boolean flag) {
-        this.dataWatcher.updateObject(19, flag ? (byte) 1 : 0);
-    }
+	public int getTrophyFacing() {
+		byte i = dataWatcher.getWatchableObjectByte(20);
+		if (i < 0 || i >= Direction.directions.length) {
+			i = 0;
+		}
+		return i;
+	}
 
-    public int getTrophyFacing() {
-        byte i = this.dataWatcher.getWatchableObjectByte(20);
-        if(i < 0 || i >= Direction.directions.length) {
-            i = 0;
-        }
-        return i;
-    }
+	public LOTRItemBossTrophy.TrophyType getTrophyType() {
+		return LOTRItemBossTrophy.TrophyType.forID(getTrophyTypeID());
+	}
 
-    public void setTrophyFacing(int i) {
-        this.dataWatcher.updateObject(20, (byte) i);
-    }
+	public int getTrophyTypeID() {
+		return dataWatcher.getWatchableObjectByte(18);
+	}
 
-    @Override
-    public boolean canBeCollidedWith() {
-        return true;
-    }
+	public boolean hangingOnValidSurface() {
+		if (isTrophyHanging()) {
+			int direction = getTrophyFacing();
+			int opposite = Direction.rotateOpposite[direction];
+			int dx = Direction.offsetX[opposite];
+			int dz = Direction.offsetZ[opposite];
+			int blockX = MathHelper.floor_double(posX);
+			int blockY = MathHelper.floor_double(boundingBox.minY);
+			int blockZ = MathHelper.floor_double(posZ);
+			Block block = worldObj.getBlock(blockX += dx, blockY, blockZ += dz);
+			int blockSide = Direction.directionToFacing[direction];
+			return block.isSideSolid(worldObj, blockX, blockY, blockZ, ForgeDirection.getOrientation(blockSide));
+		}
+		return false;
+	}
 
-    @Override
-    public AxisAlignedBB getBoundingBox() {
-        return this.boundingBox;
-    }
+	public boolean isTrophyHanging() {
+		return dataWatcher.getWatchableObjectByte(19) == 1;
+	}
 
-    @Override
-    public void onUpdate() {
-        super.onUpdate();
-        this.prevPosX = this.posX;
-        this.prevPosY = this.posY;
-        this.prevPosZ = this.posZ;
-        if(this.isTrophyHanging()) {
-            if((!this.hangingOnValidSurface() && !this.worldObj.isRemote && !this.isDead)) {
-                this.dropAsItem(true);
-            }
-        }
-        else {
-            this.motionY -= 0.04;
-            this.func_145771_j(this.posX, (this.boundingBox.minY + this.boundingBox.maxY) / 2.0, this.posZ);
-            this.moveEntity(this.motionX, this.motionY, this.motionZ);
-            float f = 0.98f;
-            if(this.onGround) {
-                f = 0.588f;
-                Block i = this.worldObj.getBlock(MathHelper.floor_double(this.posX), MathHelper.floor_double(this.boundingBox.minY) - 1, MathHelper.floor_double(this.posZ));
-                if(i.getMaterial() != Material.air) {
-                    f = i.slipperiness * 0.98f;
-                }
-            }
-            this.motionX *= f;
-            this.motionY *= 0.98;
-            this.motionZ *= f;
-            if(this.onGround) {
-                this.motionY *= -0.5;
-            }
-        }
-    }
+	@Override
+	public void onUpdate() {
+		super.onUpdate();
+		prevPosX = posX;
+		prevPosY = posY;
+		prevPosZ = posZ;
+		if (isTrophyHanging()) {
+			if (!hangingOnValidSurface() && !worldObj.isRemote && !isDead) {
+				dropAsItem(true);
+			}
+		} else {
+			motionY -= 0.04;
+			func_145771_j(posX, (boundingBox.minY + boundingBox.maxY) / 2.0, posZ);
+			moveEntity(motionX, motionY, motionZ);
+			float f = 0.98f;
+			if (onGround) {
+				f = 0.588f;
+				Block i = worldObj.getBlock(MathHelper.floor_double(posX), MathHelper.floor_double(boundingBox.minY) - 1, MathHelper.floor_double(posZ));
+				if (i.getMaterial() != Material.air) {
+					f = i.slipperiness * 0.98f;
+				}
+			}
+			motionX *= f;
+			motionY *= 0.98;
+			motionZ *= f;
+			if (onGround) {
+				motionY *= -0.5;
+			}
+		}
+	}
 
-    public boolean hangingOnValidSurface() {
-        if(this.isTrophyHanging()) {
-            int direction = this.getTrophyFacing();
-            int opposite = Direction.rotateOpposite[direction];
-            int dx = Direction.offsetX[opposite];
-            int dz = Direction.offsetZ[opposite];
-            int blockX = MathHelper.floor_double(this.posX);
-            int blockY = MathHelper.floor_double(this.boundingBox.minY);
-            int blockZ = MathHelper.floor_double(this.posZ);
-            Block block = this.worldObj.getBlock(blockX += dx, blockY, blockZ += dz);
-            int blockSide = Direction.directionToFacing[direction];
-            return block.isSideSolid(this.worldObj, blockX, blockY, blockZ, ForgeDirection.getOrientation(blockSide));
-        }
-        return false;
-    }
+	@Override
+	public void readEntityFromNBT(NBTTagCompound nbt) {
+		setTrophyTypeID(nbt.getByte("TrophyType"));
+		setTrophyHanging(nbt.getBoolean("TrophyHanging"));
+		setTrophyFacing(nbt.getByte("TrophyFacing"));
+	}
 
-    @Override
-    public void writeEntityToNBT(NBTTagCompound nbt) {
-        nbt.setByte("TrophyType", (byte) this.getTrophyTypeID());
-        nbt.setBoolean("TrophyHanging", this.isTrophyHanging());
-        nbt.setByte("TrophyFacing", (byte) this.getTrophyFacing());
-    }
+	public void setTrophyFacing(int i) {
+		dataWatcher.updateObject(20, (byte) i);
+	}
 
-    @Override
-    public void readEntityFromNBT(NBTTagCompound nbt) {
-        this.setTrophyTypeID(nbt.getByte("TrophyType"));
-        this.setTrophyHanging(nbt.getBoolean("TrophyHanging"));
-        this.setTrophyFacing(nbt.getByte("TrophyFacing"));
-    }
+	public void setTrophyHanging(boolean flag) {
+		dataWatcher.updateObject(19, flag ? (byte) 1 : 0);
+	}
 
-    @Override
-    public boolean attackEntityFrom(DamageSource damagesource, float f) {
-        if(!this.worldObj.isRemote && !this.isDead && damagesource.getSourceOfDamage() instanceof EntityPlayer) {
-            EntityPlayer entityplayer = (EntityPlayer) damagesource.getSourceOfDamage();
-            this.dropAsItem(!entityplayer.capabilities.isCreativeMode);
-            return true;
-        }
-        return false;
-    }
+	public void setTrophyType(LOTRItemBossTrophy.TrophyType type) {
+		setTrophyTypeID(type.trophyID);
+	}
 
-    private void dropAsItem(boolean dropItem) {
-        this.worldObj.playSoundAtEntity(this, Blocks.stone.stepSound.getBreakSound(), (Blocks.stone.stepSound.getVolume() + 1.0f) / 2.0f, Blocks.stone.stepSound.getPitch() * 0.8f);
-        if(dropItem) {
-            this.entityDropItem(new ItemStack(LOTRMod.bossTrophy, 1, this.getTrophyType().trophyID), 0.0f);
-        }
-        this.setDead();
-    }
+	public void setTrophyTypeID(int i) {
+		dataWatcher.updateObject(18, (byte) i);
+	}
 
-    @Override
-    public ItemStack getPickedResult(MovingObjectPosition target) {
-        return new ItemStack(LOTRMod.bossTrophy, 1, this.getTrophyType().trophyID);
-    }
+	@Override
+	public void writeEntityToNBT(NBTTagCompound nbt) {
+		nbt.setByte("TrophyType", (byte) getTrophyTypeID());
+		nbt.setBoolean("TrophyHanging", isTrophyHanging());
+		nbt.setByte("TrophyFacing", (byte) getTrophyFacing());
+	}
 }

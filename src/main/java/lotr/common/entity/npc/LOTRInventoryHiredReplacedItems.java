@@ -5,145 +5,150 @@ import net.minecraft.item.ItemStack;
 import net.minecraft.nbt.NBTTagCompound;
 
 public class LOTRInventoryHiredReplacedItems extends LOTRInventoryNPC {
-    private boolean[] hasReplacedEquipment = new boolean[7];
-    public static final int HELMET = 0;
-    public static final int BODY = 1;
-    public static final int LEGS = 2;
-    public static final int BOOTS = 3;
-    public static final int MELEE = 4;
-    public static final int BOMB = 5;
-    public static final int RANGED = 6;
-    private boolean replacedMeleeWeapons = false;
+	public static int HELMET = 0;
+	public static int BODY = 1;
+	public static int LEGS = 2;
+	public static int BOOTS = 3;
+	public static int MELEE = 4;
+	public static int BOMB = 5;
+	public static int RANGED = 6;
+	public boolean[] hasReplacedEquipment = new boolean[7];
+	public boolean replacedMeleeWeapons = false;
 
-    public LOTRInventoryHiredReplacedItems(LOTREntityNPC npc) {
-        super("HiredReplacedItems", npc, 7);
-    }
+	public LOTRInventoryHiredReplacedItems(LOTREntityNPC npc) {
+		super("HiredReplacedItems", npc, 7);
+	}
 
-    @Override
-    public void writeToNBT(NBTTagCompound nbt) {
-        super.writeToNBT(nbt);
-        for(int i = 0; i < this.hasReplacedEquipment.length; ++i) {
-            boolean flag = this.hasReplacedEquipment[i];
-            nbt.setBoolean("ReplacedFlag_" + i, flag);
-        }
-        nbt.setBoolean("ReplacedMelee", this.replacedMeleeWeapons);
-    }
+	public void dropAllReplacedItems() {
+		for (int i = 0; i < 7; ++i) {
+			ItemStack itemstack;
+			if (!hasReplacedEquipment(i) || (itemstack = getEquippedReplacement(i)) == null) {
+				continue;
+			}
+			theNPC.npcDropItem(itemstack, 0.0f, false, true);
+			equipReplacement(i, getReplacedEquipment(i));
+			setReplacedEquipment(i, null, false);
+		}
+	}
 
-    @Override
-    public void readFromNBT(NBTTagCompound nbt) {
-        super.readFromNBT(nbt);
-        for(int i = 0; i < this.hasReplacedEquipment.length; ++i) {
-            this.hasReplacedEquipment[i] = nbt.getBoolean("ReplacedFlag_" + i);
-        }
-        this.replacedMeleeWeapons = nbt.getBoolean("ReplacedMelee");
-    }
+	public void equipReplacement(int i, ItemStack itemstack) {
+		switch (i) {
+		case 4: {
+			boolean idleMelee = false;
+			if (ItemStack.areItemStacksEqual(theNPC.npcItemsInv.getMeleeWeapon(), theNPC.npcItemsInv.getIdleItem())) {
+				idleMelee = true;
+			}
+			theNPC.npcItemsInv.setMeleeWeapon(itemstack);
+			if (!replacedMeleeWeapons) {
+				theNPC.npcItemsInv.setReplacedIdleItem(theNPC.npcItemsInv.getIdleItem());
+				theNPC.npcItemsInv.setReplacedMeleeWeaponMounted(theNPC.npcItemsInv.getMeleeWeaponMounted());
+				theNPC.npcItemsInv.setReplacedIdleItemMounted(theNPC.npcItemsInv.getIdleItemMounted());
+				replacedMeleeWeapons = true;
+			}
+			theNPC.npcItemsInv.setMeleeWeaponMounted(itemstack);
+			if (idleMelee) {
+				theNPC.npcItemsInv.setIdleItem(itemstack);
+				theNPC.npcItemsInv.setIdleItemMounted(itemstack);
+			}
+			updateHeldItem();
+			break;
+		}
+		case 6:
+			theNPC.npcItemsInv.setRangedWeapon(itemstack);
+			updateHeldItem();
+			break;
+		case 5:
+			theNPC.npcItemsInv.setBomb(itemstack);
+			updateHeldItem();
+			break;
+		default:
+			theNPC.setCurrentItemOrArmor(getNPCArmorSlot(i), itemstack);
+			break;
+		}
+	}
 
-    private ItemStack getReplacedEquipment(int i) {
-        ItemStack item = this.getStackInSlot(i);
-        return item == null ? null : item.copy();
-    }
+	public ItemStack getEquippedReplacement(int i) {
+		switch (i) {
+		case 4:
+			return theNPC.npcItemsInv.getMeleeWeapon();
+		case 6:
+			return theNPC.npcItemsInv.getRangedWeapon();
+		case 5:
+			return theNPC.npcItemsInv.getBomb();
+		default:
+			break;
+		}
+		return theNPC.getEquipmentInSlot(getNPCArmorSlot(i));
+	}
 
-    private void setReplacedEquipment(int i, ItemStack item, boolean flag) {
-        this.setInventorySlotContents(i, item);
-        this.hasReplacedEquipment[i] = flag;
-        if(!flag && i == 4) {
-            if(this.replacedMeleeWeapons) {
-                this.theNPC.npcItemsInv.setIdleItem(this.theNPC.npcItemsInv.getReplacedIdleItem());
-                this.theNPC.npcItemsInv.setMeleeWeaponMounted(this.theNPC.npcItemsInv.getReplacedMeleeWeaponMounted());
-                this.theNPC.npcItemsInv.setIdleItemMounted(this.theNPC.npcItemsInv.getReplacedIdleItemMounted());
-                this.theNPC.npcItemsInv.setReplacedMeleeWeaponMounted(null);
-                this.theNPC.npcItemsInv.setReplacedIdleItem(null);
-                this.theNPC.npcItemsInv.setReplacedIdleItemMounted(null);
-                this.replacedMeleeWeapons = false;
-            }
-            this.updateHeldItem();
-        }
-    }
+	public int getNPCArmorSlot(int i) {
+		return 4 - i;
+	}
 
-    public boolean hasReplacedEquipment(int i) {
-        return this.hasReplacedEquipment[i];
-    }
+	public ItemStack getReplacedEquipment(int i) {
+		ItemStack item = getStackInSlot(i);
+		return item == null ? null : item.copy();
+	}
 
-    private void equipReplacement(int i, ItemStack itemstack) {
-        if(i == 4) {
-            boolean idleMelee = false;
-            if(ItemStack.areItemStacksEqual(this.theNPC.npcItemsInv.getMeleeWeapon(), this.theNPC.npcItemsInv.getIdleItem())) {
-                idleMelee = true;
-            }
-            this.theNPC.npcItemsInv.setMeleeWeapon(itemstack);
-            if(!this.replacedMeleeWeapons) {
-                this.theNPC.npcItemsInv.setReplacedIdleItem(this.theNPC.npcItemsInv.getIdleItem());
-                this.theNPC.npcItemsInv.setReplacedMeleeWeaponMounted(this.theNPC.npcItemsInv.getMeleeWeaponMounted());
-                this.theNPC.npcItemsInv.setReplacedIdleItemMounted(this.theNPC.npcItemsInv.getIdleItemMounted());
-                this.replacedMeleeWeapons = true;
-            }
-            this.theNPC.npcItemsInv.setMeleeWeaponMounted(itemstack);
-            if(idleMelee) {
-                this.theNPC.npcItemsInv.setIdleItem(itemstack);
-                this.theNPC.npcItemsInv.setIdleItemMounted(itemstack);
-            }
-            this.updateHeldItem();
-        }
-        else if(i == 6) {
-            this.theNPC.npcItemsInv.setRangedWeapon(itemstack);
-            this.updateHeldItem();
-        }
-        else if(i == 5) {
-            this.theNPC.npcItemsInv.setBomb(itemstack);
-            this.updateHeldItem();
-        }
-        else {
-            this.theNPC.setCurrentItemOrArmor(this.getNPCArmorSlot(i), itemstack);
-        }
-    }
+	public boolean hasReplacedEquipment(int i) {
+		return hasReplacedEquipment[i];
+	}
 
-    public ItemStack getEquippedReplacement(int i) {
-        if(i == 4) {
-            return this.theNPC.npcItemsInv.getMeleeWeapon();
-        }
-        if(i == 6) {
-            return this.theNPC.npcItemsInv.getRangedWeapon();
-        }
-        if(i == 5) {
-            return this.theNPC.npcItemsInv.getBomb();
-        }
-        return this.theNPC.getEquipmentInSlot(this.getNPCArmorSlot(i));
-    }
+	public void onEquipmentChanged(int i, ItemStack newItem) {
+		if (newItem == null) {
+			if (hasReplacedEquipment(i)) {
+				ItemStack itemstack = getReplacedEquipment(i);
+				equipReplacement(i, itemstack);
+				setReplacedEquipment(i, null, false);
+			}
+		} else {
+			if (!hasReplacedEquipment(i)) {
+				ItemStack itemstack = getEquippedReplacement(i);
+				setReplacedEquipment(i, itemstack, true);
+			}
+			equipReplacement(i, newItem.copy());
+		}
+	}
 
-    private int getNPCArmorSlot(int i) {
-        return 4 - i;
-    }
+	@Override
+	public void readFromNBT(NBTTagCompound nbt) {
+		super.readFromNBT(nbt);
+		for (int i = 0; i < hasReplacedEquipment.length; ++i) {
+			hasReplacedEquipment[i] = nbt.getBoolean("ReplacedFlag_" + i);
+		}
+		replacedMeleeWeapons = nbt.getBoolean("ReplacedMelee");
+	}
 
-    public void onEquipmentChanged(int i, ItemStack newItem) {
-        if(newItem == null) {
-            if(this.hasReplacedEquipment(i)) {
-                ItemStack itemstack = this.getReplacedEquipment(i);
-                this.equipReplacement(i, itemstack);
-                this.setReplacedEquipment(i, null, false);
-            }
-        }
-        else {
-            if(!this.hasReplacedEquipment(i)) {
-                ItemStack itemstack = this.getEquippedReplacement(i);
-                this.setReplacedEquipment(i, itemstack, true);
-            }
-            this.equipReplacement(i, newItem.copy());
-        }
-    }
+	public void setReplacedEquipment(int i, ItemStack item, boolean flag) {
+		setInventorySlotContents(i, item);
+		hasReplacedEquipment[i] = flag;
+		if (!flag && i == 4) {
+			if (replacedMeleeWeapons) {
+				theNPC.npcItemsInv.setIdleItem(theNPC.npcItemsInv.getReplacedIdleItem());
+				theNPC.npcItemsInv.setMeleeWeaponMounted(theNPC.npcItemsInv.getReplacedMeleeWeaponMounted());
+				theNPC.npcItemsInv.setIdleItemMounted(theNPC.npcItemsInv.getReplacedIdleItemMounted());
+				theNPC.npcItemsInv.setReplacedMeleeWeaponMounted(null);
+				theNPC.npcItemsInv.setReplacedIdleItem(null);
+				theNPC.npcItemsInv.setReplacedIdleItemMounted(null);
+				replacedMeleeWeapons = false;
+			}
+			updateHeldItem();
+		}
+	}
 
-    private void updateHeldItem() {
-        if(!this.theNPC.npcItemsInv.getIsEating()) {
-            this.theNPC.refreshCurrentAttackMode();
-        }
-    }
+	public void updateHeldItem() {
+		if (!theNPC.npcItemsInv.getIsEating()) {
+			theNPC.refreshCurrentAttackMode();
+		}
+	}
 
-    public void dropAllReplacedItems() {
-        for (int i = 0; i < 7; ++i) {
-            ItemStack itemstack;
-            if (!this.hasReplacedEquipment(i) || (itemstack = this.getEquippedReplacement(i)) == null) continue;
-            this.theNPC.npcDropItem(itemstack, 0.0f, false, true);
-            this.equipReplacement(i, this.getReplacedEquipment(i));
-            this.setReplacedEquipment(i, null, false);
-        }
-    }
+	@Override
+	public void writeToNBT(NBTTagCompound nbt) {
+		super.writeToNBT(nbt);
+		for (int i = 0; i < hasReplacedEquipment.length; ++i) {
+			boolean flag = hasReplacedEquipment[i];
+			nbt.setBoolean("ReplacedFlag_" + i, flag);
+		}
+		nbt.setBoolean("ReplacedMelee", replacedMeleeWeapons);
+	}
 }

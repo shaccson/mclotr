@@ -12,89 +12,88 @@ import net.minecraft.world.World;
 import net.minecraft.world.biome.BiomeGenBase;
 
 public class LOTREntityRangerIthilien extends LOTREntityRanger {
-    public LOTREntityRangerIthilien(World world) {
-        super(world);
-        this.npcCape = LOTRCapes.RANGER_ITHILIEN;
-    }
+	public LOTREntityRangerIthilien(World world) {
+		super(world);
+		npcCape = LOTRCapes.RANGER_ITHILIEN;
+	}
 
-    @Override
-    protected LOTRFoods getDunedainFoods() {
-        return LOTRFoods.GONDOR;
-    }
+	@Override
+	public LOTRMiniQuest createMiniQuest() {
+		return LOTRMiniQuestFactory.GONDOR.createQuest(this);
+	}
 
-    @Override
-    protected LOTRFoods getDunedainDrinks() {
-        return LOTRFoods.GONDOR_DRINK;
-    }
+	@Override
+	public void dropDunedainItems(boolean flag, int i) {
+		if (rand.nextInt(6) == 0) {
+			dropChestContents(LOTRChestContents.GONDOR_HOUSE, 1, 2 + i);
+		}
+	}
 
-    @Override
-    public IEntityLivingData onSpawnWithEgg(IEntityLivingData data) {
-        data = super.onSpawnWithEgg(data);
-        int i = this.rand.nextInt(4);
-        if(i == 0 || i == 1 || i == 2) {
-            this.npcItemsInv.setMeleeWeapon(new ItemStack(LOTRMod.daggerGondor));
-        }
-        else if(i == 3) {
-            this.npcItemsInv.setMeleeWeapon(new ItemStack(LOTRMod.swordGondor));
-        }
-        this.npcItemsInv.setRangedWeapon(new ItemStack(LOTRMod.gondorBow));
-        this.setCurrentItemOrArmor(1, new ItemStack(LOTRMod.bootsRangerIthilien));
-        this.setCurrentItemOrArmor(2, new ItemStack(LOTRMod.legsRangerIthilien));
-        this.setCurrentItemOrArmor(3, new ItemStack(LOTRMod.bodyRangerIthilien));
-        this.setCurrentItemOrArmor(4, new ItemStack(LOTRMod.helmetRangerIthilien));
-        return data;
-    }
+	@Override
+	public float getAlignmentBonus() {
+		return 2.0f;
+	}
 
-    @Override
-    public LOTRFaction getFaction() {
-        return LOTRFaction.GONDOR;
-    }
+	@Override
+	public float getBlockPathWeight(int i, int j, int k) {
+		float f = super.getBlockPathWeight(i, j, k);
+		BiomeGenBase biome = worldObj.getBiomeGenForCoords(i, k);
+		if (biome instanceof LOTRBiomeGenIthilien) {
+			f += 20.0f;
+		}
+		return f;
+	}
 
-    @Override
-    public float getBlockPathWeight(int i, int j, int k) {
-        float f = super.getBlockPathWeight(i, j, k);
-        BiomeGenBase biome = this.worldObj.getBiomeGenForCoords(i, k);
-        if(biome instanceof LOTRBiomeGenIthilien) {
-            f += 20.0f;
-        }
-        return f;
-    }
+	@Override
+	public LOTRMiniQuestFactory getBountyHelpSpeechDir() {
+		return LOTRMiniQuestFactory.GONDOR;
+	}
 
-    @Override
-    protected void dropDunedainItems(boolean flag, int i) {
-        if(this.rand.nextInt(6) == 0) {
-            this.dropChestContents(LOTRChestContents.GONDOR_HOUSE, 1, 2 + i);
-        }
-    }
+	@Override
+	public LOTRFoods getDunedainDrinks() {
+		return LOTRFoods.GONDOR_DRINK;
+	}
 
-    @Override
-    protected LOTRAchievement getKillAchievement() {
-        return LOTRAchievement.killRangerIthilien;
-    }
+	@Override
+	public LOTRFoods getDunedainFoods() {
+		return LOTRFoods.GONDOR;
+	}
 
-    @Override
-    public float getAlignmentBonus() {
-        return 2.0f;
-    }
+	@Override
+	public LOTRFaction getFaction() {
+		return LOTRFaction.GONDOR;
+	}
 
-    @Override
-    public String getSpeechBank(EntityPlayer entityplayer) {
-        if(this.isFriendly(entityplayer)) {
-            if(this.hiredNPCInfo.getHiringPlayer() == entityplayer) {
-                return "gondor/ranger/hired";
-            }
-            return "gondor/ranger/friendly";
-        }
-        return "gondor/ranger/hostile";
-    }
+	@Override
+	public LOTRAchievement getKillAchievement() {
+		return LOTRAchievement.killRangerIthilien;
+	}
 
-    @Override
-    public LOTRMiniQuest createMiniQuest() {
-        return LOTRMiniQuestFactory.GONDOR.createQuest(this);
-    }
+	@Override
+	public String getSpeechBank(EntityPlayer entityplayer) {
+		if (isFriendly(entityplayer)) {
+			if (hiredNPCInfo.getHiringPlayer() == entityplayer) {
+				return "gondor/ranger/hired";
+			}
+			return "gondor/ranger/friendly";
+		}
+		return "gondor/ranger/hostile";
+	}
 
-    @Override
-    public LOTRMiniQuestFactory getBountyHelpSpeechDir() {
-        return LOTRMiniQuestFactory.GONDOR;
-    }
+	@Override
+	public IEntityLivingData onSpawnWithEgg(IEntityLivingData data) {
+		data = super.onSpawnWithEgg(data);
+		int i = rand.nextInt(4);
+		if (i == 0 || i == 1 || i == 2) {
+			npcItemsInv.setMeleeWeapon(new ItemStack(LOTRMod.daggerGondor));
+		} else if (i == 3) {
+			npcItemsInv.setMeleeWeapon(new ItemStack(LOTRMod.swordGondor));
+		}
+		npcItemsInv.setRangedWeapon(new ItemStack(LOTRMod.gondorBow));
+		setCurrentItemOrArmor(1, new ItemStack(LOTRMod.bootsRangerIthilien));
+		setCurrentItemOrArmor(2, new ItemStack(LOTRMod.legsRangerIthilien));
+		setCurrentItemOrArmor(3, new ItemStack(LOTRMod.bodyRangerIthilien));
+		setCurrentItemOrArmor(4, new ItemStack(LOTRMod.helmetRangerIthilien));
+		return data;
+	}
 }

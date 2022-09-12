@@ -8,37 +8,37 @@ import net.minecraft.item.ItemStack;
 import net.minecraft.world.World;
 
 public class LOTREntityEasterlingLumberman extends LOTREntityEasterlingMarketTrader {
-    public LOTREntityEasterlingLumberman(World world) {
-        super(world);
-    }
+	public LOTREntityEasterlingLumberman(World world) {
+		super(world);
+	}
 
-    @Override
-    public LOTRTradeEntries getBuyPool() {
-        return LOTRTradeEntries.RHUN_LUMBERMAN_BUY;
-    }
+	@Override
+	public LOTRTradeEntries getBuyPool() {
+		return LOTRTradeEntries.RHUN_LUMBERMAN_BUY;
+	}
 
-    @Override
-    public LOTRTradeEntries getSellPool() {
-        return LOTRTradeEntries.RHUN_LUMBERMAN_SELL;
-    }
+	@Override
+	public LOTRTradeEntries getSellPool() {
+		return LOTRTradeEntries.RHUN_LUMBERMAN_SELL;
+	}
 
-    @Override
-    public void setupNPCGender() {
-        this.familyInfo.setMale(true);
-    }
+	@Override
+	public IEntityLivingData onSpawnWithEgg(IEntityLivingData data) {
+		data = super.onSpawnWithEgg(data);
+		npcItemsInv.setMeleeWeapon(new ItemStack(Items.iron_axe));
+		npcItemsInv.setIdleItem(npcItemsInv.getMeleeWeapon());
+		int robeColor = 8538153;
+		ItemStack body = new ItemStack(LOTRMod.bodyKaftan);
+		ItemStack legs = new ItemStack(LOTRMod.legsKaftan);
+		LOTRItemHaradRobes.setRobesColor(body, robeColor);
+		LOTRItemHaradRobes.setRobesColor(legs, robeColor);
+		setCurrentItemOrArmor(3, body);
+		setCurrentItemOrArmor(2, legs);
+		return data;
+	}
 
-    @Override
-    public IEntityLivingData onSpawnWithEgg(IEntityLivingData data) {
-        data = super.onSpawnWithEgg(data);
-        this.npcItemsInv.setMeleeWeapon(new ItemStack(Items.iron_axe));
-        this.npcItemsInv.setIdleItem(this.npcItemsInv.getMeleeWeapon());
-        int robeColor = 8538153;
-        ItemStack body = new ItemStack(LOTRMod.bodyKaftan);
-        ItemStack legs = new ItemStack(LOTRMod.legsKaftan);
-        LOTRItemHaradRobes.setRobesColor(body, robeColor);
-        LOTRItemHaradRobes.setRobesColor(legs, robeColor);
-        this.setCurrentItemOrArmor(3, body);
-        this.setCurrentItemOrArmor(2, legs);
-        return data;
-    }
+	@Override
+	public void setupNPCGender() {
+		familyInfo.setMale(true);
+	}
 }

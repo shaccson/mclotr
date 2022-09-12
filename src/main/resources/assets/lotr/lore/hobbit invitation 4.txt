@@ -1,8 +1,10 @@
-#title:Приглашение
-#author:Бильбо Бэггинс
+#title:Invitation
+#author:Bilbo Baggins
 #types:shire
-Сообщение для доставки к Фолко Боффину
+Message to be delivered to Folco Boffin,
+Little Delving.
 
-Дорогой господин Боффин, я приглашаю вас и вашу прекрасную жену на празднование моего 111-го дня рождения, на праздничном поле Хоббитона, 22 сентября.
-
-Надеюсь, вам понравится. Бильбо Бэггинс.
+Dear Mr. Boffin,
+I invite you and your lovely wife to the celebration of my eleventy-first birthday party at the Party Field, Hobbiton, on the 22nd of September.
+Hoping you will enjoy yourselves,
+Bilbo Baggins

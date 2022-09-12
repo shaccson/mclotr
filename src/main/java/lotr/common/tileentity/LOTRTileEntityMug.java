@@ -10,125 +10,126 @@ import net.minecraft.network.play.server.S35PacketUpdateTileEntity;
 import net.minecraft.tileentity.TileEntity;
 
 public class LOTRTileEntityMug extends TileEntity {
-    private ItemStack mugItem;
-    private LOTRItemMug.Vessel mugVessel;
+	public ItemStack mugItem;
+	public LOTRItemMug.Vessel mugVessel;
 
-    public ItemStack getMugItem() {
-        if(this.mugItem == null) {
-            return this.getVessel().getEmptyVessel();
-        }
-        ItemStack copy = this.mugItem.copy();
-        if(LOTRItemMug.isItemFullDrink(copy)) {
-            LOTRItemMug.setVessel(copy, this.getVessel(), true);
-        }
-        return copy;
-    }
+	public boolean canPoisonMug() {
+		ItemStack itemstack = getMugItem();
+		if (itemstack != null) {
+			return LOTRPoisonedDrinks.canPoison(itemstack) && !LOTRPoisonedDrinks.isDrinkPoisoned(itemstack);
+		}
+		return false;
+	}
 
-    public void setMugItem(ItemStack itemstack) {
-        if(itemstack != null && itemstack.stackSize <= 0) {
-            itemstack = null;
-        }
-        this.mugItem = itemstack;
-        this.worldObj.markBlockForUpdate(this.xCoord, this.yCoord, this.zCoord);
-        this.markDirty();
-    }
+	@Override
+	public Packet getDescriptionPacket() {
+		NBTTagCompound data = new NBTTagCompound();
+		writeToNBT(data);
+		return new S35PacketUpdateTileEntity(xCoord, yCoord, zCoord, 0, data);
+	}
 
-    public ItemStack getMugItemForRender() {
-        return LOTRItemMug.getEquivalentDrink(this.getMugItem());
-    }
+	public ItemStack getMugItem() {
+		if (mugItem == null) {
+			return getVessel().getEmptyVessel();
+		}
+		ItemStack copy = mugItem.copy();
+		if (LOTRItemMug.isItemFullDrink(copy)) {
+			LOTRItemMug.setVessel(copy, getVessel(), true);
+		}
+		return copy;
+	}
 
-    public void setEmpty() {
-        this.setMugItem(null);
-    }
+	public ItemStack getMugItemForRender() {
+		return LOTRItemMug.getEquivalentDrink(getMugItem());
+	}
 
-    public boolean isEmpty() {
-        return !LOTRItemMug.isItemFullDrink(this.getMugItem());
-    }
+	public LOTRItemMug.Vessel getVessel() {
+		if (mugVessel == null) {
+			for (LOTRItemMug.Vessel v : LOTRItemMug.Vessel.values()) {
+				if (!v.canPlace || v.getBlock() != getBlockType()) {
+					continue;
+				}
+				return v;
+			}
+			return LOTRItemMug.Vessel.MUG;
+		}
+		return mugVessel;
+	}
 
-    public LOTRItemMug.Vessel getVessel() {
-        if(this.mugVessel == null) {
-            for(LOTRItemMug.Vessel v : LOTRItemMug.Vessel.values()) {
-                if(!v.canPlace || v.getBlock() != this.getBlockType()) continue;
-                return v;
-            }
-            return LOTRItemMug.Vessel.MUG;
-        }
-        return this.mugVessel;
-    }
+	public boolean isEmpty() {
+		return !LOTRItemMug.isItemFullDrink(getMugItem());
+	}
 
-    public void setVessel(LOTRItemMug.Vessel v) {
-        this.mugVessel = v;
-        this.worldObj.markBlockForUpdate(this.xCoord, this.yCoord, this.zCoord);
-        this.markDirty();
-    }
+	@Override
+	public void onDataPacket(NetworkManager manager, S35PacketUpdateTileEntity packet) {
+		NBTTagCompound data = packet.func_148857_g();
+		readFromNBT(data);
+	}
 
-    public boolean canPoisonMug() {
-        ItemStack itemstack = this.getMugItem();
-        if(itemstack != null) {
-            return LOTRPoisonedDrinks.canPoison(itemstack) && !LOTRPoisonedDrinks.isDrinkPoisoned(itemstack);
-        }
-        return false;
-    }
+	public void poisonMug(EntityPlayer entityplayer) {
+		ItemStack itemstack = getMugItem();
+		LOTRPoisonedDrinks.setDrinkPoisoned(itemstack, true);
+		LOTRPoisonedDrinks.setPoisonerPlayer(itemstack, entityplayer);
+		setMugItem(itemstack);
+	}
 
-    public void poisonMug(EntityPlayer entityplayer) {
-        ItemStack itemstack = this.getMugItem();
-        LOTRPoisonedDrinks.setDrinkPoisoned(itemstack, true);
-        LOTRPoisonedDrinks.setPoisonerPlayer(itemstack, entityplayer);
-        this.setMugItem(itemstack);
-    }
+	@Override
+	public void readFromNBT(NBTTagCompound nbt) {
+		super.readFromNBT(nbt);
+		if (nbt.hasKey("ItemID")) {
+			Item item = Item.getItemById(nbt.getInteger("ItemID"));
+			if (item != null) {
+				int damage = nbt.getInteger("ItemDamage");
+				mugItem = new ItemStack(item, 1, damage);
+			}
+		} else {
+			boolean hasItem = nbt.getBoolean("HasMugItem");
+			mugItem = !hasItem ? null : ItemStack.loadItemStackFromNBT(nbt.getCompoundTag("MugItem"));
+		}
+		if (nbt.hasKey("Vessel")) {
+			mugVessel = LOTRItemMug.Vessel.forMeta(nbt.getByte("Vessel"));
+		}
+	}
 
-    @Override
-    public void updateEntity() {
-        if(!this.worldObj.isRemote && this.isEmpty() && this.worldObj.canLightningStrikeAt(this.xCoord, this.yCoord, this.zCoord) && this.worldObj.rand.nextInt(6000) == 0) {
-            ItemStack waterItem = new ItemStack(LOTRMod.mugWater);
-            LOTRItemMug.setVessel(waterItem, this.getVessel(), false);
-            this.setMugItem(waterItem);
-            this.worldObj.markBlockForUpdate(this.xCoord, this.yCoord, this.zCoord);
-            this.markDirty();
-        }
-    }
+	public void setEmpty() {
+		setMugItem(null);
+	}
 
-    @Override
-    public void writeToNBT(NBTTagCompound nbt) {
-        super.writeToNBT(nbt);
-        nbt.setBoolean("HasMugItem", this.mugItem != null);
-        if(this.mugItem != null) {
-            nbt.setTag("MugItem", this.mugItem.writeToNBT(new NBTTagCompound()));
-        }
-        if(this.mugVessel != null) {
-            nbt.setByte("Vessel", (byte) this.mugVessel.id);
-        }
-    }
+	public void setMugItem(ItemStack itemstack) {
+		if (itemstack != null && itemstack.stackSize <= 0) {
+			itemstack = null;
+		}
+		mugItem = itemstack;
+		worldObj.markBlockForUpdate(xCoord, yCoord, zCoord);
+		markDirty();
+	}
 
-    @Override
-    public void readFromNBT(NBTTagCompound nbt) {
-        super.readFromNBT(nbt);
-        if(nbt.hasKey("ItemID")) {
-            Item item = Item.getItemById(nbt.getInteger("ItemID"));
-            if(item != null) {
-                int damage = nbt.getInteger("ItemDamage");
-                this.mugItem = new ItemStack(item, 1, damage);
-            }
-        }
-        else {
-            boolean hasItem = nbt.getBoolean("HasMugItem");
-            this.mugItem = !hasItem ? null : ItemStack.loadItemStackFromNBT(nbt.getCompoundTag("MugItem"));
-        }
-        if(nbt.hasKey("Vessel")) {
-            this.mugVessel = LOTRItemMug.Vessel.forMeta(nbt.getByte("Vessel"));
-        }
-    }
+	public void setVessel(LOTRItemMug.Vessel v) {
+		mugVessel = v;
+		worldObj.markBlockForUpdate(xCoord, yCoord, zCoord);
+		markDirty();
+	}
 
-    @Override
-    public Packet getDescriptionPacket() {
-        NBTTagCompound data = new NBTTagCompound();
-        this.writeToNBT(data);
-        return new S35PacketUpdateTileEntity(this.xCoord, this.yCoord, this.zCoord, 0, data);
-    }
+	@Override
+	public void updateEntity() {
+		if (!worldObj.isRemote && isEmpty() && worldObj.canLightningStrikeAt(xCoord, yCoord, zCoord) && worldObj.rand.nextInt(6000) == 0) {
+			ItemStack waterItem = new ItemStack(LOTRMod.mugWater);
+			LOTRItemMug.setVessel(waterItem, getVessel(), false);
+			setMugItem(waterItem);
+			worldObj.markBlockForUpdate(xCoord, yCoord, zCoord);
+			markDirty();
+		}
+	}
 
-    @Override
-    public void onDataPacket(NetworkManager manager, S35PacketUpdateTileEntity packet) {
-        NBTTagCompound data = packet.func_148857_g();
-        this.readFromNBT(data);
-    }
+	@Override
+	public void writeToNBT(NBTTagCompound nbt) {
+		super.writeToNBT(nbt);
+		nbt.setBoolean("HasMugItem", mugItem != null);
+		if (mugItem != null) {
+			nbt.setTag("MugItem", mugItem.writeToNBT(new NBTTagCompound()));
+		}
+		if (mugVessel != null) {
+			nbt.setByte("Vessel", (byte) mugVessel.id);
+		}
+	}
 }

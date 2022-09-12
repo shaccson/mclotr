@@ -20,296 +20,296 @@ import net.minecraft.world.World;
 import net.minecraft.world.biome.WorldChunkManager;
 
 public class LOTREntityBear extends EntityAnimal implements LOTRAnimalSpawnConditions {
-    private EntityAIBase attackAI = new LOTREntityAIAttackOnCollide(this, 1.7, false);
-    private EntityAIBase panicAI = new EntityAIPanic(this, 1.5);
-    private EntityAIBase targetNearAI = new EntityAINearestAttackableTarget(this, EntityPlayer.class, 0, true);
-    private int hostileTick = 0;
-    private boolean prevIsChild = true;
+	public EntityAIBase attackAI = new LOTREntityAIAttackOnCollide(this, 1.7, false);
+	public EntityAIBase panicAI = new EntityAIPanic(this, 1.5);
+	public EntityAIBase targetNearAI = new EntityAINearestAttackableTarget(this, EntityPlayer.class, 0, true);
+	public int hostileTick = 0;
+	public boolean prevIsChild = true;
 
-    public LOTREntityBear(World world) {
-        super(world);
-        this.setSize(1.6f, 1.8f);
-        this.getNavigator().setAvoidsWater(true);
-        this.tasks.addTask(0, new EntityAISwimming(this));
-        this.tasks.addTask(2, this.panicAI);
-        this.tasks.addTask(3, new EntityAIMate(this, 1.0));
-        this.tasks.addTask(4, new EntityAITempt(this, 1.4, Items.fish, false));
-        this.tasks.addTask(5, new EntityAIFollowParent(this, 1.4));
-        this.tasks.addTask(6, new EntityAIWander(this, 1.0));
-        this.tasks.addTask(7, new EntityAIWatchClosest(this, EntityPlayer.class, 8.0f));
-        this.tasks.addTask(8, new EntityAILookIdle(this));
-        this.targetTasks.addTask(0, new EntityAIHurtByTarget(this, false));
-        this.targetTasks.addTask(1, this.targetNearAI);
-    }
+	public LOTREntityBear(World world) {
+		super(world);
+		setSize(1.6f, 1.8f);
+		getNavigator().setAvoidsWater(true);
+		tasks.addTask(0, new EntityAISwimming(this));
+		tasks.addTask(2, panicAI);
+		tasks.addTask(3, new EntityAIMate(this, 1.0));
+		tasks.addTask(4, new EntityAITempt(this, 1.4, Items.fish, false));
+		tasks.addTask(5, new EntityAIFollowParent(this, 1.4));
+		tasks.addTask(6, new EntityAIWander(this, 1.0));
+		tasks.addTask(7, new EntityAIWatchClosest(this, EntityPlayer.class, 8.0f));
+		tasks.addTask(8, new EntityAILookIdle(this));
+		targetTasks.addTask(0, new EntityAIHurtByTarget(this, false));
+		targetTasks.addTask(1, targetNearAI);
+	}
 
-    @Override
-    public void entityInit() {
-        super.entityInit();
-        this.dataWatcher.addObject(18, (byte) 0);
-        this.dataWatcher.addObject(20, (byte) 0);
-        this.setBearType(BearType.forID(this.rand.nextInt(BearType.values().length)));
-    }
+	@Override
+	public void applyEntityAttributes() {
+		super.applyEntityAttributes();
+		getEntityAttribute(SharedMonsterAttributes.maxHealth).setBaseValue(40.0);
+		getEntityAttribute(SharedMonsterAttributes.movementSpeed).setBaseValue(0.2);
+		getAttributeMap().registerAttribute(SharedMonsterAttributes.attackDamage).setBaseValue(4.0);
+	}
 
-    public BearType getBearType() {
-        byte i = this.dataWatcher.getWatchableObjectByte(18);
-        return BearType.forID(i);
-    }
+	@Override
+	public boolean attackEntityAsMob(Entity entity) {
+		float f = (float) getEntityAttribute(SharedMonsterAttributes.attackDamage).getAttributeValue();
+		return entity.attackEntityFrom(DamageSource.causeMobDamage(this), f);
+	}
 
-    public void setBearType(BearType t) {
-        this.dataWatcher.updateObject(18, (byte) t.bearID);
-    }
+	@Override
+	public boolean attackEntityFrom(DamageSource damagesource, float f) {
+		Entity attacker;
+		boolean flag = super.attackEntityFrom(damagesource, f);
+		if (flag && (attacker = damagesource.getEntity()) instanceof EntityLivingBase) {
+			if (isChild()) {
+				double range = 12.0;
+				List list = worldObj.getEntitiesWithinAABBExcludingEntity(this, boundingBox.expand(range, range, range));
+				for (Object obj : list) {
+					LOTREntityBear bear;
+					Entity entity = (Entity) obj;
+					if (!(entity instanceof LOTREntityBear) || (bear = (LOTREntityBear) entity).isChild()) {
+						continue;
+					}
+					bear.becomeAngryAt((EntityLivingBase) attacker);
+				}
+			} else {
+				becomeAngryAt((EntityLivingBase) attacker);
+			}
+		}
+		return flag;
+	}
 
-    public boolean isHostile() {
-        return this.dataWatcher.getWatchableObjectByte(20) == 1;
-    }
+	public void becomeAngryAt(EntityLivingBase entity) {
+		setAttackTarget(entity);
+		hostileTick = 200;
+	}
 
-    public void setHostile(boolean flag) {
-        this.dataWatcher.updateObject(20, flag ? (byte) 1 : 0);
-    }
+	@Override
+	public boolean canWorldGenSpawnAt(int i, int j, int k, LOTRBiome biome, LOTRBiomeVariant variant) {
+		int trees = biome.decorator.getVariantTreesPerChunk(variant);
+		return trees >= 1;
+	}
 
-    @Override
-    protected void applyEntityAttributes() {
-        super.applyEntityAttributes();
-        this.getEntityAttribute(SharedMonsterAttributes.maxHealth).setBaseValue(40.0);
-        this.getEntityAttribute(SharedMonsterAttributes.movementSpeed).setBaseValue(0.2);
-        this.getAttributeMap().registerAttribute(SharedMonsterAttributes.attackDamage).setBaseValue(4.0);
-    }
+	@Override
+	public EntityAgeable createChild(EntityAgeable entity) {
+		LOTREntityBear mate = (LOTREntityBear) entity;
+		LOTREntityBear child = new LOTREntityBear(worldObj);
+		if (rand.nextBoolean()) {
+			child.setBearType(getBearType());
+		} else {
+			child.setBearType(mate.getBearType());
+		}
+		return child;
+	}
 
-    @Override
-    public IEntityLivingData onSpawnWithEgg(IEntityLivingData data) {
-        if((data = super.onSpawnWithEgg(data)) == null) {
-            data = new BearGroupSpawnData();
-            ((BearGroupSpawnData) data).numSpawned = 1;
-        }
-        else if(data instanceof BearGroupSpawnData) {
-            BearGroupSpawnData bgsd = (BearGroupSpawnData) data;
-            if(bgsd.numSpawned >= 1 && this.rand.nextBoolean()) {
-                this.setGrowingAge(-24000);
-            }
-            ++bgsd.numSpawned;
-        }
-        if(this.rand.nextInt(10000) == 0) {
-            this.setCustomNameTag("Wojtek");
-        }
-        return data;
-    }
+	@Override
+	public void dropFewItems(boolean flag, int i) {
+		int furs = 1 + rand.nextInt(3) + rand.nextInt(i + 1);
+		for (int l = 0; l < furs; ++l) {
+			dropItem(LOTRMod.fur, 1);
+		}
+		if (flag) {
+			int rugChance = 30 - i * 5;
+			if (rand.nextInt(rugChance = Math.max(rugChance, 1)) == 0) {
+				entityDropItem(new ItemStack(LOTRMod.bearRug, 1, getBearType().bearID), 0.0f);
+			}
+		}
+	}
 
-    @Override
-    public boolean isAIEnabled() {
-        return true;
-    }
+	@Override
+	public void entityInit() {
+		super.entityInit();
+		dataWatcher.addObject(18, (byte) 0);
+		dataWatcher.addObject(20, (byte) 0);
+		setBearType(BearType.forID(rand.nextInt(BearType.values().length)));
+	}
 
-    @Override
-    public void onLivingUpdate() {
-        boolean isChild;
-        EntityLivingBase entity;
-        if(!this.worldObj.isRemote && (isChild = this.isChild()) != this.prevIsChild) {
-            if(isChild) {
-                this.tasks.removeTask(this.attackAI);
-                this.tasks.addTask(2, this.panicAI);
-                this.targetTasks.removeTask(this.targetNearAI);
-            }
-            else {
-                this.tasks.removeTask(this.panicAI);
-                if(this.hostileTick > 0) {
-                    this.tasks.addTask(1, this.attackAI);
-                    this.targetTasks.addTask(1, this.targetNearAI);
-                }
-                else {
-                    this.tasks.removeTask(this.attackAI);
-                    this.targetTasks.removeTask(this.targetNearAI);
-                }
-            }
-        }
-        super.onLivingUpdate();
-        if(!this.worldObj.isRemote && this.getAttackTarget() != null && (!(entity = this.getAttackTarget()).isEntityAlive() || entity instanceof EntityPlayer && ((EntityPlayer) entity).capabilities.isCreativeMode)) {
-            this.setAttackTarget(null);
-        }
-        if(!this.worldObj.isRemote) {
-            if(this.hostileTick > 0 && this.getAttackTarget() == null) {
-                --this.hostileTick;
-            }
-            this.setHostile(this.hostileTick > 0);
-            if(this.isHostile()) {
-                this.resetInLove();
-            }
-        }
-    }
+	public BearType getBearType() {
+		byte i = dataWatcher.getWatchableObjectByte(18);
+		return BearType.forID(i);
+	}
 
-    @Override
-    protected void dropFewItems(boolean flag, int i) {
-        int furs = 1 + this.rand.nextInt(3) + this.rand.nextInt(i + 1);
-        for(int l = 0; l < furs; ++l) {
-            this.dropItem(LOTRMod.fur, 1);
-        }
-        if(flag) {
-            int rugChance = 30 - i * 5;
-            if(this.rand.nextInt(rugChance = Math.max(rugChance, 1)) == 0) {
-                this.entityDropItem(new ItemStack(LOTRMod.bearRug, 1, this.getBearType().bearID), 0.0f);
-            }
-        }
-    }
+	@Override
+	public boolean getCanSpawnHere() {
+		WorldChunkManager worldChunkMgr = worldObj.getWorldChunkManager();
+		if (worldChunkMgr instanceof LOTRWorldChunkManager) {
+			int i = MathHelper.floor_double(posX);
+			int j = MathHelper.floor_double(boundingBox.minY);
+			int k = MathHelper.floor_double(posZ);
+			LOTRBiome biome = (LOTRBiome) worldObj.getBiomeGenForCoords(i, k);
+			LOTRBiomeVariant variant = ((LOTRWorldChunkManager) worldChunkMgr).getBiomeVariantAt(i, k);
+			return super.getCanSpawnHere() && canWorldGenSpawnAt(i, j, k, biome, variant);
+		}
+		return super.getCanSpawnHere();
+	}
 
-    @Override
-    protected int getExperiencePoints(EntityPlayer entityplayer) {
-        return 2 + this.worldObj.rand.nextInt(3);
-    }
+	@Override
+	public String getDeathSound() {
+		return "lotr:bear.death";
+	}
 
-    @Override
-    public boolean attackEntityAsMob(Entity entity) {
-        float f = (float) this.getEntityAttribute(SharedMonsterAttributes.attackDamage).getAttributeValue();
-        return entity.attackEntityFrom(DamageSource.causeMobDamage(this), f);
-    }
+	@Override
+	public int getExperiencePoints(EntityPlayer entityplayer) {
+		return 2 + worldObj.rand.nextInt(3);
+	}
 
-    @Override
-    public EntityAgeable createChild(EntityAgeable entity) {
-        LOTREntityBear mate = (LOTREntityBear) entity;
-        LOTREntityBear child = new LOTREntityBear(this.worldObj);
-        if(this.rand.nextBoolean()) {
-            child.setBearType(this.getBearType());
-        }
-        else {
-            child.setBearType(mate.getBearType());
-        }
-        return child;
-    }
+	@Override
+	public String getHurtSound() {
+		return "lotr:bear.hurt";
+	}
 
-    @Override
-    public boolean attackEntityFrom(DamageSource damagesource, float f) {
-        Entity attacker;
-        boolean flag = super.attackEntityFrom(damagesource, f);
-        if(flag && (attacker = damagesource.getEntity()) instanceof EntityLivingBase) {
-            if(this.isChild()) {
-                double range = 12.0;
-                List list = this.worldObj.getEntitiesWithinAABBExcludingEntity(this, this.boundingBox.expand(range, range, range));
-                for(Object obj : list) {
-                    LOTREntityBear bear;
-                    Entity entity = (Entity) obj;
-                    if(!(entity instanceof LOTREntityBear) || (bear = (LOTREntityBear) entity).isChild()) continue;
-                    bear.becomeAngryAt((EntityLivingBase) attacker);
-                }
-            }
-            else {
-                this.becomeAngryAt((EntityLivingBase) attacker);
-            }
-        }
-        return flag;
-    }
+	@Override
+	public String getLivingSound() {
+		return "lotr:bear.say";
+	}
 
-    private void becomeAngryAt(EntityLivingBase entity) {
-        this.setAttackTarget(entity);
-        this.hostileTick = 200;
-    }
+	@Override
+	public ItemStack getPickedResult(MovingObjectPosition target) {
+		return new ItemStack(LOTRMod.spawnEgg, 1, LOTREntities.getEntityID(this));
+	}
 
-    @Override
-    public void writeEntityToNBT(NBTTagCompound nbt) {
-        super.writeEntityToNBT(nbt);
-        nbt.setByte("BearType", (byte) this.getBearType().bearID);
-        nbt.setInteger("Angry", this.hostileTick);
-    }
+	@Override
+	public int getTalkInterval() {
+		return 200;
+	}
 
-    @Override
-    public void readEntityFromNBT(NBTTagCompound nbt) {
-        super.readEntityFromNBT(nbt);
-        if(nbt.hasKey("BearType")) {
-            this.setBearType(BearType.forID(nbt.getByte("BearType")));
-        }
-        this.hostileTick = nbt.getInteger("Angry");
-    }
+	@Override
+	public boolean interact(EntityPlayer entityplayer) {
+		if (isHostile()) {
+			return false;
+		}
+		return super.interact(entityplayer);
+	}
 
-    @Override
-    public boolean isBreedingItem(ItemStack itemstack) {
-        return itemstack.getItem() == Items.fish;
-    }
+	@Override
+	public boolean isAIEnabled() {
+		return true;
+	}
 
-    @Override
-    public boolean interact(EntityPlayer entityplayer) {
-        if(this.isHostile()) {
-            return false;
-        }
-        return super.interact(entityplayer);
-    }
+	@Override
+	public boolean isBreedingItem(ItemStack itemstack) {
+		return itemstack.getItem() == Items.fish;
+	}
 
-    @Override
-    public boolean canWorldGenSpawnAt(int i, int j, int k, LOTRBiome biome, LOTRBiomeVariant variant) {
-        int trees = biome.decorator.getVariantTreesPerChunk(variant);
-        return trees >= 1;
-    }
+	public boolean isHostile() {
+		return dataWatcher.getWatchableObjectByte(20) == 1;
+	}
 
-    @Override
-    public boolean getCanSpawnHere() {
-        WorldChunkManager worldChunkMgr = this.worldObj.getWorldChunkManager();
-        if(worldChunkMgr instanceof LOTRWorldChunkManager) {
-            int i = MathHelper.floor_double(this.posX);
-            int j = MathHelper.floor_double(this.boundingBox.minY);
-            int k = MathHelper.floor_double(this.posZ);
-            LOTRBiome biome = (LOTRBiome) this.worldObj.getBiomeGenForCoords(i, k);
-            LOTRBiomeVariant variant = ((LOTRWorldChunkManager) worldChunkMgr).getBiomeVariantAt(i, k);
-            return super.getCanSpawnHere() && this.canWorldGenSpawnAt(i, j, k, biome, variant);
-        }
-        return super.getCanSpawnHere();
-    }
+	@Override
+	public void onLivingUpdate() {
+		boolean isChild;
+		EntityLivingBase entity;
+		if (!worldObj.isRemote && (isChild = isChild()) != prevIsChild) {
+			if (isChild) {
+				tasks.removeTask(attackAI);
+				tasks.addTask(2, panicAI);
+				targetTasks.removeTask(targetNearAI);
+			} else {
+				tasks.removeTask(panicAI);
+				if (hostileTick > 0) {
+					tasks.addTask(1, attackAI);
+					targetTasks.addTask(1, targetNearAI);
+				} else {
+					tasks.removeTask(attackAI);
+					targetTasks.removeTask(targetNearAI);
+				}
+			}
+		}
+		super.onLivingUpdate();
+		if (!worldObj.isRemote && getAttackTarget() != null && (!(entity = getAttackTarget()).isEntityAlive() || entity instanceof EntityPlayer && ((EntityPlayer) entity).capabilities.isCreativeMode)) {
+			setAttackTarget(null);
+		}
+		if (!worldObj.isRemote) {
+			if (hostileTick > 0 && getAttackTarget() == null) {
+				--hostileTick;
+			}
+			setHostile(hostileTick > 0);
+			if (isHostile()) {
+				resetInLove();
+			}
+		}
+	}
 
-    @Override
-    protected String getLivingSound() {
-        return "lotr:bear.say";
-    }
+	@Override
+	public IEntityLivingData onSpawnWithEgg(IEntityLivingData data) {
+		data = super.onSpawnWithEgg(data);
+		if (data == null) {
+			data = new BearGroupSpawnData();
+			((BearGroupSpawnData) data).numSpawned = 1;
+		} else if (data instanceof BearGroupSpawnData) {
+			BearGroupSpawnData bgsd = (BearGroupSpawnData) data;
+			if (bgsd.numSpawned >= 1 && rand.nextBoolean()) {
+				setGrowingAge(-24000);
+			}
+			++bgsd.numSpawned;
+		}
+		if (rand.nextInt(10000) == 0) {
+			setCustomNameTag("Wojtek");
+		}
+		return data;
+	}
 
-    @Override
-    protected String getHurtSound() {
-        return "lotr:bear.hurt";
-    }
+	@Override
+	public void readEntityFromNBT(NBTTagCompound nbt) {
+		super.readEntityFromNBT(nbt);
+		if (nbt.hasKey("BearType")) {
+			setBearType(BearType.forID(nbt.getByte("BearType")));
+		}
+		hostileTick = nbt.getInteger("Angry");
+	}
 
-    @Override
-    protected String getDeathSound() {
-        return "lotr:bear.death";
-    }
+	public void setBearType(BearType t) {
+		dataWatcher.updateObject(18, (byte) t.bearID);
+	}
 
-    @Override
-    public int getTalkInterval() {
-        return 200;
-    }
+	public void setHostile(boolean flag) {
+		dataWatcher.updateObject(20, flag ? (byte) 1 : 0);
+	}
 
-    @Override
-    public ItemStack getPickedResult(MovingObjectPosition target) {
-        return new ItemStack(LOTRMod.spawnEgg, 1, LOTREntities.getEntityID(this));
-    }
+	@Override
+	public void writeEntityToNBT(NBTTagCompound nbt) {
+		super.writeEntityToNBT(nbt);
+		nbt.setByte("BearType", (byte) getBearType().bearID);
+		nbt.setInteger("Angry", hostileTick);
+	}
 
-    public enum BearType {
-        LIGHT(0), DARK(1), BLACK(2);
+	public static class BearGroupSpawnData implements IEntityLivingData {
+		public int numSpawned = 0;
 
-        public final int bearID;
+		public BearGroupSpawnData() {
+		}
+	}
 
-        BearType(int i) {
-            this.bearID = i;
-        }
+	public enum BearType {
+		LIGHT(0), DARK(1), BLACK(2);
 
-        public String textureName() {
-            return this.name().toLowerCase();
-        }
+		public int bearID;
 
-        public static BearType forID(int ID) {
-            for(BearType t : BearType.values()) {
-                if(t.bearID != ID) continue;
-                return t;
-            }
-            return LIGHT;
-        }
+		BearType(int i) {
+			bearID = i;
+		}
 
-        public static String[] bearTypeNames() {
-            String[] names = new String[BearType.values().length];
-            for(int i = 0; i < names.length; ++i) {
-                names[i] = BearType.values()[i].textureName();
-            }
-            return names;
-        }
-    }
+		public String textureName() {
+			return name().toLowerCase();
+		}
 
-    private static class BearGroupSpawnData implements IEntityLivingData {
-        public int numSpawned = 0;
+		public static String[] bearTypeNames() {
+			String[] names = new String[BearType.values().length];
+			for (int i = 0; i < names.length; ++i) {
+				names[i] = BearType.values()[i].textureName();
+			}
+			return names;
+		}
 
-        private BearGroupSpawnData() {
-        }
-    }
+		public static BearType forID(int ID) {
+			for (BearType t : BearType.values()) {
+				if (t.bearID != ID) {
+					continue;
+				}
+				return t;
+			}
+			return LIGHT;
+		}
+	}
 
 }

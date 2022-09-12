@@ -8,70 +8,76 @@ import net.minecraft.item.ItemStack;
 import net.minecraft.world.World;
 
 public class LOTREntityTormentedElf extends LOTREntityElf {
-    public LOTREntityTormentedElf(World world) {
-        super(world);
-    }
+	public LOTREntityTormentedElf(World world) {
+		super(world);
+	}
 
-    @Override
-    protected void applyEntityAttributes() {
-        super.applyEntityAttributes();
-        this.getEntityAttribute(SharedMonsterAttributes.followRange).setBaseValue(24.0);
-    }
+	@Override
+	public void applyEntityAttributes() {
+		super.applyEntityAttributes();
+		getEntityAttribute(SharedMonsterAttributes.followRange).setBaseValue(24.0);
+	}
 
-    @Override
-    public IEntityLivingData onSpawnWithEgg(IEntityLivingData data) {
-        data = super.onSpawnWithEgg(data);
-        int i = this.rand.nextInt(5);
-        if(i == 0 || i == 1 || i == 2) {
-            this.npcItemsInv.setMeleeWeapon(new ItemStack(LOTRMod.swordUtumno));
-        }
-        else if(i == 3) {
-            this.npcItemsInv.setMeleeWeapon(new ItemStack(LOTRMod.daggerUtumno));
-        }
-        else if(i == 4) {
-            this.npcItemsInv.setMeleeWeapon(new ItemStack(LOTRMod.daggerUtumnoPoisoned));
-        }
-        this.npcItemsInv.setRangedWeapon(new ItemStack(LOTRMod.utumnoBow));
-        this.npcItemsInv.setIdleItem(this.npcItemsInv.getMeleeWeapon());
-        return data;
-    }
+	@Override
+	public boolean canElfSpawnHere() {
+		return true;
+	}
 
-    @Override
-    public LOTRFaction getFaction() {
-        return LOTRFaction.UTUMNO;
-    }
+	@Override
+	public void dropElfItems(boolean flag, int i) {
+	}
 
-    @Override
-    protected LOTRAchievement getKillAchievement() {
-        return LOTRAchievement.killTormentedElf;
-    }
+	@Override
+	public void dropFewItems(boolean flag, int i) {
+		super.dropFewItems(flag, i);
+	}
 
-    @Override
-    protected void dropFewItems(boolean flag, int i) {
-        super.dropFewItems(flag, i);
-    }
+	@Override
+	public String getAttackSound() {
+		return null;
+	}
 
-    @Override
-    protected void dropElfItems(boolean flag, int i) {
-    }
+	@Override
+	public LOTRFaction getFaction() {
+		return LOTRFaction.UTUMNO;
+	}
 
-    @Override
-    public boolean canElfSpawnHere() {
-        return true;
-    }
+	@Override
+	public LOTRAchievement getKillAchievement() {
+		return LOTRAchievement.killTormentedElf;
+	}
 
-    @Override
-    public String getSpeechBank(EntityPlayer entityplayer) {
-        return "utumno/elf/hostile";
-    }
+	@Override
+	public String getLivingSound() {
+		return null;
+	}
 
-    @Override
-    public String getLivingSound() {
-        return null;
-    }
+	@Override
+	public String getSpeechBank(EntityPlayer entityplayer) {
+		return "utumno/elf/hostile";
+	}
 
-    @Override
-    public String getAttackSound() {
-        return null;
-    }
+	@Override
+	public IEntityLivingData onSpawnWithEgg(IEntityLivingData data) {
+		data = super.onSpawnWithEgg(data);
+		int i = rand.nextInt(5);
+		switch (i) {
+		case 0:
+		case 1:
+		case 2:
+			npcItemsInv.setMeleeWeapon(new ItemStack(LOTRMod.swordUtumno));
+			break;
+		case 3:
+			npcItemsInv.setMeleeWeapon(new ItemStack(LOTRMod.daggerUtumno));
+			break;
+		case 4:
+			npcItemsInv.setMeleeWeapon(new ItemStack(LOTRMod.daggerUtumnoPoisoned));
+			break;
+		default:
+			break;
+		}
+		npcItemsInv.setRangedWeapon(new ItemStack(LOTRMod.utumnoBow));
+		npcItemsInv.setIdleItem(npcItemsInv.getMeleeWeapon());
+		return data;
+	}
 }

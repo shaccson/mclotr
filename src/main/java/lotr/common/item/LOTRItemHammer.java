@@ -3,17 +3,17 @@ package lotr.common.item;
 import net.minecraft.item.*;
 
 public class LOTRItemHammer extends LOTRItemSword {
-    public LOTRItemHammer(LOTRMaterial material) {
-        this(material.toToolMaterial());
-        this.lotrWeaponDamage += 2.0f;
-    }
+	public LOTRItemHammer(Item.ToolMaterial material) {
+		super(material);
+	}
 
-    public LOTRItemHammer(Item.ToolMaterial material) {
-        super(material);
-    }
+	public LOTRItemHammer(LOTRMaterial material) {
+		this(material.toToolMaterial());
+		lotrWeaponDamage += 2.0f;
+	}
 
-    @Override
-    public EnumAction getItemUseAction(ItemStack itemstack) {
-        return EnumAction.none;
-    }
+	@Override
+	public EnumAction getItemUseAction(ItemStack itemstack) {
+		return EnumAction.none;
+	}
 }

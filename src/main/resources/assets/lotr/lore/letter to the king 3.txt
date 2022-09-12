@@ -1,15 +1,17 @@
-#title:Третье письмо Королю
-#author:Балин, сын Фундина
+#title:A Third Letter to the King 
+#author:Balin son of Fundin
 #types:durins_folk,ruins
 #
-Королю Даину II,
+#by Aidan
+#
+To King Dáin II,
 
-Дни становятся короче и тяжелее.
+The days grow shorter and wearier.
 
-Много месяцев назад я отправил Оина с отрядом к воротам, но он не вернулся. Я не знаю, что с ними стало.
+Many months ago I sent Óin with some others to the Hollin Gate, but they have not returned. I do not know what has become of them.
 
-Мне нехорошо, и меня преследует неизвестное безумие. Бесчисленные часы я провел, глядя в глубины. В них есть темное зло; я боюсь, что существо пострашнее орков скрывается в тени.
+I am not well, and I feel haunted by an unknown madness. Uncounted hours have I spent gazing into the Mirrormere. There is dark evil in the depths of Moria; I fear worse than Orcs may yet lurk in the shadows beneath.
 
-Мы должны действовать осторожно.
+We must tread carefully.
 
-Балин, сын Фундина, властелин Мории.
+Balin son of Fundin, Lord of Moria.

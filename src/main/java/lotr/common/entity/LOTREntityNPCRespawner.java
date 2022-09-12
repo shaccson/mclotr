@@ -1,6 +1,6 @@
 package lotr.common.entity;
 
-import java.util.*;
+import java.util.List;
 
 import cpw.mods.fml.common.network.simpleimpl.IMessage;
 import cpw.mods.fml.relauncher.*;
@@ -16,342 +16,360 @@ import net.minecraft.init.Blocks;
 import net.minecraft.item.*;
 import net.minecraft.nbt.NBTTagCompound;
 import net.minecraft.util.*;
-import net.minecraft.world.*;
+import net.minecraft.world.World;
 import net.minecraftforge.common.util.ForgeDirection;
 
-public class LOTREntityNPCRespawner
-extends Entity {
-    public float spawnerSpin;
-    public float prevSpawnerSpin;
-    public int spawnInterval = 3600;
-    public int noPlayerRange = 24;
-    public Class spawnClass1;
-    public Class spawnClass2;
-    public int checkHorizontalRange = 8;
-    public int checkVerticalMin = -4;
-    public int checkVerticalMax = 4;
-    public int spawnCap = 4;
-    public int spawnHorizontalRange = 4;
-    public int spawnVerticalMin = -2;
-    public int spawnVerticalMax = 2;
-    public int homeRange = -1;
-    private boolean setHomePosFromSpawn = false;
-    public int mountSetting = 0;
-    public int blockEnemySpawns = 0;
-    public static final int MAX_SPAWN_BLOCK_RANGE = 64;
+public class LOTREntityNPCRespawner extends Entity {
+	public static int MAX_SPAWN_BLOCK_RANGE = 64;
+	public float spawnerSpin;
+	public float prevSpawnerSpin;
+	public int spawnInterval = 3600;
+	public int noPlayerRange = 24;
+	public Class spawnClass1;
+	public Class spawnClass2;
+	public int checkHorizontalRange = 8;
+	public int checkVerticalMin = -4;
+	public int checkVerticalMax = 4;
+	public int spawnCap = 4;
+	public int spawnHorizontalRange = 4;
+	public int spawnVerticalMin = -2;
+	public int spawnVerticalMax = 2;
+	public int homeRange = -1;
+	public boolean setHomePosFromSpawn = false;
+	public int mountSetting = 0;
+	public int blockEnemySpawns = 0;
 
-    public LOTREntityNPCRespawner(World world) {
-        super(world);
-        this.setSize(1.0f, 1.0f);
-        this.spawnerSpin = this.rand.nextFloat() * 360.0f;
-    }
+	public LOTREntityNPCRespawner(World world) {
+		super(world);
+		setSize(1.0f, 1.0f);
+		spawnerSpin = rand.nextFloat() * 360.0f;
+	}
 
-    public void setSpawnClass(Class c) {
-        this.spawnClass1 = c;
-    }
+	@Override
+	public void applyEntityCollision(Entity entity) {
+	}
 
-    public void setSpawnClasses(Class c1, Class c2) {
-        this.spawnClass1 = c1;
-        this.spawnClass2 = c2;
-    }
+	public boolean blockEnemySpawns() {
+		return blockEnemySpawns > 0;
+	}
 
-    public void setCheckRanges(int xz, int y, int y1, int l) {
-        this.checkHorizontalRange = xz;
-        this.checkVerticalMin = y;
-        this.checkVerticalMax = y1;
-        this.spawnCap = l;
-    }
+	@Override
+	public boolean canBeCollidedWith() {
+		if (!worldObj.isRemote) {
+			return false;
+		}
+		EntityPlayer entityplayer = LOTRMod.proxy.getClientPlayer();
+		if (entityplayer == null) {
+			return false;
+		}
+		return entityplayer.capabilities.isCreativeMode;
+	}
 
-    public void setSpawnRanges(int xz, int y, int y1, int h) {
-        this.spawnHorizontalRange = xz;
-        this.spawnVerticalMin = y;
-        this.spawnVerticalMax = y1;
-        this.homeRange = h;
-    }
+	public AxisAlignedBB createSpawnBlockRegion() {
+		if (!blockEnemySpawns()) {
+			return null;
+		}
+		int i = MathHelper.floor_double(posX);
+		int j = MathHelper.floor_double(boundingBox.minY);
+		int k = MathHelper.floor_double(posZ);
+		int range = blockEnemySpawns;
+		return AxisAlignedBB.getBoundingBox(i, j, k, i + 1, j + 1, k + 1).expand(range, range, range);
+	}
 
-    public void setHomePosFromSpawn() {
-        this.setHomePosFromSpawn = true;
-    }
+	@Override
+	public void entityInit() {
+	}
 
-    public boolean hasHomeRange() {
-        return this.homeRange >= 0;
-    }
+	@Override
+	public ItemStack getPickedResult(MovingObjectPosition target) {
+		return new ItemStack(LOTRMod.npcRespawner);
+	}
 
-    public void setMountSetting(int i) {
-        this.mountSetting = i;
-    }
+	@Override
+	@SideOnly(value = Side.CLIENT)
+	public void handleHealthUpdate(byte b) {
+		if (b == 16) {
+			for (int l = 0; l < 16; ++l) {
+				double d = posX + (rand.nextDouble() - 0.5) * width;
+				double d1 = posY + rand.nextDouble() * height;
+				double d2 = posZ + (rand.nextDouble() - 0.5) * width;
+				worldObj.spawnParticle("iconcrack_" + Item.getIdFromItem(LOTRMod.npcRespawner), d, d1, d2, 0.0, 0.0, 0.0);
+			}
+		} else {
+			super.handleHealthUpdate(b);
+		}
+	}
 
-    public void toggleMountSetting() {
-        this.mountSetting = this.mountSetting == 0 ? 1 : (this.mountSetting == 1 ? 2 : 0);
-    }
+	public boolean hasHomeRange() {
+		return homeRange >= 0;
+	}
 
-    public void setNoPlayerRange(int i) {
-        this.noPlayerRange = i;
-    }
+	@Override
+	public boolean interactFirst(EntityPlayer entityplayer) {
+		if (entityplayer.capabilities.isCreativeMode) {
+			if (!worldObj.isRemote) {
+				LOTRPacketNPCRespawner packet = new LOTRPacketNPCRespawner(this);
+				LOTRPacketHandler.networkWrapper.sendTo((IMessage) packet, (EntityPlayerMP) entityplayer);
+			}
+			return true;
+		}
+		return false;
+	}
 
-    public boolean blockEnemySpawns() {
-        return this.blockEnemySpawns > 0;
-    }
+	public boolean isEnemySpawnBlocked(LOTREntityNPC npc) {
+		return this.isEnemySpawnBlocked(npc.getFaction());
+	}
 
-    public void setBlockEnemySpawnRange(int i) {
-        this.blockEnemySpawns = i = Math.min(i, 64);
-    }
+	public boolean isEnemySpawnBlocked(LOTRFaction spawnFaction) {
+		LOTRFaction faction1;
+		LOTRFaction faction2;
+		if (spawnClass1 != null && (faction1 = ((LOTREntityNPC) EntityList.createEntityByName(LOTREntities.getStringFromClass(spawnClass1), worldObj)).getFaction()) != null && faction1.isBadRelation(spawnFaction)) {
+			return true;
+		}
+		return spawnClass2 != null && (faction2 = ((LOTREntityNPC) EntityList.createEntityByName(LOTREntities.getStringFromClass(spawnClass2), worldObj)).getFaction()) != null && faction2.isBadRelation(spawnFaction);
+	}
 
-    public void setSpawnInterval(int i) {
-        this.spawnInterval = i;
-    }
+	@Override
+	public boolean isInvisible() {
+		if (!worldObj.isRemote) {
+			return super.isInvisible();
+		}
+		EntityPlayer entityplayer = LOTRMod.proxy.getClientPlayer();
+		return entityplayer == null || !entityplayer.capabilities.isCreativeMode;
+	}
 
-    public void setSpawnIntervalMinutes(int m) {
-        int s = m * 60;
-        int t = s * 20;
-        this.setSpawnInterval(t);
-    }
+	public void onBreak() {
+		worldObj.playSoundAtEntity(this, Blocks.glass.stepSound.getBreakSound(), (Blocks.glass.stepSound.getVolume() + 1.0f) / 2.0f, Blocks.glass.stepSound.getPitch() * 0.8f);
+		worldObj.setEntityState(this, (byte) 16);
+		setDead();
+	}
 
-    protected void entityInit() {
-    }
+	@Override
+	public void onUpdate() {
+		int maxX;
+		int entities;
+		int maxY;
+		int minZ;
+		int minX;
+		int minY;
+		int i;
+		int j;
+		int maxZ;
+		int k;
+		prevPosX = posX;
+		prevPosY = posY;
+		prevPosZ = posZ;
+		prevSpawnerSpin = spawnerSpin;
+		spawnerSpin += 6.0f;
+		prevSpawnerSpin = MathHelper.wrapAngleTo180_float(prevSpawnerSpin);
+		spawnerSpin = MathHelper.wrapAngleTo180_float(spawnerSpin);
+		motionX = 0.0;
+		motionY = 0.0;
+		motionZ = 0.0;
+		moveEntity(motionX, motionY, motionZ);
+		if (!worldObj.isRemote && ticksExisted % spawnInterval == 0 && (spawnClass1 != null || spawnClass2 != null) && worldObj.checkChunksExist(minX = (i = MathHelper.floor_double(posX)) - checkHorizontalRange, minY = (j = MathHelper.floor_double(boundingBox.minY)) + checkVerticalMin, minZ = (k = MathHelper.floor_double(posZ)) - checkHorizontalRange, maxX = i + checkHorizontalRange, maxY = j + checkVerticalMax, maxZ = k + checkHorizontalRange) && worldObj.getClosestPlayer(i + 0.5, j + 0.5, k + 0.5, noPlayerRange) == null && (entities = worldObj.selectEntitiesWithinAABB(EntityLiving.class, AxisAlignedBB.getBoundingBox(minX, minY, minZ, maxX + 1, maxY + 1, maxZ + 1), new IEntitySelector() {
 
-    public boolean isInvisible() {
-        if (!this.worldObj.isRemote) {
-            return super.isInvisible();
-        }
-        EntityPlayer entityplayer = LOTRMod.proxy.getClientPlayer();
-        return entityplayer == null || !entityplayer.capabilities.isCreativeMode;
-    }
+			@Override
+			public boolean isEntityApplicable(Entity entity) {
+				if (!entity.isEntityAlive()) {
+					return false;
+				}
+				Class<?> entityClass = entity.getClass();
+				return spawnClass1 != null && spawnClass1.isAssignableFrom(entityClass) || spawnClass2 != null && spawnClass2.isAssignableFrom(entityClass);
+			}
+		}).size()) < spawnCap) {
+			int attempts = 16;
+			for (int l = 0; l < attempts; ++l) {
+				int spawnX = i + MathHelper.getRandomIntegerInRange(rand, -spawnHorizontalRange, spawnHorizontalRange);
+				int spawnY = j + MathHelper.getRandomIntegerInRange(rand, spawnVerticalMin, spawnVerticalMax);
+				int spawnZ = k + MathHelper.getRandomIntegerInRange(rand, -spawnHorizontalRange, spawnHorizontalRange);
+				Block belowBlock = worldObj.getBlock(spawnX, spawnY - 1, spawnZ);
+				worldObj.getBlockMetadata(spawnX, spawnY - 1, spawnZ);
+				boolean belowSolid = belowBlock.isSideSolid(worldObj, spawnX, spawnY - 1, spawnZ, ForgeDirection.UP);
+				if (!belowSolid || worldObj.getBlock(spawnX, spawnY, spawnZ).isNormalCube() || worldObj.getBlock(spawnX, spawnY + 1, spawnZ).isNormalCube()) {
+					continue;
+				}
+				Class entityClass = null;
+				if (spawnClass1 != null && spawnClass2 != null) {
+					entityClass = rand.nextInt(3) == 0 ? spawnClass2 : spawnClass1;
+				} else if (spawnClass1 != null) {
+					entityClass = spawnClass1;
+				} else if (spawnClass2 != null) {
+					entityClass = spawnClass2;
+				}
+				String entityName = LOTREntities.getStringFromClass(entityClass);
+				LOTREntityNPC entity = (LOTREntityNPC) EntityList.createEntityByName(entityName, worldObj);
+				entity.setLocationAndAngles(spawnX + 0.5, spawnY, spawnZ + 0.5, rand.nextFloat() * 360.0f, 0.0f);
+				entity.isNPCPersistent = true;
+				entity.liftSpawnRestrictions = true;
+				if (!entity.getCanSpawnHere()) {
+					continue;
+				}
+				entity.liftSpawnRestrictions = false;
+				worldObj.spawnEntityInWorld(entity);
+				if (mountSetting == 0) {
+					entity.spawnRidingHorse = false;
+				} else if (mountSetting == 1) {
+					entity.spawnRidingHorse = true;
+				}
+				entity.onSpawnWithEgg(null);
+				if (hasHomeRange()) {
+					if (setHomePosFromSpawn) {
+						entity.setHomeArea(spawnX, spawnY, spawnZ, homeRange);
+					} else {
+						entity.setHomeArea(i, j, k, homeRange);
+					}
+				} else {
+					entity.detachHome();
+				}
+				entities++;
+				if (entities >= spawnCap) {
+					break;
+				}
+			}
+		}
+	}
 
-    public void writeEntityToNBT(NBTTagCompound nbt) {
-        this.writeSpawnerDataToNBT(nbt);
-    }
+	@Override
+	public void readEntityFromNBT(NBTTagCompound nbt) {
+		readSpawnerDataFromNBT(nbt);
+	}
 
-    public void writeSpawnerDataToNBT(NBTTagCompound nbt) {
-        nbt.setInteger("SpawnInterval", this.spawnInterval);
-        nbt.setByte("NoPlayerRange", (byte)this.noPlayerRange);
-        String class1String = "";
-        String class2String = "";
-        if (this.spawnClass1 != null) {
-            class1String = LOTREntities.getStringFromClass(this.spawnClass1);
-        }
-        if (this.spawnClass2 != null) {
-            class2String = LOTREntities.getStringFromClass(this.spawnClass2);
-        }
-        nbt.setString("SpawnClass1", class1String == null ? "" : class1String);
-        nbt.setString("SpawnClass2", class2String == null ? "" : class2String);
-        nbt.setByte("CheckHorizontal", (byte)this.checkHorizontalRange);
-        nbt.setByte("CheckVerticalMin", (byte)this.checkVerticalMin);
-        nbt.setByte("CheckVerticalMax", (byte)this.checkVerticalMax);
-        nbt.setByte("SpawnCap", (byte)this.spawnCap);
-        nbt.setByte("SpawnHorizontal", (byte)this.spawnHorizontalRange);
-        nbt.setByte("SpawnVerticalMin", (byte)this.spawnVerticalMin);
-        nbt.setByte("SpawnVerticalMax", (byte)this.spawnVerticalMax);
-        nbt.setByte("HomeRange", (byte)this.homeRange);
-        nbt.setBoolean("HomeSpawn", this.setHomePosFromSpawn);
-        nbt.setByte("MountSetting", (byte)this.mountSetting);
-        nbt.setByte("BlockEnemy", (byte)this.blockEnemySpawns);
-    }
+	public void readSpawnerDataFromNBT(NBTTagCompound nbt) {
+		spawnInterval = nbt.getInteger("SpawnInterval");
+		if (spawnInterval <= 0) {
+			spawnInterval = 3600;
+		}
+		noPlayerRange = nbt.getByte("NoPlayerRange");
+		spawnClass1 = LOTREntities.getClassFromString(nbt.getString("SpawnClass1"));
+		spawnClass2 = LOTREntities.getClassFromString(nbt.getString("SpawnClass2"));
+		if (spawnClass1 != null && !LOTREntityNPC.class.isAssignableFrom(spawnClass1)) {
+			spawnClass1 = null;
+		}
+		if (spawnClass2 != null && !LOTREntityNPC.class.isAssignableFrom(spawnClass2)) {
+			spawnClass2 = null;
+		}
+		checkHorizontalRange = nbt.getByte("CheckHorizontal");
+		checkVerticalMin = nbt.getByte("CheckVerticalMin");
+		checkVerticalMax = nbt.getByte("CheckVerticalMax");
+		spawnCap = nbt.getByte("SpawnCap");
+		spawnHorizontalRange = nbt.getByte("SpawnHorizontal");
+		spawnVerticalMin = nbt.getByte("SpawnVerticalMin");
+		spawnVerticalMax = nbt.getByte("SpawnVerticalMax");
+		homeRange = nbt.getByte("HomeRange");
+		setHomePosFromSpawn = nbt.getBoolean("HomeSpawn");
+		mountSetting = nbt.getByte("MountSetting");
+		blockEnemySpawns = nbt.getByte("BlockEnemy");
+	}
 
-    public void readEntityFromNBT(NBTTagCompound nbt) {
-        this.readSpawnerDataFromNBT(nbt);
-    }
+	public void setBlockEnemySpawnRange(int i) {
+		blockEnemySpawns = i = Math.min(i, 64);
+	}
 
-    public void readSpawnerDataFromNBT(NBTTagCompound nbt) {
-        this.spawnInterval = nbt.getInteger("SpawnInterval");
-        if (this.spawnInterval <= 0) {
-            this.spawnInterval = 3600;
-        }
-        this.noPlayerRange = nbt.getByte("NoPlayerRange");
-        this.spawnClass1 = LOTREntities.getClassFromString(nbt.getString("SpawnClass1"));
-        this.spawnClass2 = LOTREntities.getClassFromString(nbt.getString("SpawnClass2"));
-        if (this.spawnClass1 != null && !LOTREntityNPC.class.isAssignableFrom(this.spawnClass1)) {
-            this.spawnClass1 = null;
-        }
-        if (this.spawnClass2 != null && !LOTREntityNPC.class.isAssignableFrom(this.spawnClass2)) {
-            this.spawnClass2 = null;
-        }
-        this.checkHorizontalRange = nbt.getByte("CheckHorizontal");
-        this.checkVerticalMin = nbt.getByte("CheckVerticalMin");
-        this.checkVerticalMax = nbt.getByte("CheckVerticalMax");
-        this.spawnCap = nbt.getByte("SpawnCap");
-        this.spawnHorizontalRange = nbt.getByte("SpawnHorizontal");
-        this.spawnVerticalMin = nbt.getByte("SpawnVerticalMin");
-        this.spawnVerticalMax = nbt.getByte("SpawnVerticalMax");
-        this.homeRange = nbt.getByte("HomeRange");
-        this.setHomePosFromSpawn = nbt.getBoolean("HomeSpawn");
-        this.mountSetting = nbt.getByte("MountSetting");
-        this.blockEnemySpawns = nbt.getByte("BlockEnemy");
-    }
+	public void setCheckRanges(int xz, int y, int y1, int l) {
+		checkHorizontalRange = xz;
+		checkVerticalMin = y;
+		checkVerticalMax = y1;
+		spawnCap = l;
+	}
 
-    public void onBreak() {
-        this.worldObj.playSoundAtEntity(this, Blocks.glass.stepSound.getBreakSound(), (Blocks.glass.stepSound.getVolume() + 1.0f) / 2.0f, Blocks.glass.stepSound.getPitch() * 0.8f);
-        this.worldObj.setEntityState(this, (byte)16);
-        this.setDead();
-    }
+	public void setHomePosFromSpawn() {
+		setHomePosFromSpawn = true;
+	}
 
-    @SideOnly(value=Side.CLIENT)
-    public void handleHealthUpdate(byte b) {
-        if (b == 16) {
-            for (int l = 0; l < 16; ++l) {
-                double d = this.posX + (this.rand.nextDouble() - 0.5) * this.width;
-                double d1 = this.posY + this.rand.nextDouble() * this.height;
-                double d2 = this.posZ + (this.rand.nextDouble() - 0.5) * this.width;
-                this.worldObj.spawnParticle("iconcrack_" + Item.getIdFromItem(LOTRMod.npcRespawner), d, d1, d2, 0.0, 0.0, 0.0);
-            }
-        } else {
-            super.handleHealthUpdate(b);
-        }
-    }
+	public void setMountSetting(int i) {
+		mountSetting = i;
+	}
 
-    public void onUpdate() {
-        int maxX;
-        int entities;
-        int maxY;
-        int minZ;
-        int minX;
-        int minY;
-        int i;
-        int j;
-        int maxZ;
-        int k;
-        this.prevPosX = this.posX;
-        this.prevPosY = this.posY;
-        this.prevPosZ = this.posZ;
-        this.prevSpawnerSpin = this.spawnerSpin;
-        this.spawnerSpin += 6.0f;
-        this.prevSpawnerSpin = MathHelper.wrapAngleTo180_float(this.prevSpawnerSpin);
-        this.spawnerSpin = MathHelper.wrapAngleTo180_float(this.spawnerSpin);
-        this.motionX = 0.0;
-        this.motionY = 0.0;
-        this.motionZ = 0.0;
-        this.moveEntity(this.motionX, this.motionY, this.motionZ);
-        if (!this.worldObj.isRemote && this.ticksExisted % this.spawnInterval == 0 && (this.spawnClass1 != null || this.spawnClass2 != null) && this.worldObj.checkChunksExist(minX = (i = MathHelper.floor_double(this.posX)) - this.checkHorizontalRange, minY = (j = MathHelper.floor_double(this.boundingBox.minY)) + this.checkVerticalMin, minZ = (k = MathHelper.floor_double(this.posZ)) - this.checkHorizontalRange, maxX = i + this.checkHorizontalRange, maxY = j + this.checkVerticalMax, maxZ = k + this.checkHorizontalRange) && this.worldObj.getClosestPlayer(i + 0.5, j + 0.5, k + 0.5, this.noPlayerRange) == null && (entities = (this.worldObj.selectEntitiesWithinAABB(EntityLiving.class, AxisAlignedBB.getBoundingBox(minX, minY, minZ, maxX + 1, maxY + 1, maxZ + 1), new IEntitySelector(){
+	public void setNoPlayerRange(int i) {
+		noPlayerRange = i;
+	}
 
-            public boolean isEntityApplicable(Entity entity) {
-                if (!entity.isEntityAlive()) {
-                    return false;
-                }
-                Class<?> entityClass = entity.getClass();
-                return LOTREntityNPCRespawner.this.spawnClass1 != null && LOTREntityNPCRespawner.this.spawnClass1.isAssignableFrom(entityClass) || LOTREntityNPCRespawner.this.spawnClass2 != null && LOTREntityNPCRespawner.this.spawnClass2.isAssignableFrom(entityClass);
-            }
-        })).size()) < this.spawnCap) {
-            int attempts = 16;
-            for (int l = 0; l < attempts; ++l) {
-                int spawnX = i + MathHelper.getRandomIntegerInRange(this.rand, (-this.spawnHorizontalRange), this.spawnHorizontalRange);
-                int spawnY = j + MathHelper.getRandomIntegerInRange(this.rand, this.spawnVerticalMin, this.spawnVerticalMax);
-                int spawnZ = k + MathHelper.getRandomIntegerInRange(this.rand, (-this.spawnHorizontalRange), this.spawnHorizontalRange);
-                Block belowBlock = this.worldObj.getBlock(spawnX, spawnY - 1, spawnZ);
-                this.worldObj.getBlockMetadata(spawnX, spawnY - 1, spawnZ);
-                boolean belowSolid = belowBlock.isSideSolid(this.worldObj, spawnX, spawnY - 1, spawnZ, ForgeDirection.UP);
-                if (!belowSolid || this.worldObj.getBlock(spawnX, spawnY, spawnZ).isNormalCube() || this.worldObj.getBlock(spawnX, spawnY + 1, spawnZ).isNormalCube()) continue;
-                Class entityClass = null;
-                if (this.spawnClass1 != null && this.spawnClass2 != null) {
-                    entityClass = this.rand.nextInt(3) == 0 ? this.spawnClass2 : this.spawnClass1;
-                } else if (this.spawnClass1 != null) {
-                    entityClass = this.spawnClass1;
-                } else if (this.spawnClass2 != null) {
-                    entityClass = this.spawnClass2;
-                }
-                String entityName = LOTREntities.getStringFromClass(entityClass);
-                LOTREntityNPC entity = (LOTREntityNPC)EntityList.createEntityByName(entityName, this.worldObj);
-                entity.setLocationAndAngles(spawnX + 0.5, spawnY, spawnZ + 0.5, this.rand.nextFloat() * 360.0f, 0.0f);
-                entity.isNPCPersistent = true;
-                entity.liftSpawnRestrictions = true;
-                if (!entity.getCanSpawnHere()) continue;
-                entity.liftSpawnRestrictions = false;
-                this.worldObj.spawnEntityInWorld(entity);
-                if (this.mountSetting == 0) {
-                    entity.spawnRidingHorse = false;
-                } else if (this.mountSetting == 1) {
-                    entity.spawnRidingHorse = true;
-                }
-                entity.onSpawnWithEgg(null);
-                if (this.hasHomeRange()) {
-                    if (this.setHomePosFromSpawn) {
-                        entity.setHomeArea(spawnX, spawnY, spawnZ, this.homeRange);
-                    } else {
-                        entity.setHomeArea(i, j, k, this.homeRange);
-                    }
-                } else {
-                    entity.detachHome();
-                }
-                if (++entities >= this.spawnCap) break;
-            }
-        }
-    }
+	public void setSpawnClass(Class c) {
+		spawnClass1 = c;
+	}
 
-    public boolean interactFirst(EntityPlayer entityplayer) {
-        if (entityplayer.capabilities.isCreativeMode) {
-            if (!this.worldObj.isRemote) {
-                LOTRPacketNPCRespawner packet = new LOTRPacketNPCRespawner(this);
-                LOTRPacketHandler.networkWrapper.sendTo((IMessage)packet, (EntityPlayerMP)entityplayer);
-            }
-            return true;
-        }
-        return false;
-    }
+	public void setSpawnClasses(Class c1, Class c2) {
+		spawnClass1 = c1;
+		spawnClass2 = c2;
+	}
 
-    public boolean canBeCollidedWith() {
-        if (!this.worldObj.isRemote) {
-            return false;
-        }
-        EntityPlayer entityplayer = LOTRMod.proxy.getClientPlayer();
-        if (entityplayer == null) {
-            return false;
-        }
-        return entityplayer.capabilities.isCreativeMode;
-    }
+	public void setSpawnInterval(int i) {
+		spawnInterval = i;
+	}
 
-    public void applyEntityCollision(Entity entity) {
-    }
+	public void setSpawnIntervalMinutes(int m) {
+		int s = m * 60;
+		int t = s * 20;
+		setSpawnInterval(t);
+	}
 
-    public ItemStack getPickedResult(MovingObjectPosition target) {
-        return new ItemStack(LOTRMod.npcRespawner);
-    }
+	public void setSpawnRanges(int xz, int y, int y1, int h) {
+		spawnHorizontalRange = xz;
+		spawnVerticalMin = y;
+		spawnVerticalMax = y1;
+		homeRange = h;
+	}
 
-    public AxisAlignedBB createSpawnBlockRegion() {
-        if (!this.blockEnemySpawns()) {
-            return null;
-        }
-        int i = MathHelper.floor_double(this.posX);
-        int j = MathHelper.floor_double(this.boundingBox.minY);
-        int k = MathHelper.floor_double(this.posZ);
-        int range = this.blockEnemySpawns;
-        return AxisAlignedBB.getBoundingBox(i, j, k, i + 1, j + 1, k + 1).expand(range, range, range);
-    }
+	public void toggleMountSetting() {
+		mountSetting = mountSetting == 0 ? 1 : mountSetting == 1 ? 2 : 0;
+	}
 
-    public boolean isEnemySpawnBlocked(LOTREntityNPC npc) {
-        return this.isEnemySpawnBlocked(npc.getFaction());
-    }
+	@Override
+	public void writeEntityToNBT(NBTTagCompound nbt) {
+		writeSpawnerDataToNBT(nbt);
+	}
 
-    public boolean isEnemySpawnBlocked(LOTRFaction spawnFaction) {
-        LOTRFaction faction1;
-        LOTRFaction faction2;
-        if (this.spawnClass1 != null && (faction1 = ((LOTREntityNPC)EntityList.createEntityByName(LOTREntities.getStringFromClass(this.spawnClass1), this.worldObj)).getFaction()) != null && faction1.isBadRelation(spawnFaction)) {
-            return true;
-        }
-        return this.spawnClass2 != null && (faction2 = ((LOTREntityNPC)EntityList.createEntityByName(LOTREntities.getStringFromClass(this.spawnClass2), this.worldObj)).getFaction()) != null && faction2.isBadRelation(spawnFaction);
-    }
+	public void writeSpawnerDataToNBT(NBTTagCompound nbt) {
+		nbt.setInteger("SpawnInterval", spawnInterval);
+		nbt.setByte("NoPlayerRange", (byte) noPlayerRange);
+		String class1String = "";
+		String class2String = "";
+		if (spawnClass1 != null) {
+			class1String = LOTREntities.getStringFromClass(spawnClass1);
+		}
+		if (spawnClass2 != null) {
+			class2String = LOTREntities.getStringFromClass(spawnClass2);
+		}
+		nbt.setString("SpawnClass1", class1String == null ? "" : class1String);
+		nbt.setString("SpawnClass2", class2String == null ? "" : class2String);
+		nbt.setByte("CheckHorizontal", (byte) checkHorizontalRange);
+		nbt.setByte("CheckVerticalMin", (byte) checkVerticalMin);
+		nbt.setByte("CheckVerticalMax", (byte) checkVerticalMax);
+		nbt.setByte("SpawnCap", (byte) spawnCap);
+		nbt.setByte("SpawnHorizontal", (byte) spawnHorizontalRange);
+		nbt.setByte("SpawnVerticalMin", (byte) spawnVerticalMin);
+		nbt.setByte("SpawnVerticalMax", (byte) spawnVerticalMax);
+		nbt.setByte("HomeRange", (byte) homeRange);
+		nbt.setBoolean("HomeSpawn", setHomePosFromSpawn);
+		nbt.setByte("MountSetting", (byte) mountSetting);
+		nbt.setByte("BlockEnemy", (byte) blockEnemySpawns);
+	}
 
-    public static boolean isSpawnBlocked(LOTREntityNPC npc) {
-        return LOTREntityNPCRespawner.isSpawnBlocked(npc, npc.getFaction());
-    }
+	public static boolean isSpawnBlocked(Entity entity, LOTRFaction spawnFaction) {
+		int j;
+		int k;
+		int range;
+		World world = entity.worldObj;
+		int i = MathHelper.floor_double(entity.posX);
+		AxisAlignedBB originBB = AxisAlignedBB.getBoundingBox(i, j = MathHelper.floor_double(entity.boundingBox.minY), k = MathHelper.floor_double(entity.posZ), i + 1, j + 1, k + 1);
+		AxisAlignedBB searchBB = originBB.expand(range = 64, range, range);
+		List spawners = world.getEntitiesWithinAABB(LOTREntityNPCRespawner.class, searchBB);
+		if (!spawners.isEmpty()) {
+			for (Object obj : spawners) {
+				AxisAlignedBB spawnBlockBB;
+				LOTREntityNPCRespawner spawner = (LOTREntityNPCRespawner) obj;
+				if (!spawner.blockEnemySpawns() || !(spawnBlockBB = spawner.createSpawnBlockRegion()).intersectsWith(searchBB) || !spawnBlockBB.intersectsWith(originBB) || !spawner.isEnemySpawnBlocked(spawnFaction)) {
+					continue;
+				}
+				return true;
+			}
+		}
+		return false;
+	}
 
-    public static boolean isSpawnBlocked(Entity entity, LOTRFaction spawnFaction) {
-        int j;
-        int k;
-        int range;
-        World world = entity.worldObj;
-        int i = MathHelper.floor_double(entity.posX);
-        AxisAlignedBB originBB = AxisAlignedBB.getBoundingBox(i, j = MathHelper.floor_double(entity.boundingBox.minY), k = MathHelper.floor_double(entity.posZ), i + 1, j + 1, k + 1);
-        AxisAlignedBB searchBB = originBB.expand(range = 64, range, range);
-        List spawners = world.getEntitiesWithinAABB(LOTREntityNPCRespawner.class, searchBB);
-        if (!spawners.isEmpty()) {
-            for (Object obj : spawners) {
-                AxisAlignedBB spawnBlockBB;
-                LOTREntityNPCRespawner spawner = (LOTREntityNPCRespawner)(obj);
-                if (!spawner.blockEnemySpawns() || !(spawnBlockBB = spawner.createSpawnBlockRegion()).intersectsWith(searchBB) || !spawnBlockBB.intersectsWith(originBB) || !spawner.isEnemySpawnBlocked(spawnFaction)) continue;
-                return true;
-            }
-        }
-        return false;
-    }
+	public static boolean isSpawnBlocked(LOTREntityNPC npc) {
+		return LOTREntityNPCRespawner.isSpawnBlocked(npc, npc.getFaction());
+	}
 
 }
-

@@ -1,29 +1,27 @@
 package lotr.common.world.structure2.scan;
 
 public class LOTRScanAlias {
-    public final String name;
-    public final Type type;
+	public String name;
+	public Type type;
 
-    public LOTRScanAlias(String s, Type t) {
-        this.name = s;
-        this.type = t;
-    }
+	public LOTRScanAlias(String s, Type t) {
+		name = s;
+		type = t;
+	}
 
-    public String getFullCode() {
-        char c = this.type.typeCode;
-        return c + this.name + c;
-    }
+	public String getFullCode() {
+		char c = type.typeCode;
+		return c + name + c;
+	}
 
-    public enum Type {
-        BLOCK('#'),
-        BLOCK_META('~');
+	public enum Type {
+		BLOCK('#'), BLOCK_META('~');
 
-        public final char typeCode;
+		public char typeCode;
 
-        Type(char c) {
-            this.typeCode = c;
-        }
-    }
+		Type(char c) {
+			typeCode = c;
+		}
+	}
 
 }
-

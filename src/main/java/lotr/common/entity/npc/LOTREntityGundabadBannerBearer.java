@@ -4,12 +4,12 @@ import lotr.common.item.LOTRItemBanner;
 import net.minecraft.world.World;
 
 public class LOTREntityGundabadBannerBearer extends LOTREntityGundabadOrc implements LOTRBannerBearer {
-    public LOTREntityGundabadBannerBearer(World world) {
-        super(world);
-    }
+	public LOTREntityGundabadBannerBearer(World world) {
+		super(world);
+	}
 
-    @Override
-    public LOTRItemBanner.BannerType getBannerType() {
-        return LOTRItemBanner.BannerType.GUNDABAD;
-    }
+	@Override
+	public LOTRItemBanner.BannerType getBannerType() {
+		return LOTRItemBanner.BannerType.GUNDABAD;
+	}
 }

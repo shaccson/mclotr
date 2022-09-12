@@ -7,16 +7,16 @@ import net.minecraft.item.*;
 import net.minecraft.world.World;
 
 public class LOTRItemStew extends ItemFood {
-    public LOTRItemStew(int j, float f, boolean flag) {
-        super(j, f, flag);
-        this.setMaxStackSize(1);
-        this.setCreativeTab(LOTRCreativeTabs.tabFood);
-        this.setContainerItem(Items.bowl);
-    }
+	public LOTRItemStew(int j, float f, boolean flag) {
+		super(j, f, flag);
+		setMaxStackSize(1);
+		setCreativeTab(LOTRCreativeTabs.tabFood);
+		setContainerItem(Items.bowl);
+	}
 
-    @Override
-    public ItemStack onEaten(ItemStack itemstack, World world, EntityPlayer entityplayer) {
-        super.onEaten(itemstack, world, entityplayer);
-        return new ItemStack(Items.bowl);
-    }
+	@Override
+	public ItemStack onEaten(ItemStack itemstack, World world, EntityPlayer entityplayer) {
+		super.onEaten(itemstack, world, entityplayer);
+		return new ItemStack(Items.bowl);
+	}
 }

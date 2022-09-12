@@ -10,6 +10,11 @@ import io.gitlab.dwarfyassassin.lotrucp.core.patches.base.Patcher;
 import net.minecraft.launchwrapper.IClassTransformer;
 
 public class UCPClassTransformer implements IClassTransformer {
+	static {
+		FMLLaunchHandler launchHandler = (FMLLaunchHandler) ReflectionHelper.getPrivateValue(FMLLaunchHandler.class, null, "INSTANCE");
+		ReflectionHelper.getPrivateValue(FMLLaunchHandler.class, launchHandler, "classLoader");
+	}
+
 	@Override
 	public byte[] transform(String name, String transformedName, byte[] classBytes) {
 		boolean ran = false;
@@ -41,10 +46,5 @@ public class UCPClassTransformer implements IClassTransformer {
 			}
 		}
 		return classBytes;
-	}
-
-	static {
-		FMLLaunchHandler launchHandler = (FMLLaunchHandler) ReflectionHelper.getPrivateValue(FMLLaunchHandler.class, null, "INSTANCE");
-		ReflectionHelper.getPrivateValue(FMLLaunchHandler.class, launchHandler, "classLoader");
 	}
 }

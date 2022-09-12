@@ -11,67 +11,67 @@ import net.minecraft.nbt.NBTTagCompound;
 import net.minecraft.util.StatCollector;
 
 public class LOTRMiniQuestKillEntity extends LOTRMiniQuestKill {
-    public Class entityType;
+	public Class entityType;
 
-    public LOTRMiniQuestKillEntity(LOTRPlayerData pd) {
-        super(pd);
-    }
+	public LOTRMiniQuestKillEntity(LOTRPlayerData pd) {
+		super(pd);
+	}
 
-    @Override
-    public void writeToNBT(NBTTagCompound nbt) {
-        super.writeToNBT(nbt);
-        nbt.setString("KillClass", LOTREntities.getStringFromClass(this.entityType));
-    }
+	@Override
+	public String getKillTargetName() {
+		String entityName = LOTREntities.getStringFromClass(entityType);
+		return StatCollector.translateToLocal("entity." + entityName + ".name");
+	}
 
-    @Override
-    public void readFromNBT(NBTTagCompound nbt) {
-        super.readFromNBT(nbt);
-        this.entityType = LOTREntities.getClassFromString(nbt.getString("KillClass"));
-    }
+	@Override
+	public boolean isValidQuest() {
+		return super.isValidQuest() && entityType != null && EntityLivingBase.class.isAssignableFrom(entityType);
+	}
 
-    @Override
-    public boolean isValidQuest() {
-        return super.isValidQuest() && this.entityType != null && EntityLivingBase.class.isAssignableFrom(this.entityType);
-    }
+	@Override
+	public void onKill(EntityPlayer entityplayer, EntityLivingBase entity) {
+		if (killCount < killTarget && entityType.isAssignableFrom(entity.getClass())) {
+			++killCount;
+			updateQuest();
+		}
+	}
 
-    @Override
-    protected String getKillTargetName() {
-        String entityName = LOTREntities.getStringFromClass(this.entityType);
-        return StatCollector.translateToLocal("entity." + entityName + ".name");
-    }
+	@Override
+	public void readFromNBT(NBTTagCompound nbt) {
+		super.readFromNBT(nbt);
+		entityType = LOTREntities.getClassFromString(nbt.getString("KillClass"));
+	}
 
-    @Override
-    public void onKill(EntityPlayer entityplayer, EntityLivingBase entity) {
-        if(this.killCount < this.killTarget && this.entityType.isAssignableFrom(entity.getClass())) {
-            ++this.killCount;
-            this.updateQuest();
-        }
-    }
+	@Override
+	public void writeToNBT(NBTTagCompound nbt) {
+		super.writeToNBT(nbt);
+		nbt.setString("KillClass", LOTREntities.getStringFromClass(entityType));
+	}
 
-    public static class QFKillEntity extends LOTRMiniQuestKill.QFKill<LOTRMiniQuestKillEntity> {
-        private Class entityType;
+	public static class QFKillEntity extends LOTRMiniQuestKill.QFKill<LOTRMiniQuestKillEntity> {
+		public Class entityType;
 
-        public QFKillEntity(String name) {
-            super(name);
-        }
+		public QFKillEntity(String name) {
+			super(name);
+		}
 
-        public QFKillEntity setKillEntity(Class entityClass, int min, int max) {
-            this.entityType = entityClass;
-            this.setKillTarget(min, max);
-            return this;
-        }
+		@Override
+		public LOTRMiniQuestKillEntity createQuest(LOTREntityNPC npc, Random rand) {
+			LOTRMiniQuestKillEntity quest = super.createQuest(npc, rand);
+			quest.entityType = entityType;
+			return quest;
+		}
 
-        @Override
-        public Class getQuestClass() {
-            return LOTRMiniQuestKillEntity.class;
-        }
+		@Override
+		public Class getQuestClass() {
+			return LOTRMiniQuestKillEntity.class;
+		}
 
-        @Override
-        public LOTRMiniQuestKillEntity createQuest(LOTREntityNPC npc, Random rand) {
-            LOTRMiniQuestKillEntity quest = super.createQuest(npc, rand);
-            quest.entityType = this.entityType;
-            return quest;
-        }
-    }
+		public QFKillEntity setKillEntity(Class entityClass, int min, int max) {
+			entityType = entityClass;
+			setKillTarget(min, max);
+			return this;
+		}
+	}
 
 }

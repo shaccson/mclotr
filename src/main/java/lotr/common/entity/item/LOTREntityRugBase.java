@@ -12,94 +12,93 @@ import net.minecraft.util.*;
 import net.minecraft.world.World;
 
 public abstract class LOTREntityRugBase extends Entity implements LOTRBannerProtectable {
-    private int timeSinceLastGrowl = this.getTimeUntilGrowl();
+	public int timeSinceLastGrowl = getTimeUntilGrowl();
 
-    public LOTREntityRugBase(World world) {
-        super(world);
-    }
+	public LOTREntityRugBase(World world) {
+		super(world);
+	}
 
-    @Override
-    protected void entityInit() {
-    }
+	@Override
+	public boolean attackEntityFrom(DamageSource damagesource, float f) {
+		if (!worldObj.isRemote && !isDead) {
+			boolean creative;
+			Block.SoundType blockSound = Blocks.wool.stepSound;
+			worldObj.playSoundAtEntity(this, blockSound.getBreakSound(), (blockSound.getVolume() + 1.0f) / 2.0f, blockSound.getPitch() * 0.8f);
+			Entity attacker = damagesource.getEntity();
+			creative = attacker instanceof EntityPlayer && ((EntityPlayer) attacker).capabilities.isCreativeMode;
+			if (!creative) {
+				entityDropItem(getRugItem(), 0.0f);
+			}
+			setDead();
+		}
+		return true;
+	}
 
-    @Override
-    public boolean canBeCollidedWith() {
-        return true;
-    }
+	@Override
+	public boolean canBeCollidedWith() {
+		return true;
+	}
 
-    @Override
-    public AxisAlignedBB getBoundingBox() {
-        return this.boundingBox;
-    }
+	@Override
+	public void entityInit() {
+	}
 
-    @Override
-    public void onUpdate() {
-        super.onUpdate();
-        this.prevPosX = this.posX;
-        this.prevPosY = this.posY;
-        this.prevPosZ = this.posZ;
-        this.motionY -= 0.04;
-        this.func_145771_j(this.posX, (this.boundingBox.minY + this.boundingBox.maxY) / 2.0, this.posZ);
-        this.moveEntity(this.motionX, this.motionY, this.motionZ);
-        float f = 0.98f;
-        if(this.onGround) {
-            f = 0.588f;
-            Block i = this.worldObj.getBlock(MathHelper.floor_double(this.posX), MathHelper.floor_double(this.boundingBox.minY) - 1, MathHelper.floor_double(this.posZ));
-            if(i.getMaterial() != Material.air) {
-                f = i.slipperiness * 0.98f;
-            }
-        }
-        this.motionX *= f;
-        this.motionY *= 0.98;
-        this.motionZ *= f;
-        if(this.onGround) {
-            this.motionY *= -0.5;
-        }
-        if(!this.worldObj.isRemote) {
-            if(this.timeSinceLastGrowl > 0) {
-                --this.timeSinceLastGrowl;
-            }
-            else if(this.rand.nextInt(5000) == 0) {
-                this.worldObj.playSoundAtEntity(this, this.getRugNoise(), 1.0f, (this.worldObj.rand.nextFloat() - this.worldObj.rand.nextFloat()) * 0.2f + 1.0f);
-                this.timeSinceLastGrowl = this.getTimeUntilGrowl();
-            }
-        }
-    }
+	@Override
+	public AxisAlignedBB getBoundingBox() {
+		return boundingBox;
+	}
 
-    private int getTimeUntilGrowl() {
-        return (60 + this.rand.nextInt(150)) * 20;
-    }
+	@Override
+	public ItemStack getPickedResult(MovingObjectPosition target) {
+		return getRugItem();
+	}
 
-    protected abstract String getRugNoise();
+	public abstract ItemStack getRugItem();
 
-    @Override
-    protected void readEntityFromNBT(NBTTagCompound nbt) {
-    }
+	public abstract String getRugNoise();
 
-    @Override
-    protected void writeEntityToNBT(NBTTagCompound nbt) {
-    }
+	public int getTimeUntilGrowl() {
+		return (60 + rand.nextInt(150)) * 20;
+	}
 
-    protected abstract ItemStack getRugItem();
+	@Override
+	public void onUpdate() {
+		super.onUpdate();
+		prevPosX = posX;
+		prevPosY = posY;
+		prevPosZ = posZ;
+		motionY -= 0.04;
+		func_145771_j(posX, (boundingBox.minY + boundingBox.maxY) / 2.0, posZ);
+		moveEntity(motionX, motionY, motionZ);
+		float f = 0.98f;
+		if (onGround) {
+			f = 0.588f;
+			Block i = worldObj.getBlock(MathHelper.floor_double(posX), MathHelper.floor_double(boundingBox.minY) - 1, MathHelper.floor_double(posZ));
+			if (i.getMaterial() != Material.air) {
+				f = i.slipperiness * 0.98f;
+			}
+		}
+		motionX *= f;
+		motionY *= 0.98;
+		motionZ *= f;
+		if (onGround) {
+			motionY *= -0.5;
+		}
+		if (!worldObj.isRemote) {
+			if (timeSinceLastGrowl > 0) {
+				--timeSinceLastGrowl;
+			} else if (rand.nextInt(5000) == 0) {
+				worldObj.playSoundAtEntity(this, getRugNoise(), 1.0f, (worldObj.rand.nextFloat() - worldObj.rand.nextFloat()) * 0.2f + 1.0f);
+				timeSinceLastGrowl = getTimeUntilGrowl();
+			}
+		}
+	}
 
-    @Override
-    public boolean attackEntityFrom(DamageSource damagesource, float f) {
-        if(!this.worldObj.isRemote && !this.isDead) {
-            boolean creative;
-            Block.SoundType blockSound = Blocks.wool.stepSound;
-            this.worldObj.playSoundAtEntity(this, blockSound.getBreakSound(), (blockSound.getVolume() + 1.0f) / 2.0f, blockSound.getPitch() * 0.8f);
-            Entity attacker = damagesource.getEntity();
-            creative = attacker instanceof EntityPlayer && ((EntityPlayer) attacker).capabilities.isCreativeMode;
-            if(!creative) {
-                this.entityDropItem(this.getRugItem(), 0.0f);
-            }
-            this.setDead();
-        }
-        return true;
-    }
+	@Override
+	public void readEntityFromNBT(NBTTagCompound nbt) {
+	}
 
-    @Override
-    public ItemStack getPickedResult(MovingObjectPosition target) {
-        return this.getRugItem();
-    }
+	@Override
+	public void writeEntityToNBT(NBTTagCompound nbt) {
+	}
 }

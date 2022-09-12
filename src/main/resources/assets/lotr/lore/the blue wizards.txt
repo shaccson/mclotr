@@ -1,14 +1,20 @@
-#title:Синие Маги
-#author:Леофред, писатель
-#types:rhun, dorwinion, dale, gondor
+#title:The Blue Wizards
+#author:Léofred, the Scribe 
+#types:rhun,dorwinion,dale,gondor
 #reward
 #
-Путешествуя по Востоку, можно услышать слухи о неуловимых синих волшебниках, Истари, о которых известно очень мало.
+#by Aidan
+#
+While travelling East, one might hear rumours of the elusive Blue Wizards, the two Istari of whom many know little more than the colour of their robes.
 
-Алатар и Палландо, более известные как "Синие волшебники", являются двумя из пяти Истари, которым было поручено помогать людям Средиземья. Уже давно забытый, Истрин Луин исчезли в истории, и их текущее местонахождение и судьбы неизвестны.
+Alatar and Pallando, more commonly known as the Blue Wizards, are two of the five Istari tasked with aiding the people of Middle-earth against the Enemy. Long since forgotten, the Ithryn Luin have faded into history, and their current whereabouts and fates are unknown.
 
-Мало, что известно об этих волшебниках, поскольку они были первыми из пяти, которые вышли за пределы Запада. Говорят, что они отправились на Дальний Восток, следуя по пути Саурона. Или что они были направлены во вражеские земли в качестве проповедников, чтобы вызвать сопротивление. Но до сих пор от них нет новостей. Нет и восстаний вастаков. Некоторые считают, что они перешли на сторону Саурона, подобно Саруману.
+Little is known of these Wizards, for they were the first of the five to venture beyond the Westlands. It is said that they went into the Far East, following the trail of Sauron; that they were sent as guiding lights into enemy lands, to stir up resistance against the works of the Enemy. But no tidings have come West of them for a long age, and it is believed by some that they have fallen into the shadows of Sauron, twisted into servants of the Darkness.
 
-Другие все же надеются,что синие волшебникии верны своей задаче, и что всё могло быть хуже. Мы, на Западе, не можем наверняка знать, что происходило за пределами Внутреннего моря Нурнен и гор Мордора.
+Others yet remain hopeful, and believe that the Blue Wizards have held true to their task; were it not for the Two, they say, the works of the Enemy in the East might have gone unchecked; and we in the Westlands cannot know what has come to pass in long ages beyond the Inland Sea and the fences of Mordor.
 
-Ни разу, во всех моих путешествиях, я не встречал Алатара и Палландо. Синие волшебникиИ, похоже, мало известны среди долийского народа. Я не смог найти ни одной песни или сказки Дейла, которая их бы упоминала.
+Though, if all I have heard of the armies of Rhûn is true - if this is a world with Blue Wizards to stay the eastward reach of Sauron's shadow - then I would tremble to see the full strength of the Enemy if no Blue Wizards had come.
+
+Not once in all my travels have I encountered Alatar and Pallando. The Blue Wizards seemed to be little known among the Dalish folk: so much, that I could not find a single Dalish song or tale which mentioned them.
+
+When I journeyed to Dorwinion in the summer of last year, I heard rumours spoken of two Blue Wizards who were travellers in the Far East. However, when I pursued these rumours further, I soon discovered that none of them were of any substance or truth. It seems that these two wanderers must remain a mystery for now.

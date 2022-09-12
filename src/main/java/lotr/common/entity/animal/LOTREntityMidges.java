@@ -13,222 +13,217 @@ import net.minecraft.util.*;
 import net.minecraft.world.World;
 
 public class LOTREntityMidges extends EntityLiving implements LOTRAmbientCreature {
-    private ChunkCoordinates currentFlightTarget;
-    private EntityPlayer playerTarget;
-    public Midge[] midges;
+	public ChunkCoordinates currentFlightTarget;
+	public EntityPlayer playerTarget;
+	public Midge[] midges;
 
-    public LOTREntityMidges(World world) {
-        super(world);
-        this.setSize(2.0f, 2.0f);
-        this.renderDistanceWeight = 0.5;
-        this.midges = new Midge[3 + this.rand.nextInt(6)];
-        for(int l = 0; l < this.midges.length; ++l) {
-            this.midges[l] = new Midge();
-        }
-    }
+	public LOTREntityMidges(World world) {
+		super(world);
+		setSize(2.0f, 2.0f);
+		renderDistanceWeight = 0.5;
+		midges = new Midge[3 + rand.nextInt(6)];
+		for (int l = 0; l < midges.length; ++l) {
+			midges[l] = new Midge();
+		}
+	}
 
-    @Override
-    protected void applyEntityAttributes() {
-        super.applyEntityAttributes();
-        this.getEntityAttribute(SharedMonsterAttributes.maxHealth).setBaseValue(2.0);
-    }
+	@Override
+	public boolean allowLeashing() {
+		return false;
+	}
 
-    @Override
-    public boolean canBePushed() {
-        return false;
-    }
+	@Override
+	public void applyEntityAttributes() {
+		super.applyEntityAttributes();
+		getEntityAttribute(SharedMonsterAttributes.maxHealth).setBaseValue(2.0);
+	}
 
-    @Override
-    protected void collideWithEntity(Entity entity) {
-    }
+	@Override
+	public boolean canBePushed() {
+		return false;
+	}
 
-    @Override
-    protected void collideWithNearbyEntities() {
-    }
+	@Override
+	public boolean canDespawn() {
+		return true;
+	}
 
-    @Override
-    protected boolean isAIEnabled() {
-        return true;
-    }
+	@Override
+	public boolean canTriggerWalking() {
+		return false;
+	}
 
-    @Override
-    public void onUpdate() {
-        super.onUpdate();
-        this.motionY *= 0.6;
-        for(Midge midge : this.midges) {
-            midge.update();
-        }
-        if(this.rand.nextInt(5) == 0) {
-            this.playSound("lotr:midges.swarm", this.getSoundVolume(), this.getSoundPitch());
-        }
-        if(!this.worldObj.isRemote && this.isEntityAlive()) {
-            int chance;
-            boolean inMidgewater = this.worldObj.getBiomeGenForCoords(MathHelper.floor_double(this.posX), MathHelper.floor_double(this.posZ)) instanceof LOTRBiomeGenMidgewater;
-            chance = inMidgewater ? 100 : 500;
-            if(this.rand.nextInt(chance) == 0) {
-                double range = inMidgewater ? 16.0 : 24.0;
-                int threshold = inMidgewater ? 6 : 5;
-                List list = this.worldObj.getEntitiesWithinAABB(LOTREntityMidges.class, this.boundingBox.expand(range, range, range));
-                if(list.size() < threshold) {
-                    LOTREntityMidges moreMidges = new LOTREntityMidges(this.worldObj);
-                    moreMidges.setLocationAndAngles(this.posX, this.posY, this.posZ, this.rand.nextFloat() * 360.0f, 0.0f);
-                    moreMidges.onSpawnWithEgg(null);
-                    this.worldObj.spawnEntityInWorld(moreMidges);
-                }
-            }
-        }
-    }
+	@Override
+	public void collideWithEntity(Entity entity) {
+	}
 
-    @Override
-    protected void updateAITasks() {
-        super.updateAITasks();
-        if(this.currentFlightTarget != null && !this.worldObj.isAirBlock(this.currentFlightTarget.posX, this.currentFlightTarget.posY, this.currentFlightTarget.posZ)) {
-            this.currentFlightTarget = null;
-        }
-        if(this.playerTarget != null && (!this.playerTarget.isEntityAlive() || this.getDistanceSqToEntity(this.playerTarget) > 256.0)) {
-            this.playerTarget = null;
-        }
-        if(this.playerTarget != null) {
-            if(this.rand.nextInt(400) == 0) {
-                this.playerTarget = null;
-            }
-            else {
-                this.currentFlightTarget = new ChunkCoordinates((int) this.playerTarget.posX, (int) this.playerTarget.posY + 3, (int) this.playerTarget.posZ);
-            }
-        }
-        else if(this.rand.nextInt(100) == 0) {
-            EntityPlayer closestPlayer = this.worldObj.getClosestPlayerToEntity(this, 12.0);
-            if(closestPlayer != null && this.rand.nextInt(7) == 0) {
-                this.playerTarget = closestPlayer;
-            }
-            else {
-                int height;
-                int i = (int) this.posX + this.rand.nextInt(7) - this.rand.nextInt(7);
-                int j = (int) this.posY + this.rand.nextInt(4) - this.rand.nextInt(3);
-                int k = (int) this.posZ + this.rand.nextInt(7) - this.rand.nextInt(7);
-                if(j < 1) {
-                    j = 1;
-                }
-                if(j > (height = this.worldObj.getTopSolidOrLiquidBlock(i, k)) + 8) {
-                    j = height + 8;
-                }
-                this.currentFlightTarget = new ChunkCoordinates(i, j, k);
-            }
-        }
-        if(this.currentFlightTarget != null) {
-            double dx = this.currentFlightTarget.posX + 0.5 - this.posX;
-            double dy = this.currentFlightTarget.posY + 0.5 - this.posY;
-            double dz = this.currentFlightTarget.posZ + 0.5 - this.posZ;
-            this.motionX += (Math.signum(dx) * 0.5 - this.motionX) * 0.1;
-            this.motionY += (Math.signum(dy) * 0.7 - this.motionY) * 0.1;
-            this.motionZ += (Math.signum(dz) * 0.5 - this.motionZ) * 0.1;
-            this.moveForward = 0.2f;
-        }
-        else {
-            this.motionZ = 0.0;
-            this.motionY = 0.0;
-            this.motionX = 0.0;
-        }
-    }
+	@Override
+	public void collideWithNearbyEntities() {
+	}
 
-    @Override
-    protected boolean canTriggerWalking() {
-        return false;
-    }
+	@Override
+	public boolean doesEntityNotTriggerPressurePlate() {
+		return true;
+	}
 
-    @Override
-    protected void fall(float f) {
-    }
+	@Override
+	public void fall(float f) {
+	}
 
-    @Override
-    protected void updateFallState(double d, boolean flag) {
-    }
+	@Override
+	public boolean getCanSpawnHere() {
+		int i = MathHelper.floor_double(posX);
+		int j = MathHelper.floor_double(posY);
+		int k = MathHelper.floor_double(posZ);
+		if (j < 62) {
+			return false;
+		}
+		return worldObj.getBlock(i, j - 1, k) == worldObj.getBiomeGenForCoords(i, k).topBlock && super.getCanSpawnHere();
+	}
 
-    @Override
-    public boolean doesEntityNotTriggerPressurePlate() {
-        return true;
-    }
+	@Override
+	public ItemStack getPickedResult(MovingObjectPosition target) {
+		int id = LOTREntities.getEntityID(this);
+		if (id > 0 && LOTREntities.spawnEggs.containsKey(id)) {
+			return new ItemStack(LOTRMod.spawnEgg, 1, id);
+		}
+		return null;
+	}
 
-    @Override
-    public void onDeath(DamageSource damagesource) {
-        Entity attacker;
-        super.onDeath(damagesource);
-        if(!this.worldObj.isRemote && damagesource instanceof EntityDamageSourceIndirect && (attacker = damagesource.getEntity()) instanceof LOTREntityNPC) {
-            LOTREntityNPC npc = (LOTREntityNPC) attacker;
-            if(npc.hiredNPCInfo.isActive && npc.hiredNPCInfo.getHiringPlayer() != null) {
-                EntityPlayer entityplayer = npc.hiredNPCInfo.getHiringPlayer();
-                LOTRLevelData.getData(entityplayer).addAchievement(LOTRAchievement.shootDownMidges);
-            }
-        }
-    }
+	@Override
+	public boolean interact(EntityPlayer entityplayer) {
+		return false;
+	}
 
-    @Override
-    protected boolean canDespawn() {
-        return true;
-    }
+	@Override
+	public boolean isAIEnabled() {
+		return true;
+	}
 
-    @Override
-    public boolean getCanSpawnHere() {
-        int i = MathHelper.floor_double(this.posX);
-        int j = MathHelper.floor_double(this.posY);
-        int k = MathHelper.floor_double(this.posZ);
-        if(j < 62) {
-            return false;
-        }
-        return this.worldObj.getBlock(i, j - 1, k) == this.worldObj.getBiomeGenForCoords(i, k).topBlock && super.getCanSpawnHere();
-    }
+	@Override
+	public void onDeath(DamageSource damagesource) {
+		Entity attacker;
+		super.onDeath(damagesource);
+		if (!worldObj.isRemote && damagesource instanceof EntityDamageSourceIndirect && (attacker = damagesource.getEntity()) instanceof LOTREntityNPC) {
+			LOTREntityNPC npc = (LOTREntityNPC) attacker;
+			if (npc.hiredNPCInfo.isActive && npc.hiredNPCInfo.getHiringPlayer() != null) {
+				EntityPlayer entityplayer = npc.hiredNPCInfo.getHiringPlayer();
+				LOTRLevelData.getData(entityplayer).addAchievement(LOTRAchievement.shootDownMidges);
+			}
+		}
+	}
 
-    @Override
-    public boolean allowLeashing() {
-        return false;
-    }
+	@Override
+	public void onUpdate() {
+		super.onUpdate();
+		motionY *= 0.6;
+		for (Midge midge : midges) {
+			midge.update();
+		}
+		if (rand.nextInt(5) == 0) {
+			playSound("lotr:midges.swarm", getSoundVolume(), getSoundPitch());
+		}
+		if (!worldObj.isRemote && isEntityAlive()) {
+			int chance;
+			boolean inMidgewater = worldObj.getBiomeGenForCoords(MathHelper.floor_double(posX), MathHelper.floor_double(posZ)) instanceof LOTRBiomeGenMidgewater;
+			chance = inMidgewater ? 100 : 500;
+			if (rand.nextInt(chance) == 0) {
+				double range = inMidgewater ? 16.0 : 24.0;
+				int threshold = inMidgewater ? 6 : 5;
+				List list = worldObj.getEntitiesWithinAABB(LOTREntityMidges.class, boundingBox.expand(range, range, range));
+				if (list.size() < threshold) {
+					LOTREntityMidges moreMidges = new LOTREntityMidges(worldObj);
+					moreMidges.setLocationAndAngles(posX, posY, posZ, rand.nextFloat() * 360.0f, 0.0f);
+					moreMidges.onSpawnWithEgg(null);
+					worldObj.spawnEntityInWorld(moreMidges);
+				}
+			}
+		}
+	}
 
-    @Override
-    protected boolean interact(EntityPlayer entityplayer) {
-        return false;
-    }
+	@Override
+	public void updateAITasks() {
+		super.updateAITasks();
+		if (currentFlightTarget != null && !worldObj.isAirBlock(currentFlightTarget.posX, currentFlightTarget.posY, currentFlightTarget.posZ)) {
+			currentFlightTarget = null;
+		}
+		if (playerTarget != null && (!playerTarget.isEntityAlive() || getDistanceSqToEntity(playerTarget) > 256.0)) {
+			playerTarget = null;
+		}
+		if (playerTarget != null) {
+			if (rand.nextInt(400) == 0) {
+				playerTarget = null;
+			} else {
+				currentFlightTarget = new ChunkCoordinates((int) playerTarget.posX, (int) playerTarget.posY + 3, (int) playerTarget.posZ);
+			}
+		} else if (rand.nextInt(100) == 0) {
+			EntityPlayer closestPlayer = worldObj.getClosestPlayerToEntity(this, 12.0);
+			if (closestPlayer != null && rand.nextInt(7) == 0) {
+				playerTarget = closestPlayer;
+			} else {
+				int height;
+				int i = (int) posX + rand.nextInt(7) - rand.nextInt(7);
+				int j = (int) posY + rand.nextInt(4) - rand.nextInt(3);
+				int k = (int) posZ + rand.nextInt(7) - rand.nextInt(7);
+				if (j < 1) {
+					j = 1;
+				}
+				height = worldObj.getTopSolidOrLiquidBlock(i, k);
+				if (j > height + 8) {
+					j = height + 8;
+				}
+				currentFlightTarget = new ChunkCoordinates(i, j, k);
+			}
+		}
+		if (currentFlightTarget != null) {
+			double dx = currentFlightTarget.posX + 0.5 - posX;
+			double dy = currentFlightTarget.posY + 0.5 - posY;
+			double dz = currentFlightTarget.posZ + 0.5 - posZ;
+			motionX += (Math.signum(dx) * 0.5 - motionX) * 0.1;
+			motionY += (Math.signum(dy) * 0.7 - motionY) * 0.1;
+			motionZ += (Math.signum(dz) * 0.5 - motionZ) * 0.1;
+			moveForward = 0.2f;
+		} else {
+			motionZ = 0.0;
+			motionY = 0.0;
+			motionX = 0.0;
+		}
+	}
 
-    @Override
-    public ItemStack getPickedResult(MovingObjectPosition target) {
-        int id = LOTREntities.getEntityID(this);
-        if(id > 0 && LOTREntities.spawnEggs.containsKey(id)) {
-            return new ItemStack(LOTRMod.spawnEgg, 1, id);
-        }
-        return null;
-    }
+	@Override
+	public void updateFallState(double d, boolean flag) {
+	}
 
-    public class Midge {
-        public float midge_posX;
-        public float midge_posY;
-        public float midge_posZ;
-        public float midge_prevPosX;
-        public float midge_prevPosY;
-        public float midge_prevPosZ;
-        private float midge_initialPosX;
-        private float midge_initialPosY;
-        private float midge_initialPosZ;
-        public float midge_rotation;
-        private int midgeTick;
-        private int maxMidgeTick = 80;
+	public class Midge {
+		public float midge_posX;
+		public float midge_posY;
+		public float midge_posZ;
+		public float midge_prevPosX;
+		public float midge_prevPosY;
+		public float midge_prevPosZ;
+		public float midge_initialPosY;
+		public float midge_rotation;
+		public int midgeTick;
+		public int maxMidgeTick = 80;
 
-        public Midge() {
-            this.midge_initialPosX = this.midge_posX = -1.0f + LOTREntityMidges.this.rand.nextFloat() * 2.0f;
-            this.midge_initialPosY = this.midge_posY = LOTREntityMidges.this.rand.nextFloat() * 2.0f;
-            this.midge_initialPosZ = this.midge_posZ = -1.0f + LOTREntityMidges.this.rand.nextFloat() * 2.0f;
-            this.midge_rotation = LOTREntityMidges.this.rand.nextFloat() * 360.0f;
-            this.midgeTick = LOTREntityMidges.this.rand.nextInt(this.maxMidgeTick);
-        }
+		public Midge() {
+			midge_posX = -1.0f + LOTREntityMidges.this.rand.nextFloat() * 2.0f;
+			midge_initialPosY = midge_posY = LOTREntityMidges.this.rand.nextFloat() * 2.0f;
+			midge_posZ = -1.0f + LOTREntityMidges.this.rand.nextFloat() * 2.0f;
+			midge_rotation = LOTREntityMidges.this.rand.nextFloat() * 360.0f;
+			midgeTick = LOTREntityMidges.this.rand.nextInt(maxMidgeTick);
+		}
 
-        public void update() {
-            this.midge_prevPosX = this.midge_posX;
-            this.midge_prevPosY = this.midge_posY;
-            this.midge_prevPosZ = this.midge_posZ;
-            ++this.midgeTick;
-            if(this.midgeTick > this.maxMidgeTick) {
-                this.midgeTick = 0;
-            }
-            this.midge_posY = this.midge_initialPosY + 0.5f * MathHelper.sin(this.midgeTick / 6.2831855f);
-        }
-    }
+		public void update() {
+			midge_prevPosX = midge_posX;
+			midge_prevPosY = midge_posY;
+			midge_prevPosZ = midge_posZ;
+			++midgeTick;
+			if (midgeTick > maxMidgeTick) {
+				midgeTick = 0;
+			}
+			midge_posY = midge_initialPosY + 0.5f * MathHelper.sin(midgeTick / 6.2831855f);
+		}
+	}
 
 }

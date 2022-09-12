@@ -5,41 +5,41 @@ import io.netty.buffer.ByteBuf;
 import lotr.common.LOTRLevelData;
 
 public class LOTRPacketPortalPos implements IMessage {
-    private int portalX;
-    private int portalY;
-    private int portalZ;
+	public int portalX;
+	public int portalY;
+	public int portalZ;
 
-    public LOTRPacketPortalPos() {
-    }
+	public LOTRPacketPortalPos() {
+	}
 
-    public LOTRPacketPortalPos(int i, int j, int k) {
-        this.portalX = i;
-        this.portalY = j;
-        this.portalZ = k;
-    }
+	public LOTRPacketPortalPos(int i, int j, int k) {
+		portalX = i;
+		portalY = j;
+		portalZ = k;
+	}
 
-    @Override
-    public void toBytes(ByteBuf data) {
-        data.writeInt(this.portalX);
-        data.writeInt(this.portalY);
-        data.writeInt(this.portalZ);
-    }
+	@Override
+	public void fromBytes(ByteBuf data) {
+		portalX = data.readInt();
+		portalY = data.readInt();
+		portalZ = data.readInt();
+	}
 
-    @Override
-    public void fromBytes(ByteBuf data) {
-        this.portalX = data.readInt();
-        this.portalY = data.readInt();
-        this.portalZ = data.readInt();
-    }
+	@Override
+	public void toBytes(ByteBuf data) {
+		data.writeInt(portalX);
+		data.writeInt(portalY);
+		data.writeInt(portalZ);
+	}
 
-    public static class Handler implements IMessageHandler<LOTRPacketPortalPos, IMessage> {
-        @Override
-        public IMessage onMessage(LOTRPacketPortalPos packet, MessageContext context) {
-            LOTRLevelData.middleEarthPortalX = packet.portalX;
-            LOTRLevelData.middleEarthPortalY = packet.portalY;
-            LOTRLevelData.middleEarthPortalZ = packet.portalZ;
-            return null;
-        }
-    }
+	public static class Handler implements IMessageHandler<LOTRPacketPortalPos, IMessage> {
+		@Override
+		public IMessage onMessage(LOTRPacketPortalPos packet, MessageContext context) {
+			LOTRLevelData.middleEarthPortalX = packet.portalX;
+			LOTRLevelData.middleEarthPortalY = packet.portalY;
+			LOTRLevelData.middleEarthPortalZ = packet.portalZ;
+			return null;
+		}
+	}
 
 }

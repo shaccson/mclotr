@@ -7,25 +7,25 @@ import net.minecraft.entity.player.EntityPlayerMP;
 import net.minecraft.inventory.Container;
 
 public class LOTRPacketSealCracker implements IMessage {
-    @Override
-    public void toBytes(ByteBuf data) {
-    }
+	@Override
+	public void fromBytes(ByteBuf data) {
+	}
 
-    @Override
-    public void fromBytes(ByteBuf data) {
-    }
+	@Override
+	public void toBytes(ByteBuf data) {
+	}
 
-    public static class Handler implements IMessageHandler<LOTRPacketSealCracker, IMessage> {
-        @Override
-        public IMessage onMessage(LOTRPacketSealCracker packet, MessageContext context) {
-            EntityPlayerMP entityplayer = context.getServerHandler().playerEntity;
-            Container container = entityplayer.openContainer;
-            if(container instanceof LOTRContainerDaleCracker) {
-                LOTRContainerDaleCracker cracker = (LOTRContainerDaleCracker) container;
-                cracker.receiveSealingPacket(entityplayer);
-            }
-            return null;
-        }
-    }
+	public static class Handler implements IMessageHandler<LOTRPacketSealCracker, IMessage> {
+		@Override
+		public IMessage onMessage(LOTRPacketSealCracker packet, MessageContext context) {
+			EntityPlayerMP entityplayer = context.getServerHandler().playerEntity;
+			Container container = entityplayer.openContainer;
+			if (container instanceof LOTRContainerDaleCracker) {
+				LOTRContainerDaleCracker cracker = (LOTRContainerDaleCracker) container;
+				cracker.receiveSealingPacket(entityplayer);
+			}
+			return null;
+		}
+	}
 
 }

@@ -1,24 +1,17 @@
-Добро пожаловатьв мою кузницу, #!
-Я кую лучшую броню на всём Востоке.
-Тебе понадобится эта броня, когда ты отправишься биться за Великое Око.
-Великое Око требует, чтобы ты купил у меня броню!
-Добро пожаловать, #. Что я могу предложить Вам?
-Нравится ли Вам моя работа?
-Броня моей работы отобёт все кинжалы и остановит стрелы!
-Позолоченная броня - это очень дорого, #, но если у тебя хватит денег, я выкую её для тебя.
-На всём Западе нет никого равных нам в кузнечном мастерстве!
-Один из моих клинков мог бы спасти Вам жизнь.
-Мой друг, я могу создать тебе лучшую броню во всём мире!
-Лишь немногии достигли высочайшего уровня в кузнечном деле. Один из тех труженников - я.
-Я был бы рад, если бы ты всё время был в безопасности, друг мой. А такое возможно только в моих доспехах.
-Добро пожаловать, #! Вам нужно оружие или броня?
-Ах, рунийская сталь. Ничто так не держит заточку, как сталь моего народа. Жесткая как чешуя дракона, легкая как пёрышко!
-Приветствую, #. Рад видеть Вас в своей кузнице.
-Вся молодёж отправилась на войну, #, и я остался без ученика!
-Любой мой меч с первого удара разрубит гондорский нагрудник!
-Теперь трудно найти хорошую сталь. Лучшие материалы уже растрачены на военные походы.
-Я слышал рассказы о Ваших деяниях, #, и для меня было бы большой честью снарядить Вас.
-Можете обежать все деревни и города Рохана и Гондора, но лучше кузнеца чем я, Вам не найти.
-Шлемы, Нагрудники, мечи - всё твоё, мой друг, если только у тебя есть деньги.
-Добро пожаловать в мою кузницу, #. Наш народ готовиться к войне, поэтому мне приходится работать день и ночь.
-Тысячи людей нуждаются в новом мече или доспехе, #. Но, я думаю, смогу уделить время и Вам.
+Could I perhaps interest you in some of my wares?
+I am always open to another trade. What are you looking for?
+I saw you look, yes, my weapons are THAT good!
+You have an eye for detail, am I right? Take a closer look at the quality of my armour, #.
+Greetings. Have you come to trade with me?
+I am sure I have something that'll interest you, #!
+A good trader never says no to another trade.
+I think that's a price we can agree on.
+I've already given you my lowest price, #!
+You drive a hard bargain...
+Meet me halfway here, I also have to make a living.
+You expect me to afford the costs of desert travel with that price?
+A wanderer like you needs a fine strong blade.
+You need some good clothing to keep the Sun's heat off. I have just the thing.
+Ah, #! I have woven some fine robes just for you.
+You deserve better than a rusty old blade.
+Ah! #! You need something to fight the scorpions off. Come, look what I have for you!

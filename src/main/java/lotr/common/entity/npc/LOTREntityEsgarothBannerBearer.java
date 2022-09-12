@@ -5,13 +5,13 @@ import lotr.common.item.LOTRItemBanner;
 import net.minecraft.world.World;
 
 public class LOTREntityEsgarothBannerBearer extends LOTREntityDaleSoldier implements LOTRBannerBearer {
-    public LOTREntityEsgarothBannerBearer(World world) {
-        super(world);
-        this.npcShield = LOTRShields.ALIGNMENT_ESGAROTH;
-    }
+	public LOTREntityEsgarothBannerBearer(World world) {
+		super(world);
+		npcShield = LOTRShields.ALIGNMENT_ESGAROTH;
+	}
 
-    @Override
-    public LOTRItemBanner.BannerType getBannerType() {
-        return LOTRItemBanner.BannerType.ESGAROTH;
-    }
+	@Override
+	public LOTRItemBanner.BannerType getBannerType() {
+		return LOTRItemBanner.BannerType.ESGAROTH;
+	}
 }

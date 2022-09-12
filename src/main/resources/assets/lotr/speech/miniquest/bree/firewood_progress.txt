@@ -1,2 +1,1 @@
-Как дела? Как дела? Есть ли вещи у тебя?
-#, ну как, у тебя есть $?
+I am still in need of $, please bring it to me as soon as you can.

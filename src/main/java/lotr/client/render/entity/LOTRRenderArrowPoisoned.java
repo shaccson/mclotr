@@ -5,10 +5,10 @@ import net.minecraft.entity.Entity;
 import net.minecraft.util.ResourceLocation;
 
 public class LOTRRenderArrowPoisoned extends RenderArrow {
-    private static final ResourceLocation arrowPoisonTexture = new ResourceLocation("lotr:item/arrowPoisoned.png");
+	public static ResourceLocation arrowPoisonTexture = new ResourceLocation("lotr:item/arrowPoisoned.png");
 
-    @Override
-    protected ResourceLocation getEntityTexture(Entity entity) {
-        return arrowPoisonTexture;
-    }
+	@Override
+	public ResourceLocation getEntityTexture(Entity entity) {
+		return arrowPoisonTexture;
+	}
 }

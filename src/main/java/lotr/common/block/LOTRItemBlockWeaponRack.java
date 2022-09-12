@@ -4,8 +4,8 @@ import net.minecraft.block.Block;
 import net.minecraft.item.ItemBlock;
 
 public class LOTRItemBlockWeaponRack extends ItemBlock {
-    public LOTRItemBlockWeaponRack(Block block) {
-        super(block);
-        this.setMaxStackSize(1);
-    }
+	public LOTRItemBlockWeaponRack(Block block) {
+		super(block);
+		setMaxStackSize(1);
+	}
 }

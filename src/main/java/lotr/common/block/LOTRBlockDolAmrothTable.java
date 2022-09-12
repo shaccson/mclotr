@@ -9,31 +9,31 @@ import net.minecraft.client.renderer.texture.IIconRegister;
 import net.minecraft.util.IIcon;
 
 public class LOTRBlockDolAmrothTable extends LOTRBlockCraftingTable {
-    @SideOnly(value = Side.CLIENT)
-    private IIcon[] tableIcons;
+	@SideOnly(value = Side.CLIENT)
+	public IIcon[] tableIcons;
 
-    public LOTRBlockDolAmrothTable() {
-        super(Material.rock, LOTRFaction.GONDOR, 36);
-        this.setStepSound(Block.soundTypeStone);
-    }
+	public LOTRBlockDolAmrothTable() {
+		super(Material.rock, LOTRFaction.GONDOR, 36);
+		setStepSound(Block.soundTypeStone);
+	}
 
-    @SideOnly(value = Side.CLIENT)
-    @Override
-    public IIcon getIcon(int i, int j) {
-        if(i == 1) {
-            return this.tableIcons[1];
-        }
-        if(i == 0) {
-            return LOTRMod.rock.getIcon(0, 1);
-        }
-        return this.tableIcons[0];
-    }
+	@SideOnly(value = Side.CLIENT)
+	@Override
+	public IIcon getIcon(int i, int j) {
+		if (i == 1) {
+			return tableIcons[1];
+		}
+		if (i == 0) {
+			return LOTRMod.rock.getIcon(0, 1);
+		}
+		return tableIcons[0];
+	}
 
-    @SideOnly(value = Side.CLIENT)
-    @Override
-    public void registerBlockIcons(IIconRegister iconregister) {
-        this.tableIcons = new IIcon[2];
-        this.tableIcons[0] = iconregister.registerIcon(this.getTextureName() + "_side");
-        this.tableIcons[1] = iconregister.registerIcon(this.getTextureName() + "_top");
-    }
+	@SideOnly(value = Side.CLIENT)
+	@Override
+	public void registerBlockIcons(IIconRegister iconregister) {
+		tableIcons = new IIcon[2];
+		tableIcons[0] = iconregister.registerIcon(getTextureName() + "_side");
+		tableIcons[1] = iconregister.registerIcon(getTextureName() + "_top");
+	}
 }

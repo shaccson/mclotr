@@ -15,139 +15,134 @@ import net.minecraft.tileentity.TileEntity;
 import net.minecraft.util.*;
 
 public class LOTRGuiBeacon extends LOTRGuiScreenBase {
-    private static ResourceLocation guiTexture = new ResourceLocation("lotr:gui/beacon.png");
-    private int xSize = 200;
-    private int ySize = 160;
-    private int guiLeft;
-    private int guiTop;
-    private int beaconX;
-    private int beaconY;
-    private int beaconZ;
-    private UUID initFellowshipID;
-    private LOTRFellowshipClient initFellowship;
-    private String initBeaconName;
-    private String currentBeaconName;
-    private GuiButton buttonDone;
-    private GuiTextField fellowshipNameField;
-    private GuiTextField beaconNameField;
+	public static ResourceLocation guiTexture = new ResourceLocation("lotr:gui/beacon.png");
+	public int xSize = 200;
+	public int ySize = 160;
+	public int guiLeft;
+	public int guiTop;
+	public int beaconX;
+	public int beaconY;
+	public int beaconZ;
+	public UUID initFellowshipID;
+	public LOTRFellowshipClient initFellowship;
+	public String initBeaconName;
+	public String currentBeaconName;
+	public GuiButton buttonDone;
+	public GuiTextField fellowshipNameField;
+	public GuiTextField beaconNameField;
 
-    public LOTRGuiBeacon(LOTRTileEntityBeacon beacon) {
-        this.beaconX = beacon.xCoord;
-        this.beaconY = beacon.yCoord;
-        this.beaconZ = beacon.zCoord;
-        this.initFellowshipID = beacon.getFellowshipID();
-        this.initBeaconName = beacon.getBeaconName();
-    }
+	public LOTRGuiBeacon(LOTRTileEntityBeacon beacon) {
+		beaconX = beacon.xCoord;
+		beaconY = beacon.yCoord;
+		beaconZ = beacon.zCoord;
+		initFellowshipID = beacon.getFellowshipID();
+		initBeaconName = beacon.getBeaconName();
+	}
 
-    @Override
-    public void initGui() {
-        this.guiLeft = (this.width - this.xSize) / 2;
-        this.guiTop = (this.height - this.ySize) / 2;
-        this.initFellowship = LOTRLevelData.getData(this.mc.thePlayer).getClientFellowshipByID(this.initFellowshipID);
-        this.buttonDone = new GuiButton(0, this.guiLeft + this.xSize / 2 - 40, this.guiTop + 130, 80, 20, StatCollector.translateToLocal("container.lotr.beacon.done"));
-        this.buttonList.add(this.buttonDone);
-        this.fellowshipNameField = new GuiTextField(this.fontRendererObj, this.guiLeft + this.xSize / 2 - 80, this.guiTop + 45, 160, 20);
-        this.fellowshipNameField.setMaxStringLength(40);
-        if(this.initFellowship != null) {
-            this.fellowshipNameField.setText(this.initFellowship.getName());
-        }
-        this.beaconNameField = new GuiTextField(this.fontRendererObj, this.guiLeft + this.xSize / 2 - 80, this.guiTop + 100, 160, 20);
-        this.beaconNameField.setMaxStringLength(40);
-        if(!StringUtils.isBlank(this.initBeaconName)) {
-            this.beaconNameField.setText(this.initBeaconName);
-        }
-    }
+	@Override
+	public void actionPerformed(GuiButton button) {
+		if (button.enabled && button == buttonDone) {
+			mc.thePlayer.closeScreen();
+		}
+	}
 
-    @Override
-    public void drawScreen(int i, int j, float f) {
-        this.drawDefaultBackground();
-        GL11.glColor4f(1.0f, 1.0f, 1.0f, 1.0f);
-        this.mc.getTextureManager().bindTexture(guiTexture);
-        this.drawTexturedModalRect(this.guiLeft, this.guiTop, 0, 0, this.xSize, this.ySize);
-        TileEntity te = this.mc.theWorld.getTileEntity(this.beaconX, this.beaconY, this.beaconZ);
-        String s = new ItemStack(te.getBlockType(), 1, te.getBlockMetadata()).getDisplayName();
-        this.fontRendererObj.drawString(s, this.guiLeft + this.xSize / 2 - this.fontRendererObj.getStringWidth(s) / 2, this.guiTop + 11, 4210752);
-        this.fellowshipNameField.drawTextBox();
-        s = StatCollector.translateToLocal("container.lotr.beacon.nameFellowship");
-        this.fontRendererObj.drawString(s, this.fellowshipNameField.xPosition + 4, this.fellowshipNameField.yPosition - 4 - this.fontRendererObj.FONT_HEIGHT, 4210752);
-        this.currentBeaconName = this.beaconNameField.getText();
-        this.beaconNameField.setEnabled(true);
-        if(this.beaconNameField.isFocused()) {
-            this.beaconNameField.drawTextBox();
-        }
-        else {
-            String beaconNameEff = this.currentBeaconName;
-            if(StringUtils.isBlank(beaconNameEff)) {
-                beaconNameEff = this.fellowshipNameField.getText();
-                this.beaconNameField.setEnabled(false);
-            }
-            this.beaconNameField.setText(beaconNameEff);
-            this.beaconNameField.drawTextBox();
-            this.beaconNameField.setText(this.currentBeaconName);
-        }
-        s = StatCollector.translateToLocal("container.lotr.beacon.nameBeacon");
-        this.fontRendererObj.drawString(s, this.beaconNameField.xPosition + 4, this.beaconNameField.yPosition - 4 - this.fontRendererObj.FONT_HEIGHT * 2, 4210752);
-        s = StatCollector.translateToLocal("container.lotr.beacon.namePrefix");
-        this.fontRendererObj.drawString(s, this.beaconNameField.xPosition + 4, this.beaconNameField.yPosition - 4 - this.fontRendererObj.FONT_HEIGHT, 4210752);
-        super.drawScreen(i, j, f);
-    }
+	@Override
+	public void drawScreen(int i, int j, float f) {
+		drawDefaultBackground();
+		GL11.glColor4f(1.0f, 1.0f, 1.0f, 1.0f);
+		mc.getTextureManager().bindTexture(guiTexture);
+		this.drawTexturedModalRect(guiLeft, guiTop, 0, 0, xSize, ySize);
+		TileEntity te = mc.theWorld.getTileEntity(beaconX, beaconY, beaconZ);
+		String s = new ItemStack(te.getBlockType(), 1, te.getBlockMetadata()).getDisplayName();
+		fontRendererObj.drawString(s, guiLeft + xSize / 2 - fontRendererObj.getStringWidth(s) / 2, guiTop + 11, 4210752);
+		fellowshipNameField.drawTextBox();
+		s = StatCollector.translateToLocal("container.lotr.beacon.nameFellowship");
+		fontRendererObj.drawString(s, fellowshipNameField.xPosition + 4, fellowshipNameField.yPosition - 4 - fontRendererObj.FONT_HEIGHT, 4210752);
+		currentBeaconName = beaconNameField.getText();
+		beaconNameField.setEnabled(true);
+		if (beaconNameField.isFocused()) {
+			beaconNameField.drawTextBox();
+		} else {
+			String beaconNameEff = currentBeaconName;
+			if (StringUtils.isBlank(beaconNameEff)) {
+				beaconNameEff = fellowshipNameField.getText();
+				beaconNameField.setEnabled(false);
+			}
+			beaconNameField.setText(beaconNameEff);
+			beaconNameField.drawTextBox();
+			beaconNameField.setText(currentBeaconName);
+		}
+		s = StatCollector.translateToLocal("container.lotr.beacon.nameBeacon");
+		fontRendererObj.drawString(s, beaconNameField.xPosition + 4, beaconNameField.yPosition - 4 - fontRendererObj.FONT_HEIGHT * 2, 4210752);
+		s = StatCollector.translateToLocal("container.lotr.beacon.namePrefix");
+		fontRendererObj.drawString(s, beaconNameField.xPosition + 4, beaconNameField.yPosition - 4 - fontRendererObj.FONT_HEIGHT, 4210752);
+		super.drawScreen(i, j, f);
+	}
 
-    @Override
-    public void updateScreen() {
-        super.updateScreen();
-        this.fellowshipNameField.updateCursorCounter();
-        this.beaconNameField.updateCursorCounter();
-        double dSq = this.mc.thePlayer.getDistanceSq(this.beaconX + 0.5, this.beaconY + 0.5, this.beaconZ + 0.5);
-        if(dSq > 64.0) {
-            this.mc.thePlayer.closeScreen();
-        }
-        else {
-            TileEntity tileentity = this.mc.theWorld.getTileEntity(this.beaconX, this.beaconY, this.beaconZ);
-            if(!(tileentity instanceof LOTRTileEntityBeacon)) {
-                this.mc.thePlayer.closeScreen();
-            }
-        }
-    }
+	@Override
+	public void initGui() {
+		guiLeft = (width - xSize) / 2;
+		guiTop = (height - ySize) / 2;
+		initFellowship = LOTRLevelData.getData(mc.thePlayer).getClientFellowshipByID(initFellowshipID);
+		buttonDone = new GuiButton(0, guiLeft + xSize / 2 - 40, guiTop + 130, 80, 20, StatCollector.translateToLocal("container.lotr.beacon.done"));
+		buttonList.add(buttonDone);
+		fellowshipNameField = new GuiTextField(fontRendererObj, guiLeft + xSize / 2 - 80, guiTop + 45, 160, 20);
+		fellowshipNameField.setMaxStringLength(40);
+		if (initFellowship != null) {
+			fellowshipNameField.setText(initFellowship.getName());
+		}
+		beaconNameField = new GuiTextField(fontRendererObj, guiLeft + xSize / 2 - 80, guiTop + 100, 160, 20);
+		beaconNameField.setMaxStringLength(40);
+		if (!StringUtils.isBlank(initBeaconName)) {
+			beaconNameField.setText(initBeaconName);
+		}
+	}
 
-    @Override
-    protected void keyTyped(char c, int i) {
-        if(this.fellowshipNameField.getVisible() && this.fellowshipNameField.textboxKeyTyped(c, i)) {
-            return;
-        }
-        if(this.beaconNameField.getVisible() && this.beaconNameField.textboxKeyTyped(c, i)) {
-            return;
-        }
-        super.keyTyped(c, i);
-    }
+	@Override
+	public void keyTyped(char c, int i) {
+		if (fellowshipNameField.getVisible() && fellowshipNameField.textboxKeyTyped(c, i) || beaconNameField.getVisible() && beaconNameField.textboxKeyTyped(c, i)) {
+			return;
+		}
+		super.keyTyped(c, i);
+	}
 
-    @Override
-    protected void mouseClicked(int i, int j, int k) {
-        super.mouseClicked(i, j, k);
-        this.fellowshipNameField.mouseClicked(i, j, k);
-        this.beaconNameField.mouseClicked(i, j, k);
-    }
+	@Override
+	public void mouseClicked(int i, int j, int k) {
+		super.mouseClicked(i, j, k);
+		fellowshipNameField.mouseClicked(i, j, k);
+		beaconNameField.mouseClicked(i, j, k);
+	}
 
-    @Override
-    protected void actionPerformed(GuiButton button) {
-        if(button.enabled && button == this.buttonDone) {
-            this.mc.thePlayer.closeScreen();
-        }
-    }
+	@Override
+	public void onGuiClosed() {
+		sendBeaconEditPacket(true);
+	}
 
-    private void sendBeaconEditPacket(boolean closed) {
-        LOTRFellowshipClient fs;
-        UUID fsID = null;
-        String fsName = this.fellowshipNameField.getText();
-        if(!StringUtils.isBlank(fsName) && (fs = LOTRLevelData.getData(this.mc.thePlayer).getClientFellowshipByName(fsName)) != null) {
-            fsID = fs.getFellowshipID();
-        }
-        String beaconName = this.currentBeaconName;
-        LOTRPacketBeaconEdit packet = new LOTRPacketBeaconEdit(this.beaconX, this.beaconY, this.beaconZ, fsID, beaconName, true);
-        LOTRPacketHandler.networkWrapper.sendToServer(packet);
-    }
+	public void sendBeaconEditPacket(boolean closed) {
+		LOTRFellowshipClient fs;
+		UUID fsID = null;
+		String fsName = fellowshipNameField.getText();
+		if (!StringUtils.isBlank(fsName) && (fs = LOTRLevelData.getData(mc.thePlayer).getClientFellowshipByName(fsName)) != null) {
+			fsID = fs.getFellowshipID();
+		}
+		String beaconName = currentBeaconName;
+		LOTRPacketBeaconEdit packet = new LOTRPacketBeaconEdit(beaconX, beaconY, beaconZ, fsID, beaconName, true);
+		LOTRPacketHandler.networkWrapper.sendToServer(packet);
+	}
 
-    @Override
-    public void onGuiClosed() {
-        this.sendBeaconEditPacket(true);
-    }
+	@Override
+	public void updateScreen() {
+		super.updateScreen();
+		fellowshipNameField.updateCursorCounter();
+		beaconNameField.updateCursorCounter();
+		double dSq = mc.thePlayer.getDistanceSq(beaconX + 0.5, beaconY + 0.5, beaconZ + 0.5);
+		if (dSq > 64.0) {
+			mc.thePlayer.closeScreen();
+		} else {
+			TileEntity tileentity = mc.theWorld.getTileEntity(beaconX, beaconY, beaconZ);
+			if (!(tileentity instanceof LOTRTileEntityBeacon)) {
+				mc.thePlayer.closeScreen();
+			}
+		}
+	}
 }

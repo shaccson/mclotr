@@ -9,254 +9,261 @@ import net.minecraft.entity.*;
 import net.minecraft.entity.player.EntityPlayer;
 import net.minecraft.init.Blocks;
 import net.minecraft.item.*;
-import net.minecraft.nbt.*;
+import net.minecraft.nbt.NBTTagCompound;
 import net.minecraft.util.*;
 import net.minecraft.world.World;
 
-public class LOTREntityTraderRespawn
-extends Entity {
-    private static int MAX_SCALE = 40;
-    private int timeUntilSpawn;
-    private int prevBobbingTime;
-    private int bobbingTime;
-    private String traderClassID;
-    private boolean traderHasHome;
-    private int traderHomeX;
-    private int traderHomeY;
-    private int traderHomeZ;
-    private float traderHomeRadius;
-    private String traderLocationName;
-    private boolean shouldTraderRespawn;
-    private NBTTagCompound traderData;
-    public float spawnerSpin;
-    public float prevSpawnerSpin;
+public class LOTREntityTraderRespawn extends Entity {
+	public static int MAX_SCALE = 40;
+	public int timeUntilSpawn;
+	public int prevBobbingTime;
+	public int bobbingTime;
+	public String traderClassID;
+	public boolean traderHasHome;
+	public int traderHomeX;
+	public int traderHomeY;
+	public int traderHomeZ;
+	public float traderHomeRadius;
+	public String traderLocationName;
+	public boolean shouldTraderRespawn;
+	public NBTTagCompound traderData;
+	public float spawnerSpin;
+	public float prevSpawnerSpin;
 
-    public LOTREntityTraderRespawn(World world) {
-        super(world);
-        this.setSize(0.75f, 0.75f);
-        this.spawnerSpin = this.rand.nextFloat() * 360.0f;
-    }
+	public LOTREntityTraderRespawn(World world) {
+		super(world);
+		setSize(0.75f, 0.75f);
+		spawnerSpin = rand.nextFloat() * 360.0f;
+	}
 
-    protected void entityInit() {
-        this.dataWatcher.addObject(16, 0);
-        this.dataWatcher.addObject(17, (byte) 0);
-        this.dataWatcher.addObject(18, "");
-    }
+	@Override
+	public void applyEntityCollision(Entity entity) {
+	}
 
-    public int getScale() {
-        return this.dataWatcher.getWatchableObjectInt(16);
-    }
+	@Override
+	public boolean attackEntityFrom(DamageSource damagesource, float f) {
+		Entity entity = damagesource.getEntity();
+		if (entity instanceof EntityPlayer && ((EntityPlayer) entity).capabilities.isCreativeMode) {
+			if (!worldObj.isRemote) {
+				Block.SoundType sound = Blocks.glass.stepSound;
+				worldObj.playSoundAtEntity(this, sound.getBreakSound(), (sound.getVolume() + 1.0f) / 2.0f, sound.getPitch() * 0.8f);
+				worldObj.setEntityState(this, (byte) 16);
+				setDead();
+			}
+			return true;
+		}
+		return false;
+	}
 
-    public void setScale(int i) {
-        this.dataWatcher.updateObject(16, i);
-    }
+	@Override
+	public boolean canBeCollidedWith() {
+		return true;
+	}
 
-    public boolean isSpawnImminent() {
-        return this.dataWatcher.getWatchableObjectByte(17) == 1;
-    }
+	public void copyTraderDataFrom(LOTREntityNPC entity) {
+		traderClassID = LOTREntities.getStringFromClass(entity.getClass());
+		traderHasHome = entity.hasHome();
+		if (traderHasHome) {
+			ChunkCoordinates home = entity.getHomePosition();
+			traderHomeX = home.posX;
+			traderHomeY = home.posY;
+			traderHomeZ = home.posZ;
+			traderHomeRadius = entity.func_110174_bM();
+		}
+		shouldTraderRespawn = entity.shouldTraderRespawn();
+		if (entity.getHasSpecificLocationName()) {
+			traderLocationName = entity.npcLocationName;
+		}
+		if (entity instanceof LOTRTradeable) {
+			LOTRTraderNPCInfo traderInfo = entity.traderNPCInfo;
+			traderData = new NBTTagCompound();
+			traderInfo.writeToNBT(traderData);
+		}
+	}
 
-    public void setSpawnImminent() {
-        this.dataWatcher.updateObject(17, 1);
-    }
+	@Override
+	public void entityInit() {
+		dataWatcher.addObject(16, 0);
+		dataWatcher.addObject(17, (byte) 0);
+		dataWatcher.addObject(18, "");
+	}
 
-    public String getClientTraderString() {
-        return this.dataWatcher.getWatchableObjectString(18);
-    }
+	public float getBobbingOffset(float tick) {
+		float f = bobbingTime - prevBobbingTime;
+		return MathHelper.sin((prevBobbingTime + (f *= tick)) / 5.0f) * 0.25f;
+	}
 
-    public void setClientTraderString(String s) {
-        this.dataWatcher.updateObject(18, s);
-    }
+	public String getClientTraderString() {
+		return dataWatcher.getWatchableObjectString(18);
+	}
 
-    public void writeEntityToNBT(NBTTagCompound nbt) {
-        nbt.setInteger("Scale", this.getScale());
-        nbt.setInteger("TimeUntilSpawn", this.timeUntilSpawn);
-        nbt.setString("TraderClassID", this.traderClassID);
-        nbt.setBoolean("TraderHasHome", this.traderHasHome);
-        nbt.setInteger("TraderHomeX", this.traderHomeX);
-        nbt.setInteger("TraderHomeY", this.traderHomeY);
-        nbt.setInteger("TraderHomeZ", this.traderHomeZ);
-        nbt.setFloat("TraderHomeRadius", this.traderHomeRadius);
-        nbt.setBoolean("TraderShouldRespawn", this.shouldTraderRespawn);
-        if (this.traderLocationName != null) {
-            nbt.setString("TraderLocationName", this.traderLocationName);
-        }
-        if (this.traderData != null) {
-            nbt.setTag("TraderData", this.traderData);
-        }
-    }
+	@Override
+	public ItemStack getPickedResult(MovingObjectPosition target) {
+		int entityID = LOTREntities.getIDFromString(getClientTraderString());
+		if (entityID > 0) {
+			return new ItemStack(LOTRMod.spawnEgg, 1, entityID);
+		}
+		return null;
+	}
 
-    public void readEntityFromNBT(NBTTagCompound nbt) {
-        this.setScale(nbt.getInteger("Scale"));
-        this.timeUntilSpawn = nbt.getInteger("TimeUntilSpawn");
-        if (this.timeUntilSpawn <= 1200) {
-            this.setSpawnImminent();
-        }
-        this.traderClassID = nbt.getString("TraderClassID");
-        this.traderHasHome = nbt.getBoolean("TraderHasHome");
-        this.traderHomeX = nbt.getInteger("TraderHomeX");
-        this.traderHomeY = nbt.getInteger("TraderHomeY");
-        this.traderHomeZ = nbt.getInteger("TraderHomeZ");
-        this.traderHomeRadius = nbt.getFloat("TraderHomeRadius");
-        this.shouldTraderRespawn = nbt.hasKey("TraderShouldRespawn") ? nbt.getBoolean("TraderShouldRespawn") : true;
-        if (nbt.hasKey("TraderLocationName")) {
-            this.traderLocationName = nbt.getString("TraderLocationName");
-        }
-        if (nbt.hasKey("TraderData")) {
-            this.traderData = nbt.getCompoundTag("TraderData");
-        }
-    }
+	public int getScale() {
+		return dataWatcher.getWatchableObjectInt(16);
+	}
 
-    public void copyTraderDataFrom(LOTREntityNPC entity) {
-        this.traderClassID = LOTREntities.getStringFromClass(entity.getClass());
-        this.traderHasHome = entity.hasHome();
-        if (this.traderHasHome) {
-            ChunkCoordinates home = entity.getHomePosition();
-            this.traderHomeX = home.posX;
-            this.traderHomeY = home.posY;
-            this.traderHomeZ = home.posZ;
-            this.traderHomeRadius = entity.func_110174_bM();
-        }
-        this.shouldTraderRespawn = entity.shouldTraderRespawn();
-        if (entity.getHasSpecificLocationName()) {
-            this.traderLocationName = entity.npcLocationName;
-        }
-        if (entity instanceof LOTRTradeable) {
-            LOTRTraderNPCInfo traderInfo = entity.traderNPCInfo;
-            this.traderData = new NBTTagCompound();
-            traderInfo.writeToNBT(this.traderData);
-        }
-    }
+	public float getScaleFloat(float tick) {
+		float scale = getScale();
+		if (scale < MAX_SCALE) {
+			scale += tick;
+		}
+		return scale / MAX_SCALE;
+	}
 
-    public void onSpawn() {
-        this.motionY = 0.25;
-        this.timeUntilSpawn = MathHelper.getRandomIntegerInRange(this.rand, 10, 30) * 1200;
-    }
+	@Override
+	@SideOnly(value = Side.CLIENT)
+	public void handleHealthUpdate(byte b) {
+		if (b == 16) {
+			for (int l = 0; l < 16; ++l) {
+				worldObj.spawnParticle("iconcrack_" + Item.getIdFromItem(LOTRMod.silverCoin), posX + (rand.nextDouble() - 0.5) * width, posY + rand.nextDouble() * height, posZ + (rand.nextDouble() - 0.5) * width, 0.0, 0.0, 0.0);
+			}
+		} else {
+			super.handleHealthUpdate(b);
+		}
+	}
 
-    public boolean canBeCollidedWith() {
-        return true;
-    }
+	@Override
+	public boolean hitByEntity(Entity entity) {
+		if (entity instanceof EntityPlayer) {
+			return attackEntityFrom(DamageSource.causePlayerDamage((EntityPlayer) entity), 0.0f);
+		}
+		return false;
+	}
 
-    public void applyEntityCollision(Entity entity) {
-    }
+	public boolean isSpawnImminent() {
+		return dataWatcher.getWatchableObjectByte(17) == 1;
+	}
 
-    public boolean hitByEntity(Entity entity) {
-        if (entity instanceof EntityPlayer) {
-            return this.attackEntityFrom(DamageSource.causePlayerDamage(((EntityPlayer)entity)), 0.0f);
-        }
-        return false;
-    }
+	public void onSpawn() {
+		motionY = 0.25;
+		timeUntilSpawn = MathHelper.getRandomIntegerInRange(rand, 10, 30) * 1200;
+	}
 
-    public boolean attackEntityFrom(DamageSource damagesource, float f) {
-        Entity entity = damagesource.getEntity();
-        if (entity instanceof EntityPlayer && ((EntityPlayer)entity).capabilities.isCreativeMode) {
-            if (!this.worldObj.isRemote) {
-                Block.SoundType sound = Blocks.glass.stepSound;
-                this.worldObj.playSoundAtEntity(this, sound.getBreakSound(), (sound.getVolume() + 1.0f) / 2.0f, sound.getPitch() * 0.8f);
-                this.worldObj.setEntityState(this, (byte)16);
-                this.setDead();
-            }
-            return true;
-        }
-        return false;
-    }
+	@Override
+	public void onUpdate() {
+		prevPosX = posX;
+		prevPosY = posY;
+		prevPosZ = posZ;
+		prevSpawnerSpin = spawnerSpin;
+		spawnerSpin = isSpawnImminent() ? (spawnerSpin += 24.0f) : (spawnerSpin += 6.0f);
+		prevSpawnerSpin = MathHelper.wrapAngleTo180_float(prevSpawnerSpin);
+		spawnerSpin = MathHelper.wrapAngleTo180_float(spawnerSpin);
+		if (getScale() < MAX_SCALE) {
+			if (!worldObj.isRemote) {
+				setScale(getScale() + 1);
+			}
+			motionX = 0.0;
+			motionY *= 0.9;
+		} else {
+			motionX = 0.0;
+			motionY = 0.0;
+		}
+		motionZ = 0.0;
+		moveEntity(motionX, motionY, motionZ);
+		if (!worldObj.isRemote) {
+			setClientTraderString(traderClassID);
+			if (!isSpawnImminent() && timeUntilSpawn <= 1200) {
+				setSpawnImminent();
+			}
+			if (timeUntilSpawn > 0) {
+				--timeUntilSpawn;
+			} else {
+				boolean flag = false;
+				Entity entity = EntityList.createEntityByName(traderClassID, worldObj);
+				if (entity instanceof LOTREntityNPC) {
+					LOTREntityNPC trader = (LOTREntityNPC) entity;
+					trader.setLocationAndAngles(posX, posY, posZ, rand.nextFloat() * 360.0f, 0.0f);
+					trader.spawnRidingHorse = false;
+					trader.liftSpawnRestrictions = true;
+					boundingBox.offset(0.0, 100.0, 0.0);
+					if (trader.getCanSpawnHere()) {
+						trader.liftSpawnRestrictions = false;
+						trader.onSpawnWithEgg(null);
+						if (traderHasHome) {
+							trader.setHomeArea(traderHomeX, traderHomeY, traderHomeZ, Math.round(traderHomeRadius));
+						}
+						if (traderLocationName != null) {
+							trader.setSpecificLocationName(traderLocationName);
+						}
+						trader.setShouldTraderRespawn(shouldTraderRespawn);
+						flag = worldObj.spawnEntityInWorld(trader);
+						if (trader instanceof LOTRTradeable && traderData != null) {
+							trader.traderNPCInfo.readFromNBT(traderData);
+						}
+					}
+					boundingBox.offset(0.0, -100.0, 0.0);
+				}
+				if (flag) {
+					playSound("random.pop", 1.0f, 0.5f + rand.nextFloat() * 0.5f);
+					setDead();
+				} else {
+					timeUntilSpawn = 60;
+					setLocationAndAngles(posX, posY + 1.0, posZ, rotationYaw, rotationPitch);
+				}
+			}
+		} else if (isSpawnImminent()) {
+			prevBobbingTime = bobbingTime++;
+		}
+	}
 
-    @SideOnly(value=Side.CLIENT)
-    public void handleHealthUpdate(byte b) {
-        if (b == 16) {
-            for (int l = 0; l < 16; ++l) {
-                this.worldObj.spawnParticle("iconcrack_" + Item.getIdFromItem(LOTRMod.silverCoin), this.posX + (this.rand.nextDouble() - 0.5) * this.width, this.posY + this.rand.nextDouble() * this.height, this.posZ + (this.rand.nextDouble() - 0.5) * this.width, 0.0, 0.0, 0.0);
-            }
-        } else {
-            super.handleHealthUpdate(b);
-        }
-    }
+	@Override
+	public void readEntityFromNBT(NBTTagCompound nbt) {
+		setScale(nbt.getInteger("Scale"));
+		timeUntilSpawn = nbt.getInteger("TimeUntilSpawn");
+		if (timeUntilSpawn <= 1200) {
+			setSpawnImminent();
+		}
+		traderClassID = nbt.getString("TraderClassID");
+		traderHasHome = nbt.getBoolean("TraderHasHome");
+		traderHomeX = nbt.getInteger("TraderHomeX");
+		traderHomeY = nbt.getInteger("TraderHomeY");
+		traderHomeZ = nbt.getInteger("TraderHomeZ");
+		traderHomeRadius = nbt.getFloat("TraderHomeRadius");
+		shouldTraderRespawn = nbt.hasKey("TraderShouldRespawn") ? nbt.getBoolean("TraderShouldRespawn") : true;
+		if (nbt.hasKey("TraderLocationName")) {
+			traderLocationName = nbt.getString("TraderLocationName");
+		}
+		if (nbt.hasKey("TraderData")) {
+			traderData = nbt.getCompoundTag("TraderData");
+		}
+	}
 
-    public void onUpdate() {
-        this.prevPosX = this.posX;
-        this.prevPosY = this.posY;
-        this.prevPosZ = this.posZ;
-        this.prevSpawnerSpin = this.spawnerSpin;
-        this.spawnerSpin = this.isSpawnImminent() ? (this.spawnerSpin += 24.0f) : (this.spawnerSpin += 6.0f);
-        this.prevSpawnerSpin = MathHelper.wrapAngleTo180_float(this.prevSpawnerSpin);
-        this.spawnerSpin = MathHelper.wrapAngleTo180_float(this.spawnerSpin);
-        if (this.getScale() < MAX_SCALE) {
-            if (!this.worldObj.isRemote) {
-                this.setScale(this.getScale() + 1);
-            }
-            this.motionX = 0.0;
-            this.motionY *= 0.9;
-            this.motionZ = 0.0;
-        } else {
-            this.motionX = 0.0;
-            this.motionY = 0.0;
-            this.motionZ = 0.0;
-        }
-        this.moveEntity(this.motionX, this.motionY, this.motionZ);
-        if (!this.worldObj.isRemote) {
-            this.setClientTraderString(this.traderClassID);
-            if (!this.isSpawnImminent() && this.timeUntilSpawn <= 1200) {
-                this.setSpawnImminent();
-            }
-            if (this.timeUntilSpawn > 0) {
-                --this.timeUntilSpawn;
-            } else {
-                boolean flag = false;
-                Entity entity = EntityList.createEntityByName(this.traderClassID, this.worldObj);
-                if (entity instanceof LOTREntityNPC) {
-                    LOTREntityNPC trader = (LOTREntityNPC)entity;
-                    trader.setLocationAndAngles(this.posX, this.posY, this.posZ, this.rand.nextFloat() * 360.0f, 0.0f);
-                    trader.spawnRidingHorse = false;
-                    trader.liftSpawnRestrictions = true;
-                    this.boundingBox.offset(0.0, 100.0, 0.0);
-                    if (trader.getCanSpawnHere()) {
-                        trader.liftSpawnRestrictions = false;
-                        trader.onSpawnWithEgg(null);
-                        if (this.traderHasHome) {
-                            trader.setHomeArea(this.traderHomeX, this.traderHomeY, this.traderHomeZ, Math.round(this.traderHomeRadius));
-                        }
-                        if (this.traderLocationName != null) {
-                            trader.setSpecificLocationName(this.traderLocationName);
-                        }
-                        trader.setShouldTraderRespawn(this.shouldTraderRespawn);
-                        flag = this.worldObj.spawnEntityInWorld(trader);
-                        if (trader instanceof LOTRTradeable && this.traderData != null) {
-                            trader.traderNPCInfo.readFromNBT(this.traderData);
-                        }
-                    }
-                    this.boundingBox.offset(0.0, -100.0, 0.0);
-                }
-                if (flag) {
-                    this.playSound("random.pop", 1.0f, 0.5f + this.rand.nextFloat() * 0.5f);
-                    this.setDead();
-                } else {
-                    this.timeUntilSpawn = 60;
-                    this.setLocationAndAngles(this.posX, this.posY + 1.0, this.posZ, this.rotationYaw, this.rotationPitch);
-                }
-            }
-        } else if (this.isSpawnImminent()) {
-            this.prevBobbingTime = this.bobbingTime++;
-        }
-    }
+	public void setClientTraderString(String s) {
+		dataWatcher.updateObject(18, s);
+	}
 
-    public float getScaleFloat(float tick) {
-        float scale = this.getScale();
-        if (scale < MAX_SCALE) {
-            scale += tick;
-        }
-        return scale / MAX_SCALE;
-    }
+	public void setScale(int i) {
+		dataWatcher.updateObject(16, i);
+	}
 
-    public float getBobbingOffset(float tick) {
-        float f = this.bobbingTime - this.prevBobbingTime;
-        return MathHelper.sin((this.prevBobbingTime + (f *= tick)) / 5.0f) * 0.25f;
-    }
+	public void setSpawnImminent() {
+		dataWatcher.updateObject(17, 1);
+	}
 
-    public ItemStack getPickedResult(MovingObjectPosition target) {
-        int entityID = LOTREntities.getIDFromString(this.getClientTraderString());
-        if (entityID > 0) {
-            return new ItemStack(LOTRMod.spawnEgg, 1, entityID);
-        }
-        return null;
-    }
+	@Override
+	public void writeEntityToNBT(NBTTagCompound nbt) {
+		nbt.setInteger("Scale", getScale());
+		nbt.setInteger("TimeUntilSpawn", timeUntilSpawn);
+		nbt.setString("TraderClassID", traderClassID);
+		nbt.setBoolean("TraderHasHome", traderHasHome);
+		nbt.setInteger("TraderHomeX", traderHomeX);
+		nbt.setInteger("TraderHomeY", traderHomeY);
+		nbt.setInteger("TraderHomeZ", traderHomeZ);
+		nbt.setFloat("TraderHomeRadius", traderHomeRadius);
+		nbt.setBoolean("TraderShouldRespawn", shouldTraderRespawn);
+		if (traderLocationName != null) {
+			nbt.setString("TraderLocationName", traderLocationName);
+		}
+		if (traderData != null) {
+			nbt.setTag("TraderData", traderData);
+		}
+	}
 }
-

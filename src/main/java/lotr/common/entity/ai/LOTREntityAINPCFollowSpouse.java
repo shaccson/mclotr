@@ -4,54 +4,51 @@ import lotr.common.entity.npc.LOTREntityNPC;
 import net.minecraft.entity.ai.EntityAIBase;
 
 public class LOTREntityAINPCFollowSpouse extends EntityAIBase {
-    private LOTREntityNPC theNPC;
-    private LOTREntityNPC theSpouse;
-    private double moveSpeed;
-    private int followTick;
+	public LOTREntityNPC theNPC;
+	public LOTREntityNPC theSpouse;
+	public double moveSpeed;
+	public int followTick;
 
-    public LOTREntityAINPCFollowSpouse(LOTREntityNPC npc, double d) {
-        this.theNPC = npc;
-        this.moveSpeed = d;
-    }
+	public LOTREntityAINPCFollowSpouse(LOTREntityNPC npc, double d) {
+		theNPC = npc;
+		moveSpeed = d;
+	}
 
-    @Override
-    public boolean shouldExecute() {
-        LOTREntityNPC spouse = this.theNPC.familyInfo.getSpouse();
-        if(spouse == null) {
-            return false;
-        }
-        if(!spouse.isEntityAlive() || this.theNPC.getDistanceSqToEntity(spouse) < 36.0 || this.theNPC.getDistanceSqToEntity(spouse) >= 256.0) {
-            return false;
-        }
-        this.theSpouse = spouse;
-        return true;
-    }
+	@Override
+	public boolean continueExecuting() {
+		if (!theSpouse.isEntityAlive()) {
+			return false;
+		}
+		double d = theNPC.getDistanceSqToEntity(theSpouse);
+		return d >= 36.0 && d <= 256.0;
+	}
 
-    @Override
-    public boolean continueExecuting() {
-        if(!this.theSpouse.isEntityAlive()) {
-            return false;
-        }
-        double d = this.theNPC.getDistanceSqToEntity(this.theSpouse);
-        return d >= 36.0 && d <= 256.0;
-    }
+	@Override
+	public void resetTask() {
+		theSpouse = null;
+	}
 
-    @Override
-    public void startExecuting() {
-        this.followTick = 200;
-    }
+	@Override
+	public boolean shouldExecute() {
+		LOTREntityNPC spouse = theNPC.familyInfo.getSpouse();
+		if (spouse == null || !spouse.isEntityAlive() || theNPC.getDistanceSqToEntity(spouse) < 36.0 || theNPC.getDistanceSqToEntity(spouse) >= 256.0) {
+			return false;
+		}
+		theSpouse = spouse;
+		return true;
+	}
 
-    @Override
-    public void resetTask() {
-        this.theSpouse = null;
-    }
+	@Override
+	public void startExecuting() {
+		followTick = 200;
+	}
 
-    @Override
-    public void updateTask() {
-        --this.followTick;
-        if(this.theNPC.getDistanceSqToEntity(this.theSpouse) > 144.0 || this.followTick <= 0) {
-            this.followTick = 200;
-            this.theNPC.getNavigator().tryMoveToEntityLiving(this.theSpouse, this.moveSpeed);
-        }
-    }
+	@Override
+	public void updateTask() {
+		--followTick;
+		if (theNPC.getDistanceSqToEntity(theSpouse) > 144.0 || followTick <= 0) {
+			followTick = 200;
+			theNPC.getNavigator().tryMoveToEntityLiving(theSpouse, moveSpeed);
+		}
+	}
 }

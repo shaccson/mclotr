@@ -13,30 +13,30 @@ import net.minecraft.tileentity.TileEntity;
 import net.minecraft.world.World;
 
 public class LOTRRenderDwarvenDoor extends TileEntitySpecialRenderer {
-    private RenderBlocks renderBlocks;
+	public RenderBlocks renderBlocks;
 
-    @Override
-    public void func_147496_a(World world) {
-        this.renderBlocks = new RenderBlocks(world);
-    }
+	@Override
+	public void func_147496_a(World world) {
+		renderBlocks = new RenderBlocks(world);
+	}
 
-    @Override
-    public void renderTileEntityAt(TileEntity tileentity, double d, double d1, double d2, float f) {
-        if(this.renderBlocks == null) {
-            this.renderBlocks = new RenderBlocks(tileentity.getWorldObj());
-        }
-        LOTRTileEntityDwarvenDoor door = (LOTRTileEntityDwarvenDoor) tileentity;
-        GL11.glPushMatrix();
-        GL11.glEnable(32826);
-        GL11.glTranslatef((float) d, (float) d1, (float) d2);
-        float alphaFunc = LOTRRenderDwarvenGlow.setupGlow(door.getGlowBrightness(f));
-        this.bindTexture(TextureMap.locationBlocksTexture);
-        Block block = door.getBlockType();
-        if(block instanceof LOTRBlockGateDwarvenIthildin) {
-            LOTRRenderBlocks.renderDwarvenDoorGlow((LOTRBlockGateDwarvenIthildin) block, this.renderBlocks, door.xCoord, door.yCoord, door.zCoord);
-        }
-        LOTRRenderDwarvenGlow.endGlow(alphaFunc);
-        GL11.glDisable(32826);
-        GL11.glPopMatrix();
-    }
+	@Override
+	public void renderTileEntityAt(TileEntity tileentity, double d, double d1, double d2, float f) {
+		if (renderBlocks == null) {
+			renderBlocks = new RenderBlocks(tileentity.getWorldObj());
+		}
+		LOTRTileEntityDwarvenDoor door = (LOTRTileEntityDwarvenDoor) tileentity;
+		GL11.glPushMatrix();
+		GL11.glEnable(32826);
+		GL11.glTranslatef((float) d, (float) d1, (float) d2);
+		float alphaFunc = LOTRRenderDwarvenGlow.setupGlow(door.getGlowBrightness(f));
+		bindTexture(TextureMap.locationBlocksTexture);
+		Block block = door.getBlockType();
+		if (block instanceof LOTRBlockGateDwarvenIthildin) {
+			LOTRRenderBlocks.renderDwarvenDoorGlow((LOTRBlockGateDwarvenIthildin) block, renderBlocks, door.xCoord, door.yCoord, door.zCoord);
+		}
+		LOTRRenderDwarvenGlow.endGlow(alphaFunc);
+		GL11.glDisable(32826);
+		GL11.glPopMatrix();
+	}
 }

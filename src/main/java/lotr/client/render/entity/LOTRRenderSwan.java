@@ -6,14 +6,14 @@ import net.minecraft.entity.Entity;
 import net.minecraft.util.ResourceLocation;
 
 public class LOTRRenderSwan extends RenderLiving {
-    public static ResourceLocation swanSkin = new ResourceLocation("lotr:mob/swan.png");
+	public static ResourceLocation swanSkin = new ResourceLocation("lotr:mob/swan.png");
 
-    public LOTRRenderSwan() {
-        super(new LOTRModelSwan(), 0.5f);
-    }
+	public LOTRRenderSwan() {
+		super(new LOTRModelSwan(), 0.5f);
+	}
 
-    @Override
-    protected ResourceLocation getEntityTexture(Entity entity) {
-        return swanSkin;
-    }
+	@Override
+	public ResourceLocation getEntityTexture(Entity entity) {
+		return swanSkin;
+	}
 }

@@ -8,68 +8,68 @@ import net.minecraft.item.ItemStack;
 import net.minecraft.world.World;
 
 public class LOTREntityDorwinionMerchantElf extends LOTREntityDorwinionElf implements LOTRTravellingTrader {
-    public LOTREntityDorwinionMerchantElf(World world) {
-        super(world);
-        this.addTargetTasks(false);
-    }
+	public LOTREntityDorwinionMerchantElf(World world) {
+		super(world);
+		this.addTargetTasks(false);
+	}
 
-    @Override
-    public LOTRTradeEntries getBuyPool() {
-        return LOTRTradeEntries.DORWINION_MERCHANT_BUY;
-    }
+	@Override
+	public boolean canTradeWith(EntityPlayer entityplayer) {
+		return LOTRLevelData.getData(entityplayer).getAlignment(getFaction()) >= 0.0f && isFriendly(entityplayer);
+	}
 
-    @Override
-    public LOTRTradeEntries getSellPool() {
-        return LOTRTradeEntries.DORWINION_MERCHANT_SELL;
-    }
+	@Override
+	public LOTREntityNPC createTravellingEscort() {
+		return new LOTREntityDorwinionGuard(worldObj);
+	}
 
-    @Override
-    public LOTREntityNPC createTravellingEscort() {
-        return new LOTREntityDorwinionGuard(this.worldObj);
-    }
+	@Override
+	public float getAlignmentBonus() {
+		return 2.0f;
+	}
 
-    @Override
-    public String getDepartureSpeech() {
-        return "dorwinion/merchantElf/departure";
-    }
+	@Override
+	public LOTRTradeEntries getBuyPool() {
+		return LOTRTradeEntries.DORWINION_MERCHANT_BUY;
+	}
 
-    @Override
-    public IEntityLivingData onSpawnWithEgg(IEntityLivingData data) {
-        data = super.onSpawnWithEgg(data);
-        ItemStack hat = new ItemStack(LOTRMod.leatherHat);
-        int colorHat = LOTREntityDorwinionMerchantMan.hatColors[this.rand.nextInt(LOTREntityDorwinionMerchantMan.hatColors.length)];
-        int colorFeather = LOTREntityDorwinionMerchantMan.featherColors[this.rand.nextInt(LOTREntityDorwinionMerchantMan.featherColors.length)];
-        LOTRItemLeatherHat.setHatColor(hat, colorHat);
-        LOTRItemLeatherHat.setFeatherColor(hat, colorFeather);
-        this.setCurrentItemOrArmor(4, hat);
-        return data;
-    }
+	@Override
+	public String getDepartureSpeech() {
+		return "dorwinion/merchantElf/departure";
+	}
 
-    @Override
-    public float getAlignmentBonus() {
-        return 2.0f;
-    }
+	@Override
+	public LOTRTradeEntries getSellPool() {
+		return LOTRTradeEntries.DORWINION_MERCHANT_SELL;
+	}
 
-    @Override
-    public boolean canTradeWith(EntityPlayer entityplayer) {
-        return LOTRLevelData.getData(entityplayer).getAlignment(this.getFaction()) >= 0.0f && this.isFriendly(entityplayer);
-    }
+	@Override
+	public String getSpeechBank(EntityPlayer entityplayer) {
+		if (isFriendly(entityplayer)) {
+			return "dorwinion/merchantElf/friendly";
+		}
+		return "dorwinion/merchantElf/hostile";
+	}
 
-    @Override
-    public void onPlayerTrade(EntityPlayer entityplayer, LOTRTradeEntries.TradeType type, ItemStack itemstack) {
-        LOTRLevelData.getData(entityplayer).addAchievement(LOTRAchievement.tradeDorwinionMerchant);
-    }
+	@Override
+	public void onPlayerTrade(EntityPlayer entityplayer, LOTRTradeEntries.TradeType type, ItemStack itemstack) {
+		LOTRLevelData.getData(entityplayer).addAchievement(LOTRAchievement.tradeDorwinionMerchant);
+	}
 
-    @Override
-    public boolean shouldTraderRespawn() {
-        return false;
-    }
+	@Override
+	public IEntityLivingData onSpawnWithEgg(IEntityLivingData data) {
+		data = super.onSpawnWithEgg(data);
+		ItemStack hat = new ItemStack(LOTRMod.leatherHat);
+		int colorHat = LOTREntityDorwinionMerchantMan.hatColors[rand.nextInt(LOTREntityDorwinionMerchantMan.hatColors.length)];
+		int colorFeather = LOTREntityDorwinionMerchantMan.featherColors[rand.nextInt(LOTREntityDorwinionMerchantMan.featherColors.length)];
+		LOTRItemLeatherHat.setHatColor(hat, colorHat);
+		LOTRItemLeatherHat.setFeatherColor(hat, colorFeather);
+		setCurrentItemOrArmor(4, hat);
+		return data;
+	}
 
-    @Override
-    public String getSpeechBank(EntityPlayer entityplayer) {
-        if(this.isFriendly(entityplayer)) {
-            return "dorwinion/merchantElf/friendly";
-        }
-        return "dorwinion/merchantElf/hostile";
-    }
+	@Override
+	public boolean shouldTraderRespawn() {
+		return false;
+	}
 }

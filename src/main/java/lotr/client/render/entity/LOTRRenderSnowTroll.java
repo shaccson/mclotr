@@ -6,26 +6,26 @@ import net.minecraft.entity.*;
 import net.minecraft.util.ResourceLocation;
 
 public class LOTRRenderSnowTroll extends LOTRRenderTroll {
-    private static LOTRRandomSkins snowTrollSkins;
+	public static LOTRRandomSkins snowTrollSkins;
 
-    public LOTRRenderSnowTroll() {
-        snowTrollSkins = LOTRRandomSkins.loadSkinsList("lotr:mob/troll/snowTroll");
-    }
+	public LOTRRenderSnowTroll() {
+		snowTrollSkins = LOTRRandomSkins.loadSkinsList("lotr:mob/troll/snowTroll");
+	}
 
-    @Override
-    protected ResourceLocation getEntityTexture(Entity entity) {
-        return snowTrollSkins.getRandomSkin((LOTREntityTroll) entity);
-    }
+	@Override
+	public void bindTrollOutfitTexture(EntityLivingBase entity) {
+	}
 
-    @Override
-    protected void bindTrollOutfitTexture(EntityLivingBase entity) {
-    }
+	@Override
+	public ResourceLocation getEntityTexture(Entity entity) {
+		return snowTrollSkins.getRandomSkin((LOTREntityTroll) entity);
+	}
 
-    @Override
-    protected void renderTrollWeapon(EntityLivingBase entity, float f) {
-        LOTREntitySnowTroll troll = (LOTREntitySnowTroll) entity;
-        if(!troll.isThrowingSnow()) {
-            ((LOTRModelTroll) this.mainModel).renderWoodenClubWithSpikes(0.0625f);
-        }
-    }
+	@Override
+	public void renderTrollWeapon(EntityLivingBase entity, float f) {
+		LOTREntitySnowTroll troll = (LOTREntitySnowTroll) entity;
+		if (!troll.isThrowingSnow()) {
+			((LOTRModelTroll) mainModel).renderWoodenClubWithSpikes(0.0625f);
+		}
+	}
 }

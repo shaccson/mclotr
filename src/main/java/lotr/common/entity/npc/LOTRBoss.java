@@ -4,9 +4,9 @@ import lotr.common.LOTRAchievement;
 import net.minecraft.entity.boss.IBossDisplayData;
 
 public interface LOTRBoss extends IBossDisplayData {
-    LOTRAchievement getBossKillAchievement();
+	float getBaseChanceModifier();
 
-    float getBaseChanceModifier();
+	LOTRAchievement getBossKillAchievement();
 
-    void onJumpAttackFall();
+	void onJumpAttackFall();
 }

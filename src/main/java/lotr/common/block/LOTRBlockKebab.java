@@ -5,10 +5,10 @@ import net.minecraft.block.Block;
 import net.minecraft.block.material.Material;
 
 public class LOTRBlockKebab extends Block {
-    public LOTRBlockKebab() {
-        super(Material.sand);
-        this.setCreativeTab(LOTRCreativeTabs.tabFood);
-        this.setHardness(0.5f);
-        this.setStepSound(Block.soundTypeWood);
-    }
+	public LOTRBlockKebab() {
+		super(Material.sand);
+		setCreativeTab(LOTRCreativeTabs.tabFood);
+		setHardness(0.5f);
+		setStepSound(Block.soundTypeWood);
+	}
 }

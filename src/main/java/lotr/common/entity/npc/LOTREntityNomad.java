@@ -12,79 +12,78 @@ import net.minecraft.item.ItemStack;
 import net.minecraft.world.World;
 
 public class LOTREntityNomad extends LOTREntityNearHaradrimBase implements LOTRBiomeGenNearHarad.ImmuneToHeat {
-    protected static int[] nomadTurbanColors = new int[] {15392448, 13550476, 10063441, 8354400, 8343622};
+	public static int[] nomadTurbanColors = { 15392448, 13550476, 10063441, 8354400, 8343622 };
 
-    public LOTREntityNomad(World world) {
-        super(world);
-        this.addTargetTasks(false);
-    }
+	public LOTREntityNomad(World world) {
+		super(world);
+		this.addTargetTasks(false);
+	}
 
-    @Override
-    protected LOTRFoods getHaradrimFoods() {
-        return LOTRFoods.NOMAD;
-    }
+	@Override
+	public LOTRMiniQuest createMiniQuest() {
+		return LOTRMiniQuestFactory.NOMAD.createQuest(this);
+	}
 
-    @Override
-    protected LOTRFoods getHaradrimDrinks() {
-        return LOTRFoods.NOMAD_DRINK;
-    }
+	@Override
+	public LOTRNPCMount createMountToRide() {
+		LOTREntityCamel camel = new LOTREntityCamel(worldObj);
+		camel.setNomadChestAndCarpet();
+		return camel;
+	}
 
-    @Override
-    public void setupNPCName() {
-        this.familyInfo.setName(LOTRNames.getNomadName(this.rand, this.familyInfo.isMale()));
-    }
+	@Override
+	public void dropHaradrimItems(boolean flag, int i) {
+		if (rand.nextInt(5) == 0) {
+			dropChestContents(LOTRChestContents.NOMAD_TENT, 1, 2 + i);
+		}
+	}
 
-    @Override
-    public IEntityLivingData onSpawnWithEgg(IEntityLivingData data) {
-        data = super.onSpawnWithEgg(data);
-        this.npcItemsInv.setMeleeWeapon(new ItemStack(LOTRMod.daggerHarad));
-        this.npcItemsInv.setIdleItem(null);
-        if(this.rand.nextInt(4) == 0) {
-            ItemStack turban = new ItemStack(LOTRMod.helmetHaradRobes);
-            int robeColor = nomadTurbanColors[this.rand.nextInt(nomadTurbanColors.length)];
-            LOTRItemHaradRobes.setRobesColor(turban, robeColor);
-            this.setCurrentItemOrArmor(4, turban);
-        }
-        else {
-            this.setCurrentItemOrArmor(4, null);
-        }
-        return data;
-    }
+	@Override
+	public LOTRMiniQuestFactory getBountyHelpSpeechDir() {
+		return LOTRMiniQuestFactory.NOMAD;
+	}
 
-    @Override
-    public LOTRNPCMount createMountToRide() {
-        LOTREntityCamel camel = new LOTREntityCamel(this.worldObj);
-        camel.setNomadChestAndCarpet();
-        return camel;
-    }
+	@Override
+	public LOTRFoods getHaradrimDrinks() {
+		return LOTRFoods.NOMAD_DRINK;
+	}
 
-    @Override
-    protected void dropHaradrimItems(boolean flag, int i) {
-        if(this.rand.nextInt(5) == 0) {
-            this.dropChestContents(LOTRChestContents.NOMAD_TENT, 1, 2 + i);
-        }
-    }
+	@Override
+	public LOTRFoods getHaradrimFoods() {
+		return LOTRFoods.NOMAD;
+	}
 
-    @Override
-    protected LOTRAchievement getKillAchievement() {
-        return LOTRAchievement.killNearHaradrim;
-    }
+	@Override
+	public LOTRAchievement getKillAchievement() {
+		return LOTRAchievement.killNearHaradrim;
+	}
 
-    @Override
-    public String getSpeechBank(EntityPlayer entityplayer) {
-        if(this.isFriendly(entityplayer)) {
-            return "nearHarad/nomad/nomad/friendly";
-        }
-        return "nearHarad/nomad/nomad/hostile";
-    }
+	@Override
+	public String getSpeechBank(EntityPlayer entityplayer) {
+		if (isFriendly(entityplayer)) {
+			return "nearHarad/nomad/nomad/friendly";
+		}
+		return "nearHarad/nomad/nomad/hostile";
+	}
 
-    @Override
-    public LOTRMiniQuest createMiniQuest() {
-        return LOTRMiniQuestFactory.NOMAD.createQuest(this);
-    }
+	@Override
+	public IEntityLivingData onSpawnWithEgg(IEntityLivingData data) {
+		data = super.onSpawnWithEgg(data);
+		npcItemsInv.setMeleeWeapon(new ItemStack(LOTRMod.daggerHarad));
+		npcItemsInv.setIdleItem(null);
+		if (rand.nextInt(4) == 0) {
+			ItemStack turban = new ItemStack(LOTRMod.helmetHaradRobes);
+			int robeColor = nomadTurbanColors[rand.nextInt(nomadTurbanColors.length)];
+			LOTRItemHaradRobes.setRobesColor(turban, robeColor);
+			setCurrentItemOrArmor(4, turban);
+		} else {
+			setCurrentItemOrArmor(4, null);
+		}
+		return data;
+	}
 
-    @Override
-    public LOTRMiniQuestFactory getBountyHelpSpeechDir() {
-        return LOTRMiniQuestFactory.NOMAD;
-    }
+	@Override
+	public void setupNPCName() {
+		familyInfo.setName(LOTRNames.getNomadName(rand, familyInfo.isMale()));
+	}
 }

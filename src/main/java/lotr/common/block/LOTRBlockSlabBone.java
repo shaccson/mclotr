@@ -8,22 +8,22 @@ import net.minecraft.client.renderer.texture.IIconRegister;
 import net.minecraft.util.IIcon;
 
 public class LOTRBlockSlabBone extends LOTRBlockSlabBase {
-    public LOTRBlockSlabBone(boolean flag) {
-        super(flag, Material.rock, 1);
-        this.setCreativeTab(LOTRCreativeTabs.tabBlock);
-        this.setHardness(1.0f);
-        this.setResistance(5.0f);
-        this.setStepSound(Block.soundTypeStone);
-    }
+	public LOTRBlockSlabBone(boolean flag) {
+		super(flag, Material.rock, 1);
+		setCreativeTab(LOTRCreativeTabs.tabBlock);
+		setHardness(1.0f);
+		setResistance(5.0f);
+		setStepSound(Block.soundTypeStone);
+	}
 
-    @SideOnly(value = Side.CLIENT)
-    @Override
-    public IIcon getIcon(int i, int j) {
-        return LOTRMod.boneBlock.getIcon(i, j &= 7);
-    }
+	@SideOnly(value = Side.CLIENT)
+	@Override
+	public IIcon getIcon(int i, int j) {
+		return LOTRMod.boneBlock.getIcon(i, j &= 7);
+	}
 
-    @SideOnly(value = Side.CLIENT)
-    @Override
-    public void registerBlockIcons(IIconRegister iconregister) {
-    }
+	@SideOnly(value = Side.CLIENT)
+	@Override
+	public void registerBlockIcons(IIconRegister iconregister) {
+	}
 }

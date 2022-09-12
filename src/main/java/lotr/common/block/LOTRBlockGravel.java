@@ -4,9 +4,9 @@ import lotr.common.LOTRCreativeTabs;
 import net.minecraft.block.*;
 
 public class LOTRBlockGravel extends BlockGravel {
-    public LOTRBlockGravel() {
-        this.setCreativeTab(LOTRCreativeTabs.tabBlock);
-        this.setHardness(0.6f);
-        this.setStepSound(Block.soundTypeGravel);
-    }
+	public LOTRBlockGravel() {
+		setCreativeTab(LOTRCreativeTabs.tabBlock);
+		setHardness(0.6f);
+		setStepSound(Block.soundTypeGravel);
+	}
 }

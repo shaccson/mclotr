@@ -6,21 +6,21 @@ import net.minecraft.block.*;
 import net.minecraft.util.IIcon;
 
 public class LOTRBlockFenceGate extends BlockFenceGate {
-    private Block plankBlock;
-    private int plankMeta;
+	public Block plankBlock;
+	public int plankMeta;
 
-    public LOTRBlockFenceGate(Block block, int meta) {
-        this.plankBlock = block;
-        this.plankMeta = meta;
-        this.setCreativeTab(LOTRCreativeTabs.tabUtil);
-        this.setHardness(2.0f);
-        this.setResistance(5.0f);
-        this.setStepSound(soundTypeWood);
-    }
+	public LOTRBlockFenceGate(Block block, int meta) {
+		plankBlock = block;
+		plankMeta = meta;
+		setCreativeTab(LOTRCreativeTabs.tabUtil);
+		setHardness(2.0f);
+		setResistance(5.0f);
+		setStepSound(soundTypeWood);
+	}
 
-    @SideOnly(value = Side.CLIENT)
-    @Override
-    public IIcon getIcon(int i, int j) {
-        return this.plankBlock.getIcon(i, this.plankMeta);
-    }
+	@SideOnly(value = Side.CLIENT)
+	@Override
+	public IIcon getIcon(int i, int j) {
+		return plankBlock.getIcon(i, plankMeta);
+	}
 }

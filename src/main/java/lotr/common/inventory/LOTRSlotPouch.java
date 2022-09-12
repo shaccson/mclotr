@@ -5,15 +5,15 @@ import net.minecraft.inventory.*;
 import net.minecraft.item.ItemStack;
 
 public class LOTRSlotPouch extends Slot {
-    public LOTRSlotPouch(IInventory inv, int i, int j, int k) {
-        super(inv, i, j, k);
-    }
+	public LOTRSlotPouch(IInventory inv, int i, int j, int k) {
+		super(inv, i, j, k);
+	}
 
-    @Override
-    public boolean isItemValid(ItemStack itemstack) {
-        if(itemstack.getItem() instanceof LOTRItemPouch) {
-            return false;
-        }
-        return super.isItemValid(itemstack);
-    }
+	@Override
+	public boolean isItemValid(ItemStack itemstack) {
+		if (itemstack.getItem() instanceof LOTRItemPouch) {
+			return false;
+		}
+		return super.isItemValid(itemstack);
+	}
 }

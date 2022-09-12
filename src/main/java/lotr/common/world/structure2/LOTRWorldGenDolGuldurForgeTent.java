@@ -5,17 +5,17 @@ import java.util.Random;
 import lotr.common.LOTRMod;
 
 public class LOTRWorldGenDolGuldurForgeTent extends LOTRWorldGenDolGuldurTent {
-    public LOTRWorldGenDolGuldurForgeTent(boolean flag) {
-        super(flag);
-    }
+	public LOTRWorldGenDolGuldurForgeTent(boolean flag) {
+		super(flag);
+	}
 
-    @Override
-    protected void setupRandomBlocks(Random random) {
-        super.setupRandomBlocks(random);
-        this.tentBlock = LOTRMod.brick2;
-        this.tentMeta = 8;
-        this.fenceBlock = LOTRMod.wall2;
-        this.fenceMeta = 8;
-        this.hasOrcForge = true;
-    }
+	@Override
+	public void setupRandomBlocks(Random random) {
+		super.setupRandomBlocks(random);
+		tentBlock = LOTRMod.brick2;
+		tentMeta = 8;
+		fenceBlock = LOTRMod.wall2;
+		fenceMeta = 8;
+		hasOrcForge = true;
+	}
 }

@@ -10,73 +10,73 @@ import net.minecraft.item.*;
 import net.minecraft.world.World;
 
 public class LOTREntityBlueDwarf extends LOTREntityDwarf {
-    public LOTREntityBlueDwarf(World world) {
-        super(world);
-        this.familyInfo.marriageEntityClass = LOTREntityBlueDwarf.class;
-        this.familyInfo.marriageAchievement = LOTRAchievement.marryBlueDwarf;
-    }
+	public LOTREntityBlueDwarf(World world) {
+		super(world);
+		familyInfo.marriageEntityClass = LOTREntityBlueDwarf.class;
+		familyInfo.marriageAchievement = LOTRAchievement.marryBlueDwarf;
+	}
 
-    @Override
-    protected LOTRFoods getDwarfFoods() {
-        return LOTRFoods.BLUE_DWARF;
-    }
+	@Override
+	public LOTRMiniQuest createMiniQuest() {
+		return LOTRMiniQuestFactory.BLUE_MOUNTAINS.createQuest(this);
+	}
 
-    @Override
-    public IEntityLivingData onSpawnWithEgg(IEntityLivingData data) {
-        data = super.onSpawnWithEgg(data);
-        this.npcItemsInv.setMeleeWeapon(new ItemStack(LOTRMod.daggerBlueDwarven));
-        this.npcItemsInv.setIdleItem(null);
-        return data;
-    }
+	@Override
+	public float getAlignmentBonus() {
+		return 1.0f;
+	}
 
-    @Override
-    public LOTRFaction getFaction() {
-        return LOTRFaction.BLUE_MOUNTAINS;
-    }
+	@Override
+	public LOTRMiniQuestFactory getBountyHelpSpeechDir() {
+		return LOTRMiniQuestFactory.BLUE_MOUNTAINS;
+	}
 
-    @Override
-    protected Item getDwarfSteelDrop() {
-        return LOTRMod.blueDwarfSteel;
-    }
+	@Override
+	public LOTRFoods getDwarfFoods() {
+		return LOTRFoods.BLUE_DWARF;
+	}
 
-    @Override
-    protected LOTRChestContents getLarderDrops() {
-        return LOTRChestContents.BLUE_DWARF_HOUSE_LARDER;
-    }
+	@Override
+	public Item getDwarfSteelDrop() {
+		return LOTRMod.blueDwarfSteel;
+	}
 
-    @Override
-    protected LOTRChestContents getGenericDrops() {
-        return LOTRChestContents.BLUE_MOUNTAINS_STRONGHOLD;
-    }
+	@Override
+	public LOTRFaction getFaction() {
+		return LOTRFaction.BLUE_MOUNTAINS;
+	}
 
-    @Override
-    protected LOTRAchievement getKillAchievement() {
-        return LOTRAchievement.killBlueDwarf;
-    }
+	@Override
+	public LOTRChestContents getGenericDrops() {
+		return LOTRChestContents.BLUE_MOUNTAINS_STRONGHOLD;
+	}
 
-    @Override
-    public float getAlignmentBonus() {
-        return 1.0f;
-    }
+	@Override
+	public LOTRAchievement getKillAchievement() {
+		return LOTRAchievement.killBlueDwarf;
+	}
 
-    @Override
-    public String getSpeechBank(EntityPlayer entityplayer) {
-        if(this.isFriendly(entityplayer)) {
-            if(this.hiredNPCInfo.getHiringPlayer() == entityplayer) {
-                return "blueDwarf/dwarf/hired";
-            }
-            return this.isChild() ? "blueDwarf/child/friendly" : "blueDwarf/dwarf/friendly";
-        }
-        return this.isChild() ? "blueDwarf/child/hostile" : "blueDwarf/dwarf/hostile";
-    }
+	@Override
+	public LOTRChestContents getLarderDrops() {
+		return LOTRChestContents.BLUE_DWARF_HOUSE_LARDER;
+	}
 
-    @Override
-    public LOTRMiniQuest createMiniQuest() {
-        return LOTRMiniQuestFactory.BLUE_MOUNTAINS.createQuest(this);
-    }
+	@Override
+	public String getSpeechBank(EntityPlayer entityplayer) {
+		if (isFriendly(entityplayer)) {
+			if (hiredNPCInfo.getHiringPlayer() == entityplayer) {
+				return "blueDwarf/dwarf/hired";
+			}
+			return isChild() ? "blueDwarf/child/friendly" : "blueDwarf/dwarf/friendly";
+		}
+		return isChild() ? "blueDwarf/child/hostile" : "blueDwarf/dwarf/hostile";
+	}
 
-    @Override
-    public LOTRMiniQuestFactory getBountyHelpSpeechDir() {
-        return LOTRMiniQuestFactory.BLUE_MOUNTAINS;
-    }
+	@Override
+	public IEntityLivingData onSpawnWithEgg(IEntityLivingData data) {
+		data = super.onSpawnWithEgg(data);
+		npcItemsInv.setMeleeWeapon(new ItemStack(LOTRMod.daggerBlueDwarven));
+		npcItemsInv.setIdleItem(null);
+		return data;
+	}
 }

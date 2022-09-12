@@ -1,9 +1,10 @@
-#title:Приглашение
-#author:Бильбо Бэггинс
+#title:Invitation
+#author:Bilbo Baggins
 #types:shire
-Сообщение для доставки к Аделарду Туку.
+Message to be delivered to Adelard Took,
+Tuckenborough.
 
-Дорогой господин Тук,
-Я был бы рад, если бы вы присутствовали на праздновании моего 111-го дня рождения на праздничном поле Хоббитона, 22 сентября. Вся ваша семья приветствуется, также, мы будем готовить много приятных сюрпризов.
-
-Ваш слуга, Бильбо Бэггинс.
+Dear Mr. Took,
+I would be delighted if you were to attend the festivities of my 111th birthday party at the Party Field, Hobbiton, on the 22nd September. All your family are welcome and there will be many pleasant surprises.
+Your servant,
+Bilbo Baggins

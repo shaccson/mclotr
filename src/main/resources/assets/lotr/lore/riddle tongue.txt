@@ -1,8 +1,10 @@
-#title:Загадка
-#types:shire, eriador, ruins, rivendell
+#Written by Forten
+#
+#title:A Riddle
+#types:shire,bree,eriador,ruins,rivendell
 #reward
 #
-Не дышит, но живёт она, 
-Как смерть, нема и холодна; 
-Не пьёт, хотя в воде сидит, 
-В кольчуге, хоть и не звенит.
+I have a tongue and a soul, and I
+am born in twins, but not alive.
+
+What am I?

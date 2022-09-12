@@ -12,100 +12,109 @@ import net.minecraft.item.ItemStack;
 import net.minecraft.util.*;
 import net.minecraft.world.World;
 
-public class LOTREntityTermite
-extends EntityMob {
-    private int fuseTime;
-    public static final float explosionSize = 2.0f;
+public class LOTREntityTermite extends EntityMob {
+	public static float explosionSize = 2.0f;
+	public int fuseTime;
 
-    public LOTREntityTermite(World world) {
-        super(world);
-        this.setSize(0.4f, 0.4f);
-        this.renderDistanceWeight = 2.0;
-        this.getNavigator().setAvoidsWater(true);
-        this.tasks.addTask(0, new EntityAISwimming(this));
-        this.tasks.addTask(1, new LOTREntityAIAttackOnCollide(this, 1.0, true));
-        this.tasks.addTask(2, new EntityAIWander(this, 1.0));
-        this.targetTasks.addTask(1, new EntityAIHurtByTarget(this, false));
-        this.targetTasks.addTask(2, new EntityAINearestAttackableTarget(this, EntityPlayer.class, 0, true));
-        this.targetTasks.addTask(2, new EntityAINearestAttackableTarget(this, LOTREntityNPC.class, 0, true));
-        this.experienceValue = 2;
-    }
+	public LOTREntityTermite(World world) {
+		super(world);
+		setSize(0.4f, 0.4f);
+		renderDistanceWeight = 2.0;
+		getNavigator().setAvoidsWater(true);
+		tasks.addTask(0, new EntityAISwimming(this));
+		tasks.addTask(1, new LOTREntityAIAttackOnCollide(this, 1.0, true));
+		tasks.addTask(2, new EntityAIWander(this, 1.0));
+		targetTasks.addTask(1, new EntityAIHurtByTarget(this, false));
+		targetTasks.addTask(2, new EntityAINearestAttackableTarget(this, EntityPlayer.class, 0, true));
+		targetTasks.addTask(2, new EntityAINearestAttackableTarget(this, LOTREntityNPC.class, 0, true));
+		experienceValue = 2;
+	}
 
-    protected void applyEntityAttributes() {
-        super.applyEntityAttributes();
-        this.getEntityAttribute(SharedMonsterAttributes.maxHealth).setBaseValue(8.0);
-        this.getEntityAttribute(SharedMonsterAttributes.movementSpeed).setBaseValue(0.3);
-    }
+	@Override
+	public void applyEntityAttributes() {
+		super.applyEntityAttributes();
+		getEntityAttribute(SharedMonsterAttributes.maxHealth).setBaseValue(8.0);
+		getEntityAttribute(SharedMonsterAttributes.movementSpeed).setBaseValue(0.3);
+	}
 
-    public boolean isAIEnabled() {
-        return true;
-    }
+	@Override
+	public boolean attackEntityAsMob(Entity entity) {
+		return true;
+	}
 
-    public void onUpdate() {
-        super.onUpdate();
-        if (!this.worldObj.isRemote) {
-            EntityLivingBase target = this.getAttackTarget();
-            if (target == null) {
-                --this.fuseTime;
-            } else {
-                float dist = this.getDistanceToEntity(target);
-                if (dist < 3.0f) {
-                    if (this.fuseTime == 0) {
-                        this.worldObj.playSoundAtEntity(this, "creeper.primed", 1.0f, 0.5f);
-                    }
-                    ++this.fuseTime;
-                    if (this.fuseTime >= 20) {
-                        this.explode();
-                    }
-                } else {
-                    --this.fuseTime;
-                }
-            }
-            this.fuseTime = Math.min(Math.max(this.fuseTime, 0), 20);
-        }
-    }
+	@Override
+	public boolean canDespawn() {
+		return false;
+	}
 
-    public boolean attackEntityAsMob(Entity entity) {
-        return true;
-    }
+	public void explode() {
+		if (!worldObj.isRemote) {
+			worldObj.createExplosion(this, posX, posY, posZ, 2.0f, LOTRMod.canGrief(worldObj));
+			setDead();
+		}
+	}
 
-    private void explode() {
-        if (!this.worldObj.isRemote) {
-            this.worldObj.createExplosion(this, this.posX, this.posY, this.posZ, 2.0f, LOTRMod.canGrief(this.worldObj));
-            this.setDead();
-        }
-    }
+	@Override
+	public EnumCreatureAttribute getCreatureAttribute() {
+		return EnumCreatureAttribute.ARTHROPOD;
+	}
 
-    protected String getLivingSound() {
-        return "mob.silverfish.say";
-    }
+	@Override
+	public String getDeathSound() {
+		return "mob.silverfish.kill";
+	}
 
-    protected String getHurtSound() {
-        return "mob.silverfish.hit";
-    }
+	@Override
+	public String getHurtSound() {
+		return "mob.silverfish.hit";
+	}
 
-    protected String getDeathSound() {
-        return "mob.silverfish.kill";
-    }
+	@Override
+	public String getLivingSound() {
+		return "mob.silverfish.say";
+	}
 
-    public void onDeath(DamageSource damagesource) {
-        super.onDeath(damagesource);
-        if (!this.worldObj.isRemote && damagesource.getEntity() instanceof EntityPlayer) {
-            this.dropItem(LOTRMod.termite, 1);
-            this.setDead();
-        }
-    }
+	@Override
+	public ItemStack getPickedResult(MovingObjectPosition target) {
+		return new ItemStack(LOTRMod.spawnEgg, 1, LOTREntities.getEntityID(this));
+	}
 
-    protected boolean canDespawn() {
-        return false;
-    }
+	@Override
+	public boolean isAIEnabled() {
+		return true;
+	}
 
-    public EnumCreatureAttribute getCreatureAttribute() {
-        return EnumCreatureAttribute.ARTHROPOD;
-    }
+	@Override
+	public void onDeath(DamageSource damagesource) {
+		super.onDeath(damagesource);
+		if (!worldObj.isRemote && damagesource.getEntity() instanceof EntityPlayer) {
+			dropItem(LOTRMod.termite, 1);
+			setDead();
+		}
+	}
 
-    public ItemStack getPickedResult(MovingObjectPosition target) {
-        return new ItemStack(LOTRMod.spawnEgg, 1, LOTREntities.getEntityID(this));
-    }
+	@Override
+	public void onUpdate() {
+		super.onUpdate();
+		if (!worldObj.isRemote) {
+			EntityLivingBase target = getAttackTarget();
+			if (target == null) {
+				--fuseTime;
+			} else {
+				float dist = getDistanceToEntity(target);
+				if (dist < 3.0f) {
+					if (fuseTime == 0) {
+						worldObj.playSoundAtEntity(this, "creeper.primed", 1.0f, 0.5f);
+					}
+					++fuseTime;
+					if (fuseTime >= 20) {
+						explode();
+					}
+				} else {
+					--fuseTime;
+				}
+			}
+			fuseTime = Math.min(Math.max(fuseTime, 0), 20);
+		}
+	}
 }
-

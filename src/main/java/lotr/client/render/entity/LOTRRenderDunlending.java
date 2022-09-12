@@ -7,32 +7,31 @@ import net.minecraft.entity.EntityLiving;
 import net.minecraft.util.ResourceLocation;
 
 public class LOTRRenderDunlending extends LOTRRenderDunlendingBase {
-    private static LOTRRandomSkins dunlendingOutfits;
-    private static ResourceLocation outfitApron;
-    private ModelBiped outfitModel = new LOTRModelHuman(0.6f, false);
+	public static LOTRRandomSkins dunlendingOutfits;
+	public static ResourceLocation outfitApron;
+	static {
+		outfitApron = new ResourceLocation("lotr:mob/dunland/bartender_apron.png");
+	}
 
-    public LOTRRenderDunlending() {
-        this.setRenderPassModel(this.outfitModel);
-        dunlendingOutfits = LOTRRandomSkins.loadSkinsList("lotr:mob/dunland/outfit");
-    }
+	public ModelBiped outfitModel = new LOTRModelHuman(0.6f, false);
 
-    @Override
-    public int shouldRenderPass(EntityLiving entity, int pass, float f) {
-        LOTREntityDunlending dunlending = (LOTREntityDunlending) entity;
-        if(pass == 1 && dunlending.getEquipmentInSlot(3) == null) {
-            this.setRenderPassModel(this.outfitModel);
-            if(dunlending instanceof LOTREntityDunlendingBartender) {
-                this.bindTexture(outfitApron);
-            }
-            else {
-                this.bindTexture(dunlendingOutfits.getRandomSkin(dunlending));
-            }
-            return 1;
-        }
-        return super.shouldRenderPass(dunlending, pass, f);
-    }
+	public LOTRRenderDunlending() {
+		setRenderPassModel(outfitModel);
+		dunlendingOutfits = LOTRRandomSkins.loadSkinsList("lotr:mob/dunland/outfit");
+	}
 
-    static {
-        outfitApron = new ResourceLocation("lotr:mob/dunland/bartender_apron.png");
-    }
+	@Override
+	public int shouldRenderPass(EntityLiving entity, int pass, float f) {
+		LOTREntityDunlending dunlending = (LOTREntityDunlending) entity;
+		if (pass == 1 && dunlending.getEquipmentInSlot(3) == null) {
+			setRenderPassModel(outfitModel);
+			if (dunlending instanceof LOTREntityDunlendingBartender) {
+				bindTexture(outfitApron);
+			} else {
+				bindTexture(dunlendingOutfits.getRandomSkin(dunlending));
+			}
+			return 1;
+		}
+		return super.shouldRenderPass(dunlending, pass, f);
+	}
 }

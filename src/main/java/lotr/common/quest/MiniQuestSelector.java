@@ -7,83 +7,77 @@ import com.google.common.base.Supplier;
 import lotr.common.fac.LOTRFaction;
 
 public interface MiniQuestSelector {
-    boolean include(LOTRMiniQuest var1);
+	boolean include(LOTRMiniQuest var1);
 
-    public static class BountyActiveFaction
-    extends BountyActiveAnyFaction {
-        private final Supplier<LOTRFaction> factionGet;
+	public static class BountyActiveAnyFaction extends OptionalActive {
+		public BountyActiveAnyFaction() {
+			setActiveOnly();
+		}
 
-        public BountyActiveFaction(Supplier<LOTRFaction> sup) {
-            this.factionGet = sup;
-        }
+		@Override
+		public boolean include(LOTRMiniQuest quest) {
+			if (super.include(quest) && quest instanceof LOTRMiniQuestBounty) {
+				LOTRMiniQuestBounty bQuest = (LOTRMiniQuestBounty) quest;
+				return !bQuest.killed;
+			}
+			return false;
+		}
+	}
 
-        @Override
-        public boolean include(LOTRMiniQuest quest) {
-            return super.include(quest) && quest.entityFaction == this.factionGet.get();
-        }
-    }
+	public static class BountyActiveFaction extends BountyActiveAnyFaction {
+		public Supplier<LOTRFaction> factionGet;
 
-    public static class BountyActiveAnyFaction
-    extends OptionalActive {
-        public BountyActiveAnyFaction() {
-            this.setActiveOnly();
-        }
+		public BountyActiveFaction(Supplier<LOTRFaction> sup) {
+			factionGet = sup;
+		}
 
-        @Override
-        public boolean include(LOTRMiniQuest quest) {
-            if (super.include(quest) && quest instanceof LOTRMiniQuestBounty) {
-                LOTRMiniQuestBounty bQuest = (LOTRMiniQuestBounty)quest;
-                return !bQuest.killed;
-            }
-            return false;
-        }
-    }
+		@Override
+		public boolean include(LOTRMiniQuest quest) {
+			return super.include(quest) && quest.entityFaction == factionGet.get();
+		}
+	}
 
-    public static class Faction
-    extends OptionalActive {
-        private final Supplier<LOTRFaction> factionGet;
+	public static class EntityId extends OptionalActive {
+		public UUID entityID;
 
-        public Faction(Supplier<LOTRFaction> sup) {
-            this.factionGet = sup;
-        }
+		public EntityId(UUID id) {
+			entityID = id;
+		}
 
-        @Override
-        public boolean include(LOTRMiniQuest quest) {
-            return super.include(quest) && quest.entityFaction == this.factionGet.get();
-        }
-    }
+		@Override
+		public boolean include(LOTRMiniQuest quest) {
+			return super.include(quest) && quest.entityUUID.equals(entityID);
+		}
+	}
 
-    public static class EntityId
-    extends OptionalActive {
-        private final UUID entityID;
+	public static class Faction extends OptionalActive {
+		public Supplier<LOTRFaction> factionGet;
 
-        public EntityId(UUID id) {
-            this.entityID = id;
-        }
+		public Faction(Supplier<LOTRFaction> sup) {
+			factionGet = sup;
+		}
 
-        @Override
-        public boolean include(LOTRMiniQuest quest) {
-            return super.include(quest) && quest.entityUUID.equals(this.entityID);
-        }
-    }
+		@Override
+		public boolean include(LOTRMiniQuest quest) {
+			return super.include(quest) && quest.entityFaction == factionGet.get();
+		}
+	}
 
-    public static class OptionalActive
-    implements MiniQuestSelector {
-        private boolean activeOnly = false;
+	public static class OptionalActive implements MiniQuestSelector {
+		public boolean activeOnly = false;
 
-        public OptionalActive setActiveOnly() {
-            this.activeOnly = true;
-            return this;
-        }
+		@Override
+		public boolean include(LOTRMiniQuest quest) {
+			if (activeOnly) {
+				return quest.isActive();
+			}
+			return true;
+		}
 
-        @Override
-        public boolean include(LOTRMiniQuest quest) {
-            if (this.activeOnly) {
-                return quest.isActive();
-            }
-            return true;
-        }
-    }
+		public OptionalActive setActiveOnly() {
+			activeOnly = true;
+			return this;
+		}
+	}
 
 }
-

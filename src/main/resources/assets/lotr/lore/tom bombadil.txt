@@ -1,12 +1,16 @@
-#title:Том Бомбадил
-#author:Леофред, писатель
-#types:shire, rivendell, eriador
+#title:Tom Bombadil
+#author:Léofred, the Scribe
+#types:shire,bree,rivendell,eriador
 #reward
 #
-Глубоко в Старом Лесу, на берегу реки Ветлянки, живет любопытное существо под именем Тома Бомбадила.
+#by Aidan
+#
+Deep in the Old Forest, down by the banks of the Withywindle river, there lives a curious creature by the name of Tom Bombadil.
 
-Те, кто что-то знает о нем, описывают его как веселого парня с любопытным настроением и манерой. Не совсем ясно, кто он такой, но эльфы говорят, что он не смертный человек. Существует широкое распространенное мнение, что Том Бомбадил - обладатель могущественной магии, как Истари, хотя мало известно о его способностях.
+Those who know something of him, by all accounts, describe him as a jolly fellow of a curious mood and manner. It is not quite clear who - or what - Tom Bombadil is, but there have been several accounts from Elves to suggest that he may not be of mortal Man-kind. There is also a widespread belief that Tom Bombadil is a wielder of good magic, after the manner of the Wizards, though little is known of the precise skills he may possess.
 
-Я сам никогда не встречался с Томом Бомбадилом, но мне посчастливилось встретиться с эльфом по имени Гильдор. Он и его спутники рассказывали старые сказки и пели странные песни. В одном из этих рассказов он упомянул любопытного человека по имени Том Бомбадил и его жену Золотинку, дочь реки. Гильдор утверждал, что Бомбадил умеет петь песни так, чтобы деревья росли, и реки бежали, а звезды светили светлее ночью. Естественно, услышав, что я очень заинтересовался Томом Бомбадилом, он рассказал, что среди эльфов Том известен как Иарвейн Бен-адар.
+While I myself have never met Tom Bombadil, I did have the good fortune to meet an Elf, not so long ago, who mentioned Tom Bombadil by name. Gildor of Rivendell he was, and our paths crossed in the Lone-lands as Spring was beginning. He and I were both travelling West - I alone, and him with a company of Elves - so I journeyed with them for a time.
 
-Вскоре возле границ Шира я расстался с Гилдором и его спутниками, но по сей день Том Бомбадил продолжает меня очаровывать. Интересно, смогу ли я когда-нибудь встретиться с ним?
+On many nights Gildor and his companions would tell old tales or sing strange songs. In one of these tales he mentioned a curious man by the name of Tom Bombadil, and his wife Goldberry, the daughter of the River. Gildor claimed that Bombadil could sing songs to make the trees grow, and the rivers run, and the stars shine fairer by night. Naturally, upon hearing that I took a great curiosity in this Tom Bombadil - though he was known to Gildor and his folk by another name. They called him Iarwain Ben-adar: the Oldest and Fatherless.
+
+Soon after by the borders of the Shire I parted ways with Gildor and his companions, but to this very day, Tom Bombadil continues to fascinate me. I wonder if I shall ever chance to meet him.

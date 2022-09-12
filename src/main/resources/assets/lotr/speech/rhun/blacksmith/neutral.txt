@@ -1,14 +1,14 @@
-Я не могу торговать с Вами, #. Простите.
-Властители Рудэля обозлились бы на меня, если бы я снарядил нашими доспехами чужака.
-Прошу прощения, #, но Вам придётся подыскать себе доспехи в другом месте. Я Вам ничего не продам.
-Кузнечное дело - ремесло благородное. И то, что создано благодаря этому ремеслу, должно достаться лишь достойному.
-Я не поверю в то, что Вы сможете принести честь и славу моей кузнице.
-Прости, но я даже за деньги не отдам тебе своё оружие, #. Откуда мне знать, что Вы будете использовать их в благих целях?
-Я продаю свои товары только благородным людям.
-Я никогда не слышал о тебе, воин с Запада. Откуда мне знать, что ты не обратишь моё же оружие против моей семьи?
-Слова - это лишь пустые звуки. Ты должен на деле доказать, что желаешь защищать мой народ.
-Мы не настолько глупы, чтобы верить чужакам, #.
-Вы сражаетесь за нас, #, или за Белое Древо?
-Я не слышал о Вас, #. Я продаю своё оружие лишь истинным героям, чьё имя воспевают наши барды в своих балладах.
-Докажите мне, что Вам можно доверять, прежде чем я предоставлю Вам свои услуги.
-Когда мой народ будет называть Ваше имя со слезами счастья на глазах, #, я буду с Вами торговать.
+I cannot sell you the craft of my smithy, #.
+Our lords would be displeased if they saw I had armed one such as yourself.
+I am sorry, #. You shall have to seek arms elsewhere.
+These weapons I make are a high and noble craft. I cannot sell them to any wanderer on the street!
+I cannot trust that you would bring honour to my forge.
+How would my blades fare in your hands, #? I cannot trust that you would use them to earn honour.
+I sell my craft only to honourable Men.
+I have never heard of you, warrior from the West. I cannot trust you not to turn my weapons against my own kin.
+Words are words, but actions are something else, so earn my people's respect and I will sell to you.
+We are not so foolish as to trust a stranger like you, #.
+Do you stand with us, #, or do you rally to the banner of the White City?
+I have not heard tell of you, #. I should like to hear your name in the songs of our people before I trade with you.
+You will have to show me that you can be trusted before I offer my wares to you.
+When I hear my kin calling your name, #, then I will trade with you as you wish.

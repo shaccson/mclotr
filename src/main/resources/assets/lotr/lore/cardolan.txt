@@ -1,14 +1,17 @@
-#title:О Кардолане
-#author:Анборн
-#types:rivendell,eriador,gondor,lindon
+#Written by Forten
+#
+#title:Of Cardolan
+#author:Anborn
+#types:rivendell,bree,eriador,gondor,lindon
 #reward
 #
-Кардолан был сыном былого Нуменора.
-От несчастных лет он поднялся, и все же
-Он был оставлен тьме вместе с нашей радостью;
-Сперва ссора и ее горькое порождение,
-затем мор и бесплодная земля,
-И наконец пришел Король-Колдун-
-и проклял наши холмы, проклял их имя.
-Мы стали называть эти холмы могильниками:
-Это падшие остатки завоёванной отчизны.
+Cardolan was a realm of yore,
+a scion of old Númenor.
+From hapless years it rose, and yet
+it left our joy in darker debt;
+first quarrel, and her bitter birth,
+then pestilence and barren earth,
+and last of all, the Witch-king came -
+he cursed her hills, he cursed her name.
+The Barrow-downs we call them now:
+fell remnants of a conquered vow.

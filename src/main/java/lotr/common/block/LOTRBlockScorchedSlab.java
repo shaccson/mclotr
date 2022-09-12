@@ -7,18 +7,18 @@ import net.minecraft.client.renderer.texture.IIconRegister;
 import net.minecraft.util.IIcon;
 
 public class LOTRBlockScorchedSlab extends LOTRBlockSlabBase {
-    public LOTRBlockScorchedSlab(boolean flag) {
-        super(flag, Material.rock, 1);
-    }
+	public LOTRBlockScorchedSlab(boolean flag) {
+		super(flag, Material.rock, 1);
+	}
 
-    @SideOnly(value = Side.CLIENT)
-    @Override
-    public IIcon getIcon(int i, int j) {
-        return LOTRMod.scorchedStone.getIcon(i, j);
-    }
+	@SideOnly(value = Side.CLIENT)
+	@Override
+	public IIcon getIcon(int i, int j) {
+		return LOTRMod.scorchedStone.getIcon(i, j);
+	}
 
-    @SideOnly(value = Side.CLIENT)
-    @Override
-    public void registerBlockIcons(IIconRegister iconregister) {
-    }
+	@SideOnly(value = Side.CLIENT)
+	@Override
+	public void registerBlockIcons(IIconRegister iconregister) {
+	}
 }

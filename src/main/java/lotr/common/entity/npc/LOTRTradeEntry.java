@@ -7,114 +7,113 @@ import net.minecraft.nbt.NBTTagCompound;
 import net.minecraftforge.oredict.OreDictionary;
 
 public class LOTRTradeEntry {
-    private final ItemStack tradeItem;
-    private int tradeCost;
-    private int recentTradeValue;
-    private int lockedTicks;
-    private LOTRTraderNPCInfo theTrader;
+	public ItemStack tradeItem;
+	public int tradeCost;
+	public int recentTradeValue;
+	public int lockedTicks;
+	public LOTRTraderNPCInfo theTrader;
 
-    public LOTRTradeEntry(ItemStack itemstack, int cost) {
-        this.tradeItem = itemstack;
-        this.tradeCost = cost;
-    }
+	public LOTRTradeEntry(ItemStack itemstack, int cost) {
+		tradeItem = itemstack;
+		tradeCost = cost;
+	}
 
-    public ItemStack createTradeItem() {
-        return this.tradeItem.copy();
-    }
+	public ItemStack createTradeItem() {
+		return tradeItem.copy();
+	}
 
-    public int getCost() {
-        return this.tradeCost;
-    }
+	public void doTransaction(int value) {
+		recentTradeValue += value;
+	}
 
-    public void setCost(int cost) {
-        this.tradeCost = cost;
-    }
+	public int getCost() {
+		return tradeCost;
+	}
 
-    public void setOwningTrader(LOTRTraderNPCInfo trader) {
-        if (this.theTrader != null) {
-            throw new IllegalArgumentException("Cannot assign already-owned trade entry to a different trader!");
-        }
-        this.theTrader = trader;
-    }
+	public float getLockedProgress() {
+		if (theTrader != null && theTrader.shouldLockTrades()) {
+			return (float) recentTradeValue / (float) theTrader.getLockTradeAtValue();
+		}
+		return 0.0f;
+	}
 
-    public boolean isAvailable() {
-        if (this.theTrader != null && this.theTrader.shouldLockTrades()) {
-            return this.recentTradeValue < this.theTrader.getLockTradeAtValue() && this.lockedTicks <= 0;
-        }
-        return true;
-    }
+	public int getLockedProgressForSlot() {
+		return getLockedProgressInt(16);
+	}
 
-    public float getLockedProgress() {
-        if (this.theTrader != null && this.theTrader.shouldLockTrades()) {
-            return (float)this.recentTradeValue / (float)this.theTrader.getLockTradeAtValue();
-        }
-        return 0.0f;
-    }
+	public int getLockedProgressInt(int i) {
+		float f = getLockedProgress();
+		return Math.round(f * i);
+	}
 
-    private int getLockedProgressInt(int i) {
-        float f = this.getLockedProgress();
-        return Math.round(f * i);
-    }
+	public boolean isAvailable() {
+		if (theTrader != null && theTrader.shouldLockTrades()) {
+			return recentTradeValue < theTrader.getLockTradeAtValue() && lockedTicks <= 0;
+		}
+		return true;
+	}
 
-    public int getLockedProgressForSlot() {
-        return this.getLockedProgressInt(16);
-    }
+	public boolean matches(ItemStack itemstack) {
+		if (IPickpocketable.Helper.isPickpocketed(itemstack)) {
+			return false;
+		}
+		ItemStack tradeCreated = createTradeItem();
+		if (LOTRItemMug.isItemFullDrink(tradeCreated)) {
+			ItemStack tradeDrink = LOTRItemMug.getEquivalentDrink(tradeCreated);
+			ItemStack offerDrink = LOTRItemMug.getEquivalentDrink(itemstack);
+			return tradeDrink.getItem() == offerDrink.getItem();
+		}
+		return OreDictionary.itemMatches(tradeCreated, itemstack, false);
+	}
 
-    public boolean updateAvailability(int tick) {
-        boolean prevAvailable = this.isAvailable();
-        int prevLockProgress = this.getLockedProgressForSlot();
-        if (tick % this.theTrader.getValueDecayTicks() == 0 && this.recentTradeValue > 0) {
-            --this.recentTradeValue;
-        }
-        if (this.lockedTicks > 0) {
-            --this.lockedTicks;
-        }
-        if (this.isAvailable() != prevAvailable) {
-            return true;
-        }
-        return this.getLockedProgressForSlot() != prevLockProgress;
-    }
+	public void setCost(int cost) {
+		tradeCost = cost;
+	}
 
-    public boolean matches(ItemStack itemstack) {
-        if (IPickpocketable.Helper.isPickpocketed(itemstack)) {
-            return false;
-        }
-        ItemStack tradeCreated = this.createTradeItem();
-        if (LOTRItemMug.isItemFullDrink(tradeCreated)) {
-            ItemStack tradeDrink = LOTRItemMug.getEquivalentDrink(tradeCreated);
-            ItemStack offerDrink = LOTRItemMug.getEquivalentDrink(itemstack);
-            return tradeDrink.getItem() == offerDrink.getItem();
-        }
-        return OreDictionary.itemMatches(tradeCreated, itemstack, false);
-    }
+	public void setLockedForTicks(int ticks) {
+		lockedTicks = ticks;
+	}
 
-    public void doTransaction(int value) {
-        this.recentTradeValue += value;
-    }
+	public void setOwningTrader(LOTRTraderNPCInfo trader) {
+		if (theTrader != null) {
+			throw new IllegalArgumentException("Cannot assign already-owned trade entry to a different trader!");
+		}
+		theTrader = trader;
+	}
 
-    public void setLockedForTicks(int ticks) {
-        this.lockedTicks = ticks;
-    }
+	public boolean updateAvailability(int tick) {
+		boolean prevAvailable = isAvailable();
+		int prevLockProgress = getLockedProgressForSlot();
+		if (tick % theTrader.getValueDecayTicks() == 0 && recentTradeValue > 0) {
+			--recentTradeValue;
+		}
+		if (lockedTicks > 0) {
+			--lockedTicks;
+		}
+		if (isAvailable() != prevAvailable) {
+			return true;
+		}
+		return getLockedProgressForSlot() != prevLockProgress;
+	}
 
-    public void writeToNBT(NBTTagCompound nbt) {
-        this.tradeItem.writeToNBT(nbt);
-        nbt.setInteger("Cost", this.tradeCost);
-        nbt.setInteger("RecentTradeValue", this.recentTradeValue);
-        nbt.setInteger("LockedTicks", this.lockedTicks);
-    }
+	public void writeToNBT(NBTTagCompound nbt) {
+		tradeItem.writeToNBT(nbt);
+		nbt.setInteger("Cost", tradeCost);
+		nbt.setInteger("RecentTradeValue", recentTradeValue);
+		nbt.setInteger("LockedTicks", lockedTicks);
+	}
 
-    public static LOTRTradeEntry readFromNBT(NBTTagCompound nbt) {
-        ItemStack savedItem = ItemStack.loadItemStackFromNBT(nbt);
-        if (savedItem != null) {
-            int cost = nbt.getInteger("Cost");
-            LOTRTradeEntry trade = new LOTRTradeEntry(savedItem, cost);
-            if (nbt.hasKey("RecentTradeValue")) {
-                trade.recentTradeValue = nbt.getInteger("RecentTradeValue");
-            }
-            trade.lockedTicks = nbt.getInteger("LockedTicks");
-            return trade;
-        }
-        return null;
-    }
+	public static LOTRTradeEntry readFromNBT(NBTTagCompound nbt) {
+		ItemStack savedItem = ItemStack.loadItemStackFromNBT(nbt);
+		if (savedItem != null) {
+			int cost = nbt.getInteger("Cost");
+			LOTRTradeEntry trade = new LOTRTradeEntry(savedItem, cost);
+			if (nbt.hasKey("RecentTradeValue")) {
+				trade.recentTradeValue = nbt.getInteger("RecentTradeValue");
+			}
+			trade.lockedTicks = nbt.getInteger("LockedTicks");
+			return trade;
+		}
+		return null;
+	}
 }
-

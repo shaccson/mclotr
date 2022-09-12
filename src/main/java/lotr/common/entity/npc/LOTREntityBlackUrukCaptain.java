@@ -8,61 +8,61 @@ import net.minecraft.item.ItemStack;
 import net.minecraft.world.World;
 
 public class LOTREntityBlackUrukCaptain extends LOTREntityBlackUruk implements LOTRUnitTradeable {
-    public LOTREntityBlackUrukCaptain(World world) {
-        super(world);
-        this.addTargetTasks(false);
-    }
+	public LOTREntityBlackUrukCaptain(World world) {
+		super(world);
+		this.addTargetTasks(false);
+	}
 
-    @Override
-    public IEntityLivingData onSpawnWithEgg(IEntityLivingData data) {
-        data = super.onSpawnWithEgg(data);
-        this.npcItemsInv.setMeleeWeapon(new ItemStack(LOTRMod.orcSkullStaff));
-        this.npcItemsInv.setIdleItem(this.npcItemsInv.getMeleeWeapon());
-        this.setCurrentItemOrArmor(1, new ItemStack(LOTRMod.bootsBlackUruk));
-        this.setCurrentItemOrArmor(2, new ItemStack(LOTRMod.legsBlackUruk));
-        this.setCurrentItemOrArmor(3, new ItemStack(LOTRMod.bodyBlackUruk));
-        this.setCurrentItemOrArmor(4, null);
-        return data;
-    }
+	@Override
+	public boolean canTradeWith(EntityPlayer entityplayer) {
+		return LOTRLevelData.getData(entityplayer).getAlignment(getFaction()) >= 400.0f && isFriendly(entityplayer);
+	}
 
-    @Override
-    public float getAlignmentBonus() {
-        return 5.0f;
-    }
+	@Override
+	public float getAlignmentBonus() {
+		return 5.0f;
+	}
 
-    @Override
-    public LOTRUnitTradeEntries getUnits() {
-        return LOTRUnitTradeEntries.BLACK_URUK_CAPTAIN;
-    }
+	@Override
+	public String getSpeechBank(EntityPlayer entityplayer) {
+		if (isFriendly(entityplayer)) {
+			if (canTradeWith(entityplayer)) {
+				return "mordor/blackUrukCaptain/friendly";
+			}
+			return "mordor/blackUrukCaptain/neutral";
+		}
+		return "mordor/orc/hostile";
+	}
 
-    @Override
-    public LOTRInvasions getWarhorn() {
-        return LOTRInvasions.MORDOR_BLACK_URUK;
-    }
+	@Override
+	public LOTRUnitTradeEntries getUnits() {
+		return LOTRUnitTradeEntries.BLACK_URUK_CAPTAIN;
+	}
 
-    @Override
-    public boolean canTradeWith(EntityPlayer entityplayer) {
-        return LOTRLevelData.getData(entityplayer).getAlignment(this.getFaction()) >= 400.0f && this.isFriendly(entityplayer);
-    }
+	@Override
+	public LOTRInvasions getWarhorn() {
+		return LOTRInvasions.MORDOR_BLACK_URUK;
+	}
 
-    @Override
-    public void onUnitTrade(EntityPlayer entityplayer) {
-        LOTRLevelData.getData(entityplayer).addAchievement(LOTRAchievement.tradeBlackUrukCaptain);
-    }
+	@Override
+	public IEntityLivingData onSpawnWithEgg(IEntityLivingData data) {
+		data = super.onSpawnWithEgg(data);
+		npcItemsInv.setMeleeWeapon(new ItemStack(LOTRMod.orcSkullStaff));
+		npcItemsInv.setIdleItem(npcItemsInv.getMeleeWeapon());
+		setCurrentItemOrArmor(1, new ItemStack(LOTRMod.bootsBlackUruk));
+		setCurrentItemOrArmor(2, new ItemStack(LOTRMod.legsBlackUruk));
+		setCurrentItemOrArmor(3, new ItemStack(LOTRMod.bodyBlackUruk));
+		setCurrentItemOrArmor(4, null);
+		return data;
+	}
 
-    @Override
-    public boolean shouldTraderRespawn() {
-        return true;
-    }
+	@Override
+	public void onUnitTrade(EntityPlayer entityplayer) {
+		LOTRLevelData.getData(entityplayer).addAchievement(LOTRAchievement.tradeBlackUrukCaptain);
+	}
 
-    @Override
-    public String getSpeechBank(EntityPlayer entityplayer) {
-        if(this.isFriendly(entityplayer)) {
-            if(this.canTradeWith(entityplayer)) {
-                return "mordor/blackUrukCaptain/friendly";
-            }
-            return "mordor/blackUrukCaptain/neutral";
-        }
-        return "mordor/orc/hostile";
-    }
+	@Override
+	public boolean shouldTraderRespawn() {
+		return true;
+	}
 }

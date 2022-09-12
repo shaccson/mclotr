@@ -1,19 +1,12 @@
-Извини, но я тебя совсем не знаю и не буду торговать с тобой.
-Добро пожаловать в наши земли.
-Хочешь купить снаряжение? Прости, но не торгую с каждым встречным.
-Приветствую тебя в наших землях, #.
-Прославь своё имя в наших краях, и только после этого я смогу тебе продать снаряжение.
-Я не доверяю тебе настолько, чтобы торговать с тобой.
-Я не могу быть уверен в том, что ты не дикарь с Рудаура.
-
-Я торгую только с теми, кого уважает мой народ.
-Докажите, что вам можно доверять, и тогда я соглашусь с Вами торговать.
-Ты меня беспокоишь, #.
-Вы друг Севера, или его враг?
-Вы друг Дунэдайн, #?
-Я торгую только с верными друзьями, #.
-Я не торгую с каждым встречным...
-Вы должны доказать свою верность Дунэдайн, если хотите со мной торговать.
-Я не доверяю Вам настолько, чтобы отдавать Вам свои товары, пускай и за деньги. Я торгую лишь с нашими союзниками.
-Прояви себя как великий воин, как защитник нашего народа, и тогда уж мы сторгуемся.
-Разве могу я быть уверен в том, что ты не спустился с гор Рудаура? Вот купишь ты сейчас у меня меч, а затем вырежешь всю деревню.
+You must earn more respect among my people if you want to trade with me.
+Prove that you can be trusted, and I will offer you my wares.
+I am uneasy about you, #.
+Are you a friend of the North, or its enemy?
+Are you a friend of the Dúnedain, #?
+I only trade with trusted friends, #.
+I do not trade with any odd stranger that passes by...
+You will have to prove your allegiance to the Dúnedain if you wish to trade with me.
+I do not trust you enough to trade with you. You will have to prove yourself, #.
+Prove yourself to the Dúnedain, and then I shall trade with you!
+You will have to do more good before I can trade with you.
+How can I be sure you're not another wild hillman from the far north?

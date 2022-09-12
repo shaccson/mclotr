@@ -10,41 +10,41 @@ import net.minecraft.entity.Entity;
 import net.minecraft.world.World;
 
 public class LOTRPacketEntityUUID implements IMessage {
-    private int entityID;
-    private UUID entityUUID;
+	public int entityID;
+	public UUID entityUUID;
 
-    public LOTRPacketEntityUUID() {
-    }
+	public LOTRPacketEntityUUID() {
+	}
 
-    public LOTRPacketEntityUUID(int id, UUID uuid) {
-        this.entityID = id;
-        this.entityUUID = uuid;
-    }
+	public LOTRPacketEntityUUID(int id, UUID uuid) {
+		entityID = id;
+		entityUUID = uuid;
+	}
 
-    @Override
-    public void toBytes(ByteBuf data) {
-        data.writeInt(this.entityID);
-        data.writeLong(this.entityUUID.getMostSignificantBits());
-        data.writeLong(this.entityUUID.getLeastSignificantBits());
-    }
+	@Override
+	public void fromBytes(ByteBuf data) {
+		entityID = data.readInt();
+		entityUUID = new UUID(data.readLong(), data.readLong());
+	}
 
-    @Override
-    public void fromBytes(ByteBuf data) {
-        this.entityID = data.readInt();
-        this.entityUUID = new UUID(data.readLong(), data.readLong());
-    }
+	@Override
+	public void toBytes(ByteBuf data) {
+		data.writeInt(entityID);
+		data.writeLong(entityUUID.getMostSignificantBits());
+		data.writeLong(entityUUID.getLeastSignificantBits());
+	}
 
-    public static class Handler implements IMessageHandler<LOTRPacketEntityUUID, IMessage> {
-        @Override
-        public IMessage onMessage(LOTRPacketEntityUUID packet, MessageContext context) {
-            World world = LOTRMod.proxy.getClientWorld();
-            Entity entity = world.getEntityByID(packet.entityID);
-            if(entity instanceof LOTRRandomSkinEntity) {
-                LOTRRandomSkinEntity npc = (LOTRRandomSkinEntity) (entity);
-                npc.setUniqueID(packet.entityUUID);
-            }
-            return null;
-        }
-    }
+	public static class Handler implements IMessageHandler<LOTRPacketEntityUUID, IMessage> {
+		@Override
+		public IMessage onMessage(LOTRPacketEntityUUID packet, MessageContext context) {
+			World world = LOTRMod.proxy.getClientWorld();
+			Entity entity = world.getEntityByID(packet.entityID);
+			if (entity instanceof LOTRRandomSkinEntity) {
+				LOTRRandomSkinEntity npc = (LOTRRandomSkinEntity) entity;
+				npc.setUniqueID(packet.entityUUID);
+			}
+			return null;
+		}
+	}
 
 }

@@ -6,31 +6,31 @@ import net.minecraft.item.ItemStack;
 import net.minecraft.world.World;
 
 public class LOTREntityMordorWarg extends LOTREntityWarg {
-    public LOTREntityMordorWarg(World world) {
-        super(world);
-    }
+	public LOTREntityMordorWarg(World world) {
+		super(world);
+	}
 
-    @Override
-    protected void entityInit() {
-        super.entityInit();
-        this.setWargType(LOTREntityWarg.WargType.BLACK);
-    }
+	@Override
+	public LOTREntityNPC createWargRider() {
+		if (rand.nextBoolean()) {
+			setWargArmor(new ItemStack(LOTRMod.wargArmorMordor));
+		}
+		return worldObj.rand.nextBoolean() ? new LOTREntityMordorOrcArcher(worldObj) : new LOTREntityMordorOrc(worldObj);
+	}
 
-    @Override
-    public LOTREntityNPC createWargRider() {
-        if(this.rand.nextBoolean()) {
-            this.setWargArmor(new ItemStack(LOTRMod.wargArmorMordor));
-        }
-        return this.worldObj.rand.nextBoolean() ? new LOTREntityMordorOrcArcher(this.worldObj) : new LOTREntityMordorOrc(this.worldObj);
-    }
+	@Override
+	public void entityInit() {
+		super.entityInit();
+		setWargType(LOTREntityWarg.WargType.BLACK);
+	}
 
-    @Override
-    public LOTRFaction getFaction() {
-        return LOTRFaction.MORDOR;
-    }
+	@Override
+	public float getAlignmentBonus() {
+		return 2.0f;
+	}
 
-    @Override
-    public float getAlignmentBonus() {
-        return 2.0f;
-    }
+	@Override
+	public LOTRFaction getFaction() {
+		return LOTRFaction.MORDOR;
+	}
 }

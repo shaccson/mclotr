@@ -7,50 +7,50 @@ import net.minecraft.item.*;
 import net.minecraft.util.StringUtils;
 
 public class LOTRItemArmor extends ItemArmor {
-    private LOTRMaterial lotrMaterial;
-    private String extraName;
+	public LOTRMaterial lotrMaterial;
+	public String extraName;
 
-    public LOTRItemArmor(LOTRMaterial material, int slotType) {
-        this(material, slotType, "");
-    }
+	public LOTRItemArmor(LOTRMaterial material, int slotType) {
+		this(material, slotType, "");
+	}
 
-    public LOTRItemArmor(LOTRMaterial material, int slotType, String s) {
-        super(material.toArmorMaterial(), 0, slotType);
-        this.lotrMaterial = material;
-        this.setCreativeTab(LOTRCreativeTabs.tabCombat);
-        this.extraName = s;
-    }
+	public LOTRItemArmor(LOTRMaterial material, int slotType, String s) {
+		super(material.toArmorMaterial(), 0, slotType);
+		lotrMaterial = material;
+		setCreativeTab(LOTRCreativeTabs.tabCombat);
+		extraName = s;
+	}
 
-    public LOTRMaterial getLOTRArmorMaterial() {
-        return this.lotrMaterial;
-    }
+	public String getArmorName() {
+		String suffix;
+		String prefix = getArmorMaterial().name().substring("lotr".length() + 1).toLowerCase();
+		suffix = armorType == 2 ? "2" : "1";
+		if (!StringUtils.isNullOrEmpty(extraName)) {
+			suffix = extraName;
+		}
+		return prefix + "_" + suffix;
+	}
 
-    @Override
-    public String getArmorTexture(ItemStack itemstack, Entity entity, int slot, String type) {
-        String path = "lotr:armor/";
-        if(entity instanceof LOTREntityHalfTroll) {
-            path = "lotr:mob/halfTroll/";
-        }
-        String armorName = this.getArmorName();
-        String texture = path + armorName;
-        if(type != null) {
-            texture = texture + "_" + type;
-        }
-        return texture + ".png";
-    }
+	@Override
+	public String getArmorTexture(ItemStack itemstack, Entity entity, int slot, String type) {
+		String path = "lotr:armor/";
+		if (entity instanceof LOTREntityHalfTroll) {
+			path = "lotr:mob/halfTroll/";
+		}
+		String armorName = getArmorName();
+		StringBuilder texture = new StringBuilder().append(path).append(armorName);
+		if (type != null) {
+			texture.append("_").append(type);
+		}
+		return texture.append(".png").toString();
+	}
 
-    private String getArmorName() {
-        String suffix;
-        String prefix = this.getArmorMaterial().name().substring("lotr".length() + 1).toLowerCase();
-        suffix = this.armorType == 2 ? "2" : "1";
-        if(!StringUtils.isNullOrEmpty(this.extraName)) {
-            suffix = this.extraName;
-        }
-        return prefix + "_" + suffix;
-    }
+	public LOTRMaterial getLOTRArmorMaterial() {
+		return lotrMaterial;
+	}
 
-    @Override
-    public boolean isDamageable() {
-        return this.lotrMaterial.isDamageable();
-    }
+	@Override
+	public boolean isDamageable() {
+		return lotrMaterial.isDamageable();
+	}
 }

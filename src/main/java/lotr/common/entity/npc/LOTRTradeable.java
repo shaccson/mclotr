@@ -5,24 +5,24 @@ import net.minecraft.entity.player.EntityPlayer;
 import net.minecraft.item.ItemStack;
 
 public interface LOTRTradeable {
-    String getNPCName();
+	boolean canTradeWith(EntityPlayer var1);
 
-    LOTRFaction getFaction();
+	LOTRTradeEntries getBuyPool();
 
-    LOTRTradeEntries getBuyPool();
+	LOTRFaction getFaction();
 
-    LOTRTradeEntries getSellPool();
+	String getNPCName();
 
-    boolean canTradeWith(EntityPlayer var1);
+	LOTRTradeEntries getSellPool();
 
-    void onPlayerTrade(EntityPlayer var1, LOTRTradeEntries.TradeType var2, ItemStack var3);
+	void onPlayerTrade(EntityPlayer var1, LOTRTradeEntries.TradeType var2, ItemStack var3);
 
-    boolean shouldTraderRespawn();
+	boolean shouldTraderRespawn();
 
-    public interface Smith extends LOTRTradeable {
-    }
+	public interface Bartender extends LOTRTradeable {
+	}
 
-    public interface Bartender extends LOTRTradeable {
-    }
+	public interface Smith extends LOTRTradeable {
+	}
 
 }

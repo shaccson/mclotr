@@ -1,9 +1,9 @@
-#author:{name:rohan_male} из Вестмарка
-#title:Письмо королю
+#author:{name:rohan_male} of the West-march
+#title:A letter to the King
 #types:rohan
 #
-Мой лорд, 
+My lord,
 
-Я пишу вам с надеждой. На наши земли постоянно совершают набеги дунландцы. Их атаки участились в последнее время, и их поддерживают странные большие орки с гор. Наш гарнизон вот-вот падет. Нам нужны подкрепления из Эдораса, иначе Вестмарк заполнят наши враги.
+I write to you in urgency. Our lands are under constant assault, being raided by the foul Hillmen from west of the Mountains. Their attacks have increased of late, and they have been aided by strange Orcs of the Mountains. Our garrison can hold them at bay no longer. We need reinforcements from Edoras, or else I fear the West-march will fall to our foes.
 
-Я надеюсь письмо дойдет до вас. Мы не сможем долго продержаться.
+I hope the messenger reaches you in time. We cannot hold out for long.
