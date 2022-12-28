@@ -18,6 +18,7 @@ import lotr.common.fac.LOTRFaction;
 import lotr.common.fellowship.LOTRFellowship;
 import lotr.common.item.*;
 import lotr.common.network.LOTRPacketHandler;
+import lotr.common.playerdetails.LOTRPlayerDetailsCache;
 import lotr.common.quest.LOTRMiniQuestFactory;
 import lotr.common.recipe.*;
 import lotr.common.tileentity.*;
@@ -49,7 +50,7 @@ import net.minecraft.world.chunk.Chunk;
 import net.minecraftforge.common.DimensionManager;
 import net.minecraftforge.oredict.OreDictionary;
 
-@Mod(modid = "lotr", name = "The Lord of the Rings Mod", version = "Update v36.14 for Minecraft 1.7.10", dependencies = "required-after:Forge@[10.13.4.1558,);before:Botania;before:DragonAPI;before:TwilightForest", guiFactory = "lotr.client.gui.config.LOTRGuiFactory")
+@Mod(modid = "lotr", name = "The Lord of the Rings Mod", version = "Update v36.15 for Minecraft 1.7.10", dependencies = "required-after:Forge@[10.13.4.1558,);before:Botania;before:DragonAPI;before:TwilightForest", guiFactory = "lotr.client.gui.config.LOTRGuiFactory")
 public class LOTRMod {
 	@SidedProxy(clientSide = "lotr.client.LOTRClientProxy", serverSide = "lotr.common.LOTRCommonProxy")
 	public static LOTRCommonProxy proxy;
@@ -1575,6 +1576,11 @@ public class LOTRMod {
 	public static LOTRPacketHandler packetHandler;
 	public static WorldType worldTypeMiddleEarth;
 	public static WorldType worldTypeMiddleEarthClassic;
+	public static LOTRPlayerDetailsCache playerDetailsCache;
+
+	static {
+		playerDetailsCache = new LOTRPlayerDetailsCache();
+	}
 
 	@Mod.EventHandler
 	public void load(FMLInitializationEvent event) {

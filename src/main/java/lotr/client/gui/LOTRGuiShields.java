@@ -157,8 +157,8 @@ public class LOTRGuiShields extends LOTRGuiMenuBase {
 		buttonList.add(changeCategory);
 		LOTRShields equippedShield = getPlayerEquippedShield();
 		if (equippedShield != null) {
-			currentShieldTypeID = equippedShield.shieldType.ordinal();
-			currentShieldID = equippedShield.shieldID;
+			currentShieldTypeID = equippedShield.getShieldType().ordinal();
+			currentShieldID = equippedShield.getShieldId();
 		}
 		updateCurrentShield(0, 0);
 	}

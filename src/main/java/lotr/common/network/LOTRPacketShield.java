@@ -49,8 +49,8 @@ public class LOTRPacketShield implements IMessage {
 		boolean hasShield = shield != null;
 		data.writeBoolean(hasShield);
 		if (hasShield) {
-			data.writeByte(shield.shieldID);
-			data.writeByte(shield.shieldType.ordinal());
+			data.writeByte(shield.getShieldId());
+			data.writeByte(shield.getShieldType().ordinal());
 		}
 	}
 

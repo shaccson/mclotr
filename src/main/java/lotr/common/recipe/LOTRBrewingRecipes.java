@@ -1,6 +1,6 @@
 package lotr.common.recipe;
 
-import java.util.*;
+import java.util.ArrayList;
 
 import lotr.common.LOTRMod;
 import lotr.common.tileentity.LOTRTileEntityBarrel;
@@ -67,10 +67,8 @@ public class LOTRBrewingRecipes {
 					continue;
 				}
 				boolean inRecipe = false;
-				Iterator<Object> it = ingredients.iterator();
-				while (it.hasNext()) {
+				for (Object next : ingredients) {
 					boolean match = false;
-					Object next = it.next();
 					if (next instanceof ItemStack) {
 						match = LOTRRecipes.checkItemEquals((ItemStack) next, itemstack);
 					} else if (next instanceof ArrayList) {

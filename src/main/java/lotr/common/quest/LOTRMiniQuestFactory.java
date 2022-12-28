@@ -1,6 +1,7 @@
 package lotr.common.quest;
 
 import java.util.*;
+import java.util.Map.Entry;
 
 import cpw.mods.fml.common.FMLLog;
 import lotr.common.*;
@@ -8,6 +9,7 @@ import lotr.common.entity.animal.*;
 import lotr.common.entity.npc.*;
 import lotr.common.fac.LOTRFaction;
 import lotr.common.item.LOTRItemBanner;
+import lotr.common.quest.LOTRMiniQuest.QuestFactoryBase;
 import net.minecraft.init.*;
 import net.minecraft.item.ItemStack;
 
@@ -78,10 +80,8 @@ public enum LOTRMiniQuestFactory {
 			return null;
 		}
 		int i = rand.nextInt(totalWeight);
-		Iterator<Map.Entry<Class<? extends LOTRMiniQuest>, List<LOTRMiniQuest.QuestFactoryBase>>> iterator = questFactories.entrySet().iterator();
 		List<LOTRMiniQuest.QuestFactoryBase> chosenFactoryList = null;
-		while (iterator.hasNext()) {
-			Map.Entry<Class<? extends LOTRMiniQuest>, List<LOTRMiniQuest.QuestFactoryBase>> next = iterator.next();
+		for (Entry<Class<? extends LOTRMiniQuest>, List<QuestFactoryBase>> next : questFactories.entrySet()) {
 			chosenFactoryList = next.getValue();
 			i -= LOTRMiniQuestFactory.getQuestClassWeight(next.getKey());
 			if (i >= 0) {

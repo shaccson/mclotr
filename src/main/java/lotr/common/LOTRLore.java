@@ -258,9 +258,7 @@ public class LOTRLore {
 				}
 				reader.close();
 				LOTRLore lore = new LOTRLore(loreName, title, author, text.toString(), categories, reward);
-				Iterator<LoreCategory> categoryString1 = categories.iterator();
-				while (categoryString1.hasNext()) {
-					LoreCategory category = categoryString1.next();
+				for (LoreCategory category : categories) {
 					category.addLore(lore);
 				}
 			} catch (Exception e) {

@@ -5,6 +5,7 @@ import java.util.*;
 import io.netty.buffer.ByteBuf;
 import lotr.common.entity.npc.LOTREntityWickedDwarf;
 import lotr.common.fac.*;
+import lotr.common.playerdetails.ExclusiveGroup;
 import net.minecraft.entity.player.EntityPlayer;
 import net.minecraft.util.*;
 
@@ -262,7 +263,7 @@ public class LOTRTitle {
 	public String name;
 	public boolean isHidden = false;
 	public TitleType titleType = TitleType.STARTER;
-	public UUID[] uuids;
+	public ExclusiveGroup[] exclusiveGroups;
 	public List<LOTRFaction> alignmentFactions = new ArrayList<>();
 	public float alignmentRequired;
 	public boolean anyAlignment = false;
@@ -304,13 +305,7 @@ public class LOTRTitle {
 			return true;
 		}
 		case PLAYER_EXCLUSIVE: {
-			for (UUID player : uuids) {
-				if (!entityplayer.getUniqueID().equals(player)) {
-					continue;
-				}
-				return true;
-			}
-			return false;
+			return LOTRMod.playerDetailsCache.getPlayerDetails(entityplayer).hasAnyExclusiveGroup(exclusiveGroups);
 		}
 		case ALIGNMENT: {
 			LOTRPlayerData pd = LOTRLevelData.getData(entityplayer);
@@ -459,35 +454,11 @@ public class LOTRTitle {
 		return this.setMultiAlignment(alignment, Arrays.asList(factions));
 	}
 
-	public LOTRTitle setPlayerExclusive(String... players) {
-		UUID[] us = new UUID[players.length];
-		for (int i = 0; i < players.length; ++i) {
-			us[i] = UUID.fromString(players[i]);
-		}
-		return this.setPlayerExclusive(us);
-	}
-
-	public LOTRTitle setPlayerExclusive(UUID... players) {
+	public LOTRTitle setPlayerExclusive(ExclusiveGroup... groups) {
 		titleType = TitleType.PLAYER_EXCLUSIVE;
-		uuids = players;
+		exclusiveGroups = groups;
 		isHidden = true;
 		return this;
-	}
-
-	public LOTRTitle setPlayerExclusive(UUID[]... playersArrays) {
-		ArrayList<UUID> allPlayers = new ArrayList<>();
-		for (UUID[] players : playersArrays) {
-			allPlayers.addAll(Arrays.asList(players));
-		}
-		return this.setPlayerExclusive(allPlayers.toArray(new UUID[0]));
-	}
-
-	public LOTRTitle setShieldExclusive(LOTRShields... shields) {
-		ArrayList<UUID> allPlayers = new ArrayList<>();
-		for (LOTRShields shield : shields) {
-			allPlayers.addAll(Arrays.asList(shield.exclusiveUUIDs));
-		}
-		return this.setPlayerExclusive(allPlayers.toArray(new UUID[0]));
 	}
 
 	public static void createTitles() {
@@ -522,18 +493,18 @@ public class LOTRTitle {
 		rider = new LOTRTitle("rider");
 		watcher = new LOTRTitle("watcher");
 		shepherd = new LOTRTitle("shepherd");
-		creator = new LOTRTitle("creator").setPlayerExclusive("7bc56da6-f133-4e47-8d0f-a2776762bca6");
-		creator2 = new LOTRTitle("creator2").setPlayerExclusive("7bc56da6-f133-4e47-8d0f-a2776762bca6");
-		moderator = new LOTRTitle("moderator").setShieldExclusive(LOTRShields.MOD);
-		gruk = new LOTRTitle("gruk").setShieldExclusive(LOTRShields.GRUK);
-		boyd = new LOTRTitle("boyd").setShieldExclusive(LOTRShields.BOYD);
-		bat = new LOTRTitle("bat").setPlayerExclusive("113c908b-a24e-43e8-a8a3-7243f2449964");
-		translator = new LOTRTitle("translator").setPlayerExclusive(LOTRTranslatorList.playerUUIDs);
-		patron = new LOTRTitle("patron").setPlayerExclusive(LOTRPatron.getTitlePlayers());
-		loremaster = new LOTRTitle("loremaster").setShieldExclusive(LOTRShields.LOREMASTER_2013, LOTRShields.LOREMASTER_2014, LOTRShields.LOREMASTER_2015, LOTRShields.LOREMASTER_2016);
-		builder = new LOTRTitle("builder").setShieldExclusive(LOTRShields.ELVEN_CONTEST, LOTRShields.EVIL_CONTEST, LOTRShields.SHIRE_CONTEST, LOTRShields.GONDOR_CONTEST, LOTRShields.HARAD_CONTEST, LOTRShields.RHUN_CONTEST);
-		renewedBuilder = new LOTRTitle("renewedBuilder").setPlayerExclusive(RenewedBuildContestEntrants.ALL_ENTRANTS);
-		renewedBuildmaster = new LOTRTitle("renewedBuildmaster").setPlayerExclusive(RenewedBuildContestEntrants.WINNERS);
+		creator = new LOTRTitle("creator").setPlayerExclusive(ExclusiveGroup.CREATOR);
+		creator2 = new LOTRTitle("creator2").setPlayerExclusive(ExclusiveGroup.VICEGERENT);
+		moderator = new LOTRTitle("moderator").setPlayerExclusive(ExclusiveGroup.MOD_TEAM);
+		gruk = new LOTRTitle("gruk").setPlayerExclusive(ExclusiveGroup.GRUK);
+		boyd = new LOTRTitle("boyd").setPlayerExclusive(ExclusiveGroup.BOYD);
+		bat = new LOTRTitle("bat").setPlayerExclusive(ExclusiveGroup.BAT);
+		translator = new LOTRTitle("translator").setPlayerExclusive(ExclusiveGroup.TRANSLATOR);
+		patron = new LOTRTitle("patron").setPlayerExclusive(ExclusiveGroup.PATRON);
+		loremaster = new LOTRTitle("loremaster").setPlayerExclusive(ExclusiveGroup.LOREMASTER_2013, ExclusiveGroup.LOREMASTER_2014, ExclusiveGroup.LOREMASTER_2015, ExclusiveGroup.LOREMASTER_2016);
+		builder = new LOTRTitle("builder").setPlayerExclusive(ExclusiveGroup.BUILD_CONTEST_1_ELVEN, ExclusiveGroup.BUILD_CONTEST_2_EVIL, ExclusiveGroup.BUILD_CONTEST_3_SHIRE, ExclusiveGroup.BUILD_CONTEST_4_GONDOR, ExclusiveGroup.BUILD_CONTEST_5_HARAD, ExclusiveGroup.BUILD_CONTEST_6_RHUN);
+		renewedBuilder = new LOTRTitle("renewedBuilder").setPlayerExclusive(ExclusiveGroup.BUILD_CONTEST_7_RENEWED_ENTRANT);
+		renewedBuildmaster = new LOTRTitle("renewedBuildmaster").setPlayerExclusive(ExclusiveGroup.BUILD_CONTEST_7_RENEWED_WINNER);
 		ANY_10000 = new LOTRTitle("ANY_10000").setAnyAlignment(10000.0f);
 		MULTI_freePeoples = new LOTRTitle("MULTI_freePeoples").setMultiAlignment(100.0f, LOTRFaction.getAllOfType(LOTRFaction.FactionType.TYPE_FREE));
 		MULTI_elf = new LOTRTitle("MULTI_elf").setMultiAlignment(100.0f, LOTRFaction.getAllOfType(LOTRFaction.FactionType.TYPE_ELF));

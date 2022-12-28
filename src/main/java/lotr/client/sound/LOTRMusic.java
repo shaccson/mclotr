@@ -206,9 +206,7 @@ public class LOTRMusic implements IResourceManagerReloadListener {
 					ArrayList<LOTRMusicCategory> regionCategories = new ArrayList<>();
 					if (region != null && regionData.has("categories")) {
 						JsonArray catList = regionData.get("categories").getAsJsonArray();
-						Iterator<JsonElement> s = catList.iterator();
-						while (s.hasNext()) {
-							JsonElement cat = s.next();
+						for (JsonElement cat : catList) {
 							String categoryName = cat.getAsString();
 							LOTRMusicCategory category = LOTRMusicCategory.forName(categoryName);
 							if (category != null) {
@@ -251,9 +249,7 @@ public class LOTRMusic implements IResourceManagerReloadListener {
 				}
 				if (trackData.has("authors")) {
 					JsonArray authorList = trackData.get("authors").getAsJsonArray();
-					Iterator<JsonElement> r = authorList.iterator();
-					while (r.hasNext()) {
-						JsonElement a = r.next();
+					for (JsonElement a : authorList) {
 						String author = a.getAsString();
 						track.addAuthor(author);
 					}

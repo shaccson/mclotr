@@ -411,18 +411,6 @@ public class LOTRLevelData {
 		CompressedStreamTools.writeCompressed(nbt, new FileOutputStream(file));
 	}
 
-	public static void selectDefaultShieldForPlayer(EntityPlayer entityplayer) {
-		if (LOTRLevelData.getData(entityplayer).getShield() == null) {
-			for (LOTRShields shield : LOTRShields.values()) {
-				if (!shield.canPlayerWear(entityplayer)) {
-					continue;
-				}
-				LOTRLevelData.getData(entityplayer).setShield(shield);
-				return;
-			}
-		}
-	}
-
 	public static void sendAlignmentToAllPlayersInWorld(EntityPlayer entityplayer, World world) {
 		for (Object element : world.playerEntities) {
 			EntityPlayer worldPlayer = (EntityPlayer) element;

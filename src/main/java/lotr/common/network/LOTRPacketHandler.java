@@ -11,22 +11,14 @@ public class LOTRPacketHandler {
 
 	public LOTRPacketHandler() {
 		int id = 0;
-		networkWrapper.registerMessage(LOTRPacketLogin.Handler.class, LOTRPacketLogin.class, id, Side.CLIENT);
-		id++;
-		networkWrapper.registerMessage(LOTRPacketLoginPlayerData.Handler.class, LOTRPacketLoginPlayerData.class, id, Side.CLIENT);
-		id++;
-		networkWrapper.registerMessage(LOTRPacketPortalPos.Handler.class, LOTRPacketPortalPos.class, id, Side.CLIENT);
-		id++;
-		networkWrapper.registerMessage(LOTRPacketUpdateViewingFaction.Handler.class, LOTRPacketUpdateViewingFaction.class, id, Side.CLIENT);
-		id++;
-		networkWrapper.registerMessage(LOTRPacketAlignment.Handler.class, LOTRPacketAlignment.class, id, Side.CLIENT);
-		id++;
-		networkWrapper.registerMessage(LOTRPacketAlignmentBonus.Handler.class, LOTRPacketAlignmentBonus.class, id, Side.CLIENT);
-		id++;
-		networkWrapper.registerMessage(LOTRPacketAlignDrain.Handler.class, LOTRPacketAlignDrain.class, id, Side.CLIENT);
-		id++;
-		networkWrapper.registerMessage(LOTRPacketAchievement.Handler.class, LOTRPacketAchievement.class, id, Side.CLIENT);
-		id++;
+		networkWrapper.registerMessage(LOTRPacketLogin.Handler.class, LOTRPacketLogin.class, id++, Side.CLIENT);
+		networkWrapper.registerMessage(LOTRPacketLoginPlayerData.Handler.class, LOTRPacketLoginPlayerData.class, id++, Side.CLIENT);
+		networkWrapper.registerMessage(LOTRPacketPortalPos.Handler.class, LOTRPacketPortalPos.class, id++, Side.CLIENT);
+		networkWrapper.registerMessage(LOTRPacketUpdateViewingFaction.Handler.class, LOTRPacketUpdateViewingFaction.class, id++, Side.CLIENT);
+		networkWrapper.registerMessage(LOTRPacketAlignment.Handler.class, LOTRPacketAlignment.class, id++, Side.CLIENT);
+		networkWrapper.registerMessage(LOTRPacketAlignmentBonus.Handler.class, LOTRPacketAlignmentBonus.class, id++, Side.CLIENT);
+		networkWrapper.registerMessage(LOTRPacketAlignDrain.Handler.class, LOTRPacketAlignDrain.class, id++, Side.CLIENT);
+		networkWrapper.registerMessage(LOTRPacketAchievement.Handler.class, LOTRPacketAchievement.class, id++, Side.CLIENT);
 		networkWrapper.registerMessage(LOTRPacketAchievementRemove.Handler.class, LOTRPacketAchievementRemove.class, id++, Side.CLIENT);
 		networkWrapper.registerMessage(LOTRPacketWeaponFX.Handler.class, LOTRPacketWeaponFX.class, id++, Side.CLIENT);
 		networkWrapper.registerMessage(LOTRPacketBlockFX.Handler.class, LOTRPacketBlockFX.class, id++, Side.CLIENT);

@@ -1768,7 +1768,7 @@ public class LOTRPlayerData {
 		if (!isSiegeActive()) {
 			runAchievementChecks(entityplayer, world);
 		}
-		if (playerTitle != null && !playerTitle.getTitle().canPlayerUse(entityplayer)) {
+		if (LOTRMod.playerDetailsCache.getPlayerDetails(playerUUID).isReceivedFromApi() && playerTitle != null && !playerTitle.getTitle().canPlayerUse(entityplayer)) {
 			ChatComponentTranslation msg = new ChatComponentTranslation("chat.lotr.loseTitle", playerTitle.getFullTitleComponent(entityplayer));
 			entityplayer.addChatMessage(msg);
 			setPlayerTitle(null);

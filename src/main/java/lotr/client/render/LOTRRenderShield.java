@@ -100,7 +100,7 @@ public class LOTRRenderShield {
 		boolean blocking;
 		ItemStack inUse;
 		Minecraft mc = Minecraft.getMinecraft();
-		ResourceLocation shieldTexture = shield.shieldTexture;
+		ResourceLocation shieldTexture = shield.getTexture();
 		ItemStack held = entity == null ? null : entity.getHeldItem();
 		ItemStack heldLeft = entity instanceof LOTREntityNPC ? ((LOTREntityNPC) entity).getHeldItemLeft() : null;
 		inUse = entity instanceof EntityPlayer ? ((EntityPlayer) entity).getItemInUse() : null;

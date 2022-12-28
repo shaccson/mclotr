@@ -346,7 +346,7 @@ public class LOTRTickHandlerClient {
 				try {
 					Object field = GameSettings.class.getField("ofTrees").get(minecraft.gameSettings);
 					if (field instanceof Integer) {
-						optifineSetting = ((Integer) field);
+						optifineSetting = (Integer) field;
 					}
 				} catch (Exception exception) {
 				}
@@ -566,7 +566,7 @@ public class LOTRTickHandlerClient {
 						}
 					}
 					if (inPortal) {
-						i = ((Integer) playersInPortals.get(entityplayer));
+						i = (Integer) playersInPortals.get(entityplayer);
 						i++;
 						playersInPortals.put(entityplayer, Integer.valueOf(i));
 						if (i >= 100) {
@@ -581,7 +581,7 @@ public class LOTRTickHandlerClient {
 				updatePlayerInPortal(entityplayer, playersInMorgulPortals, LOTRMod.morgulPortal);
 				if (inUtumnoReturnPortal) {
 					entityplayer.setPosition(utumnoReturnX + 0.5D, entityplayer.posY, utumnoReturnZ + 0.5D);
-					if ((lastUtumnoReturnY >= 0.0D) && (entityplayer.posY < lastUtumnoReturnY)) {
+					if (lastUtumnoReturnY >= 0.0D && entityplayer.posY < lastUtumnoReturnY) {
 						entityplayer.setPosition(entityplayer.posX, lastUtumnoReturnY, entityplayer.posZ);
 					}
 					lastUtumnoReturnY = entityplayer.posY;
@@ -597,7 +597,7 @@ public class LOTRTickHandlerClient {
 					lastTrack = nowPlaying;
 					musicTrackTick = 200;
 				}
-				if ((lastTrack != null) && (musicTrackTick > 0)) {
+				if (lastTrack != null && musicTrackTick > 0) {
 					musicTrackTick--;
 				}
 			}
@@ -691,7 +691,7 @@ public class LOTRTickHandlerClient {
 	@SubscribeEvent
 	public void onPlayerTick(TickEvent.PlayerTickEvent event) {
 		EntityPlayer player = event.player;
-		if ((event.phase == TickEvent.Phase.END) && (player instanceof EntityClientPlayerMP)) {
+		if (event.phase == TickEvent.Phase.END && player instanceof EntityClientPlayerMP) {
 			EntityClientPlayerMP clientPlayer = (EntityClientPlayerMP) player;
 			if (clientPlayer.isRiding()) {
 				LOTRMountFunctions.sendControlToServer(clientPlayer);
@@ -706,7 +706,7 @@ public class LOTRTickHandlerClient {
 		EntityClientPlayerMP entityClientPlayerMP = mc.thePlayer;
 		GuiIngame guiIngame = mc.ingameGUI;
 		if (worldClient != null && entityClientPlayerMP != null) {
-			if ((event.type == RenderGameOverlayEvent.ElementType.ALL) && (lastHighlightedItemstack != null)) {
+			if (event.type == RenderGameOverlayEvent.ElementType.ALL && lastHighlightedItemstack != null) {
 				if (highlightedItemstackName != null) {
 					lastHighlightedItemstack.setStackDisplayName(highlightedItemstackName);
 				} else {
@@ -715,7 +715,7 @@ public class LOTRTickHandlerClient {
 				lastHighlightedItemstack = null;
 				highlightedItemstackName = null;
 			}
-			if ((event.type == RenderGameOverlayEvent.ElementType.BOSSHEALTH) && watchedInvasion.isActive()) {
+			if (event.type == RenderGameOverlayEvent.ElementType.BOSSHEALTH && watchedInvasion.isActive()) {
 				GL11.glEnable(3042);
 				FontRenderer fr = mc.fontRenderer;
 				ScaledResolution scaledresolution = event.resolution;
@@ -741,11 +741,11 @@ public class LOTRTickHandlerClient {
 				mc.getTextureManager().bindTexture(Gui.icons);
 				GL11.glDisable(3042);
 			}
-			if ((event.type == RenderGameOverlayEvent.ElementType.HEALTH) && addedClientPoisonEffect) {
+			if (event.type == RenderGameOverlayEvent.ElementType.HEALTH && addedClientPoisonEffect) {
 				entityClientPlayerMP.removePotionEffectClient(Potion.poison.id);
 				addedClientPoisonEffect = false;
 			}
-			if ((event.type == RenderGameOverlayEvent.ElementType.TEXT) && (bannerRepossessDisplayTick > 0)) {
+			if (event.type == RenderGameOverlayEvent.ElementType.TEXT && bannerRepossessDisplayTick > 0) {
 				String text = StatCollector.translateToLocalFormatted("item.lotr.banner.toggleRepossess", GameSettings.getKeyDisplayString(mc.gameSettings.keyBindSneak.getKeyCode()));
 				int fadeAtTick = 10;
 				int opacity = (int) (bannerRepossessDisplayTick * 255.0F / fadeAtTick);
@@ -800,19 +800,19 @@ public class LOTRTickHandlerClient {
 					renderOverlay(null, brightness, mc, null);
 				}
 				if (playersInPortals.containsKey(entityClientPlayerMP)) {
-					int i = ((Integer) playersInPortals.get(entityClientPlayerMP));
+					int i = (Integer) playersInPortals.get(entityClientPlayerMP);
 					if (i > 0) {
 						renderOverlay(null, 0.1F + i / 100.0F * 0.6F, mc, portalOverlay);
 					}
 				}
 				if (playersInElvenPortals.containsKey(entityClientPlayerMP)) {
-					int i = ((Integer) playersInElvenPortals.get(entityClientPlayerMP));
+					int i = (Integer) playersInElvenPortals.get(entityClientPlayerMP);
 					if (i > 0) {
 						renderOverlay(null, 0.1F + i / entityClientPlayerMP.getMaxInPortalTime() * 0.6F, mc, elvenPortalOverlay);
 					}
 				}
 				if (playersInMorgulPortals.containsKey(entityClientPlayerMP)) {
-					int i = ((Integer) playersInMorgulPortals.get(entityClientPlayerMP));
+					int i = (Integer) playersInMorgulPortals.get(entityClientPlayerMP);
 					if (i > 0) {
 						renderOverlay(null, 0.1F + i / entityClientPlayerMP.getMaxInPortalTime() * 0.6F, mc, morgulPortalOverlay);
 					}
@@ -870,16 +870,16 @@ public class LOTRTickHandlerClient {
 					}
 				}
 			}
-			if ((event.type == RenderGameOverlayEvent.ElementType.HEALTH) && (entityClientPlayerMP.isPotionActive(LOTRPoisonedDrinks.killingPoison) && !entityClientPlayerMP.isPotionActive(Potion.poison))) {
+			if (event.type == RenderGameOverlayEvent.ElementType.HEALTH && entityClientPlayerMP.isPotionActive(LOTRPoisonedDrinks.killingPoison) && !entityClientPlayerMP.isPotionActive(Potion.poison)) {
 				entityClientPlayerMP.addPotionEffect(new PotionEffect(Potion.poison.id, 20));
 				addedClientPoisonEffect = true;
 			}
 			boolean enchantingDisabled = !LOTRLevelData.clientside_thisServer_enchanting && ((World) worldClient).provider instanceof LOTRWorldProvider;
-			if ((event.type == RenderGameOverlayEvent.ElementType.EXPERIENCE) && enchantingDisabled) {
+			if (event.type == RenderGameOverlayEvent.ElementType.EXPERIENCE && enchantingDisabled) {
 				event.setCanceled(true);
 				return;
 			}
-			if ((event.type == RenderGameOverlayEvent.ElementType.ALL) && (enchantingDisabled && ((EntityPlayer) entityClientPlayerMP).ridingEntity == null)) {
+			if (event.type == RenderGameOverlayEvent.ElementType.ALL && enchantingDisabled && ((EntityPlayer) entityClientPlayerMP).ridingEntity == null) {
 				GuiIngameForge.left_height -= 6;
 				GuiIngameForge.right_height -= 6;
 			}
@@ -1065,7 +1065,7 @@ public class LOTRTickHandlerClient {
 						}
 					}
 				}
-				if ((entityplayer.dimension == LOTRDimension.MIDDLE_EARTH.dimensionID && minecraft.currentScreen == null) && (newDate > 0)) {
+				if (entityplayer.dimension == LOTRDimension.MIDDLE_EARTH.dimensionID && minecraft.currentScreen == null && newDate > 0) {
 					int halfMaxDate = 100;
 					float alpha = 0.0F;
 					if (newDate > halfMaxDate) {
@@ -1090,7 +1090,7 @@ public class LOTRTickHandlerClient {
 					GL11.glDisable(3042);
 					GL11.glScalef(invScale, invScale, invScale);
 				}
-				if ((LOTRConfig.displayMusicTrack && minecraft.currentScreen == null) && (lastTrack != null && musicTrackTick > 0)) {
+				if (LOTRConfig.displayMusicTrack && minecraft.currentScreen == null && lastTrack != null && musicTrackTick > 0) {
 					List<String> lines = new ArrayList<>();
 					lines.add(StatCollector.translateToLocal("lotr.music.nowPlaying"));
 					String title = lastTrack.getTitle();
@@ -1138,7 +1138,7 @@ public class LOTRTickHandlerClient {
 	public void onRenderWorldLast(RenderWorldLastEvent event) {
 		Minecraft mc = Minecraft.getMinecraft();
 		float f = event.partialTicks;
-		if (LOTRConfig.aurora && (LOTRDimension.getCurrentDimension(mc.theWorld) == LOTRDimension.MIDDLE_EARTH)) {
+		if (LOTRConfig.aurora && LOTRDimension.getCurrentDimension(mc.theWorld) == LOTRDimension.MIDDLE_EARTH) {
 			LOTRRenderNorthernLights.render(mc, mc.theWorld, f);
 		}
 		mc.entityRenderer.enableLightmap(f);

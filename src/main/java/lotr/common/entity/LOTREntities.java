@@ -32,7 +32,7 @@ public class LOTREntities {
 	}
 
 	public static Class<? extends Entity> getClassFromString(String name) {
-		return (Class) EntityList.stringToClassMapping.get(name);
+		return EntityList.stringToClassMapping.get(name);
 	}
 
 	public static int getEntityID(Entity entity) {
@@ -51,7 +51,7 @@ public class LOTREntities {
 	}
 
 	public static String getStringFromClass(Class entityClass) {
-		return (String) EntityList.classToStringMapping.get(entityClass);
+		return EntityList.classToStringMapping.get(entityClass);
 	}
 
 	public static String getStringFromID(int id) {
@@ -526,7 +526,7 @@ public class LOTREntities {
 
 	public static void registerEntity(Class<? extends Entity> entityClass, String name, int id, int updateRange, int updateFreq, boolean sendVelocityUpdates) {
 		EntityRegistry.registerModEntity(entityClass, name, id, LOTRMod.instance, updateRange, updateFreq, sendVelocityUpdates);
-		String fullName = (String) EntityList.classToStringMapping.get(entityClass);
+		String fullName = EntityList.classToStringMapping.get(entityClass);
 		stringToIDMapping.put(fullName, id);
 		IDToStringMapping.put(id, fullName);
 		classToIDMapping.put(entityClass, id);

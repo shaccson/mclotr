@@ -4,6 +4,7 @@ import java.util.List;
 
 import lotr.common.*;
 import lotr.common.entity.ai.*;
+import lotr.common.playerdetails.ExclusiveGroup;
 import net.minecraft.command.IEntitySelector;
 import net.minecraft.entity.*;
 import net.minecraft.entity.ai.*;
@@ -231,7 +232,7 @@ public abstract class LOTREntityElf extends LOTREntityNPC {
 				public boolean isEntityApplicable(Entity entity) {
 					EntityPlayer entityplayer = (EntityPlayer) entity;
 					if (entityplayer.isEntityAlive() && LOTREntityElf.this.isFriendly(entityplayer) && LOTREntityElf.this.getDistanceSqToEntity(entityplayer) <= rangeSq) {
-						return entityplayer.getUniqueID().equals(LOTRPatron.elfBowPlayer);
+						return LOTRMod.playerDetailsCache.getPlayerDetails(entityplayer).hasExclusiveGroup(ExclusiveGroup.BOWING_ELVES);
 					}
 					return false;
 				}

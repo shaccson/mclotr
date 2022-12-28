@@ -113,7 +113,6 @@ public class LOTRBlockBeacon extends BlockContainer {
 			world.playSoundEffect(i + 0.5, j + 0.5, k + 0.5, "fire.ignite", 1.0f, world.rand.nextFloat() * 0.4f + 0.8f);
 			if (!world.isRemote) {
 				LOTRBlockBeacon.setLit(world, i, j, k, true);
-				entity.setDead();
 			}
 		}
 	}
