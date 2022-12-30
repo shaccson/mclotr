@@ -66,6 +66,7 @@ public abstract class LOTRWorldGenEasterlingStructure extends LOTRWorldGenStruct
 	public Block cropBlock;
 	public int cropMeta;
 	public Item seedItem;
+	public Block trapdoorBlock;
 	public LOTRItemBanner.BannerType bannerType;
 	public LOTRChestContents chestContents;
 
@@ -127,6 +128,7 @@ public abstract class LOTRWorldGenEasterlingStructure extends LOTRWorldGenStruct
 			woodBeamBlock = LOTRMod.woodBeam8;
 			woodBeamMeta = 1;
 			doorBlock = LOTRMod.doorRedwood;
+			trapdoorBlock = LOTRMod.trapdoorRedwood;
 		} else {
 			int randomWood = random.nextInt(4);
 			switch (randomWood) {
@@ -144,6 +146,7 @@ public abstract class LOTRWorldGenEasterlingStructure extends LOTRWorldGenStruct
 				woodBeamBlock = LOTRMod.woodBeamV1;
 				woodBeamMeta = 0;
 				doorBlock = Blocks.wooden_door;
+				trapdoorBlock = Blocks.trapdoor;
 				break;
 			case 1:
 				logBlock = LOTRMod.wood2;
@@ -159,6 +162,7 @@ public abstract class LOTRWorldGenEasterlingStructure extends LOTRWorldGenStruct
 				woodBeamBlock = LOTRMod.woodBeam2;
 				woodBeamMeta = 1;
 				doorBlock = LOTRMod.doorBeech;
+				trapdoorBlock = LOTRMod.trapdoorBeech;
 				break;
 			case 2:
 				logBlock = LOTRMod.wood6;
@@ -174,6 +178,7 @@ public abstract class LOTRWorldGenEasterlingStructure extends LOTRWorldGenStruct
 				woodBeamBlock = LOTRMod.woodBeam6;
 				woodBeamMeta = 2;
 				doorBlock = LOTRMod.doorCypress;
+				trapdoorBlock = LOTRMod.trapdoorCypress;
 				break;
 			case 3:
 				logBlock = LOTRMod.wood6;
@@ -189,6 +194,7 @@ public abstract class LOTRWorldGenEasterlingStructure extends LOTRWorldGenStruct
 				woodBeamBlock = LOTRMod.woodBeam6;
 				woodBeamMeta = 3;
 				doorBlock = LOTRMod.doorOlive;
+				trapdoorBlock = LOTRMod.trapdoorOlive;
 				break;
 			default:
 				break;

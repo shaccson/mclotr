@@ -200,7 +200,7 @@ public class LOTRWorldGenRangerLodge extends LOTRWorldGenRangerStructure {
 		setBlockAndMetadata(world, 4, 1, 0, barsBlock, 0);
 		setBlockAndMetadata(world, 4, 2, 0, Blocks.furnace, 5);
 		spawnItemFrame(world, 4, 4, 0, 3, getRangerFramedItem(random));
-		setBlockAndMetadata(world, 4, 1, 2, Blocks.trapdoor, 3);
+		setBlockAndMetadata(world, 4, 1, 2, trapdoorBlock, 3);
 		for (j12 = -2; j12 <= 0; ++j12) {
 			setBlockAndMetadata(world, 4, j12, 2, Blocks.ladder, 3);
 		}

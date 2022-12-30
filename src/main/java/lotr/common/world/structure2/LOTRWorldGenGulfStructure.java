@@ -8,6 +8,7 @@ import net.minecraft.init.Blocks;
 import net.minecraft.item.ItemStack;
 
 public abstract class LOTRWorldGenGulfStructure extends LOTRWorldGenStructureBase2 {
+	public Block trapdoorBlock;
 	public Block brickBlock;
 	public int brickMeta;
 	public Block brickSlabBlock;
@@ -99,6 +100,7 @@ public abstract class LOTRWorldGenGulfStructure extends LOTRWorldGenStructureBas
 			doorBlock = LOTRMod.doorDragon;
 			beamBlock = LOTRMod.woodBeam9;
 			beamMeta = 0;
+			trapdoorBlock = LOTRMod.trapdoorDragon;
 		} else {
 			woodBlock = LOTRMod.wood8;
 			woodMeta = 3;
@@ -113,6 +115,7 @@ public abstract class LOTRWorldGenGulfStructure extends LOTRWorldGenStructureBas
 			doorBlock = LOTRMod.doorPalm;
 			beamBlock = LOTRMod.woodBeam8;
 			beamMeta = 3;
+			trapdoorBlock = LOTRMod.trapdoorPalm;
 		}
 		int randomWood2 = random.nextInt(3);
 		switch (randomWood2) {

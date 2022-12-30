@@ -117,7 +117,7 @@ public class LOTREntityBanner extends Entity {
 
 	@Override
 	public void entityInit() {
-		dataWatcher.addObject(18, 0);
+		dataWatcher.addObject(18, (byte) 0);
 	}
 
 	public float getAlignmentProtection() {

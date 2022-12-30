@@ -175,19 +175,19 @@ public class LOTRWorldGenGondorFortress extends LOTRWorldGenGondorStructure {
 					for (j15 = 1; j15 <= 5; ++j15) {
 						setBlockAndMetadata(world, i15 + 1, j15, k11, Blocks.ladder, 4);
 					}
-					setBlockAndMetadata(world, i15 + 1, 6, k11, Blocks.trapdoor, 11);
+					setBlockAndMetadata(world, i15 + 1, 6, k11, trapdoorBlock, 11);
 				}
 				if (i15 > 0) {
 					for (j15 = 1; j15 <= 5; ++j15) {
 						setBlockAndMetadata(world, i15 - 1, j15, k11, Blocks.ladder, 5);
 					}
-					setBlockAndMetadata(world, i15 - 1, 6, k11, Blocks.trapdoor, 10);
+					setBlockAndMetadata(world, i15 - 1, 6, k11, trapdoorBlock, 10);
 				}
 				if (k11 < 0) {
 					for (j15 = 1; j15 <= 5; ++j15) {
 						setBlockAndMetadata(world, i15, j15, k11 + 1, Blocks.ladder, 3);
 					}
-					setBlockAndMetadata(world, i15, 6, k11 + 1, Blocks.trapdoor, 8);
+					setBlockAndMetadata(world, i15, 6, k11 + 1, trapdoorBlock, 8);
 				}
 				if (k11 <= 0) {
 					continue;
@@ -195,7 +195,7 @@ public class LOTRWorldGenGondorFortress extends LOTRWorldGenGondorStructure {
 				for (j15 = 1; j15 <= 5; ++j15) {
 					setBlockAndMetadata(world, i15, j15, k11 - 1, Blocks.ladder, 2);
 				}
-				setBlockAndMetadata(world, i15, 6, k11 - 1, Blocks.trapdoor, 9);
+				setBlockAndMetadata(world, i15, 6, k11 - 1, trapdoorBlock, 9);
 			}
 		}
 		for (int i15 : new int[] { -11, 11 }) {

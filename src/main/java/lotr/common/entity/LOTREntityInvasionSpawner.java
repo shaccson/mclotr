@@ -155,9 +155,9 @@ public class LOTREntityInvasionSpawner extends Entity {
 
 	@Override
 	public void entityInit() {
-		dataWatcher.addObject(20, 0);
-		dataWatcher.addObject(21, 0);
-		dataWatcher.addObject(22, 0);
+		dataWatcher.addObject(20, (byte) 0);
+		dataWatcher.addObject(21, (short) 0);
+		dataWatcher.addObject(22, (short) 0);
 	}
 
 	public float getInvasionHealthStatus() {

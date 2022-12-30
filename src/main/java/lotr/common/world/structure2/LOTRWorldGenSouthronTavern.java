@@ -83,6 +83,7 @@ public class LOTRWorldGenSouthronTavern extends LOTRWorldGenSouthronStructure {
 		associateBlockMetaAlias("ROOF_SLAB", roofSlabBlock, roofSlabMeta);
 		associateBlockMetaAlias("ROOF_SLAB_INV", roofSlabBlock, roofSlabMeta | 8);
 		associateBlockAlias("ROOF_STAIR", roofStairBlock);
+		associateBlockAlias("TRAPDOOR", trapdoorBlock);
 		generateStrScan(world, random, 0, 0, 0);
 		String[] tavernName = LOTRNames.getHaradTavernName(random);
 		String tavernNameNPC = tavernName[0] + " " + tavernName[1];

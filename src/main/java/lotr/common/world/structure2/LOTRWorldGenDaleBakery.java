@@ -117,14 +117,14 @@ public class LOTRWorldGenDaleBakery extends LOTRWorldGenDaleStructure {
 			setBlockAndMetadata(world, 7, 4, k13, brickSlabBlock, brickSlabMeta | 8);
 		}
 		for (int i15 : new int[] { -5, 2 }) {
-			setBlockAndMetadata(world, i15, 2, -1, Blocks.trapdoor, 12);
+			setBlockAndMetadata(world, i15, 2, -1, trapdoorBlock, 12);
 			setBlockAndMetadata(world, i15, 3, -1, brickSlabBlock, brickSlabMeta | 8);
 			setBlockAndMetadata(world, i15, 4, -2, brickBlock, brickMeta);
 			setBlockAndMetadata(world, i15 + 1, 2, 0, fenceBlock, fenceMeta);
 			setBlockAndMetadata(world, i15 + 1, 3, -1, plankSlabBlock, plankSlabMeta);
 			setBlockAndMetadata(world, i15 + 2, 2, 0, fenceBlock, fenceMeta);
 			setBlockAndMetadata(world, i15 + 2, 3, -1, plankSlabBlock, plankSlabMeta);
-			setBlockAndMetadata(world, i15 + 3, 2, -1, Blocks.trapdoor, 12);
+			setBlockAndMetadata(world, i15 + 3, 2, -1, trapdoorBlock, 12);
 			setBlockAndMetadata(world, i15 + 3, 3, -1, brickSlabBlock, brickSlabMeta | 8);
 			setBlockAndMetadata(world, i15 + 3, 4, -2, brickBlock, brickMeta);
 		}
@@ -133,23 +133,23 @@ public class LOTRWorldGenDaleBakery extends LOTRWorldGenDaleStructure {
 		for (j1 = 0; j1 < k12; ++j1) {
 			int i15;
 			i15 = k16[j1];
-			setBlockAndMetadata(world, i15, 2, 14, Blocks.trapdoor, 13);
+			setBlockAndMetadata(world, i15, 2, 14, trapdoorBlock, 13);
 			setBlockAndMetadata(world, i15, 3, 14, brickSlabBlock, brickSlabMeta | 8);
 			setBlockAndMetadata(world, i15, 4, 15, brickBlock, brickMeta);
 			setBlockAndMetadata(world, i15 + 1, 2, 13, fenceBlock, fenceMeta);
 			setBlockAndMetadata(world, i15 + 1, 3, 14, plankSlabBlock, plankSlabMeta);
 			setBlockAndMetadata(world, i15 + 2, 2, 13, fenceBlock, fenceMeta);
 			setBlockAndMetadata(world, i15 + 2, 3, 14, plankSlabBlock, plankSlabMeta);
-			setBlockAndMetadata(world, i15 + 3, 2, 14, Blocks.trapdoor, 13);
+			setBlockAndMetadata(world, i15 + 3, 2, 14, trapdoorBlock, 13);
 			setBlockAndMetadata(world, i15 + 3, 3, 14, brickSlabBlock, brickSlabMeta | 8);
 			setBlockAndMetadata(world, i15 + 3, 4, 15, brickBlock, brickMeta);
 		}
 		for (k14 = 0; k14 <= 13; ++k14) {
 			if (k14 == 0 || k14 == 3 || k14 == 6 || k14 == 8 || k14 == 13) {
-				setBlockAndMetadata(world, -6, 2, k14, Blocks.trapdoor, 15);
+				setBlockAndMetadata(world, -6, 2, k14, trapdoorBlock, 15);
 				setBlockAndMetadata(world, -6, 3, k14, brickSlabBlock, brickSlabMeta | 8);
 				setBlockAndMetadata(world, -7, 4, k14, brickBlock, brickMeta);
-				setBlockAndMetadata(world, 6, 2, k14, Blocks.trapdoor, 14);
+				setBlockAndMetadata(world, 6, 2, k14, trapdoorBlock, 14);
 				setBlockAndMetadata(world, 6, 3, k14, brickSlabBlock, brickSlabMeta | 8);
 				setBlockAndMetadata(world, 7, 4, k14, brickBlock, brickMeta);
 			}

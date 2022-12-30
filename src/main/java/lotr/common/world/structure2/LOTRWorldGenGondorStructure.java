@@ -17,6 +17,7 @@ public abstract class LOTRWorldGenGondorStructure extends LOTRWorldGenStructureB
 	public int rockMeta;
 	public Block rockSlabBlock;
 	public int rockSlabMeta;
+	public Block trapdoorBlock;
 	public Block rockSlabDoubleBlock;
 	public int rockSlabDoubleMeta;
 	public Block rockStairBlock;
@@ -256,6 +257,7 @@ public abstract class LOTRWorldGenGondorStructure extends LOTRWorldGenStructureB
 			woodBeamBlock = LOTRMod.woodBeamV2;
 			woodBeamMeta = 1;
 			doorBlock = LOTRMod.doorDarkOak;
+			trapdoorBlock = LOTRMod.trapdoorDarkOak;
 		} else {
 			int randomWood = random.nextInt(7);
 			switch (randomWood) {
@@ -273,6 +275,7 @@ public abstract class LOTRWorldGenGondorStructure extends LOTRWorldGenStructureB
 				woodBeamBlock = LOTRMod.woodBeamV1;
 				woodBeamMeta = 0;
 				doorBlock = Blocks.wooden_door;
+				trapdoorBlock = Blocks.trapdoor;
 				break;
 			case 3:
 				plankBlock = LOTRMod.planks;
@@ -286,6 +289,7 @@ public abstract class LOTRWorldGenGondorStructure extends LOTRWorldGenStructureB
 				woodBeamBlock = LOTRMod.woodBeam2;
 				woodBeamMeta = 1;
 				doorBlock = LOTRMod.doorBeech;
+				trapdoorBlock = LOTRMod.trapdoorBeech;
 				break;
 			case 4:
 				plankBlock = LOTRMod.planks2;
@@ -299,6 +303,7 @@ public abstract class LOTRWorldGenGondorStructure extends LOTRWorldGenStructureB
 				woodBeamBlock = LOTRMod.woodBeam4;
 				woodBeamMeta = 2;
 				doorBlock = LOTRMod.doorCedar;
+				trapdoorBlock = LOTRMod.trapdoorCedar;
 				break;
 			case 5:
 				plankBlock = LOTRMod.planks;
@@ -312,6 +317,7 @@ public abstract class LOTRWorldGenGondorStructure extends LOTRWorldGenStructureB
 				woodBeamBlock = LOTRMod.woodBeam2;
 				woodBeamMeta = 0;
 				doorBlock = LOTRMod.doorLebethron;
+				trapdoorBlock = LOTRMod.trapdoorLebethron;
 				break;
 			case 6:
 				plankBlock = Blocks.planks;
@@ -325,6 +331,7 @@ public abstract class LOTRWorldGenGondorStructure extends LOTRWorldGenStructureB
 				woodBeamBlock = LOTRMod.woodBeamV1;
 				woodBeamMeta = 2;
 				doorBlock = LOTRMod.doorBirch;
+				trapdoorBlock = LOTRMod.trapdoorBirch;
 				break;
 			default:
 				break;

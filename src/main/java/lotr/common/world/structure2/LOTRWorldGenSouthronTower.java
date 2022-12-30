@@ -54,6 +54,7 @@ public class LOTRWorldGenSouthronTower extends LOTRWorldGenSouthronStructure {
 		associateBlockAlias("PLANK_STAIR", plankStairBlock);
 		associateBlockMetaAlias("FENCE", fenceBlock, fenceMeta);
 		associateBlockMetaAlias("BEAM", woodBeamBlock, woodBeamMeta);
+		associateBlockAlias("TRAPDOOR", trapdoorBlock);
 		associateBlockAlias("GATE_METAL", gateMetalBlock);
 		generateStrScan(world, random, 0, 0, 0);
 		this.placeChest(world, random, -1, 1, -1, LOTRMod.chestBasket, 4, LOTRChestContents.NEAR_HARAD_TOWER);

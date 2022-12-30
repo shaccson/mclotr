@@ -101,7 +101,7 @@ public abstract class LOTRWorldGenBreeStructure extends LOTRWorldGenStructureBas
 			fenceMeta = 0;
 			fenceGateBlock = Blocks.fence_gate;
 			doorBlock = Blocks.wooden_door;
-			trapdoorBlock = Blocks.trapdoor;
+			trapdoorBlock = trapdoorBlock;
 			beamBlock = LOTRMod.woodBeamV1;
 			beamMeta = 0;
 			break;

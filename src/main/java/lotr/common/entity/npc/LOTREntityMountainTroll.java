@@ -67,7 +67,7 @@ public class LOTREntityMountainTroll extends LOTREntityTroll {
 	@Override
 	public void entityInit() {
 		super.entityInit();
-		dataWatcher.addObject(21, 0);
+		dataWatcher.addObject(21, (byte) 0);
 	}
 
 	@Override

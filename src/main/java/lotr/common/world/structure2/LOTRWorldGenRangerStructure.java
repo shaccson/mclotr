@@ -51,6 +51,7 @@ public abstract class LOTRWorldGenRangerStructure extends LOTRWorldGenStructureB
 	public Block cropBlock;
 	public int cropMeta;
 	public Item seedItem;
+	public Block trapdoorBlock;
 	public LOTRItemBanner.BannerType bannerType;
 	public LOTRChestContents chestContentsHouse;
 	public LOTRChestContents chestContentsRanger;
@@ -110,6 +111,7 @@ public abstract class LOTRWorldGenRangerStructure extends LOTRWorldGenStructureB
 			woodBeamBlock = LOTRMod.woodBeamV1;
 			woodBeamMeta = 0;
 			doorBlock = Blocks.wooden_door;
+			trapdoorBlock = Blocks.trapdoor;
 			break;
 		case 3:
 			logBlock = LOTRMod.wood2;
@@ -125,6 +127,7 @@ public abstract class LOTRWorldGenRangerStructure extends LOTRWorldGenStructureB
 			woodBeamBlock = LOTRMod.woodBeam2;
 			woodBeamMeta = 1;
 			doorBlock = LOTRMod.doorBeech;
+			trapdoorBlock = LOTRMod.trapdoorBeech;
 			break;
 		case 4:
 			logBlock = Blocks.log;
@@ -140,6 +143,7 @@ public abstract class LOTRWorldGenRangerStructure extends LOTRWorldGenStructureB
 			woodBeamBlock = LOTRMod.woodBeamV1;
 			woodBeamMeta = 1;
 			doorBlock = LOTRMod.doorSpruce;
+			trapdoorBlock = LOTRMod.trapdoorSpruce;
 			break;
 		case 5:
 			logBlock = LOTRMod.wood5;
@@ -155,6 +159,7 @@ public abstract class LOTRWorldGenRangerStructure extends LOTRWorldGenStructureB
 			woodBeamBlock = LOTRMod.woodBeam5;
 			woodBeamMeta = 0;
 			doorBlock = LOTRMod.doorPine;
+			trapdoorBlock = LOTRMod.trapdoorPine;
 			break;
 		case 6:
 			logBlock = LOTRMod.wood4;
@@ -170,6 +175,7 @@ public abstract class LOTRWorldGenRangerStructure extends LOTRWorldGenStructureB
 			woodBeamBlock = LOTRMod.woodBeam4;
 			woodBeamMeta = 0;
 			doorBlock = LOTRMod.doorChestnut;
+			trapdoorBlock = LOTRMod.trapdoorChestnut;
 			break;
 		default:
 			break;

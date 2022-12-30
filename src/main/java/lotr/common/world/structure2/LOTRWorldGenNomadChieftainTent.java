@@ -64,6 +64,7 @@ public class LOTRWorldGenNomadChieftainTent extends LOTRWorldGenNomadStructure {
 		associateBlockMetaAlias("TENT2", tent2Block, tent2Meta);
 		associateBlockMetaAlias("CARPET", carpetBlock, carpetMeta);
 		associateBlockMetaAlias("CARPET2", carpet2Block, carpet2Meta);
+		associateBlockAlias("TRAPDOOR", trapdoorBlock);
 		generateStrScan(world, random, 0, 1, 0);
 		setBlockAndMetadata(world, -6, 1, 4, bedBlock, 0);
 		setBlockAndMetadata(world, -6, 1, 5, bedBlock, 8);

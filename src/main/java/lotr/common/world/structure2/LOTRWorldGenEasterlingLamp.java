@@ -2,6 +2,7 @@ package lotr.common.world.structure2;
 
 import java.util.Random;
 
+import lotr.common.LOTRMod;
 import net.minecraft.init.Blocks;
 import net.minecraft.world.World;
 
@@ -54,10 +55,16 @@ public class LOTRWorldGenEasterlingLamp extends LOTRWorldGenEasterlingStructure 
 			}
 		}
 		setBlockAndMetadata(world, 0, 3, 0, Blocks.glowstone, 0);
-		setBlockAndMetadata(world, 0, 3, -1, Blocks.trapdoor, 4);
-		setBlockAndMetadata(world, 0, 3, 1, Blocks.trapdoor, 5);
-		setBlockAndMetadata(world, -1, 3, 0, Blocks.trapdoor, 7);
-		setBlockAndMetadata(world, 1, 3, 0, Blocks.trapdoor, 6);
+		setBlockAndMetadata(world, 0, 3, -1, trapdoorBlock, 4);
+		setBlockAndMetadata(world, 0, 3, 1, trapdoorBlock, 5);
+		setBlockAndMetadata(world, -1, 3, 0, trapdoorBlock, 7);
+		setBlockAndMetadata(world, 1, 3, 0, trapdoorBlock, 6);
 		return true;
+	}
+
+	@Override
+	public void setupRandomBlocks(Random random) {
+		super.setupRandomBlocks(random);
+		trapdoorBlock = LOTRMod.trapdoorRedwood;
 	}
 }

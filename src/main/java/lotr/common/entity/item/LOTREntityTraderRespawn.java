@@ -245,7 +245,7 @@ public class LOTREntityTraderRespawn extends Entity {
 	}
 
 	public void setSpawnImminent() {
-		dataWatcher.updateObject(17, 1);
+		dataWatcher.updateObject(17, (byte) 1);
 	}
 
 	@Override

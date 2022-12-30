@@ -125,7 +125,7 @@ public class LOTRWorldGenEasterlingTower extends LOTRWorldGenEasterlingStructure
 		for (int j1 = 1; j1 <= 9; ++j1) {
 			setBlockAndMetadata(world, 0, j1, 1, Blocks.ladder, 2);
 		}
-		setBlockAndMetadata(world, 0, 10, 1, Blocks.trapdoor, 9);
+		setBlockAndMetadata(world, 0, 10, 1, trapdoorBlock, 9);
 		setBlockAndMetadata(world, -1, 6, -1, plankSlabBlock, plankSlabMeta | 8);
 		setBlockAndMetadata(world, 0, 6, -1, plankSlabBlock, plankSlabMeta | 8);
 		int[] j1 = { 5, 7 };

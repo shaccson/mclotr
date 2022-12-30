@@ -29,6 +29,7 @@ public abstract class LOTRWorldGenHarnedorStructure extends LOTRWorldGenStructur
 	public Block boneBlock;
 	public int boneMeta;
 	public Block bedBlock;
+	public Block trapdoorBlock;
 
 	public LOTRWorldGenHarnedorStructure(boolean flag) {
 		super(flag);
@@ -62,6 +63,7 @@ public abstract class LOTRWorldGenHarnedorStructure extends LOTRWorldGenStructur
 		fenceMeta = 2;
 		fenceGateBlock = LOTRMod.fenceGateCedar;
 		doorBlock = LOTRMod.doorCedar;
+		trapdoorBlock = LOTRMod.trapdoorCedar;
 		int randomWool = random.nextInt(3);
 		switch (randomWool) {
 		case 0:
@@ -109,6 +111,7 @@ public abstract class LOTRWorldGenHarnedorStructure extends LOTRWorldGenStructur
 				fenceMeta = 3;
 				fenceGateBlock = LOTRMod.fenceGateCharred;
 				doorBlock = LOTRMod.doorCharred;
+				trapdoorBlock = LOTRMod.trapdoorCharred;
 			}
 			if (random.nextBoolean()) {
 				plank2Block = LOTRMod.planks;

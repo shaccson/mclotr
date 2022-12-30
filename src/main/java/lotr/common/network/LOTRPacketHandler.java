@@ -11,7 +11,8 @@ public class LOTRPacketHandler {
 
 	public LOTRPacketHandler() {
 		int id = 0;
-		networkWrapper.registerMessage(LOTRPacketLogin.Handler.class, LOTRPacketLogin.class, id++, Side.CLIENT);
+		networkWrapper.registerMessage(LOTRPacketLogin.Handler.class, LOTRPacketLogin.class, id, Side.CLIENT);
+		id++;
 		networkWrapper.registerMessage(LOTRPacketLoginPlayerData.Handler.class, LOTRPacketLoginPlayerData.class, id++, Side.CLIENT);
 		networkWrapper.registerMessage(LOTRPacketPortalPos.Handler.class, LOTRPacketPortalPos.class, id++, Side.CLIENT);
 		networkWrapper.registerMessage(LOTRPacketUpdateViewingFaction.Handler.class, LOTRPacketUpdateViewingFaction.class, id++, Side.CLIENT);

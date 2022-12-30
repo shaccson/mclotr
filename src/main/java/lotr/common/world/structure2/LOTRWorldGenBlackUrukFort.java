@@ -73,6 +73,7 @@ public class LOTRWorldGenBlackUrukFort extends LOTRWorldGenMordorStructure {
 		addBlockMetaAliasOption("GROUND", 6, LOTRMod.rock, 0);
 		addBlockMetaAliasOption("GROUND", 2, LOTRMod.mordorDirt, 0);
 		addBlockMetaAliasOption("GROUND", 2, LOTRMod.mordorGravel, 0);
+		associateBlockAlias("TRAPDOOR", trapdoorBlock);
 		associateBlockAlias("GATE_IRON", gateIronBlock);
 		associateBlockAlias("GATE_ORC", gateOrcBlock);
 		associateBlockMetaAlias("BARS", barsBlock, 0);

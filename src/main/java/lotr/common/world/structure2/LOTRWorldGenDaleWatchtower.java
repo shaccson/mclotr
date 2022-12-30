@@ -115,7 +115,7 @@ public class LOTRWorldGenDaleWatchtower extends LOTRWorldGenDaleStructure {
 		for (int j13 = 1; j13 <= 7; ++j13) {
 			setBlockAndMetadata(world, 0, j13, 1, Blocks.ladder, 2);
 		}
-		setBlockAndMetadata(world, 0, 8, 1, Blocks.trapdoor, 9);
+		setBlockAndMetadata(world, 0, 8, 1, trapdoorBlock, 9);
 		setBlockAndMetadata(world, 0, 1, -2, doorBlock, 1);
 		setBlockAndMetadata(world, 0, 2, -2, doorBlock, 8);
 		setBlockAndMetadata(world, 0, 3, -1, Blocks.torch, 3);

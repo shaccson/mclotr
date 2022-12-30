@@ -50,6 +50,7 @@ public class LOTRWorldGenHighElfHouse extends LOTRWorldGenStructureBase2 {
 	public Block plateBlock;
 	public LOTRItemBanner.BannerType bannerType;
 	public LOTRChestContents chestContents;
+	public Block trapdoorBlock;
 
 	public LOTRWorldGenHighElfHouse(boolean flag) {
 		super(flag);
@@ -319,8 +320,8 @@ public class LOTRWorldGenHighElfHouse extends LOTRWorldGenStructureBase2 {
 		placeFlowerPot(world, -2, 2, 3, getRandomFlower(world, random));
 		setBlockAndMetadata(world, -2, 4, 3, stoneSlabBlock, stoneSlabMeta | 8);
 		setBlockAndMetadata(world, -2, 1, 4, Blocks.grass, 0);
-		setBlockAndMetadata(world, -1, 1, 4, Blocks.trapdoor, 6);
-		setBlockAndMetadata(world, -2, 1, 5, Blocks.trapdoor, 5);
+		setBlockAndMetadata(world, -1, 1, 4, trapdoorBlock, 6);
+		setBlockAndMetadata(world, -2, 1, 5, trapdoorBlock, 5);
 		setBlockAndMetadata(world, -2, 2, 4, fenceBlock, fenceMeta);
 		setBlockAndMetadata(world, -2, 3, 4, leafBlock, leafMeta);
 		setBlockAndMetadata(world, -2, 4, 4, leafBlock, leafMeta);
@@ -575,6 +576,7 @@ public class LOTRWorldGenHighElfHouse extends LOTRWorldGenStructureBase2 {
 			plankStairBlock = Blocks.oak_stairs;
 			fenceBlock = Blocks.fence;
 			fenceMeta = 0;
+			trapdoorBlock = Blocks.trapdoor;
 			break;
 		case 1:
 			plankBlock = Blocks.planks;
@@ -584,6 +586,7 @@ public class LOTRWorldGenHighElfHouse extends LOTRWorldGenStructureBase2 {
 			plankStairBlock = Blocks.birch_stairs;
 			fenceBlock = Blocks.fence;
 			fenceMeta = 2;
+			trapdoorBlock = LOTRMod.trapdoorBirch;
 			break;
 		case 2:
 			plankBlock = LOTRMod.planks;
@@ -593,6 +596,7 @@ public class LOTRWorldGenHighElfHouse extends LOTRWorldGenStructureBase2 {
 			plankStairBlock = LOTRMod.stairsBeech;
 			fenceBlock = LOTRMod.fence;
 			fenceMeta = 9;
+			trapdoorBlock = LOTRMod.trapdoorBeech;
 			break;
 		case 3:
 			plankBlock = LOTRMod.planks;
@@ -602,6 +606,7 @@ public class LOTRWorldGenHighElfHouse extends LOTRWorldGenStructureBase2 {
 			plankStairBlock = LOTRMod.stairsApple;
 			fenceBlock = LOTRMod.fence;
 			fenceMeta = 4;
+			trapdoorBlock = LOTRMod.trapdoorApple;
 			break;
 		default:
 			break;

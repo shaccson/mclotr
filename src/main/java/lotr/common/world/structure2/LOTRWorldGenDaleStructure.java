@@ -38,6 +38,7 @@ public abstract class LOTRWorldGenDaleStructure extends LOTRWorldGenStructureBas
 	public Block roofStairBlock;
 	public Block barsBlock;
 	public Block plateBlock;
+	public Block trapdoorBlock;
 
 	public LOTRWorldGenDaleStructure(boolean flag) {
 		super(flag);
@@ -72,6 +73,7 @@ public abstract class LOTRWorldGenDaleStructure extends LOTRWorldGenStructureBas
 			woodBeamBlock = LOTRMod.woodBeamV1;
 			woodBeamMeta = 0;
 			doorBlock = LOTRMod.doorSpruce;
+			trapdoorBlock = LOTRMod.trapdoorSpruce;
 			break;
 		case 1:
 			plankBlock = LOTRMod.planks2;
@@ -87,6 +89,7 @@ public abstract class LOTRWorldGenDaleStructure extends LOTRWorldGenStructureBas
 			woodBeamBlock = LOTRMod.woodBeam5;
 			woodBeamMeta = 0;
 			doorBlock = LOTRMod.doorPine;
+			trapdoorBlock = LOTRMod.trapdoorPine;
 			break;
 		case 2:
 			plankBlock = LOTRMod.planks2;
@@ -102,6 +105,7 @@ public abstract class LOTRWorldGenDaleStructure extends LOTRWorldGenStructureBas
 			woodBeamBlock = LOTRMod.woodBeam4;
 			woodBeamMeta = 3;
 			doorBlock = LOTRMod.doorFir;
+			trapdoorBlock = LOTRMod.trapdoorFir;
 			break;
 		default:
 			break;

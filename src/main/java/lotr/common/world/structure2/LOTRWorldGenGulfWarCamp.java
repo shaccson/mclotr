@@ -96,6 +96,7 @@ public class LOTRWorldGenGulfWarCamp extends LOTRWorldGenGulfStructure {
 		associateBlockMetaAlias("WOOD|4", woodBlock, woodMeta | 4);
 		associateBlockMetaAlias("PLANK", plankBlock, plankMeta);
 		associateBlockMetaAlias("FENCE", fenceBlock, fenceMeta);
+		associateBlockAlias("TRAPDOOR", trapdoorBlock);
 		associateBlockMetaAlias("ROOF", roofBlock, roofMeta);
 		associateBlockAlias("ROOF_STAIR", roofStairBlock);
 		associateBlockMetaAlias("FLAG", flagBlock, flagMeta);

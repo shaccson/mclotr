@@ -19,6 +19,7 @@ public class LOTRWorldGenRangerWatchtower extends LOTRWorldGenStructureBase2 {
 	public Block fenceBlock;
 	public int fenceMeta;
 	public Block stairBlock;
+	public Block trapdoorBlock;
 
 	public LOTRWorldGenRangerWatchtower(boolean flag) {
 		super(flag);
@@ -63,6 +64,7 @@ public class LOTRWorldGenRangerWatchtower extends LOTRWorldGenStructureBase2 {
 			fenceBlock = Blocks.fence;
 			fenceMeta = 0;
 			stairBlock = Blocks.oak_stairs;
+			trapdoorBlock = Blocks.trapdoor;
 			break;
 		case 1:
 			woodBlock = Blocks.log;
@@ -72,6 +74,7 @@ public class LOTRWorldGenRangerWatchtower extends LOTRWorldGenStructureBase2 {
 			fenceBlock = Blocks.fence;
 			fenceMeta = 0;
 			stairBlock = Blocks.spruce_stairs;
+			trapdoorBlock = LOTRMod.trapdoorSpruce;
 			break;
 		case 2:
 			woodBlock = LOTRMod.wood2;
@@ -81,6 +84,7 @@ public class LOTRWorldGenRangerWatchtower extends LOTRWorldGenStructureBase2 {
 			fenceBlock = LOTRMod.fence;
 			fenceMeta = 9;
 			stairBlock = LOTRMod.stairsBeech;
+			trapdoorBlock = LOTRMod.trapdoorBeech;
 			break;
 		case 3:
 			woodBlock = LOTRMod.wood3;
@@ -90,6 +94,7 @@ public class LOTRWorldGenRangerWatchtower extends LOTRWorldGenStructureBase2 {
 			fenceBlock = LOTRMod.fence;
 			fenceMeta = 12;
 			stairBlock = LOTRMod.stairsMaple;
+			trapdoorBlock = LOTRMod.trapdoorMaple;
 			break;
 		default:
 			break;
@@ -161,8 +166,8 @@ public class LOTRWorldGenRangerWatchtower extends LOTRWorldGenStructureBase2 {
 			}
 			setBlockAndMetadata(world, 0, j1, -1, Blocks.ladder, 2);
 		}
-		setBlockAndMetadata(world, 0, 6, -1, Blocks.trapdoor, 0);
-		setBlockAndMetadata(world, 0, 11, -1, Blocks.trapdoor, 0);
+		setBlockAndMetadata(world, 0, 6, -1, trapdoorBlock, 0);
+		setBlockAndMetadata(world, 0, 11, -1, trapdoorBlock, 0);
 		setBlockAndMetadata(world, 0, 17, -2, Blocks.torch, 5);
 		setBlockAndMetadata(world, 0, 17, 2, Blocks.torch, 5);
 		setBlockAndMetadata(world, -2, 17, 0, Blocks.torch, 5);

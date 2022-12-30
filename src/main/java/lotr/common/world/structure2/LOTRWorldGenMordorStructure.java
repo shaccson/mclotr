@@ -42,6 +42,7 @@ public abstract class LOTRWorldGenMordorStructure extends LOTRWorldGenStructureB
 	public Block barsBlock;
 	public Block chandelierBlock;
 	public int chandelierMeta;
+	public Block trapdoorBlock;
 
 	public LOTRWorldGenMordorStructure(boolean flag) {
 		super(flag);
@@ -91,5 +92,6 @@ public abstract class LOTRWorldGenMordorStructure extends LOTRWorldGenStructureB
 		barsBlock = LOTRMod.orcSteelBars;
 		chandelierBlock = LOTRMod.chandelier;
 		chandelierMeta = 7;
+		trapdoorBlock = LOTRMod.trapdoorCharred;
 	}
 }

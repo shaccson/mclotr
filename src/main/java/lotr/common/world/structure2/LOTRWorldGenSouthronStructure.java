@@ -61,6 +61,7 @@ public abstract class LOTRWorldGenSouthronStructure extends LOTRWorldGenStructur
 	public Block gateMetalBlock;
 	public Block bedBlock;
 	public Block tableBlock;
+	public Block trapdoorBlock;
 	public Block cropBlock;
 	public LOTRItemBanner.BannerType bannerType;
 
@@ -156,6 +157,7 @@ public abstract class LOTRWorldGenSouthronStructure extends LOTRWorldGenStructur
 			woodBeamBlock = LOTRMod.woodBeam4;
 			woodBeamMeta = 2;
 			doorBlock = LOTRMod.doorCedar;
+			trapdoorBlock = LOTRMod.trapdoorCedar;
 		} else {
 			int randomWood = random.nextInt(3);
 			switch (randomWood) {
@@ -173,6 +175,7 @@ public abstract class LOTRWorldGenSouthronStructure extends LOTRWorldGenStructur
 				woodBeamBlock = LOTRMod.woodBeam6;
 				woodBeamMeta = 3;
 				doorBlock = LOTRMod.doorOlive;
+				trapdoorBlock = LOTRMod.trapdoorOlive;
 				break;
 			case 1:
 				woodBlock = LOTRMod.wood3;
@@ -188,6 +191,7 @@ public abstract class LOTRWorldGenSouthronStructure extends LOTRWorldGenStructur
 				woodBeamBlock = LOTRMod.woodBeam3;
 				woodBeamMeta = 2;
 				doorBlock = LOTRMod.doorDatePalm;
+				trapdoorBlock = LOTRMod.trapdoorDatePalm;
 				break;
 			case 2:
 				woodBlock = LOTRMod.wood8;
@@ -203,6 +207,7 @@ public abstract class LOTRWorldGenSouthronStructure extends LOTRWorldGenStructur
 				woodBeamBlock = LOTRMod.woodBeam8;
 				woodBeamMeta = 3;
 				doorBlock = LOTRMod.doorPalm;
+				trapdoorBlock = LOTRMod.trapdoorPalm;
 				break;
 			default:
 				break;

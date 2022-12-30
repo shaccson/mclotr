@@ -28,6 +28,7 @@ public abstract class LOTRWorldGenNomadStructure extends LOTRWorldGenStructureBa
 	public Block beamBlock;
 	public int beamMeta;
 	public Block bedBlock;
+	public Block trapdoorBlock;
 
 	public LOTRWorldGenNomadStructure(boolean flag) {
 		super(flag);
@@ -81,6 +82,7 @@ public abstract class LOTRWorldGenNomadStructure extends LOTRWorldGenStructureBa
 			fenceGateBlock = Blocks.fence_gate;
 			beamBlock = LOTRMod.woodBeamV1;
 			beamMeta = 0;
+			trapdoorBlock = Blocks.trapdoor;
 			break;
 		case 1:
 			plankBlock = LOTRMod.planks2;
@@ -93,6 +95,7 @@ public abstract class LOTRWorldGenNomadStructure extends LOTRWorldGenStructureBa
 			fenceGateBlock = LOTRMod.fenceGateCedar;
 			beamBlock = LOTRMod.woodBeam4;
 			beamMeta = 2;
+			trapdoorBlock = LOTRMod.trapdoorCedar;
 			break;
 		case 2:
 			plankBlock = LOTRMod.planks;
@@ -103,6 +106,7 @@ public abstract class LOTRWorldGenNomadStructure extends LOTRWorldGenStructureBa
 			fenceBlock = LOTRMod.fence;
 			fenceMeta = 14;
 			fenceGateBlock = LOTRMod.fenceGateDatePalm;
+			trapdoorBlock = LOTRMod.trapdoorDatePalm;
 			beamBlock = LOTRMod.woodBeam3;
 			beamMeta = 2;
 			break;
